@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrarse - Vehículos en Venta</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
+    body {
+      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      min-height: 100vh;
+      display: flex; justify-content: center; align-items: center;
+      padding: 20px;
+    }
+    .caja {
+      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
+      border-radius: 28px; padding: 45px 35px; width: 100%; max-width: 500px;
+      box-shadow: 0 10px 30px rgba(44,82,130,0.08); border: 1px solid #e2d9c8;
+    }
+    h1 {color: #2c5282; font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 8px;}
+    .subtitulo {color: #5a6872; text-align: center; margin-bottom: 25px; font-size: 15px;}
+    .campo {margin-bottom: 20px; position: relative;}
+    label {display: block; margin-bottom: 8px; font-weight: 600; color: #4a5568; font-size: 14px;}
+    .contenedor-input {position: relative;}
+    input {
+      width: 100%; padding: 14px 50px 14px 16px; border: 2px solid #c5d6e8;
+      border-radius: 12px; font-size: 16px; background: #fff;
+    }
+    input:focus {outline: none; border-color: #3182ce; box-shadow: 0 0 0 3px rgba(49,130,206,0.12);}
+    .boton-ojo {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; font-size: 20px; cursor: pointer; padding: 0;
+    }
+    .reglas-contraseña {
+      margin-top: 10px; padding: 12px; background: #f0f4f8; border-radius: 10px; font-size: 13px; line-height: 1.8;
+    }
+    .ok {color: #276749;}
+    .falta {color: #c53030;}
+    .boton {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: #fff; border: none; border-radius: 14px;
+      font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 8px;
+    }
+    .boton:disabled {background: #a0aec0; cursor: not-allowed; opacity: 0.7;}
+    .mensaje {margin-top: 20px; padding: 15px; border-radius: 12px; display: none; font-weight: 600; text-align: center;}
+    .exito {background: #f0fff4; border: 2px solid #9ae6b4; color: #276749;}
+    .error {background: #fff5f5; border: 2px solid #feb2b2; color: #c53030;}
+    .enlace {display: block; text-align: center; margin-top: 20px; color: #3182ce; font-size: 14px; font-weight: 600; text-decoration: none;}
+  </style>
+</head>
+<body>
+  <div class="caja">
+    <h1>📝 Crear Cuenta</h1>
+    <p class="subtitulo">Completá tus datos para registrarte</p>
+
+    <form id="formRegistro">
+      <div class="campo">
+        <label for="nombre">Nombre</label>
+        <input type="text" id="nombre" required placeholder="Tu nombre completo">
+      </div>
+      <div class="campo">
+        <label for="correo">Correo electrónico</label>
+        <input type="email" id="correo" required placeholder="tu@correo.com">
+      </div>
+      
+      <div class="campo">
+        <label for="contrasena">Contraseña (máximo 8 caracteres)</label>
+        <div class="contenedor-input">
+          <input type="password" id="contrasena" required placeholder="Elegí una contraseña" maxlength="8">
+          <button type="button" class="boton-ojo" id="ojo1">👁️</button>
+        </div>
+      </div>
+      
+      <div class="campo">
+        <label for="repetir">Repetí la contraseña</label>
+        <div class="contenedor-input">
+          <input type="password" id="repetir" required placeholder="Escribila de nuevo" maxlength="8">
+          <button type="button" class="boton-ojo" id="ojo2">👁️</button>
+        </div>
+      </div>
+
+      <div class="reglas-contraseña">
+        <div id="r1" class="falta">❌ Exactamente 8 caracteres</div>
+        <div id="r2" class="falta">❌ Una mayúscula (A-Z)</div>
+        <div id="r3" class="falta">❌ Una minúscula (a-z)</div>
+        <div id="r4" class="falta">❌ Un número o carácter especial</div>
+        <div id="r5" class="falta">❌ Las contraseñas coinciden</div>
+      </div>
+
+      <button type="submit" id="btnRegistrar" class="boton">Registrarse ✅</button>
+    </form>
+
+    <div id="mensaje" class="mensaje"></div>
+
+    <a href="iniciar-sesion.html" class="enlace">¿Ya tenés cuenta? Iniciar sesión</a>
+    <a href="index.html" class="enlace">← Volver al inicio</a>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const RESEND_KEY = "re_9uyFsX7D_7MT5q5YmtDpdq8BsDxVTp8Kx";
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const formRegistro = document.getElementById('formRegistro');
+    const btnRegistrar = document.getElementById('btnRegistrar');
+    const mensaje = document.getElementById('mensaje');
+    const contrasena = document.getElementById('contrasena');
+    const repetir = document.getElementById('repetir');
+
+    // OJITOS 👁️
+    document.getElementById('ojo1').addEventListener('click', () => {
+      contrasena.type = contrasena.type === 'password' ? 'text' : 'password';
+    });
+    document.getElementById('ojo2').addEventListener('click', () => {
+      repetir.type = repetir.type === 'password' ? 'text' : 'password';
+    });
+
+    // ✅ VALIDACIÓN: EXACTAMENTE 8 caracteres + TODOS los símbolos aceptados
+    function validarContrasena() {
+      const c = contrasena.value;
+      const r = repetir.value;
+
+      // Regla 1: exactamente 8 caracteres
+      const val1 = c.length === 8;
+      document.getElementById('r1').className = val1 ? 'ok' : 'falta';
+      document.getElementById('r1').innerHTML = val1 ? '✅ Exactamente 8 caracteres' : '❌ Exactamente 8 caracteres';
+
+      // Regla 2: mayúscula
+      const val2 = /[A-ZÁÉÍÓÚÑ]/.test(c);
+      document.getElementById('r2').className = val2 ? 'ok' : 'falta';
+      document.getElementById('r2').innerHTML = val2 ? '✅ Una mayúscula (A-Z)' : '❌ Una mayúscula (A-Z)';
+
+      // Regla 3: minúscula
+      const val3 = /[a-záéíóúñ]/.test(c);
+      document.getElementById('r3').className = val3 ? 'ok' : 'falta';
+      document.getElementById('r3').innerHTML = val3 ? '✅ Una minúscula (a-z)' : '❌ Una minúscula (a-z)';
+
+      // Regla 4: número o CUALQUIER símbolo
+      const val4 = /[0-9]|[^\w\s]/.test(c);
+      document.getElementById('r4').className = val4 ? 'ok' : 'falta';
+      document.getElementById('r4').innerHTML = val4 ? '✅ Un número o carácter especial' : '❌ Un número o carácter especial';
+
+      // Regla 5: coinciden
+      const val5 = c && r && c === r;
+      document.getElementById('r5').className = val5 ? 'ok' : 'falta';
+      document.getElementById('r5').innerHTML = val5 ? '✅ Las contraseñas coinciden' : '❌ Las contraseñas coinciden';
+
+      return val1 && val2 && val3 && val4 && val5;
+    }
+
+    contrasena.addEventListener('input', validarContrasena);
+    repetir.addEventListener('input', validarContrasena);
+
+    function generarCodigo() {
+      return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+    }
+
+    formRegistro.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      mensaje.style.display = 'none';
+
+      if (!validarContrasena()) {
+        mensaje.className = 'mensaje error';
+        mensaje.innerHTML = '❌ Revisá los requisitos de la contraseña';
+        mensaje.style.display = 'block';
+        return;
+      }
+
+      btnRegistrar.disabled = true;
+
+      const nombre = document.getElementById('nombre').value.trim();
+      const correo = document.getElementById('correo').value.trim();
+      const valorContrasena = contrasena.value;
+
+      try {
+        const { data: existe } = await supabaseClient
+          .from('usuarios')
+          .select('id')
+          .eq('correo', correo)
+          .maybeSingle();
+
+        if (existe) throw new Error('Este correo ya está registrado');
+
+        const codigo = generarCodigo();
+        const fecha = new Date().toISOString();
+
+        const { error: dbError } = await supabaseClient
+          .from('usuarios')
+          .insert([{
+            nombre: nombre,
+            correo: correo,
+            contraseña: valorContrasena,
+            confirmado: false,
+            codigo_confirmacion: codigo,
+            fecha_codigo: fecha
+          }]);
+
+        if (dbError) throw dbError;
+
+        const origen = window.location.origin;
+        const enlaceConfirmar = `${origen}/confirmar.html?correo=${encodeURIComponent(correo)}&codigo=${codigo}`;
+
+        const respuesta = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${RESEND_KEY}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            from: 'Confirmación <onboarding@resend.dev>',
+            to: [correo],
+            subject: 'Confirmá tu cuenta',
+            html: `
+              <h2>¡Hola ${nombre}!</h2>
+              <p>Gracias por registrarte. Tocá el enlace de abajo para confirmar tu cuenta:</p>
+              <p><a href="${enlaceConfirmar}" style="background:#3182ce; color:white; padding:10px 20px; border-radius:8px; text-decoration:none;">Confirmar mi cuenta</a></p>
+              <p>Si no funciona, copiá y pegá esto en tu navegador:</p>
+              <p>${enlaceConfirmar}</p>
+            `
+          })
+        });
+
+        if (!respuesta.ok) {
+          const errorDetalle = await respuesta.json();
+          throw new Error('No se pudo enviar el correo: ' + (errorDetalle.message || 'Error de conexión'));
+        }
+
+        mensaje.className = 'mensaje exito';
+        mensaje.innerHTML = '✅ ¡Registrado! Revisá tu correo y confirmá tu cuenta';
+        mensaje.style.display = 'block';
+        formRegistro.reset();
+        setTimeout(validarContrasena, 100);
+
+      } catch (err) {
+        mensaje.className = 'mensaje error';
+        mensaje.innerHTML = '❌ ' + err.message;
+        mensaje.style.display = 'block';
+      } finally {
+        btnRegistrar.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

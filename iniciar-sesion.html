@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar Sesión - Vehículos en Venta</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
+    body {
+      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      min-height: 100vh;
+      display: flex; justify-content: center; align-items: center;
+      padding: 20px;
+    }
+    .caja {
+      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
+      border-radius: 28px; padding: 45px 35px; width: 100%; max-width: 500px;
+      box-shadow: 0 10px 30px rgba(44,82,130,0.08); border: 1px solid #e2d9c8;
+    }
+    h1 {color: #2c5282; font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 8px;}
+    .subtitulo {color: #5a6872; text-align: center; margin-bottom: 30px; font-size: 15px;}
+    .campo {margin-bottom: 20px;}
+    label {display: block; margin-bottom: 8px; font-weight: 600; color: #4a5568; font-size: 14px;}
+    input {
+      width: 100%; padding: 14px 16px; border: 2px solid #c5d6e8;
+      border-radius: 12px; font-size: 16px; background: #fff;
+    }
+    input:focus {outline: none; border-color: #3182ce; box-shadow: 0 0 0 3px rgba(49,130,206,0.12);}
+    .boton {
+      width: 100%; padding: 16px;
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: #fff; border: none; border-radius: 14px;
+      font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 8px;
+    }
+    .boton:disabled {background: #a0aec0; cursor: not-allowed; opacity: 0.7;}
+    .boton-rojo {
+      background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+      margin-top: 20px;
+    }
+    .mensaje {margin-top: 20px; padding: 15px; border-radius: 12px; display: none; font-weight: 600; text-align: center;}
+    .exito {background: #f0fff4; border: 2px solid #9ae6b4; color: #276749;}
+    .error {background: #fff5f5; border: 2px solid #feb2b2; color: #c53030;}
+    .enlace {display: block; text-align: center; margin-top: 20px; color: #3182ce; font-size: 14px; font-weight: 600; text-decoration: none;}
+    .oculto {display: none !important;}
+    .fila-saludo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    .bienvenida {
+      color: #276749;
+      font-weight: 600;
+      font-size: 17px;
+      margin: 0;
+    }
+    .boton-chico {
+      padding: 8px 16px;
+      font-size: 14px;
+      width: auto;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="caja">
+    <!-- ✅ Cuando NO hay sesión: se ve esto -->
+    <div id="sinSesion">
+      <h1>🔐 Iniciar Sesión</h1>
+      <p class="subtitulo">Ingresá tus datos para entrar</p>
+
+      <form id="formLogin">
+        <div class="campo">
+          <label for="correo">Correo electrónico</label>
+          <input type="email" id="correo" required placeholder="tu@correo.com">
+        </div>
+        <div class="campo">
+          <label for="contrasena">Contraseña (máximo 8 caracteres)</label>
+          <input type="password" id="contrasena" maxlength="8" required placeholder="Máximo 8 caracteres">
+        </div>
+        <button type="submit" id="btnEntrar" class="boton">Entrar ✅</button>
+      </form>
+
+      <div id="mensaje" class="mensaje"></div>
+
+      <a href="registrarse.html" class="enlace">¿No tenés cuenta? Creá una</a>
+      <a href="index.html" class="enlace">← Volver al inicio</a>
+    </div>
+
+    <!-- ✅ Cuando SÍ hay sesión: te quedás acá mismo -->
+    <div id="conSesion" class="oculto">
+      <h1>✅ Conectado</h1>
+      
+      <div class="fila-saludo">
+        <p class="bienvenida" id="textoBienvenida"></p>
+        <button id="btnCerrar" class="boton boton-rojo boton-chico">🚪 Cerrar sesión</button>
+      </div>
+      
+      <a href="mis-vehiculos.html" class="boton" style="text-align:center; text-decoration:none; display:block;">🚗 Ver Mis Vehículos</a>
+      <a href="index.html" class="enlace">← Ir a la Página Principal</a>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const sinSesion = document.getElementById('sinSesion');
+    const conSesion = document.getElementById('conSesion');
+    const textoBienvenida = document.getElementById('textoBienvenida');
+    const formLogin = document.getElementById('formLogin');
+    const btnEntrar = document.getElementById('btnEntrar');
+    const btnCerrar = document.getElementById('btnCerrar');
+    const mensaje = document.getElementById('mensaje');
+
+    // ✅ Verificar si ya hay alguien conectado
+    function verificarSesion() {
+      const usuarioId = localStorage.getItem('usuario_id');
+      const usuarioNombre = localStorage.getItem('usuario_nombre');
+      
+      if (usuarioId) {
+        sinSesion.classList.add('oculto');
+        conSesion.classList.remove('oculto');
+        textoBienvenida.textContent = '¡Bienvenido, ' + usuarioNombre + '! 🎉';
+      } else {
+        sinSesion.classList.remove('oculto');
+        conSesion.classList.add('oculto');
+      }
+    }
+
+    verificarSesion();
+
+    // ✅ Iniciar sesión — con límite de 8 caracteres
+    formLogin.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      btnEntrar.disabled = true;
+      mensaje.style.display = 'none';
+
+      const correo = document.getElementById('correo').value.trim();
+      const contrasena = document.getElementById('contrasena').value;
+
+      // ✅ Validar que no supere los 8 caracteres
+      if (contrasena.length > 8) {
+        mensaje.className = 'mensaje error';
+        mensaje.innerHTML = '❌ La contraseña no puede tener más de 8 caracteres';
+        mensaje.style.display = 'block';
+        btnEntrar.disabled = false;
+        return;
+      }
+
+      try {
+        const { data, error } = await supabaseClient
+          .from('usuarios')
+          .select('*')
+          .eq('correo', correo)
+          .eq('contraseña', contrasena)
+          .maybeSingle();
+
+        if (error) throw error;
+        if (!data) throw new Error('Correo o contraseña incorrectos');
+        if (!data.confirmado) throw new Error('⚠️ Confirmá tu cuenta desde la tabla');
+
+        localStorage.setItem('usuario_id', data.id);
+        localStorage.setItem('usuario_nombre', data.nombre);
+
+        mensaje.className = 'mensaje exito';
+        mensaje.innerHTML = '✅ ¡Bienvenido, ' + data.nombre + '!';
+        mensaje.style.display = 'block';
+
+        setTimeout(() => {
+          verificarSesion();
+        }, 1000);
+
+      } catch (err) {
+        mensaje.className = 'mensaje error';
+        mensaje.innerHTML = '❌ ' + err.message;
+        mensaje.style.display = 'block';
+      } finally {
+        btnEntrar.disabled = false;
+      }
+    });
+
+    // ✅ Cerrar sesión
+    btnCerrar.addEventListener('click', () => {
+      localStorage.removeItem('usuario_id');
+      localStorage.removeItem('usuario_nombre');
+      verificarSesion();
+    });
+  </script>
+</body>
+</html>

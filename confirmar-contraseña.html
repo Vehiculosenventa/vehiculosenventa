@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmar Contraseña - Vehículos en Venta</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .caja {
+      background: #fff;
+      padding: 35px;
+      border-radius: 20px;
+      box-shadow: 0 8px 24px rgba(44,82,130,.12);
+      max-width: 420px;
+      width: 100%;
+    }
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      margin-bottom: 10px;
+      font-size: 22px;
+    }
+    p {
+      text-align: center;
+      color: #718096;
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+    .reglas {
+      background: #f0f7ff;
+      border-left: 4px solid #3182ce;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      color: #2c5282;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #4a5568;
+    }
+    .input-con-ojo {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    input {
+      width: 100%;
+      padding: 14px 50px 14px 16px;
+      border: 2px solid #c5d6e8;
+      border-radius: 12px;
+      font-size: 16px;
+    }
+    input:focus {
+      outline: none;
+      border-color: #3182ce;
+      box-shadow: 0 0 0 3px rgba(49,130,206,.12);
+    }
+    .ojo {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      padding: 0;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+      opacity: .7;
+    }
+    .mensaje {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      display: none;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    .exito {
+      background: #f0f7ee;
+      color: #276749;
+      border: 1px solid #b8d8b9;
+    }
+    .error {
+      background: #fef2f2;
+      color: #c53030;
+      border: 1px solid #feb2b2;
+    }
+    .volver {
+      display: block;
+      margin-top: 20px;
+      text-align: center;
+      color: #3182ce;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .volver:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="caja">
+    <h1>Confirmar Contraseña</h1>
+    <p>Creá tu contraseña nueva</p>
+
+    <div class="reglas">
+      <strong>La contraseña debe tener:</strong><br>
+      ✅ Mínimo 8 caracteres<br>
+      ✅ 1 letra MAYÚSCULA (A-Z)<br>
+      ✅ 1 letra minúscula (a-z)<br>
+      ✅ 1 número (0-9)<br>
+      ✅ 1 carácter especial (!@#$%^&*)
+    </div>
+
+    <form id="formClave">
+      <label for="nueva">Contraseña Nueva</label>
+      <div class="input-con-ojo">
+        <input type="password" id="nueva" placeholder="Escribí tu contraseña nueva" required>
+        <button type="button" class="ojo" id="ojo1">👁️</button>
+      </div>
+
+      <label for="repetida">Repetir Contraseña</label>
+      <div class="input-con-ojo">
+        <input type="password" id="repetida" placeholder="Volvé a escribirla igual" required>
+        <button type="button" class="ojo" id="ojo2">👁️</button>
+      </div>
+
+      <button type="submit" id="btnGuardar">✅ Confirmar y Cambiar</button>
+      <div id="mensaje" class="mensaje"></div>
+    </form>
+
+    <a href="iniciar-sesion.html" class="volver">← Volver a Iniciar Sesión</a>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://cgwdahvstitjksphucqk.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpc3RpdGprc3BodWNxayIsImF1dGhvcml0eSI6ImFub24iLCJpYXQiOjE3NTY4OTU0MDAsImV4cCI6MjA3MjQ3MTQwMH0.7VbH5GqCqXWXfV5bYq9h3ZbXhY7Z9X8Y9Z7X6Y5Z4X3Y2Z1X0Y9Z8X7Y6Z5X4Y3Z2X1Y0Z";
+
+    const { createClient } = supabase;
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let correoConfirmado = null;
+    let codigoValido = false;
+
+    // Ver/ocultar contraseña
+    document.getElementById('ojo1').addEventListener('click', () => {
+      const i = document.getElementById('nueva');
+      i.type = i.type === 'password' ? 'text' : 'password';
+    });
+    document.getElementById('ojo2').addEventListener('click', () => {
+      const i = document.getElementById('repetida');
+      i.type = i.type === 'password' ? 'text' : 'password';
+    });
+
+    // Verificar enlace que llega del correo
+    window.addEventListener('load', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const codigo = params.get('codigo');
+      const correo = params.get('correo');
+
+      if (codigo && correo) {
+        const { data, error } = await supabase
+          .from('usuarios')
+          .select('id, codigo_confirmado')
+          .eq('correo', correo)
+          .eq('codigo_confirmado', codigo)
+          .single();
+
+        if (data && !error) {
+          correoConfirmado = correo;
+          codigoValido = true;
+        }
+      }
+
+      if (!codigoValido) {
+        document.querySelector('.caja').innerHTML = `
+          <h1>Enlace inválido o ya usado</h1>
+          <p>Pedí nuevamente el correo de recuperación.</p>
+          <a href="recuperar-contraseña.html" style="display:block;text-align:center;margin-top:20px;color:#3182ce;font-weight:600;">Ir a Recuperar Contraseña</a>
+        `;
+      }
+    });
+
+    // Guardar contraseña nueva
+    document.getElementById('formClave').addEventListener('submit', async e => {
+      e.preventDefault();
+      const nueva = document.getElementById('nueva').value;
+      const repetida = document.getElementById('repetida').value;
+      const btn = document.getElementById('btnGuardar');
+      const mensaje = document.getElementById('mensaje');
+
+      // Que coincidan
+      if (nueva !== repetida) {
+        mensaje.textContent = "❌ Las contraseñas no coinciden";
+        mensaje.className = "mensaje error";
+        mensaje.style.display = "block";
+        return;
+      }
+
+      // Todas las reglas
+      const regla = /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]).{8,}$/;
+      if (!regla.test(nueva)) {
+        mensaje.textContent = "❌ No cumple los requisitos. Revisá las reglas de arriba.";
+        mensaje.className = "mensaje error";
+        mensaje.style.display = "block";
+        return;
+      }
+
+      if (!codigoValido || !correoConfirmado) return;
+
+      btn.disabled = true;
+      btn.textContent = "Guardando...";
+      mensaje.style.display = "none";
+
+      try {
+        const { error } = await supabase
+          .from('usuarios')
+          .update({ 
+            contraseña: nueva,
+            codigo_confirmado: null
+          })
+          .eq('correo', correoConfirmado);
+
+        if (error) throw error;
+
+        mensaje.textContent = "✅ ¡Listo! Contraseña cambiada. Ya podés iniciar sesión.";
+        mensaje.className = "mensaje exito";
+        mensaje.style.display = "block";
+        e.target.reset();
+        codigoValido = false;
+
+      } catch (err) {
+        mensaje.textContent = "❌ " + err.message;
+        mensaje.className = "mensaje error";
+        mensaje.style.display = "block";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "✅ Confirmar y Cambiar";
+      }
+    });
+  </script>
+</body>
+</html>
