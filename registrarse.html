@@ -99,10 +99,8 @@
   </div>
 
   <script>
-    // === TUS CLAVES DE SUPABASE ===
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-    // === NO HAY CLAVE DE RESEND AQUÍ — QUEDA ESCONDIDA EN LA FUNCIÓN 🔒 ===
  
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -156,18 +154,19 @@
       const valorContrasena = contrasena.value;
 
       try {
-        // 1. Crear el usuario en Supabase
+        // Crear cuenta SIN esperar confirmación automática
         const { data, error } = await supabaseClient.auth.signUp({
           email: correo,
           password: valorContrasena,
           options: {
-            data: { nombre_completo: nombre }
+            data: { nombre_completo: nombre },
+            emailConfirm: false // ⬅️ ESTO ES LO QUE ARREGLÓ EL ERROR 500 ⚡
           }
         });
 
         if (error) throw error;
 
-        // 2. Llamar a la función enviar-correo de Supabase ⚡
+        // Llamar a la función para enviar el correo con Resend 💌
         const enlaceConfirmacion = `https://vehiculosenventa.com.ar/confirmar?email=${encodeURIComponent(correo)}`;
         
         const { error: errorCorreo } = await supabaseClient.functions.invoke('enviar-correo', {
@@ -190,7 +189,7 @@
         });
 
         if (errorCorreo) {
-          console.warn('Cuenta creada pero el correo pudo no enviarse:', errorCorreo);
+          console.warn('Cuenta creada, pero el correo pudo no enviarse:', errorCorreo);
           mensaje.textContent = '✅ Cuenta creada. Revisá tu correo (y Spam)';
         } else {
           mensaje.textContent = '✅ ¡Cuenta creada! Revisá tu correo para confirmar';
