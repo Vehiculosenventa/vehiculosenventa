@@ -99,15 +99,12 @@
   </div>
 
   <script>
-    // === TUS CLAVES — PONÉ LAS TUYAS ACÁ ===
+    // === TUS CLAVES DE SUPABASE ===
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-    const RESEND_KEY = "re_9uyFsX7D_7MT5q5YmtDpdq8BsDxVTp8Kx";
-    // ======================================
+    // === NO HAY CLAVE DE RESEND AQUÍ — QUEDA ESCONDIDA EN LA FUNCIÓN 🔒 ===
  
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    // De acá para abajo ES LO QUE VOS ME PASASTE, ESTÁ IGUALITO 👇
 
     const formRegistro = document.getElementById('formRegistro');
     const btnRegistrar = document.getElementById('btnRegistrar');
@@ -159,6 +156,7 @@
       const valorContrasena = contrasena.value;
 
       try {
+        // 1. Crear el usuario en Supabase
         const { data, error } = await supabaseClient.auth.signUp({
           email: correo,
           password: valorContrasena,
@@ -169,7 +167,35 @@
 
         if (error) throw error;
 
-        mensaje.textContent = '✅ Revisá tu correo para confirmar tu cuenta';
+        // 2. Llamar a la función enviar-correo de Supabase ⚡
+        const enlaceConfirmacion = `https://vehiculosenventa.com.ar/confirmar?email=${encodeURIComponent(correo)}`;
+        
+        const { error: errorCorreo } = await supabaseClient.functions.invoke('enviar-correo', {
+          body: {
+            to: correo,
+            subject: '¡Bienvenido a Vehículos en Venta! Confirma tu cuenta ✅',
+            html: `
+              <h2>¡Hola ${nombre}! 👋</h2>
+              <p>Gracias por registrarte en <strong>Vehículos en Venta</strong>.</p>
+              <p>Hacé clic en el siguiente enlace para confirmar tu cuenta:</p>
+              <p style="margin: 25px 0;">
+                <a href="${enlaceConfirmacion}" style="background: #3182ce; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold;">
+                  Confirmar mi cuenta ✅
+                </a>
+              </p>
+              <p>Si no te registraste, podés ignorar este mensaje.</p>
+              <p>Saludos,<br>El equipo de Vehículos en Venta 🚗</p>
+            `
+          }
+        });
+
+        if (errorCorreo) {
+          console.warn('Cuenta creada pero el correo pudo no enviarse:', errorCorreo);
+          mensaje.textContent = '✅ Cuenta creada. Revisá tu correo (y Spam)';
+        } else {
+          mensaje.textContent = '✅ ¡Cuenta creada! Revisá tu correo para confirmar';
+        }
+        
         mensaje.className = 'mensaje exito';
         mensaje.style.display = 'block';
         formRegistro.reset();
