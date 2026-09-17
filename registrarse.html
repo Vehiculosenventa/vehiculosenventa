@@ -99,10 +99,15 @@
   </div>
 
   <script>
+    // === TUS CLAVES — PONÉ LAS TUYAS ACÁ ===
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizWkkbygrdWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "pegá_tu_clave_de_Supabase_acá";
+    const RESEND_KEY = "pegá_tu_clave_de_Resend_acá_empieza_con_re_";
+    // ======================================
  
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // De acá para abajo ES LO QUE VOS ME PASASTE, ESTÁ IGUALITO 👇
 
     const formRegistro = document.getElementById('formRegistro');
     const btnRegistrar = document.getElementById('btnRegistrar');
@@ -110,7 +115,6 @@
     const contrasena = document.getElementById('contrasena');
     const repetir = document.getElementById('repetir');
 
-    // Mostrar/ocultar contraseña 👁️
     document.getElementById('ojo1').addEventListener('click', () => {
       contrasena.type = contrasena.type === 'password' ? 'text' : 'password';
     });
@@ -118,33 +122,26 @@
       repetir.type = repetir.type === 'password' ? 'text' : 'password';
     });
 
-    // Validación en tiempo real
     function validarContraseña() {
       const valor = contrasena.value;
       const valorRepetir = repetir.value;
       
-      // R1: Exactamente 8 caracteres
       document.getElementById('r1').className = valor.length === 8 ? 'ok' : 'falta';
       document.getElementById('r1').innerHTML = valor.length === 8 ? '✅ Exactamente 8 caracteres' : '❌ Exactamente 8 caracteres';
       
-      // R2: Una mayúscula
       document.getElementById('r2').className = /[A-Z]/.test(valor) ? 'ok' : 'falta';
       document.getElementById('r2').innerHTML = /[A-Z]/.test(valor) ? '✅ Una mayúscula (A-Z)' : '❌ Una mayúscula (A-Z)';
       
-      // R3: Una minúscula
       document.getElementById('r3').className = /[a-z]/.test(valor) ? 'ok' : 'falta';
       document.getElementById('r3').innerHTML = /[a-z]/.test(valor) ? '✅ Una minúscula (a-z)' : '❌ Una minúscula (a-z)';
       
-      // R4: Un número o carácter especial
       document.getElementById('r4').className = /[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(valor) ? 'ok' : 'falta';
       document.getElementById('r4').innerHTML = /[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(valor) ? '✅ Un número o carácter especial' : '❌ Un número o carácter especial';
       
-      // R5: Coinciden
       const coinciden = valor && valorRepetir && valor === valorRepetir;
       document.getElementById('r5').className = coinciden ? 'ok' : 'falta';
       document.getElementById('r5').innerHTML = coinciden ? '✅ Las contraseñas coinciden' : '❌ Las contraseñas coinciden';
       
-      // Habilitar botón solo si todo está OK
       const todoOk = valor.length === 8 && /[A-Z]/.test(valor) && /[a-z]/.test(valor) && /[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(valor) && coinciden;
       btnRegistrar.disabled = !todoOk;
     }
@@ -152,7 +149,6 @@
     contrasena.addEventListener('input', validarContraseña);
     repetir.addEventListener('input', validarContraseña);
 
-    // Envío del formulario
     formRegistro.addEventListener('submit', async (e) => {
       e.preventDefault();
       btnRegistrar.disabled = true;
@@ -178,7 +174,6 @@
         mensaje.style.display = 'block';
         formRegistro.reset();
         
-        // Resetear las reglas
         setTimeout(() => {
           document.querySelectorAll('.reglas-contraseña > div').forEach(el => {
             el.className = 'falta';
