@@ -165,7 +165,7 @@
 
         if (error) throw error;
 
-        const enlaceConfirmacion = `https://vehiculosenventa.com.ar/confirmar?email=${encodeURIComponent(correo)}`;
+        const enlaceConfirmacion = `https://vehiculosenventa.com.ar/confirmar.html?email=${encodeURIComponent(correo)}`;
         
         const { error: errorCorreo } = await supabaseClient.functions.invoke('enviar-correo', {
           body: {
