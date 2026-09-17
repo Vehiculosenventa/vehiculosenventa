@@ -154,19 +154,17 @@
       const valorContrasena = contrasena.value;
 
       try {
-        // Crear cuenta SIN esperar confirmación automática
         const { data, error } = await supabaseClient.auth.signUp({
           email: correo,
           password: valorContrasena,
           options: {
             data: { nombre_completo: nombre },
-            emailConfirm: false // ⬅️ ESTO ES LO QUE ARREGLÓ EL ERROR 500 ⚡
+            emailConfirm: false
           }
         });
 
         if (error) throw error;
 
-        // Llamar a la función para enviar el correo con Resend 💌
         const enlaceConfirmacion = `https://vehiculosenventa.com.ar/confirmar?email=${encodeURIComponent(correo)}`;
         
         const { error: errorCorreo } = await supabaseClient.functions.invoke('enviar-correo', {
