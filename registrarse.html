@@ -102,7 +102,6 @@
   // === TUS CLAVES — TAL CUAL LAS TENÍAS ===
   const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-  const RESEND_KEY = "re_9uyFsX7D_7MT5q5YmtDpdq8BsDxVTp8Kx";
   const DOMINIO = "vehiculosenventa.com.ar";
   // ======================================
  
@@ -163,8 +162,7 @@
         email: correo,
         password: valorContrasena,
         options: {
-          data: { nombre_completo: nombre },
-          emailConfirm: false
+          data: { nombre_completo: nombre }
         }
       });
 
@@ -173,30 +171,15 @@
       // 2. Generar enlace de confirmación
       const enlaceConfirmacion = `https://${DOMINIO}/confirmar.html?email=${encodeURIComponent(correo)}`;
 
-      // 3. Resend manda el correo
-      await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${RESEND_KEY}`,
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-          from: `no-reply@${DOMINIO}`,
-          to: correo,
-          subject: "✅ Confirma tu cuenta - Vehículos en Venta",
-          html: `
-            <h2>¡Hola ${nombre}! 👋</h2>
-            <p>Gracias por registrarte en <strong>Vehículos en Venta</strong>.</p>
-            <p>Confirmá tu cuenta tocando el botón de abajo:</p>
-            <p style="margin: 25px 0;">
-              <a href="${enlaceConfirmacion}" style="background: #3182ce; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block;">
-                Confirmar mi cuenta ✅
-              </a>
-            </p>
-            <p>Si no te registraste, podés ignorar este mensaje.</p>
-            <p>Saludos,<br>El equipo de Vehículos en Venta 🚗</p>
-          `
-        })
+      // 3. Llamamos a la FUNCIÓN de Supabase que manda el correo por Resend
+      // La clave de Resend está GUARDADA ADENTRO de la función, nadie la ve 🔒
+      await supabase.functions.invoke('enviar-correo', {
+        body: {
+          nombre: nombre,
+          correo: correo,
+          enlace: enlaceConfirmacion,
+          dominio: DOMINIO
+        }
       });
 
       mensaje.textContent = '✅ ¡Cuenta creada! Revisá tu correo para confirmar';
@@ -219,6 +202,7 @@
       mensaje.textContent = '❌ ' + err.message;
       mensaje.className = 'mensaje error';
       mensaje.style.display = 'block';
+    } finally {
       btnRegistrar.disabled = false;
     }
   });
