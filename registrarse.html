@@ -7,44 +7,16 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
-    body {
-      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
-      min-height: 100vh;
-      display: flex; justify-content: center; align-items: center;
-      padding: 20px;
-    }
-    .caja {
-      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
-      border-radius: 28px; padding: 45px 35px; width: 100%; max-width: 500px;
-      box-shadow: 0 10px 30px rgba(44,82,130,0.08); border: 1px solid #e2d9c8;
-    }
-    h1 {color: #2c5282; font-size: 28px; font-weight: 800; text-align: center; margin-bottom: 8px;}
-    .subtitulo {color: #5a6872; text-align: center; margin-bottom: 25px; font-size: 15px;}
-    .campo {margin-bottom: 20px; position: relative;}
-    label {display: block; margin-bottom: 8px; font-weight: 600; color: #4a5568; font-size: 14px;}
-    .contenedor-input {position: relative;}
-    input {
-      width: 100%; padding: 14px 50px 14px 16px; border: 2px solid #c5d6e8;
-      border-radius: 12px; font-size: 16px; background: #fff;
-    }
+    body {background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;}
+    .caja {background: #fff; border-radius: 20px; padding: 35px; width: 100%; max-width: 420px; box-shadow: 0 8px 25px rgba(44,82,130,0.1);}
+    h1 {color: #2c5282; text-align: center; margin-bottom: 25px; font-size: 24px;}
+    .campo {margin-bottom: 18px;}
+    label {display: block; margin-bottom: 7px; font-weight: 600; color: #4a5568; font-size: 14px;}
+    input {width: 100%; padding: 13px; border: 2px solid #c5d6e8; border-radius: 10px; font-size: 15px;}
     input:focus {outline: none; border-color: #3182ce; box-shadow: 0 0 0 3px rgba(49,130,206,0.12);}
-    .boton-ojo {
-      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
-      background: none; border: none; font-size: 20px; cursor: pointer; padding: 0;
-    }
-    .reglas-contraseña {
-      margin-top: 12px; padding: 14px; background: #f0f4f8; border-radius: 10px; font-size: 13px; line-height: 2;
-    }
-    .ok {color: #276749;}
-    .falta {color: #c53030;}
-    .boton {
-      width: 100%; padding: 16px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff; border: none; border-radius: 14px;
-      font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 10px;
-    }
+    .boton {width: 100%; padding: 15px; background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px;}
     .boton:disabled {background: #a0aec0; cursor: not-allowed; opacity: 0.7;}
-    .mensaje {margin-top: 20px; padding: 15px; border-radius: 12px; display: none; font-weight: 600; text-align: center;}
+    .mensaje {margin-top: 20px; padding: 15px; border-radius: 10px; display: none; font-weight: 600; text-align: center;}
     .exito {background: #f0fff4; border: 2px solid #9ae6b4; color: #276749;}
     .error {background: #fff5f5; border: 2px solid #feb2b2; color: #c53030;}
     .enlace {display: block; text-align: center; margin-top: 20px; color: #3182ce; font-size: 14px; font-weight: 600; text-decoration: none;}
@@ -53,8 +25,6 @@
 <body>
   <div class="caja">
     <h1>📝 Crear Cuenta</h1>
-    <p class="subtitulo">Completá tus datos para registrarte</p>
-
     <form id="formRegistro">
       <div class="campo">
         <label for="nombre">Nombre completo</label>
@@ -64,88 +34,25 @@
         <label for="correo">Correo electrónico</label>
         <input type="email" id="correo" required placeholder="tu@correo.com">
       </div>
-      
       <div class="campo">
-        <label for="contrasena">Contraseña (8 caracteres)</label>
-        <div class="contenedor-input">
-          <input type="password" id="contrasena" required placeholder="Elegí una contraseña" maxlength="8">
-          <button type="button" class="boton-ojo" id="ojo1">👁️</button>
-        </div>
+        <label for="contrasena">Contraseña</label>
+        <input type="password" id="contrasena" required placeholder="Mínimo 8 caracteres">
       </div>
-      
-      <div class="campo">
-        <label for="repetir">Repetir contraseña</label>
-        <div class="contenedor-input">
-          <input type="password" id="repetir" required placeholder="Escribila de nuevo" maxlength="8">
-          <button type="button" class="boton-ojo" id="ojo2">👁️</button>
-        </div>
-      </div>
-
-      <div class="reglas-contraseña">
-        <div id="r1" class="falta">❌ Exactamente 8 caracteres</div>
-        <div id="r2" class="falta">❌ Una mayúscula (A-Z)</div>
-        <div id="r3" class="falta">❌ Una minúscula (a-z)</div>
-        <div id="r4" class="falta">❌ Un número o carácter especial</div>
-        <div id="r5" class="falta">❌ Las contraseñas coinciden</div>
-      </div>
-
       <button type="submit" id="btnRegistrar" class="boton">Registrarse ✅</button>
     </form>
-
     <div id="mensaje" class="mensaje"></div>
-
     <a href="iniciar-sesion.html" class="enlace">¿Ya tenés cuenta? Iniciar sesión</a>
     <a href="index.html" class="enlace">← Volver al inicio</a>
   </div>
 
 <script>
-  // === TUS CLAVES — TAL CUAL LAS TENÍAS ===
   const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-  const DOMINIO = "vehiculosenventa.com.ar";
-  // ======================================
- 
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
   const formRegistro = document.getElementById('formRegistro');
   const btnRegistrar = document.getElementById('btnRegistrar');
   const mensaje = document.getElementById('mensaje');
-  const contrasena = document.getElementById('contrasena');
-  const repetir = document.getElementById('repetir');
-
-  document.getElementById('ojo1').addEventListener('click', () => {
-    contrasena.type = contrasena.type === 'password' ? 'text' : 'password';
-  });
-  document.getElementById('ojo2').addEventListener('click', () => {
-    repetir.type = repetir.type === 'password' ? 'text' : 'password';
-  });
-
-  function validarContraseña() {
-    const valor = contrasena.value;
-    const valorRepetir = repetir.value;
-    
-    document.getElementById('r1').className = valor.length === 8 ? 'ok' : 'falta';
-    document.getElementById('r1').innerHTML = valor.length === 8 ? '✅ Exactamente 8 caracteres' : '❌ Exactamente 8 caracteres';
-    
-    document.getElementById('r2').className = /[A-Z]/.test(valor) ? 'ok' : 'falta';
-    document.getElementById('r2').innerHTML = /[A-Z]/.test(valor) ? '✅ Una mayúscula (A-Z)' : '❌ Una mayúscula (A-Z)';
-    
-    document.getElementById('r3').className = /[a-z]/.test(valor) ? 'ok' : 'falta';
-    document.getElementById('r3').innerHTML = /[a-z]/.test(valor) ? '✅ Una minúscula (a-z)' : '❌ Una minúscula (a-z)';
-    
-    document.getElementById('r4').className = /[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(valor) ? 'ok' : 'falta';
-    document.getElementById('r4').innerHTML = /[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(valor) ? '✅ Un número o carácter especial' : '❌ Un número o carácter especial';
-    
-    const coinciden = valor && valorRepetir && valor === valorRepetir;
-    document.getElementById('r5').className = coinciden ? 'ok' : 'falta';
-    document.getElementById('r5').innerHTML = coinciden ? '✅ Las contraseñas coinciden' : '❌ Las contraseñas coinciden';
-    
-    const todoOk = valor.length === 8 && /[A-Z]/.test(valor) && /[a-z]/.test(valor) && /[0-9!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(valor) && coinciden;
-    btnRegistrar.disabled = !todoOk;
-  }
-
-  contrasena.addEventListener('input', validarContraseña);
-  repetir.addEventListener('input', validarContraseña);
 
   formRegistro.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -154,54 +61,36 @@
 
     const nombre = document.getElementById('nombre').value.trim();
     const correo = document.getElementById('correo').value.trim();
-    const valorContrasena = contrasena.value;
+    const contrasena = document.getElementById('contrasena').value;
 
     try {
-      // 1. Crear cuenta en Supabase
+      // 1. Crear el usuario en Supabase
       const { data, error } = await supabase.auth.signUp({
         email: correo,
-        password: valorContrasena,
-        options: {
-          data: { nombre_completo: nombre }
-        }
+        password: contrasena,
+        options: { data: { nombre_completo: nombre } }
       });
 
       if (error) throw error;
 
-      // 2. Generar enlace de confirmación
-      const enlaceConfirmacion = `https://${DOMINIO}/confirmar.html?email=${encodeURIComponent(correo)}`;
+      // 2. Llamar a la función para mandar el correo
+      const enlaceConfirmacion = `https://vehiculosenventa.com.ar/confirmar.html?email=${encodeURIComponent(correo)}`;
 
-      // 3. Llamamos a la FUNCIÓN de Supabase que manda el correo por Resend
-      // La clave de Resend está GUARDADA ADENTRO de la función, nadie la ve 🔒
-      await supabase.functions.invoke('enviar-correo', {
-        body: {
-          nombre: nombre,
-          correo: correo,
-          enlace: enlaceConfirmacion,
-          dominio: DOMINIO
-        }
+      const respuesta = await supabase.functions.invoke('enviar-correo', {
+        body: { email: correo, nombre: nombre, enlaceConfirmacion: enlaceConfirmacion }
       });
 
-      mensaje.textContent = '✅ ¡Cuenta creada! Revisá tu correo para confirmar';
-      mensaje.className = 'mensaje exito';
-      mensaje.style.display = 'block';
+      if (respuesta.error) throw new Error(respuesta.error.message || "No se pudo enviar el correo");
+
+      mensaje.textContent = "✅ ¡Cuenta creada! Revisá tu correo";
+      mensaje.className = "mensaje exito";
+      mensaje.style.display = "block";
       formRegistro.reset();
-      
-      setTimeout(() => {
-        document.querySelectorAll('.reglas-contraseña > div').forEach(el => {
-          el.className = 'falta';
-          if (el.id === 'r1') el.innerHTML = '❌ Exactamente 8 caracteres';
-          if (el.id === 'r2') el.innerHTML = '❌ Una mayúscula (A-Z)';
-          if (el.id === 'r3') el.innerHTML = '❌ Una minúscula (a-z)';
-          if (el.id === 'r4') el.innerHTML = '❌ Un número o carácter especial';
-          if (el.id === 'r5') el.innerHTML = '❌ Las contraseñas coinciden';
-        });
-      }, 3000);
 
     } catch (err) {
-      mensaje.textContent = '❌ ' + err.message;
-      mensaje.className = 'mensaje error';
-      mensaje.style.display = 'block';
+      mensaje.textContent = "❌ " + err.message;
+      mensaje.className = "mensaje error";
+      mensaje.style.display = "block";
     } finally {
       btnRegistrar.disabled = false;
     }
