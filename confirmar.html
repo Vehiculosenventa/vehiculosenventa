@@ -35,7 +35,6 @@
       return;
     }
 
-    // ✅ MARCAMOS COMO CONFIRMADO = TRUE en tu tabla
     const { error } = await supabase
       .from('usuarios')
       .update({ confirmado: true })
@@ -47,7 +46,6 @@
       return;
     }
 
-    // ✅ TODO LISTO
     document.getElementById('titulo').textContent = "✅ ¡Cuenta confirmada!";
     document.getElementById('mensaje').textContent = "Tu cuenta ya está activa. Bienvenido/a 🎉";
     document.getElementById('enlaceBoton').style.display = "inline-block";
