@@ -69,7 +69,10 @@
       const { data, error } = await supabaseClient.auth.signUp({
         email: correo,
         password: contrasena,
-        options: { data: { nombre_completo: nombre } }
+        options: { data: { nombre_completo: nombre },
+        emailRedirecTo:
+        "https://vehiculosenventa.com.ar/confirmar.html"
+      }
       });
 
       if (error) {
