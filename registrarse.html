@@ -66,7 +66,6 @@
     const contrasena = document.getElementById('contrasena').value;
 
     try {
-      // ✅ Creamos el usuario
       const { data, error } = await supabaseClient.auth.signUp({
         email: correo,
         password: contrasena,
@@ -83,20 +82,14 @@
         throw error;
       }
 
-      // ✅ Si Supabase nos da el enlace, lo usamos
-      let enlaceConfirmacion = data?.confirmationUrl;
-      
-      // ✅ Si no lo da, armamos el enlace directo de confirmación
-      if (!enlaceConfirmacion && data?.user?.id) {
-        enlaceConfirmacion = `${SUPABASE_URL}/auth/v1/verify?token=${encodeURIComponent(data.user.id)}&type=signup&redirect_to=https://vehiculosenventa.com.ar/confirmar.html`;
-      }
-      
-      // ✅ Último recurso: enlace simple con el correo
+      // ✅ TOMAMOS EL ENLACE COMPLETO DE SUPABASE CON EL TOKEN 🔑
+      const enlaceConfirmacion = data?.confirmationUrl;
+
       if (!enlaceConfirmacion) {
-        enlaceConfirmacion = `https://vehiculosenventa.com.ar/confirmar.html?email=${encodeURIComponent(correo)}`;
+        throw new Error("Activa 'Confirm Email' en Supabase → Authentication → Providers → Email");
       }
 
-      // ✅ Enviamos por Resend
+      // ✅ SE LO PASAMOS A RESEND
       const respuesta = await fetch(URL_FUNCION, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
