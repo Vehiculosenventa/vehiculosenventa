@@ -1,6 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirmar Cuenta - Vehículos en Venta</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
+    body {
+      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      min-height: 100vh;
+      display: flex; justify-content: center; align-items: center;
+      padding: 20px;
+    }
+    .caja {
+      background: white;
+      padding: 40px 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 { color: #2c5282; margin-bottom: 25px; font-size: 22px; }
+    p { margin: 15px 0; color: #4a5568; line-height: 1.6; }
+    a { color: #3182ce; text-decoration: none; font-weight: 600; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="caja">
+    <h1>Confirmando tu cuenta</h1>
+    <div id="estado">
+      🔐 Cargando...
+    </div>
+  </div>
+
 <script>
 const supabaseUrl = "https://vehiculosenventa.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+const supabaseKey = "PEGÁ_TU_CLAVE_PÚBLICA_ACÁ";
 const { createClient } = supabase;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -25,7 +63,7 @@ async function confirmarCuenta() {
 
         if (error) throw error;
 
-        estado.innerHTML = "✅ ¡Cuenta confirmada! Redirigiendo...";
+        estado.innerHTML = "✅ ¡Cuenta confirmada!<br>Redirigiendo...";
         setTimeout(() => {
           window.location.href = "iniciar-sesion.html";
         }, 1500);
@@ -33,7 +71,7 @@ async function confirmarCuenta() {
       }
     }
 
-    estado.innerHTML = "✅ Todo listo! <a href='iniciar-sesion.html'>Ir a iniciar sesión</a>";
+    estado.innerHTML = "✅ Todo listo!<br><a href='iniciar-sesion.html'>Ir a iniciar sesión</a>";
     
   } catch (error) {
     estado.innerHTML = "❌ " + error.message + "<br><a href='iniciar-sesion.html'>Ir a iniciar sesión</a>";
@@ -42,3 +80,5 @@ async function confirmarCuenta() {
 
 window.addEventListener("load", confirmarCuenta);
 </script>
+</body>
+</html>
