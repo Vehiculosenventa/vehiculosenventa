@@ -3,64 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Confirmando tu cuenta...</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Confirmando cuenta...</title>
   <style>
-    body {font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f4f8; padding: 20px;}
-    .caja {background: white; padding: 40px; border-radius: 16px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 420px; width: 100%;}
-    h2 {margin-bottom: 15px;}
-    .exito {color: #28a745; font-weight: bold;}
-    .error {color: #dc3545; font-weight: bold;}
-    .boton {display: inline-block; margin-top: 25px; padding: 12px 24px; background: #3182ce; color: white; border-radius: 8px; text-decoration: none; font-weight: bold;}
-    .boton:hover {background: #2b6cb0;}
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 100px auto;
+      padding: 20px;
+      text-align: center;
+      background: #f0fdf4;
+    }
+    .exito {
+      color: #166534;
+      background: #bbf7d0;
+      padding: 25px;
+      border-radius: 12px;
+      border: 2px solid #4ade80;
+    }
+    .error {
+      color: #991b1b;
+      background: #fee2e2;
+      padding: 25px;
+      border-radius: 12px;
+      border: 2px solid #f87171;
+    }
+    a {
+      display: inline-block;
+      margin-top: 15px;
+      padding: 10px 20px;
+      background: #22c55e;
+      color: white;
+      text-decoration: none;
+      border-radius: 8px;
+      font-weight: bold;
+    }
+    a:hover {
+      background: #16a34a;
+    }
   </style>
 </head>
 <body>
-  <div class="caja">
-    <h2 id="titulo">🔄 Confirmando tu cuenta...</h2>
-    <p id="mensaje">Un momento por favor...</p>
-    <a href="iniciar-sesion.html" id="boton" class="boton" style="display:none;">Ir a iniciar sesión</a>
+
+  <div id="contenido">
+    <h2>Confirmando tu cuenta...</h2>
+    <p>Un momento por favor ⏳</p>
   </div>
 
-<script>
-  const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-  
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    // Tus datos de Supabase
+    const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpencxa2J5Z3J2dWV4Iiwicm9sZSI6ImFub255bW91cyIsImlhdCI6MTc1NTUxNzYwMCwiZXhwIjozMDMxMDk0MDAwfQ.zJN0Z2sO2SdLb0FyYVdUa1E4Ql9wM0hXN1h6bU5aM2E";
 
-  async function confirmar() {
-    // 1️⃣ Leemos el ID del enlace
-    const params = new URLSearchParams(window.location.search);
-    const id = params.get('id');
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    if (!id) {
-      document.getElementById('titulo').textContent = "❌ Enlace inválido";
-      document.getElementById('mensaje').textContent = "Falta el ID en la dirección";
-      return;
+    // Tomamos el ID de la dirección
+    const parametros = new URLSearchParams(window.location.search);
+    const usuarioId = parametros.get('id');
+
+    async function confirmarCuenta() {
+      const contenido = document.getElementById('contenido');
+
+      if (!usuarioId) {
+        contenido.innerHTML = `
+          <div class="error">
+            <h3>❌ Enlace incompleto</h3>
+            <p>Falta el identificador de la cuenta.</p>
+          </div>`;
+        return;
+      }
+
+      // Actualizamos confirmado a true en la tabla
+      const { error } = await supabase
+        .from('usuarios')
+        .update({ confirmado: true })
+        .eq('id', usuarioId);
+
+      if (error) {
+        contenido.innerHTML = `
+          <div class="error">
+            <h3>❌ No se pudo confirmar</h3>
+            <p>${error.message}</p>
+          </div>`;
+      } else {
+        contenido.innerHTML = `
+          <div class="exito">
+            <h3>✅ ¡Cuenta confirmada!</h3>
+            <p>Tu cuenta ya está activa. Ya podés entrar.</p>
+            <a href="iniciar-sesion.html">Iniciar sesión</a>
+          </div>`;
+      }
     }
 
-    console.log("✅ ID recibido:", id);
+    confirmarCuenta();
+  </script>
 
-    // 2️⃣ Buscamos y actualizamos POR EL ID
-    const { error } = await supabase
-      .from('usuarios')
-      .update({ confirmado: true })
-      .eq('id', id);  // 👈 CLAVE: buscamos por id, nada más
-
-    if (error) {
-      console.log("❌ Error:", error);
-      document.getElementById('titulo').textContent = "⚠️ No se pudo confirmar";
-      document.getElementById('mensaje').textContent = error.message;
-      return;
-    }
-
-    // 3️⃣ ¡Listo!
-    document.getElementById('titulo').textContent = "✅ ¡Cuenta confirmada!";
-    document.getElementById('mensaje').textContent = "Ya podés iniciar sesión 🎉";
-    document.getElementById('boton').style.display = "inline-block";
-  }
-
-  confirmar();
-</script>
 </body>
 </html>
