@@ -3,119 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registrarse - Vehículos en Venta</title>
+  <title>Confirmando cuenta...</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
-    body {background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;}
-    .caja {background: #fff; border-radius: 20px; padding: 35px; width: 100%; max-width: 420px; box-shadow: 0 8px 25px rgba(44,82,130,0.1);}
-    h1 {color: #2c5282; text-align: center; margin-bottom: 25px; font-size: 24px;}
-    .campo {margin-bottom: 18px;}
-    label {display: block; margin-bottom: 7px; font-weight: 600; color: #4a5568; font-size: 14px;}
-    input {width: 100%; padding: 13px; border: 2px solid #c5d6e8; border-radius: 10px; font-size: 15px;}
-    input:focus {outline: none; border-color: #3182ce; box-shadow: 0 0 0 3px rgba(49,130,206,0.12);}
-    .boton {width: 100%; padding: 15px; background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%); color: #fff; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 8px;}
-    .boton:disabled {background: #a0aec0; cursor: not-allowed; opacity: 0.7;}
-    .mensaje {margin-top: 20px; padding: 15px; border-radius: 10px; display: none; font-weight: 600; text-align: center;}
-    .exito {background: #f0fff4; border: 2px solid #9ae6b4; color: #276749;}
-    .error {background: #fff5f5; border: 2px solid #feb2b2; color: #c53030;}
-    .enlace {display: block; text-align: center; margin-top: 20px; color: #3182ce; font-size: 14px; font-weight: 600; text-decoration: none;}
+    body {font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f4f8;}
+    .caja {background: white; padding: 40px; border-radius: 16px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 400px; width: 90%;}
+    .exito {color: #28a745; font-size: 22px; font-weight: bold;}
+    .error {color: #dc3545; font-size: 18px;}
+    .boton {display: inline-block; margin-top: 20px; padding: 12px 24px; background: #3182ce; color: white; border-radius: 8px; text-decoration: none; font-weight: bold;}
   </style>
 </head>
 <body>
   <div class="caja">
-    <h1>📝 Crear Cuenta</h1>
-    <form id="formRegistro">
-      <div class="campo">
-        <label for="nombre">Nombre completo</label>
-        <input type="text" id="nombre" required placeholder="Tu nombre">
-      </div>
-      <div class="campo">
-        <label for="correo">Correo electrónico</label>
-        <input type="email" id="correo" required placeholder="tu@correo.com">
-      </div>
-      <div class="campo">
-        <label for="contrasena">Contraseña</label>
-        <input type="password" id="contrasena" required placeholder="Mínimo 6 caracteres">
-      </div>
-      <button type="submit" id="btnRegistrar" class="boton">Registrarse ✅</button>
-    </form>
-    <div id="mensaje" class="mensaje"></div>
-    <a href="iniciar-sesion.html" class="enlace">¿Ya tenés cuenta? Iniciar sesión</a>
-    <a href="index.html" class="enlace">← Volver al inicio</a>
+    <h2 id="titulo">Confirmando tu cuenta...</h2>
+    <p id="mensaje"></p>
+    <a href="iniciar-sesion.html" class="boton" id="enlaceBoton" style="display:none;">Ir a iniciar sesión</a>
   </div>
 
 <script>
   const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
   const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-  const URL_FUNCION = SUPABASE_URL + "/functions/v1/enviar-correo";
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-  const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  async function confirmar() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
 
-  const formRegistro = document.getElementById('formRegistro');
-  const btnRegistrar = document.getElementById('btnRegistrar');
-  const mensaje = document.getElementById('mensaje');
-
-  formRegistro.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    btnRegistrar.disabled = true;
-    mensaje.style.display = 'none';
-
-    const nombre = document.getElementById('nombre').value.trim();
-    const correo = document.getElementById('correo').value.trim();
-    const contrasena = document.getElementById('contrasena').value;
-
-    try {
-      const { data, error } = await supabaseClient.auth.signUp({
-        email: correo,
-        password: contrasena,
-        options: { 
-          data: { nombre_completo: nombre },
-          emailRedirectTo: "https://vehiculosenventa.com.ar/confirmar.html"
-        }
-      });
-
-      if (error) {
-        if (error.message.includes("User already registered")) {
-          throw new Error("Este correo ya existe → andá a 'Iniciar sesión'");
-        }
-        throw error;
-      }
-
-      // ✅ TOMAMOS EL ENLACE COMPLETO DE SUPABASE CON EL TOKEN 🔑
-      const enlaceConfirmacion = data?.confirmationUrl;
-
-      if (!enlaceConfirmacion) {
-        throw new Error("Activa 'Confirm Email' en Supabase → Authentication → Providers → Email");
-      }
-
-      // ✅ SE LO PASAMOS A RESEND
-      const respuesta = await fetch(URL_FUNCION, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          email: correo,
-          nombre: nombre,
-          enlaceConfirmacion: enlaceConfirmacion
-        })
-      });
-
-      const resultado = await respuesta.json();
-      if (!respuesta.ok) throw new Error(resultado.error || "No se pudo enviar el correo");
-
-      mensaje.textContent = "✅ ¡Cuenta creada! Revisá tu correo";
-      mensaje.className = "mensaje exito";
-      mensaje.style.display = "block";
-      formRegistro.reset();
-
-    } catch (err) {
-      mensaje.textContent = "❌ " + err.message;
-      mensaje.className = "mensaje error";
-      mensaje.style.display = "block";
-    } finally {
-      btnRegistrar.disabled = false;
+    if (!id) {
+      document.getElementById('titulo').textContent = "❌ Enlace inválido";
+      document.getElementById('mensaje').textContent = "Falta el ID del usuario";
+      return;
     }
-  });
+
+    // ✅ MARCAMOS COMO CONFIRMADO = TRUE en tu tabla
+    const { error } = await supabase
+      .from('usuarios')
+      .update({ confirmado: true })
+      .eq('id', id);
+
+    if (error) {
+      document.getElementById('titulo').textContent = "⚠️ Error";
+      document.getElementById('mensaje').textContent = error.message;
+      return;
+    }
+
+    // ✅ TODO LISTO
+    document.getElementById('titulo').textContent = "✅ ¡Cuenta confirmada!";
+    document.getElementById('mensaje').textContent = "Tu cuenta ya está activa. Bienvenido/a 🎉";
+    document.getElementById('enlaceBoton').style.display = "inline-block";
+  }
+
+  confirmar();
 </script>
 </body>
 </html>
