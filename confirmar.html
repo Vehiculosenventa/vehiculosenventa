@@ -39,8 +39,9 @@
 <script>
 const supabaseUrl = "https://uhdypavizwkkbygrvuex.supabase.co";
 const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-const { createClient } = supabase;
-const supabase = createClient(supabaseUrl, supabaseKey);
+
+// ✅ CORREGIDO: Usamos un nombre distinto para no repetir
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
 async function confirmarCuenta() {
   const estado = document.getElementById("estado");
@@ -56,7 +57,8 @@ async function confirmarCuenta() {
       const refresh_token = params.get("refresh_token");
 
       if (access_token) {
-        const { error } = await supabase.auth.setSession({
+        // ✅ CORREGIDO: Usamos supabaseClient
+        const { error } = await supabaseClient.auth.setSession({
           access_token,
           refresh_token
         });
