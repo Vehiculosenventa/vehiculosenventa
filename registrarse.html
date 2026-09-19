@@ -66,10 +66,13 @@
     const contrasena = document.getElementById('contrasena').value;
 
     try {
-      // 1️⃣ Creamos el usuario
+      // 1️⃣ Crear el usuario
       const { data, error } = await supabaseClient.auth.signUp({
         email: correo,
-        password: contrasena
+        password: contrasena,
+        options: { 
+          data: { nombre_completo: nombre }
+        }
       });
 
       if (error) {
@@ -79,10 +82,11 @@
         throw error;
       }
 
+      // 2️⃣ Obtener el ID del usuario
       const userId = data.user.id;
 
-      // 2️⃣ ESCRIBIMOS EN LA TABLA — IGUAL QUE ANTES ✅
-      const { error: errorTabla } = await supabaseClient
+      // 3️⃣ Guardar en la tabla usuarios
+      const { error: tablaError } = await supabaseClient
         .from('usuarios')
         .insert({
           id: userId,
@@ -91,15 +95,15 @@
           confirmado: false
         });
 
-      if (errorTabla) {
-        console.log("Error detalle:", errorTabla);
-        throw new Error("No se guardó en la tabla: " + errorTabla.message);
+      if (tablaError) {
+        console.log("❌ Error en tabla:", tablaError);
+        throw new Error("No se guardó en la tabla: " + tablaError.message);
       }
 
-      // 3️⃣ Enlace con el ID
+      // 4️⃣ Armar el enlace CON EL ID ✅
       const enlaceConfirmacion = `https://vehiculosenventa.com.ar/confirmar.html?id=${userId}`;
 
-      // 4️⃣ Mandamos por Resend
+      // 5️⃣ Enviar por Resend
       const respuesta = await fetch(URL_FUNCION, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
