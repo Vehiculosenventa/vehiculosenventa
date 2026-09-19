@@ -51,11 +51,11 @@
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script>
-    // Tus datos de Supabase
+    // Datos de Supabase
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpencxa2J5Z3J2dWV4Iiwicm9sZSI6ImFub255bW91cyIsImlhdCI6MTc1NTUxNzYwMCwiZXhwIjozMDMxMDk0MDAwfQ.zJN0Z2sO2SdLb0FyYVdUa1E4Ql9wM0hXN1h6bU5aM2E";
 
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // Tomamos el ID de la dirección
     const parametros = new URLSearchParams(window.location.search);
@@ -69,12 +69,13 @@
           <div class="error">
             <h3>❌ Enlace incompleto</h3>
             <p>Falta el identificador de la cuenta.</p>
+            <a href="registrarse.html" style="background:#3b82f6">Volver a registrarse</a>
           </div>`;
         return;
       }
 
-      // Actualizamos confirmado a true en la tabla
-      const { error } = await supabase
+      // Actualizamos confirmado = true en la tabla usuarios
+      const { error } = await supabaseClient
         .from('usuarios')
         .update({ confirmado: true })
         .eq('id', usuarioId);
@@ -84,6 +85,7 @@
           <div class="error">
             <h3>❌ No se pudo confirmar</h3>
             <p>${error.message}</p>
+            <a href="registrarse.html" style="background:#3b82f6">Intentar de nuevo</a>
           </div>`;
       } else {
         contenido.innerHTML = `
