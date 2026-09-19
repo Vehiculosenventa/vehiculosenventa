@@ -3,84 +3,57 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Confirmar Cuenta - Vehículos en Venta</title>
+  <title>Confirmando cuenta...</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
-    body {
-      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
-      min-height: 100vh;
-      display: flex; justify-content: center; align-items: center;
-      padding: 20px;
-    }
-    .caja {
-      background: white;
-      padding: 40px 30px;
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-      max-width: 420px;
-      width: 100%;
-      text-align: center;
-    }
-    h1 { color: #2c5282; margin-bottom: 25px; font-size: 22px; }
-    p { margin: 15px 0; color: #4a5568; line-height: 1.6; }
-    a { color: #3182ce; text-decoration: none; font-weight: 600; }
-    a:hover { text-decoration: underline; }
+    body {font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #f0f4f8;}
+    .caja {background: white; padding: 40px; border-radius: 16px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); max-width: 400px; width: 90%;}
+    .exito {color: #28a745; font-size: 22px; font-weight: bold;}
+    .error {color: #dc3545; font-size: 18px;}
+    .boton {display: inline-block; margin-top: 20px; padding: 12px 24px; background: #3182ce; color: white; border-radius: 8px; text-decoration: none; font-weight: bold;}
   </style>
 </head>
 <body>
   <div class="caja">
-    <h1>Confirmando tu cuenta</h1>
-    <div id="estado">
-      🔐 Cargando...
-    </div>
+    <h2 id="titulo">Confirmando tu cuenta...</h2>
+    <p id="mensaje"></p>
+    <a href="iniciar-sesion.html" class="boton" id="enlaceBoton" style="display:none;">Ir a iniciar sesión</a>
   </div>
 
 <script>
-const supabaseUrl = "https://uhdypavizwkkbygrvuex.supabase.co";
-const supabaseKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+  const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ✅ CORREGIDO: Usamos un nombre distinto para no repetir
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+  async function confirmar() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get('id');
 
-async function confirmarCuenta() {
-  const estado = document.getElementById("estado");
-  if (!estado) return;
-
-  try {
-    estado.innerHTML = "🔐 Confirmando tu cuenta...";
-
-    const hash = window.location.hash;
-    if (hash && hash.includes("access_token")) {
-      const params = new URLSearchParams(hash.substring(1));
-      const access_token = params.get("access_token");
-      const refresh_token = params.get("refresh_token");
-
-      if (access_token) {
-        // ✅ CORREGIDO: Usamos supabaseClient
-        const { error } = await supabaseClient.auth.setSession({
-          access_token,
-          refresh_token
-        });
-
-        if (error) throw error;
-
-        estado.innerHTML = "✅ ¡Cuenta confirmada!<br>Redirigiendo...";
-        setTimeout(() => {
-          window.location.href = "iniciar-sesion.html";
-        }, 1500);
-        return;
-      }
+    if (!id) {
+      document.getElementById('titulo').textContent = "❌ Enlace inválido";
+      document.getElementById('mensaje').textContent = "Falta el ID del usuario";
+      return;
     }
 
-    estado.innerHTML = "✅ Todo listo!<br><a href='iniciar-sesion.html'>Ir a iniciar sesión</a>";
-    
-  } catch (error) {
-    estado.innerHTML = "❌ " + error.message + "<br><a href='iniciar-sesion.html'>Ir a iniciar sesión</a>";
-  }
-}
+    // ✅ MARCAMOS COMO CONFIRMADO = TRUE en tu tabla
+    const { error } = await supabase
+      .from('usuarios')
+      .update({ confirmado: true })
+      .eq('id', id);
 
-window.addEventListener("load", confirmarCuenta);
+    if (error) {
+      document.getElementById('titulo').textContent = "⚠️ Error";
+      document.getElementById('mensaje').textContent = error.message;
+      return;
+    }
+
+    // ✅ TODO LISTO
+    document.getElementById('titulo').textContent = "✅ ¡Cuenta confirmada!";
+    document.getElementById('mensaje').textContent = "Tu cuenta ya está activa. Bienvenido/a 🎉";
+    document.getElementById('enlaceBoton').style.display = "inline-block";
+  }
+
+  confirmar();
 </script>
 </body>
 </html>
