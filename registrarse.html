@@ -20,8 +20,6 @@
     .exito {background: #f0fff4; border: 2px solid #9ae6b4; color: #276749;}
     .error {background: #fff5f5; border: 2px solid #feb2b2; color: #c53030;}
     .enlace {display: block; text-align: center; margin-top: 20px; color: #3182ce; font-size: 14px; font-weight: 600; text-decoration: none;}
-    .coincide {color: #276749; font-size: 13px; margin-top: 5px; display: none;}
-    .no-coincide {color: #c53030; font-size: 13px; margin-top: 5px; display: none;}
   </style>
 </head>
 <body>
@@ -40,12 +38,6 @@
         <label for="contrasena">Contraseña</label>
         <input type="password" id="contrasena" required placeholder="Mínimo 6 caracteres">
       </div>
-      <div class="campo">
-        <label for="repetir_contrasena">Repetir contraseña</label>
-        <input type="password" id="repetir_contrasena" required placeholder="Escribí la contraseña otra vez">
-        <span id="msgCoincide" class="coincide">✅ Las contraseñas coinciden</span>
-        <span id="msgNoCoincide" class="no-coincide">❌ No coinciden</span>
-      </div>
       <button type="submit" id="btnRegistrar" class="boton">Registrarse ✅</button>
     </form>
     <div id="mensaje" class="mensaje"></div>
@@ -63,59 +55,24 @@
   const formRegistro = document.getElementById('formRegistro');
   const btnRegistrar = document.getElementById('btnRegistrar');
   const mensaje = document.getElementById('mensaje');
-  const contrasena = document.getElementById('contrasena');
-  const repetirContrasena = document.getElementById('repetir_contrasena');
-  const msgCoincide = document.getElementById('msgCoincide');
-  const msgNoCoincide = document.getElementById('msgNoCoincide');
-
-  // ✅ Validación en tiempo real de contraseñas
-  function validarContrasenas() {
-    if (!contrasena.value && !repetirContrasena.value) {
-      msgCoincide.style.display = 'none';
-      msgNoCoincide.style.display = 'none';
-      return true;
-    }
-    if (contrasena.value === repetirContrasena.value) {
-      msgCoincide.style.display = 'block';
-      msgNoCoincide.style.display = 'none';
-      return true;
-    } else {
-      msgCoincide.style.display = 'none';
-      msgNoCoincide.style.display = 'block';
-      return false;
-    }
-  }
-
-  contrasena.addEventListener('input', validarContrasenas);
-  repetirContrasena.addEventListener('input', validarContrasenas);
 
   formRegistro.addEventListener('submit', async (e) => {
     e.preventDefault();
     btnRegistrar.disabled = true;
     mensaje.style.display = 'none';
 
-    // ✅ Bloquear si no coinciden
-    if (!validarContrasenas()) {
-      mensaje.textContent = "❌ Las contraseñas no coinciden";
-      mensaje.className = "mensaje error";
-      mensaje.style.display = "block";
-      btnRegistrar.disabled = false;
-      return;
-    }
-
     const nombre = document.getElementById('nombre').value.trim();
     const correo = document.getElementById('correo').value.trim();
-    const contrasenaValor = contrasena.value;
+    const contrasena = document.getElementById('contrasena').value;
 
     try {
-      // ✅ Crear usuario con Supabase
       const { data, error } = await supabaseClient.auth.signUp({
         email: correo,
-        password: contrasenaValor,
-        options: { 
-          data: { nombre_completo: nombre },
-          emailRedirectTo: "https://vehiculosenventa.com.ar/confirmar.html"
-        }
+        password: contrasena,
+        options: { data: { nombre_completo: nombre },
+        emailRedirecTo:
+        "https://vehiculosenventa.com.ar/confirmar.html"
+      }
       });
 
       if (error) {
@@ -125,17 +82,13 @@
         throw error;
       }
 
-      // ✅ TOMAMOS EL ENLACE COMPLETO DE SUPABASE con el token adentro 🔑
-      const enlaceConfirmacion = data.confirmationUrl;
+      const enlaceConfirmacion = `https://vehiculosenventa.com.ar/confirmar.html?email=${encodeURIComponent(correo)}`;
 
-      if (!enlaceConfirmacion) {
-        throw new Error("No se pudo generar el enlace de confirmación");
-      }
-
-      // ✅ Enviar por Resend
       const respuesta = await fetch(URL_FUNCION, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
           email: correo,
           nombre: nombre,
@@ -144,14 +97,13 @@
       });
 
       const resultado = await respuesta.json();
+
       if (!respuesta.ok) throw new Error(resultado.error || "No se pudo enviar el correo");
 
       mensaje.textContent = "✅ ¡Cuenta creada! Revisá tu correo";
       mensaje.className = "mensaje exito";
       mensaje.style.display = "block";
       formRegistro.reset();
-      msgCoincide.style.display = 'none';
-      msgNoCoincide.style.display = 'none';
 
     } catch (err) {
       mensaje.textContent = "❌ " + err.message;
