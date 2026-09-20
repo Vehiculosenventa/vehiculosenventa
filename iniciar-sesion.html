@@ -105,7 +105,8 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // ✅ NOMBRE CORRECTO: no se repite más
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const sinSesion = document.getElementById('sinSesion');
     const conSesion = document.getElementById('conSesion');
@@ -116,12 +117,12 @@
     const mensaje = document.getElementById('mensaje');
 
     async function verificarSesion() {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
         sinSesion.classList.add('oculto');
         conSesion.classList.remove('oculto');
         
-        const { data: usuario } = await supabase
+        const { data: usuario } = await supabaseClient
           .from('usuarios')
           .select('nombre')
           .eq('correo', session.user.email)
@@ -145,8 +146,8 @@
       const contrasena = document.getElementById('contrasena').value;
 
       try {
-        // ✅ AHORA SÍ — USAMOS SUPABASE DE VERDAD
-        const { data, error } = await supabase.auth.signInWithPassword({
+        // ✅ Iniciamos sesión con Supabase
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
           email: correo,
           password: contrasena
         });
@@ -154,7 +155,7 @@
         if (error) throw error;
 
         // ✅ Verificamos que esté confirmado
-        const { data: usuario } = await supabase
+        const { data: usuario } = await supabaseClient
           .from('usuarios')
           .select('confirmado, nombre')
           .eq('correo', correo)
@@ -164,7 +165,7 @@
           mensaje.className = 'mensaje error';
           mensaje.innerHTML = '⚠️ Confirmá tu cuenta desde el correo primero';
           mensaje.style.display = 'block';
-          await supabase.auth.signOut();
+          await supabaseClient.auth.signOut();
           return;
         }
 
@@ -190,7 +191,7 @@
     });
 
     btnCerrar.addEventListener('click', async () => {
-      await supabase.auth.signOut();
+      await supabaseClient.auth.signOut();
       verificarSesion();
     });
   </script>
