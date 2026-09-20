@@ -162,10 +162,10 @@
       <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
     </div>
 
-    <!-- ✅ CON SESIÓN → solo saludo y Cerrar sesión -->
+    <!-- ✅ CON SESIÓN → saludo + Cerrar sesión -->
     <div id="conSesion" class="oculto">
       <span id="saludo" class="saludo"></span>
-      <button id="btn-cerrar" class="boton-cerrar">🚪 Cerrar sesión</button>
+      <button id="btn-cerrar" class="boton-cerrar activo">🚪 Cerrar sesión</button>
     </div>
   </div>
 
@@ -206,7 +206,7 @@
       const { data: { session } } = await supabaseClient.auth.getSession();
 
       if (session) {
-        // ✅ CONECTADO → saludo + Cerrar sesión
+        // ✅ CONECTADO → saludo + Cerrar sesión VISIBLES
         sinSesion.classList.add('oculto');
         conSesion.classList.remove('oculto');
         
@@ -217,10 +217,12 @@
           .single();
           
         saludo.textContent = '¡Hola, ' + (usuario?.nombre || session.user.email) + '! 🎉';
+        btnCerrar.classList.add('activo');
       } else {
         // 🔒 SIN CONECTAR → entrar + olvidaste
         sinSesion.classList.remove('oculto');
         conSesion.classList.add('oculto');
+        btnCerrar.classList.remove('activo');
       }
     }
 
