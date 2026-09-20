@@ -2,154 +2,18 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recuperar Contraseña - Vehículos en Venta</title>
+  <title>Prueba Conexión</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
-    body {
-      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
-      min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 20px;
-    }
-    .caja {
-      background: #fff;
-      border-radius: 28px;
-      padding: 45px 35px;
-      width: 100%;
-      max-width: 500px;
-      box-shadow: 0 10px 30px rgba(44,82,130,0.08);
-    }
-    h1 {
-      color: #2c5282;
-      font-size: 24px;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    .subtitulo {
-      color: #5a6872;
-      text-align: center;
-      margin-bottom: 30px;
-      line-height: 1.5;
-    }
-    .campo {margin-bottom: 20px;}
-    label {display: block; margin-bottom: 8px; font-weight: 600;}
-    input {
-      width: 100%;
-      padding: 14px;
-      border: 2px solid #c5d6e8;
-      border-radius: 10px;
-      font-size: 16px;
-    }
-    button {
-      width: 100%;
-      padding: 15px;
-      background: #3182ce;
-      color: #fff;
-      border: none;
-      border-radius: 10px;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    button:disabled {opacity: 0.7;}
-    .mensaje {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 10px;
-      display: none;
-      font-weight: 600;
-      text-align: center;
-      line-height: 1.5;
-    }
-    .exito {background: #f0fff4; color: #166534;}
-    .error {background: #fef2f2; color: #c53030;}
-    .enlace {
-      display: block;
-      text-align: center;
-      margin-top: 20px;
-      color: #3182ce;
-      text-decoration: none;
-    }
-  </style>
 </head>
 <body>
-  <div class="caja">
-    <h1>🔑 Olvidé mi contraseña</h1>
-    <p class="subtitulo">Escribí tu correo y te mandamos el enlace para crear una clave nueva</p>
-
-    <form id="formRecuperar">
-      <div class="campo">
-        <label for="correo">Tu correo electrónico</label>
-        <input type="email" id="correo" required>
-      </div>
-      <button type="submit" id="btnEnviar">📩 Enviar enlace</button>
-    </form>
-
-    <div id="mensaje" class="mensaje"></div>
-
-    <a href="iniciar-sesion.html" class="enlace">← Volver a Iniciar Sesión</a>
-  </div>
-
+  <h1>Probando conexión...</h1>
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // ✅ UNA SOLA VEZ — sin repetir
-    const { createClient } = window.supabase;
-    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    const formRecuperar = document.getElementById('formRecuperar');
-    const btnEnviar = document.getElementById('btnEnviar');
-    const mensaje = document.getElementById('mensaje');
-
-    formRecuperar.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      btnEnviar.disabled = true;
-      mensaje.style.display = 'none';
-
-      const correo = document.getElementById('correo').value.trim();
-      const correoMinus = correo.toLowerCase();
-
-      try {
-        // PASO 1 — Verificar que existe en tu tabla
-        const { data: usuarios, error: errLeer } = await supabase
-          .from('usuarios')
-          .select('correo, nombre');
-
-        if (errLeer) throw new Error("No se pudo verificar el correo");
-
-        const existe = usuarios?.some(u => 
-          u.correo.trim().toLowerCase() === correoMinus
-        );
-
-        if (!existe) {
-          throw new Error("No encontramos ese correo");
-        }
-
-        // PASO 2 — Mandar enlace por Supabase
-        const { error: errRecuperar } = await supabase.auth.resetPasswordForEmail(correo, {
-          redirectTo: window.location.origin + "/crear-contraseña.html"
-        });
-
-        if (errRecuperar) throw errRecuperar;
-
-        mensaje.className = 'mensaje exito';
-        mensaje.style.display = 'block';
-        mensaje.innerHTML = "✅ ¡Listo! Revisá tu correo 📬<br>Te mandamos el enlace para crear tu clave nueva";
-        formRecuperar.style.display = 'none';
-
-      } catch (err) {
-        mensaje.className = 'mensaje error';
-        mensaje.style.display = 'block';
-        mensaje.innerHTML = "❌ " + (err.message || "Ocurrió un error");
-      }
-
-      btnEnviar.disabled = false;
-    });
+    // UNA SOLA VEZ
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    console.log("✅ Conexión lista");
   </script>
 </body>
 </html>
