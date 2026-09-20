@@ -127,7 +127,6 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // ✅ LÍNEA CORRECTA — tal cual, sin cambiar nada:
     const miCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const formRecuperar = document.getElementById('formRecuperar');
@@ -140,12 +139,15 @@
       mensaje.style.display = 'none';
 
       const correo = document.getElementById('correo').value.trim();
+      
+      // ✅ LÍNEA PARA VER EXACTAMENTE QUÉ BUSCA:
+      console.log("🔍 Busca este correo:", "[" + correo + "]", "Caracteres:", correo.length);
 
       try {
         const { data: usuario, error: errBusqueda } = await miCliente
           .from('usuarios')
           .select('id, nombre, correo')
-          .eq('correo', correo)
+          .ilike('correo', correo)  // ✅ Ahora busca SIN distinguir mayúsculas/minúsculas
           .single();
 
         if (errBusqueda) throw new Error("No encontramos ese correo");
