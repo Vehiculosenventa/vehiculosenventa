@@ -66,7 +66,6 @@
 </head>
 <body>
   <div class="caja">
-    <!-- ✅ Cuando NO hay sesión: se ve esto -->
     <div id="sinSesion">
       <h1>🔐 Iniciar Sesión</h1>
       <p class="subtitulo">Ingresá tus datos para entrar</p>
@@ -77,8 +76,8 @@
           <input type="email" id="correo" required placeholder="tu@correo.com">
         </div>
         <div class="campo">
-          <label for="contrasena">Contraseña (máximo 8 caracteres)</label>
-          <input type="password" id="contrasena" maxlength="8" required placeholder="Máximo 8 caracteres">
+          <label for="contrasena">Contraseña</label>
+          <input type="password" id="contrasena" required placeholder="Tu contraseña">
         </div>
         <button type="submit" id="btnEntrar" class="boton">Entrar ✅</button>
       </form>
@@ -89,7 +88,6 @@
       <a href="index.html" class="enlace">← Volver al inicio</a>
     </div>
 
-    <!-- ✅ Cuando SÍ hay sesión: te quedás acá mismo -->
     <div id="conSesion" class="oculto">
       <h1>✅ Conectado</h1>
       
@@ -107,7 +105,7 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const sinSesion = document.getElementById('sinSesion');
     const conSesion = document.getElementById('conSesion');
@@ -117,15 +115,19 @@
     const btnCerrar = document.getElementById('btnCerrar');
     const mensaje = document.getElementById('mensaje');
 
-    // ✅ Verificar si ya hay alguien conectado
-    function verificarSesion() {
-      const usuarioId = localStorage.getItem('usuario_id');
-      const usuarioNombre = localStorage.getItem('usuario_nombre');
-      
-      if (usuarioId) {
+    async function verificarSesion() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session) {
         sinSesion.classList.add('oculto');
         conSesion.classList.remove('oculto');
-        textoBienvenida.textContent = '¡Bienvenido, ' + usuarioNombre + '! 🎉';
+        
+        const { data: usuario } = await supabase
+          .from('usuarios')
+          .select('nombre')
+          .eq('correo', session.user.email)
+          .single();
+          
+        textoBienvenida.textContent = '¡Bienvenido, ' + (usuario?.nombre || session.user.email) + '! 🎉';
       } else {
         sinSesion.classList.remove('oculto');
         conSesion.classList.add('oculto');
@@ -134,7 +136,6 @@
 
     verificarSesion();
 
-    // ✅ Iniciar sesión — con límite de 8 caracteres
     formLogin.addEventListener('submit', async (e) => {
       e.preventDefault();
       btnEntrar.disabled = true;
@@ -143,51 +144,53 @@
       const correo = document.getElementById('correo').value.trim();
       const contrasena = document.getElementById('contrasena').value;
 
-      // ✅ Validar que no supere los 8 caracteres
-      if (contrasena.length > 8) {
-        mensaje.className = 'mensaje error';
-        mensaje.innerHTML = '❌ La contraseña no puede tener más de 8 caracteres';
-        mensaje.style.display = 'block';
-        btnEntrar.disabled = false;
-        return;
-      }
-
       try {
-        const { data, error } = await supabaseClient
-          .from('usuarios')
-          .select('*')
-          .eq('correo', correo)
-          .eq('contraseña', contrasena)
-          .maybeSingle();
+        // ✅ AHORA SÍ — USAMOS SUPABASE DE VERDAD
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: correo,
+          password: contrasena
+        });
 
         if (error) throw error;
-        if (!data) throw new Error('Correo o contraseña incorrectos');
-        if (!data.confirmado) throw new Error('⚠️ Confirmá tu cuenta desde la tabla');
 
-        localStorage.setItem('usuario_id', data.id);
-        localStorage.setItem('usuario_nombre', data.nombre);
+        // ✅ Verificamos que esté confirmado
+        const { data: usuario } = await supabase
+          .from('usuarios')
+          .select('confirmado, nombre')
+          .eq('correo', correo)
+          .single();
+
+        if (!usuario?.confirmado) {
+          mensaje.className = 'mensaje error';
+          mensaje.innerHTML = '⚠️ Confirmá tu cuenta desde el correo primero';
+          mensaje.style.display = 'block';
+          await supabase.auth.signOut();
+          return;
+        }
 
         mensaje.className = 'mensaje exito';
-        mensaje.innerHTML = '✅ ¡Bienvenido, ' + data.nombre + '!';
+        mensaje.innerHTML = '✅ ¡Bienvenido, ' + usuario.nombre + '!';
         mensaje.style.display = 'block';
 
-        setTimeout(() => {
-          verificarSesion();
-        }, 1000);
+        setTimeout(() => verificarSesion(), 1000);
 
       } catch (err) {
         mensaje.className = 'mensaje error';
-        mensaje.innerHTML = '❌ ' + err.message;
+        if (err.message.includes('Invalid login')) {
+          mensaje.innerHTML = '❌ Correo o contraseña incorrectos';
+        } else if (err.message.includes('Email not confirmed')) {
+          mensaje.innerHTML = '⚠️ Confirmá tu cuenta desde el correo primero';
+        } else {
+          mensaje.innerHTML = '❌ ' + err.message;
+        }
         mensaje.style.display = 'block';
       } finally {
         btnEntrar.disabled = false;
       }
     });
 
-    // ✅ Cerrar sesión
-    btnCerrar.addEventListener('click', () => {
-      localStorage.removeItem('usuario_id');
-      localStorage.removeItem('usuario_nombre');
+    btnCerrar.addEventListener('click', async () => {
+      await supabase.auth.signOut();
       verificarSesion();
     });
   </script>
