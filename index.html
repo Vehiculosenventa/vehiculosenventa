@@ -34,7 +34,7 @@
 
     .saludo {
       display: inline-block;
-      margin-right: 15px;
+      margin-right: 12px;
       color: #2c5282;
       font-weight: 600;
       vertical-align: middle;
@@ -69,42 +69,36 @@
       text-decoration: underline;
     }
 
+    .enlace-eliminar {
+      display: inline-block;
+      margin-left: 12px;
+      margin-right: 12px;
+      font-size: 14px;
+      color: #c53030;
+      text-decoration: none;
+      vertical-align: middle;
+    }
+    .enlace-eliminar:hover {
+      text-decoration: underline;
+    }
+
     .boton-cerrar {
-      display: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 15px;
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 14px;
       font-weight: 600;
       border: none;
       background: transparent;
       color: #3182ce;
       cursor: pointer;
       vertical-align: middle;
-      margin-left: 10px;
       text-decoration: underline;
       transition: all 0.2s ease;
-    }
-    .boton-cerrar.activo {
-      display: inline-block;
     }
     .boton-cerrar:hover {
       color: #2b6cb0;
       background: rgba(49, 130, 206, 0.08);
-    }
-
-    .enlace-eliminar {
-      display: none;
-      margin-left: 15px;
-      font-size: 14px;
-      color: #c53030;
-      text-decoration: none;
-      vertical-align: middle;
-    }
-    .enlace-eliminar.activo {
-      display: inline-block;
-    }
-    .enlace-eliminar:hover {
-      text-decoration: underline;
     }
 
     .oculto { display: none !important; }
@@ -172,16 +166,16 @@
 <body>
 
   <div class="barra-superior">
-    <!-- SIN SESIÓN -->
+    <!-- 🔒 SIN SESIÓN -->
     <div id="sinSesion">
       <a id="btn-entrar" href="iniciar-sesion.html" class="boton-entrar">🔐 Iniciar sesión</a>
       <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
     </div>
 
-    <!-- CON SESIÓN -->
+    <!-- ✅ CON SESIÓN -->
     <div id="conSesion" class="oculto">
       <span id="saludo" class="saludo"></span>
-      <a id="eliminarCuenta" href="eliminar-cuenta.html" class="enlace-eliminar">⚠️ Eliminar cuenta</a>
+      <a href="eliminar-cuenta.html" class="enlace-eliminar">⚠️ Eliminar cuenta</a>
       <button id="btn-cerrar" class="boton-cerrar">🚪 Cerrar sesión</button>
     </div>
   </div>
@@ -223,7 +217,7 @@
       const { data: { session } } = await supabaseClient.auth.getSession();
 
       if (session) {
-        // ✅ CONECTADO
+        // ✅ CONECTADO → todo visible
         sinSesion.classList.add('oculto');
         conSesion.classList.remove('oculto');
         
@@ -235,7 +229,7 @@
           
         saludo.textContent = '¡Hola, ' + (usuario?.nombre || session.user.email) + '! 🎉';
       } else {
-        // 🔒 SIN CONECTAR
+        // 🔒 SIN CONECTAR → solo entrar y olvidaste
         sinSesion.classList.remove('oculto');
         conSesion.classList.add('oculto');
       }
