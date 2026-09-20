@@ -62,7 +62,7 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const formRecuperar = document.getElementById('formRecuperar');
     const btnEnviar = document.getElementById('btnEnviar');
@@ -76,7 +76,6 @@
       const correo = document.getElementById('correo').value.trim();
 
       try {
-        // ✅ Buscamos al usuario por su correo
         const { data: usuario, error: errBusqueda } = await supabase
           .from('usuarios')
           .select('id, nombre, correo')
@@ -85,8 +84,8 @@
 
         if (errBusqueda) throw new Error("No encontramos ese correo");
 
-        // ✅ Llamamos a la función que mandamos por Resend
-        const funcionUrl = `${SUPABASE_URL}/functions/v1/enviar-recuperacion`;
+        // ✅ AQUÍ VA EL NOMBRE DE TU FUNCIÓN — SIN TILDE
+        const funcionUrl = SUPABASE_URL + "/functions/v1/enviar-recuperacion";
 
         const respuesta = await fetch(funcionUrl, {
           method: "POST",
@@ -94,7 +93,7 @@
           body: JSON.stringify({
             correo: usuario.correo,
             nombre: usuario.nombre,
-            enlace: `${window.location.origin}/crear-contraseña.html`
+            enlace: window.location.origin + "/crear-contraseña.html"
           })
         });
 
@@ -102,15 +101,14 @@
 
         if (!respuesta.ok) throw new Error(resultado.error || "No se pudo enviar");
 
-        // ✅ Todo salió bien
         mensaje.className = 'mensaje exito';
-        mensaje.innerHTML = `✅ ¡Listo! Revisá tu correo 📬<br>Te mandamos el enlace para crear tu contraseña nueva`;
+        mensaje.innerHTML = "✅ ¡Listo! Revisá tu correo 📬<br>Te mandamos el enlace para crear tu contraseña nueva";
         mensaje.style.display = 'block';
         formRecuperar.style.display = 'none';
 
       } catch (err) {
         mensaje.className = 'mensaje error';
-        mensaje.innerHTML = `❌ ${err.message}`;
+        mensaje.innerHTML = "❌ " + err.message;
         mensaje.style.display = 'block';
       }
 
