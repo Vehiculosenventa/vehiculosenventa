@@ -2,21 +2,18 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Prueba Leer Tabla</title>
+  <title>DiagnÃ³stico Completo</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body { font-family: sans-serif; padding: 30px; max-width: 600px; margin: 0 auto; }
-    .ok { color: green; font-weight: bold; font-size: 18px; }
-    .mal { color: red; font-weight: bold; font-size: 18px; }
-    .info { color: #3182ce; margin: 10px 0; }
-    pre { background: #f5f5f5; padding: 15px; border-radius: 8px; margin-top: 15px; }
+    .ok { color: green; font-weight: bold; margin: 5px 0; }
+    .mal { color: red; font-weight: bold; margin: 5px 0; }
+    .info { color: #3182ce; margin: 5px 0; }
   </style>
 </head>
 <body>
-  <h1>Probando lectura de tabla...</h1>
-  <div id="resultado">
-    <p class="info">🔄 Iniciando...</p>
-  </div>
+  <h1>DiagnÃ³stico...</h1>
+  <div id="resultado"></div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
@@ -24,25 +21,38 @@
     
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     const div = document.getElementById('resultado');
-    
+
+    div.innerHTML += `<p class="info">1ï¸âƒ£ Cliente creado âœ…</p>`;
+
     async function probar() {
-      div.innerHTML += `<p class="info">✅ Conectado, buscando tabla...</p>`;
+      div.innerHTML += `<p class="info">2ï¸âƒ£ Haciendo consulta...</p>`;
       
+      const consulta = supabase
+        .from('usuarios')
+        .select('correo')
+        .limit(5);
+
+      // Esperamos mÃ¡ximo 5 segundos
+      const tiempoLimite = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("Se agotÃ³ el tiempo")), 5000)
+      );
+
       try {
-        const { data, error } = await supabase
-          .from('usuarios')
-          .select('id, correo, nombre');
+        const { data, error } = await Promise.race([consulta, tiempoLimite]);
         
         if (error) {
-          div.innerHTML += `<p class="mal">❌ Error: ${error.message}</p><pre>${JSON.stringify(error, null, 2)}</pre>`;
+          div.innerHTML += `<p class="mal">âŒ Error: ${error.message}</p>`;
         } else {
-          div.innerHTML += `<p class="ok">✅ ¡Lectura exitosa! Encontrados ${data.length} usuario(s)</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+          div.innerHTML += `<p class="ok">âœ… ${data.length} usuario(s) encontrados</p>`;
+          if (data.length > 0) {
+            div.innerHTML += `<p class="info">Correos: ${data.map(u => u.correo).join(', ')}</p>`;
+          }
         }
       } catch (err) {
-        div.innerHTML += `<p class="mal">❌ Excepción: ${err.message}</p><pre>${err}</pre>`;
+        div.innerHTML += `<p class="mal">âŒ ${err.message}</p>`;
       }
     }
-    
+
     probar();
   </script>
 </body>
