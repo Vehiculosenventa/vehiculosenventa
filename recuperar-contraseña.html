@@ -6,121 +6,199 @@
   <title>Recuperar Contraseña - Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {box-sizing:border-box;margin:0;padding:0;font-family:'Segoe UI',Roboto,sans-serif;}
-    body {background:linear-gradient(135deg,#dceaf5 0%,#cfe0ee 100%);min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;}
-    .caja {background:#fff;padding:35px;border-radius:20px;box-shadow:0 8px 24px rgba(44,82,130,.12);max-width:420px;width:100%;}
-    h1 {text-align:center;color:#2c5282;margin-bottom:10px;font-size:22px;}
-    p {text-align:center;color:#718096;margin-bottom:20px;line-height:1.5;}
-    label {display:block;margin-bottom:8px;font-weight:600;color:#4a5568;}
-    input {width:100%;padding:14px 16px;border:2px solid #c5d6e8;border-radius:12px;font-size:16px;margin-bottom:20px;}
-    input:focus {outline:none;border-color:#3182ce;box-shadow:0 0 0 3px rgba(49,130,206,.12);}
-    button {width:100%;padding:15px;background:linear-gradient(135deg,#3182ce 0%,#2b6cb0 100%);color:#fff;border:none;border-radius:12px;font-size:16px;font-weight:700;cursor:pointer;}
-    button:disabled {background:#a0aec0;cursor:not-allowed;opacity:.7;}
-    .mensaje {margin-top:20px;padding:15px;border-radius:12px;display:none;font-weight:600;line-height:1.5;}
-    .exito {background:#f0f7ee;color:#276749;border:1px solid #b8d8b9;}
-    .error {background:#fef2f2;color:#c53030;border:1px solid #feb2b2;}
-    .info {background:#ebf8ff;color:#2b6cb0;border:1px solid #90cdf4;}
-    .volver {display:block;margin-top:20px;text-align:center;color:#3182ce;text-decoration:none;font-weight:600;}
-    .volver:hover {text-decoration:underline;}
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .caja {
+      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
+      border-radius: 28px;
+      padding: 45px 35px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.08);
+      border: 1px solid #e2d9c8;
+    }
+
+    h1 {
+      color: #2c5282;
+      font-size: 28px;
+      font-weight: 800;
+      text-align: center;
+      margin-bottom: 8px;
+    }
+
+    .subtitulo {
+      color: #5a6872;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .campo {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: #4a5568;
+      font-size: 14px;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px 16px;
+      border: 2px solid #c5d6e8;
+      border-radius: 12px;
+      font-size: 16px;
+      background: #fff;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    input:focus {
+      outline: none;
+      border-color: #3182ce;
+      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.12);
+    }
+
+    .boton {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: all 0.3s ease;
+    }
+
+    .boton:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(49, 130, 206, 0.18);
+    }
+
+    .boton:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+      opacity: 0.7;
+      transform: none;
+    }
+
+    .mensaje {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      display: none;
+      font-weight: 600;
+      text-align: center;
+      line-height: 1.5;
+    }
+
+    .exito {
+      background: #f0fff4;
+      border: 2px solid #9ae6b4;
+      color: #276749;
+    }
+
+    .error {
+      background: #fff5f5;
+      border: 2px solid #feb2b2;
+      color: #c53030;
+    }
+
+    .enlace {
+      display: block;
+      text-align: center;
+      margin-top: 20px;
+      color: #3182ce;
+      font-size: 14px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .enlace:hover {
+      text-decoration: underline;
+      color: #2b6cb0;
+    }
   </style>
 </head>
 <body>
   <div class="caja">
-    <h1>¿Olvidaste tu contraseña?</h1>
-    <p>Ingresá tu correo con el que te registraste</p>
-    <form id="formCorreo">
-      <label for="correo">Correo electrónico</label>
-      <input type="email" id="correo" placeholder="tu@correo.com" required>
-      <button type="submit" id="btnEnviar">📧 Enviar Correo de Recuperación</button>
-      <div id="mensajeCorreo" class="mensaje"></div>
+    <h1>🔑 ¿Olvidaste tu contraseña?</h1>
+    <p class="subtitulo">Ingresá el correo con el que te registraste y te enviaremos un enlace para crear una nueva</p>
+
+    <form id="formRecuperar">
+      <div class="campo">
+        <label for="correo">Correo electrónico</label>
+        <input type="email" id="correo" required placeholder="tu@correo.com">
+      </div>
+      <button type="submit" id="btnEnviar" class="boton">📧 Enviar correo de recuperación</button>
     </form>
-    <a href="iniciar-sesion.html" class="volver">← Volver a Iniciar Sesión</a>
+
+    <div id="mensaje" class="mensaje"></div>
+
+    <a href="iniciar-sesion.html" class="enlace">← Volver a Iniciar Sesión</a>
+    <a href="index.html" class="enlace">← Volver al Inicio</a>
   </div>
 
   <script>
-    // Tus datos
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpc3RpdGprc3BodWNxayIsImF1dGhvcml0eSI6ImFub24iLCJpYXQiOjE3NTY4OTU0MDAsImV4cCI6MjA3MjQ3MTQwMH0.7VbH5GqCqXWXfV5bYq9h3ZbXhY7Z9X8Y9Z7X6Y5Z4X3Y2Z1X0Y9Z8X7Y6Z5X4Y3Z2X1Y0Z";
-    const RESEND_KEY = "re_9uyFsX7D_7MT5q5YmtDpdq8BsDxVTp8Kx";
-    const CORREO_REMITENTE = "no-reply@vehiculosenventa.com.ar";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ✅ UNA SOLA VEZ — SIN DUPLICAR
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const formRecuperar = document.getElementById('formRecuperar');
+    const btnEnviar = document.getElementById('btnEnviar');
+    const mensaje = document.getElementById('mensaje');
 
-    document.getElementById('formCorreo').addEventListener('submit', async e => {
+    formRecuperar.addEventListener('submit', async (e) => {
       e.preventDefault();
+      btnEnviar.disabled = true;
+      mensaje.style.display = 'none';
+
       const correo = document.getElementById('correo').value.trim();
-      const btn = document.getElementById('btnEnviar');
-      const mensaje = document.getElementById('mensajeCorreo');
-      
-      btn.disabled = true;
-      btn.textContent = "Enviando...";
-      mensaje.style.display = "none";
 
       try {
-        // 1. Buscar usuario
-        const { data: usuario, error: errBuscar } = await supabase
-          .from('usuarios')
-          .select('id')
-          .eq('correo', correo)
-          .single();
-
-        if (errBuscar || !usuario) throw new Error("No existe cuenta con ese correo");
-
-        // 2. Generar código
-        const codigo = Math.random().toString(36).substring(2, 8).toUpperCase();
-
-        // 3. Guardar código en la tabla
-        const { error: errCodigo } = await supabase
-          .from('usuarios')
-          .update({ codigo_confirmado: codigo })
-          .eq('id', usuario.id);
-
-        if (errCodigo) throw errCodigo;
-
-        // 4. Enlace → confirmar-contraseña.html
-        const enlace = `${window.location.origin}/confirmar-contraseña.html?codigo=${codigo}&correo=${encodeURIComponent(correo)}`;
-
-        // 5. Enviar correo con Resend — forma correcta para navegador
-        const respuesta = await fetch("https://api.resend.com/emails", {
-          method: "POST",
-          headers: {
-            "Authorization": `Bearer ${RESEND_KEY}`,
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            from: `Vehículos en Venta <${CORREO_REMITENTE}>`,
-            to: correo,
-            subject: "Recuperar tu contraseña",
-            html: `
-              <h2>Recuperar Contraseña</h2>
-              <p>Hola,</p>
-              <p>Recibimos una solicitud para cambiar tu contraseña.</p>
-              <p style="margin:25px 0;">
-                <a href="${enlace}" style="padding:14px 30px;background:#3182ce;color:white;border-radius:10px;font-weight:bold;text-decoration:none;display:inline-block;">
-                  ✅ Confirmar Contraseña
-                </a>
-              </p>
-              <p>Al tocar el botón vas a poder escribir tu contraseña nueva.</p>
-              <p style="color:#888;font-size:13px;">Si no pediste esto, ignorá este correo.</p>
-            `
-          })
+        const { error } = await supabaseClient.auth.resetPasswordForEmail(correo, {
+          redirectTo: 'https://vehiculosenventa.com.ar/cambiar-contraseña.html'
         });
 
-        const datos = await respuesta.json();
-        if (!respuesta.ok) throw new Error(datos.message || "Error al enviar el correo");
+        if (error) throw error;
 
-        mensaje.innerHTML = `✅ Correo enviado con éxito 📧<br><br>Revisá tu correo<br>Tocá "Confirmar Contraseña" y vas directo a la página ✅`;
-        mensaje.className = "mensaje info";
-        mensaje.style.display = "block";
+        mensaje.className = 'mensaje exito';
+        mensaje.innerHTML = '✅ ¡Listo! Revisá tu correo 📬<br>Te enviamos el enlace para crear una contraseña nueva';
+        mensaje.style.display = 'block';
+        formRecuperar.reset();
 
       } catch (err) {
-        mensaje.textContent = "❌ " + err.message;
-        mensaje.className = "mensaje error";
-        mensaje.style.display = "block";
+        mensaje.className = 'mensaje error';
+        if (err.message.includes('Email not found')) {
+          mensaje.innerHTML = '⚠️ Ese correo no está registrado';
+        } else {
+          mensaje.innerHTML = '❌ ' + err.message;
+        }
+        mensaje.style.display = 'block';
       } finally {
-        btn.disabled = false;
-        btn.textContent = "📧 Enviar Correo de Recuperación";
+        btnEnviar.disabled = false;
       }
     });
   </script>
