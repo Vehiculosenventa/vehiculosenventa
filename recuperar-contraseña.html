@@ -127,8 +127,8 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // ✅ CORRECTO: llamamos desde window.supabase directamente
-    const miSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // ✅ LÍNEA CORRECTA — tal cual, sin cambiar nada:
+    const miCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const formRecuperar = document.getElementById('formRecuperar');
     const btnEnviar = document.getElementById('btnEnviar');
@@ -142,7 +142,7 @@
       const correo = document.getElementById('correo').value.trim();
 
       try {
-        const { data: usuario, error: errBusqueda } = await miSupabase
+        const { data: usuario, error: errBusqueda } = await miCliente
           .from('usuarios')
           .select('id, nombre, correo')
           .eq('correo', correo)
