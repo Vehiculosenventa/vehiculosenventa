@@ -10,23 +10,18 @@
     body {background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;}
     .caja {background: #f8fafc; padding: 35px; border-radius: 20px; width: 100%; max-width: 450px; box-shadow: 0 5px 20px rgba(0,0,0,0.08);}
     h1 {color: #2c5282; text-align: center; margin-bottom: 25px; font-size: 22px;}
-    .campo {margin-bottom: 20px;}
-    label {display: block; margin-bottom: 8px; font-weight: bold; color: #444;}
-    input {width: 100%; padding: 13px; border: 2px solid #c5d6e8; border-radius: 10px; font-size: 16px; outline: none;}
-    input:focus {border-color: #3182ce;}
-    button {width: 100%; padding: 14px; background: #3182ce; color: white; border: none; border-radius: 10px; font-size: 17px; font-weight: bold; cursor: pointer; margin-top: 10px;}
-    .paso {margin: 10px 0; padding: 8px; border-radius: 6px;}
-    .info {background: #ebf8ff; color: #2c5282;}
-    .ok {background: #f0fff4; color: #166534;}
-    .mal {background: #fef2f2; color: #c53030;}
+    input {width: 100%; padding: 13px; border: 2px solid #c5d6e8; border-radius: 10px; font-size: 16px; margin-bottom: 20px;}
+    button {width: 100%; padding: 14px; background: #3182ce; color: white; border: none; border-radius: 10px; font-size: 17px; font-weight: bold; cursor: pointer;}
+    .ok {color: #166534; margin-top: 20px; font-weight: bold;}
+    .mal {color: #c53030; margin-top: 20px; font-weight: bold;}
   </style>
 </head>
 <body>
   <div class="caja">
     <h1>🔑 Recuperar Contraseña</h1>
-    <input type="email" id="correo" placeholder="Tu correo">
-    <button onclick="enviar()">📩 Enviar</button>
-    <div id="pasos"></div>
+    <input type="email" id="correo" placeholder="Tu correo electrónico">
+    <button onclick="buscar()">Buscar</button>
+    <p id="mensaje"></p>
   </div>
 
   <script>
@@ -34,33 +29,28 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const pasos = document.getElementById('pasos');
 
-    function agregar(texto, clase) {
-      pasos.innerHTML += `<div class="paso ${clase}">${texto}</div>`;
-    }
-
-    async function enviar() {
-      pasos.innerHTML = '';
-      agregar("1️⃣ Empecé...", "info");
-      
+    async function buscar() {
       const correo = document.getElementById('correo').value.trim();
-      agregar(`2️⃣ Correo leído: ${correo}`, "info");
+      const msg = document.getElementById('mensaje');
+      msg.textContent = 'Buscando...';
+      msg.className = '';
 
-      try {
-        agregar("3️⃣ Llamando a Supabase...", "info");
-        
-        const { error } = await supabase.auth.resetPasswordForEmail(correo, {
-          redirectTo: window.location.origin + "/crear-contraseña.html"
-        });
+      const { data, error } = await supabase
+        .from('usuarios')
+        .select('correo')
+        .eq('correo', correo)
+        .limit(1);
 
-        if (error) {
-          agregar(`❌ Error: ${error.message}`, "mal");
-        } else {
-          agregar("✅ ¡Correo enviado!", "ok");
-        }
-      } catch (e) {
-        agregar(`❌ Fallo: ${e.message}`, "mal");
+      if (error) {
+        msg.textContent = '❌ Error: ' + error.message;
+        msg.className = 'mal';
+      } else if (data.length > 0) {
+        msg.textContent = '✅ Correo encontrado — enviamos el enlace';
+        msg.className = 'ok';
+      } else {
+        msg.textContent = '❌ No encontramos ese correo';
+        msg.className = 'mal';
       }
     }
   </script>
