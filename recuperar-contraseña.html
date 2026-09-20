@@ -127,8 +127,8 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // ✅ CORREGIDO: Usamos el nombre 'cliente' para no chocar
-    const cliente = createClient(SUPABASE_URL, SUPABASE_KEY);
+    // ✅ CORRECTO: llamamos desde window.supabase directamente
+    const miSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const formRecuperar = document.getElementById('formRecuperar');
     const btnEnviar = document.getElementById('btnEnviar');
@@ -142,7 +142,7 @@
       const correo = document.getElementById('correo').value.trim();
 
       try {
-        const { data: usuario, error: errBusqueda } = await cliente
+        const { data: usuario, error: errBusqueda } = await miSupabase
           .from('usuarios')
           .select('id, nombre, correo')
           .eq('correo', correo)
@@ -150,9 +150,7 @@
 
         if (errBusqueda) throw new Error("No encontramos ese correo");
 
-        const funcionUrl = SUPABASE_URL + "/functions/v1/enviar-recuperacion";
-
-        const respuesta = await fetch(funcionUrl, {
+        const respuesta = await fetch(SUPABASE_URL + "/functions/v1/enviar-recuperacion", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
@@ -163,7 +161,6 @@
         });
 
         const resultado = await respuesta.json();
-
         if (!respuesta.ok) throw new Error(resultado.error || "No se pudo enviar");
 
         mensaje.className = 'mensaje exito';
