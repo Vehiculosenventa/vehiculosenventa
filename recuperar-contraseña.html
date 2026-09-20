@@ -16,91 +16,62 @@
       padding: 20px;
     }
     .caja {
-      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
+      background: #fff;
       border-radius: 28px;
       padding: 45px 35px;
       width: 100%;
       max-width: 500px;
       box-shadow: 0 10px 30px rgba(44,82,130,0.08);
-      border: 1px solid #e2d9c8;
     }
     h1 {
       color: #2c5282;
-      font-size: 26px;
-      font-weight: 800;
+      font-size: 24px;
       text-align: center;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
     }
     .subtitulo {
       color: #5a6872;
       text-align: center;
       margin-bottom: 30px;
-      font-size: 15px;
       line-height: 1.5;
     }
     .campo {margin-bottom: 20px;}
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: 600;
-      color: #4a5568;
-      font-size: 14px;
-    }
+    label {display: block; margin-bottom: 8px; font-weight: 600;}
     input {
       width: 100%;
-      padding: 14px 16px;
+      padding: 14px;
       border: 2px solid #c5d6e8;
-      border-radius: 12px;
+      border-radius: 10px;
       font-size: 16px;
-      background: #fff;
     }
-    input:focus {
-      outline: none;
-      border-color: #3182ce;
-      box-shadow: 0 0 0 3px rgba(49,130,206,0.12);
-    }
-    .boton {
+    button {
       width: 100%;
-      padding: 16px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      padding: 15px;
+      background: #3182ce;
       color: #fff;
       border: none;
-      border-radius: 14px;
+      border-radius: 10px;
       font-size: 17px;
       font-weight: 700;
       cursor: pointer;
     }
-    .boton:disabled {
-      background: #a0aec0;
-      cursor: not-allowed;
-      opacity: 0.7;
-    }
+    button:disabled {opacity: 0.7;}
     .mensaje {
       margin-top: 20px;
       padding: 15px;
-      border-radius: 12px;
+      border-radius: 10px;
       display: none;
       font-weight: 600;
       text-align: center;
       line-height: 1.5;
     }
-    .exito {
-      background: #f0fff4;
-      border: 2px solid #9ae6b4;
-      color: #276749;
-    }
-    .error {
-      background: #fff5f5;
-      border: 2px solid #feb2b2;
-      color: #c53030;
-    }
+    .exito {background: #f0fff4; color: #166534;}
+    .error {background: #fef2f2; color: #c53030;}
     .enlace {
       display: block;
       text-align: center;
       margin-top: 20px;
       color: #3182ce;
-      font-size: 14px;
-      font-weight: 600;
       text-decoration: none;
     }
   </style>
@@ -113,9 +84,9 @@
     <form id="formRecuperar">
       <div class="campo">
         <label for="correo">Tu correo electrónico</label>
-        <input type="email" id="correo" required placeholder="misvehiculosenventa@gmail.com">
+        <input type="email" id="correo" required>
       </div>
-      <button type="submit" id="btnEnviar" class="boton">📩 Enviar enlace</button>
+      <button type="submit" id="btnEnviar">📩 Enviar enlace</button>
     </form>
 
     <div id="mensaje" class="mensaje"></div>
@@ -127,7 +98,8 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    const miCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const { createClient } = window.supabase;
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const formRecuperar = document.getElementById('formRecuperar');
     const btnEnviar = document.getElementById('btnEnviar');
@@ -138,49 +110,42 @@
       btnEnviar.disabled = true;
       mensaje.style.display = 'none';
 
-      const correo = document.getElementById('correo').value.trim().toLowerCase();
-      console.log("🔍 Busca:", "[" + correo + "]");
+      const correo = document.getElementById('correo').value.trim();
+      const correoMinusculas = correo.toLowerCase();
 
       try {
-        // ✅ Buscamos TODOS y comparamos manualmente
-        const { data: todos, error: errLista } = await miCliente
+        // PASO 1 — Buscar en tu tabla primero
+        const { data: todos, error: errLeer } = await supabase
           .from('usuarios')
-          .select('id, nombre, correo');
+          .select('correo, nombre');
 
-        if (errLista) throw new Error("No se pudo leer la lista");
+        if (errLeer) throw new Error("No se pudo verificar el correo");
 
-        // ✅ Buscamos manualmente sin importar mayúsculas/minúsculas
-        const usuario = todos?.find(u => u.correo?.trim().toLowerCase() === correo);
+        // Comparar sin importar mayúsculas/minúsculas ni espacios
+        const existe = todos?.some(u => 
+          u.correo.trim().toLowerCase() === correoMinusculas
+        );
 
-        if (!usuario) {
-          console.log("❌ No encontrado. Correos en tabla:", todos?.map(u => u.correo));
+        if (!existe) {
           throw new Error("No encontramos ese correo");
         }
 
-        console.log("✅ Encontrado:", usuario);
-
-        const respuesta = await fetch(SUPABASE_URL + "/functions/v1/enviar-recuperacion", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            correo: usuario.correo,
-            nombre: usuario.nombre,
-            enlace: window.location.origin + "/crear-contraseña.html"
-          })
+        // PASO 2 — Si existe, pedir a Supabase que mande el enlace
+        const { error: errRecuperar } = await supabase.auth.resetPasswordForEmail(correo, {
+          redirectTo: window.location.origin + "/crear-contraseña.html"
         });
 
-        const resultado = await respuesta.json();
-        if (!respuesta.ok) throw new Error(resultado.error || "No se pudo enviar");
+        if (errRecuperar) throw errRecuperar;
 
         mensaje.className = 'mensaje exito';
         mensaje.style.display = 'block';
-        mensaje.innerHTML = "✅ ¡Listo! Revisá tu correo 📬<br>Te mandamos el enlace para crear tu contraseña nueva";
+        mensaje.innerHTML = "✅ ¡Listo! Revisá tu correo 📬<br>Te mandamos el enlace para crear tu clave nueva";
         formRecuperar.style.display = 'none';
 
       } catch (err) {
         mensaje.className = 'mensaje error';
         mensaje.style.display = 'block';
-        mensaje.innerHTML = "❌ " + err.message;
+        mensaje.innerHTML = "❌ " + (err.message || "Ocurrió un error");
       }
 
       btnEnviar.disabled = false;
