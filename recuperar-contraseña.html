@@ -2,18 +2,40 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Prueba Conexión</title>
+  <title>Prueba Leer Tabla</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body { font-family: sans-serif; padding: 30px; max-width: 600px; margin: 0 auto; }
+    .ok { color: green; font-weight: bold; font-size: 18px; }
+    .mal { color: red; font-weight: bold; font-size: 18px; }
+    pre { background: #f5f5f5; padding: 15px; border-radius: 8px; margin-top: 15px; }
+  </style>
 </head>
 <body>
-  <h1>Probando conexión...</h1>
+  <h1>Probando lectura de tabla...</h1>
+  <div id="resultado"></div>
+
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // UNA SOLA VEZ
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    console.log("✅ Conexión lista");
+    
+    async function probar() {
+      const div = document.getElementById('resultado');
+      
+      const { data, error } = await supabase
+        .from('usuarios')
+        .select('id, correo, nombre');
+      
+      if (error) {
+        div.innerHTML = `<p class="mal">❌ Error: ${error.message}</p><pre>${JSON.stringify(error, null, 2)}</pre>`;
+      } else {
+        div.innerHTML = `<p class="ok">✅ ¡Lectura exitosa! Encontrados ${data.length} usuario(s)</p><pre>${JSON.stringify(data, null, 2)}</pre>`;
+      }
+    }
+    
+    probar();
   </script>
 </body>
 </html>
