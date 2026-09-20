@@ -113,7 +113,7 @@
     <form id="formRecuperar">
       <div class="campo">
         <label for="correo">Tu correo electrónico</label>
-        <input type="email" id="correo" required placeholder="tu@correo.com">
+        <input type="email" id="correo" required placeholder="misvehiculosenventa@gmail.com">
       </div>
       <button type="submit" id="btnEnviar" class="boton">📩 Enviar enlace</button>
     </form>
@@ -138,19 +138,26 @@
       btnEnviar.disabled = true;
       mensaje.style.display = 'none';
 
-      const correo = document.getElementById('correo').value.trim();
-      
-      // ✅ LÍNEA PARA VER EXACTAMENTE QUÉ BUSCA:
-      console.log("🔍 Busca este correo:", "[" + correo + "]", "Caracteres:", correo.length);
+      const correo = document.getElementById('correo').value.trim().toLowerCase();
+      console.log("🔍 Busca:", "[" + correo + "]");
 
       try {
-        const { data: usuario, error: errBusqueda } = await miCliente
+        // ✅ Buscamos TODOS y comparamos manualmente
+        const { data: todos, error: errLista } = await miCliente
           .from('usuarios')
-          .select('id, nombre, correo')
-          .ilike('correo', correo)  // ✅ Ahora busca SIN distinguir mayúsculas/minúsculas
-          .single();
+          .select('id, nombre, correo');
 
-        if (errBusqueda) throw new Error("No encontramos ese correo");
+        if (errLista) throw new Error("No se pudo leer la lista");
+
+        // ✅ Buscamos manualmente sin importar mayúsculas/minúsculas
+        const usuario = todos?.find(u => u.correo?.trim().toLowerCase() === correo);
+
+        if (!usuario) {
+          console.log("❌ No encontrado. Correos en tabla:", todos?.map(u => u.correo));
+          throw new Error("No encontramos ese correo");
+        }
+
+        console.log("✅ Encontrado:", usuario);
 
         const respuesta = await fetch(SUPABASE_URL + "/functions/v1/enviar-recuperacion", {
           method: "POST",
