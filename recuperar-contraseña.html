@@ -98,6 +98,7 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
+    // ✅ UNA SOLA VEZ — sin repetir
     const { createClient } = window.supabase;
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -111,26 +112,25 @@
       mensaje.style.display = 'none';
 
       const correo = document.getElementById('correo').value.trim();
-      const correoMinusculas = correo.toLowerCase();
+      const correoMinus = correo.toLowerCase();
 
       try {
-        // PASO 1 — Buscar en tu tabla primero
-        const { data: todos, error: errLeer } = await supabase
+        // PASO 1 — Verificar que existe en tu tabla
+        const { data: usuarios, error: errLeer } = await supabase
           .from('usuarios')
           .select('correo, nombre');
 
         if (errLeer) throw new Error("No se pudo verificar el correo");
 
-        // Comparar sin importar mayúsculas/minúsculas ni espacios
-        const existe = todos?.some(u => 
-          u.correo.trim().toLowerCase() === correoMinusculas
+        const existe = usuarios?.some(u => 
+          u.correo.trim().toLowerCase() === correoMinus
         );
 
         if (!existe) {
           throw new Error("No encontramos ese correo");
         }
 
-        // PASO 2 — Si existe, pedir a Supabase que mande el enlace
+        // PASO 2 — Mandar enlace por Supabase
         const { error: errRecuperar } = await supabase.auth.resetPasswordForEmail(correo, {
           redirectTo: window.location.origin + "/crear-contraseña.html"
         });
