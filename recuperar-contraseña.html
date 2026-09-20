@@ -2,58 +2,52 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>DiagnÃ³stico Completo</title>
+  <title>Diagnóstico</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     body { font-family: sans-serif; padding: 30px; max-width: 600px; margin: 0 auto; }
-    .ok { color: green; font-weight: bold; margin: 5px 0; }
-    .mal { color: red; font-weight: bold; margin: 5px 0; }
-    .info { color: #3182ce; margin: 5px 0; }
+    .ok { color: green; font-weight: bold; margin: 8px 0; }
+    .mal { color: red; font-weight: bold; margin: 8px 0; }
+    .info { color: #3182ce; margin: 8px 0; }
   </style>
 </head>
 <body>
-  <h1>DiagnÃ³stico...</h1>
-  <div id="resultado"></div>
+  <h1>Diagnóstico</h1>
+  <div id="pasos"></div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const div = document.getElementById('resultado');
+    const pasos = document.getElementById('pasos');
 
-    div.innerHTML += `<p class="info">1ï¸âƒ£ Cliente creado âœ…</p>`;
+    function agregar(texto, clase) {
+      pasos.innerHTML += `<p class="${clase}">${texto}</p>`;
+    }
 
-    async function probar() {
-      div.innerHTML += `<p class="info">2ï¸âƒ£ Haciendo consulta...</p>`;
+    async function iniciar() {
+      agregar("1️⃣ Cliente conectado", "info");
       
-      const consulta = supabase
-        .from('usuarios')
-        .select('correo')
-        .limit(5);
-
-      // Esperamos mÃ¡ximo 5 segundos
-      const tiempoLimite = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("Se agotÃ³ el tiempo")), 5000)
-      );
-
       try {
-        const { data, error } = await Promise.race([consulta, tiempoLimite]);
+        agregar("2️⃣ Pidiendo datos...", "info");
+        
+        const { data, error } = await supabase
+          .from('usuarios')
+          .select('correo')
+          .limit(1);
         
         if (error) {
-          div.innerHTML += `<p class="mal">âŒ Error: ${error.message}</p>`;
+          agregar(`❌ Error: ${error.message}`, "mal");
         } else {
-          div.innerHTML += `<p class="ok">âœ… ${data.length} usuario(s) encontrados</p>`;
-          if (data.length > 0) {
-            div.innerHTML += `<p class="info">Correos: ${data.map(u => u.correo).join(', ')}</p>`;
-          }
+          agregar(`✅ ${data.length} usuario(s)`, "ok");
         }
-      } catch (err) {
-        div.innerHTML += `<p class="mal">âŒ ${err.message}</p>`;
+      } catch (e) {
+        agregar(`❌ Fallo: ${e.message}`, "mal");
       }
     }
 
-    probar();
+    iniciar();
   </script>
 </body>
 </html>
