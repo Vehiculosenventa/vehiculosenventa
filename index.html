@@ -63,13 +63,13 @@
       border: none;
       display: none;
     }
-    .boton-eliminar {
+    .boton-eliminar-arriba {
       background: #fff;
       color: #c53030;
       border: 2px solid #c53030;
       display: none;
     }
-    .boton-eliminar:hover {
+    .boton-eliminar-arriba:hover {
       background: #fff5f5;
       transform: translateY(-1px);
     }
@@ -140,7 +140,7 @@
     }
 
     .enlace-olvidada {
-      display: inline-block;
+      display: block;
       margin-top: 25px;
       color: #3182ce;
       font-size: 15px;
@@ -150,6 +150,20 @@
     }
     .enlace-olvidada:hover {
       color: #2b6cb0;
+      text-decoration: underline;
+    }
+
+    .enlace-eliminar-abajo {
+      display: block;
+      margin-top: 12px;
+      color: #000000;
+      font-size: 15px;
+      font-weight: bold;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    .enlace-eliminar-abajo:hover {
+      color: #c53030;
       text-decoration: underline;
     }
 
@@ -167,14 +181,14 @@
     <span id="saludo" class="saludo"></span>
     <a id="btn-registrar" href="registrarse.html" class="boton-sesion boton-registrar">✨ Registrarse</a>
     <a id="btn-iniciar" href="iniciar-sesion.html" class="boton-sesion boton-entrar">🔐 Iniciar sesión</a>
-    <a id="btn-eliminar" href="eliminar-cuenta.html" class="boton-sesion boton-eliminar">⚠️ Eliminar Cuenta</a>
+    <a id="btn-eliminar-arriba" href="eliminar-cuenta.html" class="boton-sesion boton-eliminar-arriba">⚠️ Eliminar Cuenta</a>
     <button id="btn-cerrar" class="boton-sesion boton-cerrar">🚪 Cerrar sesión</button>
   </div>
 
   <div class="caja-principal">
     <h1>🚗 Vehículos en Venta</h1>
     <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
-    La plataforma de vehículos de Rosario y la región</p>
+    La plataforma de vehículos de Rosario y toda la región</p>
 
     <a href="cargar.html" class="boton">
       📄 <span>Ingresar Vehículo</span>
@@ -189,59 +203,67 @@
       ❤️ <span>Mis Vehículos</span>
     </a>
 
-    <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
+    <!-- SIN SESIÓN → aparecen abajo -->
+    <div id="enlaces-sin-sesion">
+      <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
+      <a id="enlace-eliminar-abajo" href="eliminar-cuenta.html" class="enlace-eliminar-abajo">Eliminar cuenta</a>
+    </div>
 
     <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
   </div>
 
   <script>
-    // Tus credenciales del proyecto NUEVO
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Elementos de la página
+    // Elementos
     const saludo = document.getElementById('saludo');
     const btnRegistrar = document.getElementById('btn-registrar');
     const btnIniciar = document.getElementById('btn-iniciar');
-    const btnEliminar = document.getElementById('btn-eliminar');
+    const btnEliminarArriba = document.getElementById('btn-eliminar-arriba');
     const btnCerrar = document.getElementById('btn-cerrar');
-    const enlaceOlvidada = document.getElementById('enlace-olvidada');
+    const enlacesSinSesion = document.getElementById('enlaces-sin-sesion');
 
-    // ✅ VERIFICAR SESIÓN UNA SOLA VEZ al cargar
-    function verificarSesion() {
-      const usuarioId = localStorage.getItem('usuario_id');
-      const usuarioNombre = localStorage.getItem('usuario_nombre');
+    // ✅ VERIFICAR SESIÓN CON SUPABASE
+    async function verificarSesion() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
 
-      if (usuarioId) {
-        // ✅ CONECTADO: ocultar los de entrar, mostrar Eliminar y Cerrar
+      if (session) {
+        // ✅ CONECTADO
         btnRegistrar.style.display = 'none';
         btnIniciar.style.display = 'none';
-        enlaceOlvidada.style.display = 'none';
-        btnEliminar.style.display = 'inline-block';
+        enlacesSinSesion.style.display = 'none';
+        btnEliminarArriba.style.display = 'inline-block';
         btnCerrar.style.display = 'inline-block';
-        saludo.textContent = '¡Hola, ' + usuarioNombre + '! 🎉';
+        
+        // Obtener nombre del usuario
+        const { data: usuario } = await supabaseClient
+          .from('usuarios')
+          .select('nombre')
+          .eq('correo', session.user.email)
+          .single();
+          
+        saludo.textContent = '¡Hola, ' + (usuario?.nombre || session.user.email) + '! 🎉';
       } else {
-        // 🔒 SIN CONECTAR: mostrar Registrar y Entrar, ocultar Eliminar y Cerrar
+        // 🔒 SIN CONECTAR
         btnRegistrar.style.display = 'inline-block';
         btnIniciar.style.display = 'inline-block';
-        enlaceOlvidada.style.display = 'inline-block';
-        btnEliminar.style.display = 'none';
+        enlacesSinSesion.style.display = 'block';
+        btnEliminarArriba.style.display = 'none';
         btnCerrar.style.display = 'none';
         saludo.textContent = '';
       }
     }
 
     // ✅ CERRAR SESIÓN
-    btnCerrar.addEventListener('click', () => {
-      localStorage.removeItem('usuario_id');
-      localStorage.removeItem('usuario_nombre');
+    btnCerrar.addEventListener('click', async () => {
+      await supabaseClient.auth.signOut();
       verificarSesion();
-      window.location.href = 'index.html';
     });
 
-    // ✅ CONTADOR DE VISITAS — UNA SOLA VEZ
+    // ✅ CONTADOR DE VISITAS
     async function contarVisitaPrincipal() {
       try {
         const { data, error } = await supabaseClient
@@ -266,7 +288,7 @@
       }
     }
 
-    // ✅ EJECUTAR TODO UNA SOLA VEZ al cargar
+    // ✅ CARGAR TODO
     document.addEventListener('DOMContentLoaded', () => {
       verificarSesion();
       contarVisitaPrincipal();
