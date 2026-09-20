@@ -30,17 +30,11 @@
     .barra-superior {
       text-align: right;
       margin-bottom: 20px;
-      position: relative;
-    }
-
-    .grupo-izquierda {
-      display: inline-block;
-      text-align: right;
     }
 
     .saludo {
       display: inline-block;
-      margin-right: 12px;
+      margin-right: 15px;
       color: #2c5282;
       font-weight: 600;
       vertical-align: middle;
@@ -75,27 +69,8 @@
       text-decoration: underline;
     }
 
-    .boton-puntos {
-      display: inline-block;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      border: none;
-      background: transparent;
-      color: #2c5282;
-      font-size: 22px;
-      font-weight: bold;
-      cursor: pointer;
-      vertical-align: middle;
-      margin-left: 8px;
-      transition: background 0.2s ease;
-    }
-    .boton-puntos:hover {
-      background: rgba(49, 130, 206, 0.1);
-    }
-
     .boton-cerrar {
-      display: none; /* Solo se ve con sesión */
+      display: none;
       padding: 10px 20px;
       border-radius: 10px;
       font-size: 15px;
@@ -105,7 +80,7 @@
       color: #3182ce;
       cursor: pointer;
       vertical-align: middle;
-      margin-left: 8px;
+      margin-left: 10px;
       text-decoration: underline;
       transition: all 0.2s ease;
     }
@@ -117,42 +92,19 @@
       background: rgba(49, 130, 206, 0.08);
     }
 
-    .menu-desplegable {
-      position: absolute;
-      top: 50px;
-      right: 0;
-      background: #fff;
-      border-radius: 12px;
-      box-shadow: 0 8px 24px rgba(44, 82, 130, 0.15);
-      min-width: 220px;
-      z-index: 100;
+    .enlace-eliminar {
       display: none;
-      overflow: hidden;
-    }
-    .menu-desplegable.mostrar {
-      display: block;
-    }
-    .menu-enlace {
-      display: block;
-      padding: 14px 20px;
-      color: #3182ce;
-      font-size: 15px;
-      font-weight: 500;
-      text-decoration: none;
-      border-bottom: 1px solid #f0f4f8;
-      transition: background 0.2s ease;
-    }
-    .menu-enlace:last-child {
-      border-bottom: none;
-    }
-    .menu-enlace:hover {
-      background: #ebf4fb;
-    }
-    .menu-enlace.rojo {
+      margin-left: 15px;
+      font-size: 14px;
       color: #c53030;
+      text-decoration: none;
+      vertical-align: middle;
     }
-    .menu-enlace.rojo:hover {
-      background: #fff5f5;
+    .enlace-eliminar.activo {
+      display: inline-block;
+    }
+    .enlace-eliminar:hover {
+      text-decoration: underline;
     }
 
     .oculto { display: none !important; }
@@ -220,27 +172,17 @@
 <body>
 
   <div class="barra-superior">
-    <div class="grupo-izquierda">
-      <!-- CON SESIÓN → saludo -->
-      <span id="saludo" class="saludo oculto"></span>
-      
-      <!-- SIN SESIÓN → entrar + olvidaste -->
-      <div id="sinSesion">
-        <a id="btn-entrar" href="iniciar-sesion.html" class="boton-entrar">🔐 Iniciar sesión</a>
-        <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
-      </div>
-      
-      <!-- CON SESIÓN → cerrar sesión FUERA -->
-      <button id="btn-cerrar" class="boton-cerrar">🚪 Cerrar sesión</button>
+    <!-- SIN SESIÓN -->
+    <div id="sinSesion">
+      <a id="btn-entrar" href="iniciar-sesion.html" class="boton-entrar">🔐 Iniciar sesión</a>
+      <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
     </div>
 
-    <!-- SIEMPRE → los 3 puntitos -->
-    <button id="btn-puntos" class="boton-puntos">⋮</button>
-
-    <!-- MENÚ DESPLEGABLE -->
-    <div id="menu-desplegable" class="menu-desplegable">
-      <a href="recuperar-contraseña.html" class="menu-enlace">🔑 Recuperar tu contraseña</a>
-      <a href="eliminar-cuenta.html" class="menu-enlace rojo">⚠️ Eliminar esta cuenta</a>
+    <!-- CON SESIÓN -->
+    <div id="conSesion" class="oculto">
+      <span id="saludo" class="saludo"></span>
+      <a id="eliminarCuenta" href="eliminar-cuenta.html" class="enlace-eliminar">⚠️ Eliminar cuenta</a>
+      <button id="btn-cerrar" class="boton-cerrar">🚪 Cerrar sesión</button>
     </div>
   </div>
 
@@ -271,19 +213,10 @@
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const saludo = document.getElementById('saludo');
     const sinSesion = document.getElementById('sinSesion');
+    const conSesion = document.getElementById('conSesion');
+    const saludo = document.getElementById('saludo');
     const btnCerrar = document.getElementById('btn-cerrar');
-    const btnPuntos = document.getElementById('btn-puntos');
-    const menuDesplegable = document.getElementById('menu-desplegable');
-
-    // Abrir/cerrar menú
-    btnPuntos.addEventListener('click', (e) => {
-      e.stopPropagation();
-      menuDesplegable.classList.toggle('mostrar');
-    });
-    document.addEventListener('click', () => menuDesplegable.classList.remove('mostrar'));
-    menuDesplegable.addEventListener('click', (e) => e.stopPropagation());
 
     // ✅ VERIFICAR SESIÓN
     async function verificarSesion() {
@@ -292,8 +225,7 @@
       if (session) {
         // ✅ CONECTADO
         sinSesion.classList.add('oculto');
-        saludo.classList.remove('oculto');
-        btnCerrar.classList.add('activo');
+        conSesion.classList.remove('oculto');
         
         const { data: usuario } = await supabaseClient
           .from('usuarios')
@@ -305,8 +237,7 @@
       } else {
         // 🔒 SIN CONECTAR
         sinSesion.classList.remove('oculto');
-        saludo.classList.add('oculto');
-        btnCerrar.classList.remove('activo');
+        conSesion.classList.add('oculto');
       }
     }
 
