@@ -3,6 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vehículos en Venta">
@@ -24,61 +27,135 @@
       padding: 20px;
     }
 
-    /* --- BOTONES ARRIBA A LA DERECHA --- */
     .barra-superior {
       text-align: right;
       margin-bottom: 20px;
+      position: relative;
     }
-    .boton-sesion {
+
+    .grupo-izquierda {
+      display: inline-block;
+      text-align: right;
+    }
+
+    .saludo {
+      display: inline-block;
+      margin-right: 12px;
+      color: #2c5282;
+      font-weight: 600;
+      vertical-align: middle;
+    }
+
+    .boton-entrar {
       display: inline-block;
       padding: 10px 20px;
-      margin-left: 10px;
       border-radius: 10px;
       font-size: 15px;
       font-weight: 600;
       text-decoration: none;
-      transition: all 0.3s ease;
-    }
-    .boton-registrar {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff;
-      border: none;
-    }
-    .boton-registrar:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(49,130,206,0.2);
-    }
-    .boton-entrar {
       background: #fff;
       color: #3182ce;
       border: 2px solid #3182ce;
+      vertical-align: middle;
+      transition: all 0.3s ease;
     }
     .boton-entrar:hover {
       background: #ebf4fb;
       transform: translateY(-1px);
     }
-    .boton-cerrar {
-      background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
-      color: #fff;
-      border: none;
-      display: none;
+
+    .enlace-olvidada {
+      display: block;
+      margin-top: 6px;
+      font-size: 14px;
+      color: #3182ce;
+      text-decoration: none;
     }
-    .boton-eliminar-arriba {
-      background: #fff;
-      color: #c53030;
-      border: 2px solid #c53030;
-      display: none;
+    .enlace-olvidada:hover {
+      text-decoration: underline;
     }
-    .boton-eliminar-arriba:hover {
-      background: #fff5f5;
-      transform: translateY(-1px);
-    }
-    .saludo {
+
+    .boton-puntos {
       display: inline-block;
-      margin-right: 15px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
       color: #2c5282;
-      font-weight: 600;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      vertical-align: middle;
+      margin-left: 8px;
+      transition: background 0.2s ease;
     }
+    .boton-puntos:hover {
+      background: rgba(49, 130, 206, 0.1);
+    }
+
+    .boton-cerrar {
+      display: none; /* Solo se ve con sesión */
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 600;
+      border: none;
+      background: transparent;
+      color: #3182ce;
+      cursor: pointer;
+      vertical-align: middle;
+      margin-left: 8px;
+      text-decoration: underline;
+      transition: all 0.2s ease;
+    }
+    .boton-cerrar.activo {
+      display: inline-block;
+    }
+    .boton-cerrar:hover {
+      color: #2b6cb0;
+      background: rgba(49, 130, 206, 0.08);
+    }
+
+    .menu-desplegable {
+      position: absolute;
+      top: 50px;
+      right: 0;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(44, 82, 130, 0.15);
+      min-width: 220px;
+      z-index: 100;
+      display: none;
+      overflow: hidden;
+    }
+    .menu-desplegable.mostrar {
+      display: block;
+    }
+    .menu-enlace {
+      display: block;
+      padding: 14px 20px;
+      color: #3182ce;
+      font-size: 15px;
+      font-weight: 500;
+      text-decoration: none;
+      border-bottom: 1px solid #f0f4f8;
+      transition: background 0.2s ease;
+    }
+    .menu-enlace:last-child {
+      border-bottom: none;
+    }
+    .menu-enlace:hover {
+      background: #ebf4fb;
+    }
+    .menu-enlace.rojo {
+      color: #c53030;
+    }
+    .menu-enlace.rojo:hover {
+      background: #fff5f5;
+    }
+
+    .oculto { display: none !important; }
 
     .caja-principal {
       background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
@@ -89,13 +166,7 @@
       margin: 0 auto;
       box-shadow: 0 10px 30px rgba(44, 82, 130, 0.08);
       text-align: center;
-      animation: entradaSuave 0.7s ease-out;
       border: 1px solid #e2d9c8;
-    }
-
-    @keyframes entradaSuave {
-      from { opacity: 0; transform: translateY(25px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
@@ -139,34 +210,6 @@
       box-shadow: 0 8px 20px rgba(49, 130, 206, 0.25);
     }
 
-    .enlace-olvidada {
-      display: block;
-      margin-top: 25px;
-      color: #3182ce;
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-    .enlace-olvidada:hover {
-      color: #2b6cb0;
-      text-decoration: underline;
-    }
-
-    .enlace-eliminar-abajo {
-      display: block;
-      margin-top: 12px;
-      color: #000000;
-      font-size: 15px;
-      font-weight: bold;
-      text-decoration: none;
-      transition: color 0.2s ease;
-    }
-    .enlace-eliminar-abajo:hover {
-      color: #c53030;
-      text-decoration: underline;
-    }
-
     .pie-pagina {
       margin-top: 30px;
       font-size: 13px;
@@ -176,13 +219,29 @@
 </head>
 <body>
 
-  <!-- BOTONES ARRIBA A LA DERECHA -->
   <div class="barra-superior">
-    <span id="saludo" class="saludo"></span>
-    <a id="btn-registrar" href="registrarse.html" class="boton-sesion boton-registrar">✨ Registrarse</a>
-    <a id="btn-iniciar" href="iniciar-sesion.html" class="boton-sesion boton-entrar">🔐 Iniciar sesión</a>
-    <a id="btn-eliminar-arriba" href="eliminar-cuenta.html" class="boton-sesion boton-eliminar-arriba">⚠️ Eliminar Cuenta</a>
-    <button id="btn-cerrar" class="boton-sesion boton-cerrar">🚪 Cerrar sesión</button>
+    <div class="grupo-izquierda">
+      <!-- CON SESIÓN → saludo -->
+      <span id="saludo" class="saludo oculto"></span>
+      
+      <!-- SIN SESIÓN → entrar + olvidaste -->
+      <div id="sinSesion">
+        <a id="btn-entrar" href="iniciar-sesion.html" class="boton-entrar">🔐 Iniciar sesión</a>
+        <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
+      </div>
+      
+      <!-- CON SESIÓN → cerrar sesión FUERA -->
+      <button id="btn-cerrar" class="boton-cerrar">🚪 Cerrar sesión</button>
+    </div>
+
+    <!-- SIEMPRE → los 3 puntitos -->
+    <button id="btn-puntos" class="boton-puntos">⋮</button>
+
+    <!-- MENÚ DESPLEGABLE -->
+    <div id="menu-desplegable" class="menu-desplegable">
+      <a href="recuperar-contraseña.html" class="menu-enlace">🔑 Recuperar tu contraseña</a>
+      <a href="eliminar-cuenta.html" class="menu-enlace rojo">⚠️ Eliminar esta cuenta</a>
+    </div>
   </div>
 
   <div class="caja-principal">
@@ -203,12 +262,6 @@
       ❤️ <span>Mis Vehículos</span>
     </a>
 
-    <!-- SIN SESIÓN → aparecen abajo -->
-    <div id="enlaces-sin-sesion">
-      <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
-      <a id="enlace-eliminar-abajo" href="eliminar-cuenta.html" class="enlace-eliminar-abajo">Eliminar cuenta</a>
-    </div>
-
     <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
   </div>
 
@@ -218,27 +271,30 @@
 
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Elementos
     const saludo = document.getElementById('saludo');
-    const btnRegistrar = document.getElementById('btn-registrar');
-    const btnIniciar = document.getElementById('btn-iniciar');
-    const btnEliminarArriba = document.getElementById('btn-eliminar-arriba');
+    const sinSesion = document.getElementById('sinSesion');
     const btnCerrar = document.getElementById('btn-cerrar');
-    const enlacesSinSesion = document.getElementById('enlaces-sin-sesion');
+    const btnPuntos = document.getElementById('btn-puntos');
+    const menuDesplegable = document.getElementById('menu-desplegable');
 
-    // ✅ VERIFICAR SESIÓN CON SUPABASE
+    // Abrir/cerrar menú
+    btnPuntos.addEventListener('click', (e) => {
+      e.stopPropagation();
+      menuDesplegable.classList.toggle('mostrar');
+    });
+    document.addEventListener('click', () => menuDesplegable.classList.remove('mostrar'));
+    menuDesplegable.addEventListener('click', (e) => e.stopPropagation());
+
+    // ✅ VERIFICAR SESIÓN
     async function verificarSesion() {
       const { data: { session } } = await supabaseClient.auth.getSession();
 
       if (session) {
         // ✅ CONECTADO
-        btnRegistrar.style.display = 'none';
-        btnIniciar.style.display = 'none';
-        enlacesSinSesion.style.display = 'none';
-        btnEliminarArriba.style.display = 'inline-block';
-        btnCerrar.style.display = 'inline-block';
+        sinSesion.classList.add('oculto');
+        saludo.classList.remove('oculto');
+        btnCerrar.classList.add('activo');
         
-        // Obtener nombre del usuario
         const { data: usuario } = await supabaseClient
           .from('usuarios')
           .select('nombre')
@@ -248,12 +304,9 @@
         saludo.textContent = '¡Hola, ' + (usuario?.nombre || session.user.email) + '! 🎉';
       } else {
         // 🔒 SIN CONECTAR
-        btnRegistrar.style.display = 'inline-block';
-        btnIniciar.style.display = 'inline-block';
-        enlacesSinSesion.style.display = 'block';
-        btnEliminarArriba.style.display = 'none';
-        btnCerrar.style.display = 'none';
-        saludo.textContent = '';
+        sinSesion.classList.remove('oculto');
+        saludo.classList.add('oculto');
+        btnCerrar.classList.remove('activo');
       }
     }
 
@@ -263,36 +316,7 @@
       verificarSesion();
     });
 
-    // ✅ CONTADOR DE VISITAS
-    async function contarVisitaPrincipal() {
-      try {
-        const { data, error } = await supabaseClient
-          .from('visitas')
-          .select('cantidad')
-          .eq('pagina', 'principal');
-
-        if (error) return;
-
-        if (data.length === 0) {
-          await supabaseClient
-            .from('visitas')
-            .insert([{ pagina: 'principal', cantidad: 1 }]);
-        } else {
-          await supabaseClient
-            .from('visitas')
-            .update({ cantidad: data[0].cantidad + 1 })
-            .eq('pagina', 'principal');
-        }
-      } catch (err) {
-        console.log('Error:', err.message);
-      }
-    }
-
-    // ✅ CARGAR TODO
-    document.addEventListener('DOMContentLoaded', () => {
-      verificarSesion();
-      contarVisitaPrincipal();
-    });
+    document.addEventListener('DOMContentLoaded', verificarSesion);
   </script>
 
 </body>
