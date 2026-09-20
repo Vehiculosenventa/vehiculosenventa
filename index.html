@@ -69,21 +69,8 @@
       text-decoration: underline;
     }
 
-    .enlace-eliminar {
-      display: inline-block;
-      margin-left: 12px;
-      margin-right: 12px;
-      font-size: 14px;
-      color: #c53030;
-      text-decoration: none;
-      vertical-align: middle;
-    }
-    .enlace-eliminar:hover {
-      text-decoration: underline;
-    }
-
     .boton-cerrar {
-      display: inline-block;
+      display: none;
       padding: 8px 16px;
       border-radius: 8px;
       font-size: 14px;
@@ -95,6 +82,9 @@
       vertical-align: middle;
       text-decoration: underline;
       transition: all 0.2s ease;
+    }
+    .boton-cerrar.activo {
+      display: inline-block;
     }
     .boton-cerrar:hover {
       color: #2b6cb0;
@@ -172,10 +162,9 @@
       <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
     </div>
 
-    <!-- ✅ CON SESIÓN -->
+    <!-- ✅ CON SESIÓN → solo saludo y Cerrar sesión -->
     <div id="conSesion" class="oculto">
       <span id="saludo" class="saludo"></span>
-      <a href="eliminar-cuenta.html" class="enlace-eliminar">⚠️ Eliminar cuenta</a>
       <button id="btn-cerrar" class="boton-cerrar">🚪 Cerrar sesión</button>
     </div>
   </div>
@@ -217,7 +206,7 @@
       const { data: { session } } = await supabaseClient.auth.getSession();
 
       if (session) {
-        // ✅ CONECTADO → todo visible
+        // ✅ CONECTADO → saludo + Cerrar sesión
         sinSesion.classList.add('oculto');
         conSesion.classList.remove('oculto');
         
@@ -229,7 +218,7 @@
           
         saludo.textContent = '¡Hola, ' + (usuario?.nombre || session.user.email) + '! 🎉';
       } else {
-        // 🔒 SIN CONECTAR → solo entrar y olvidaste
+        // 🔒 SIN CONECTAR → entrar + olvidaste
         sinSesion.classList.remove('oculto');
         conSesion.classList.add('oculto');
       }
