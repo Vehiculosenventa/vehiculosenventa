@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Crear Nueva Contraseña - Vehículos en Venta</title>
+  <title>Recuperar Contraseña - Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
@@ -19,7 +19,7 @@
       box-shadow: 0 10px 30px rgba(44,82,130,0.08); border: 1px solid #e2d9c8;
     }
     h1 {color: #2c5282; font-size: 26px; font-weight: 800; text-align: center; margin-bottom: 8px;}
-    .subtitulo {color: #5a6872; text-align: center; margin-bottom: 30px; font-size: 15px;}
+    .subtitulo {color: #5a6872; text-align: center; margin-bottom: 30px; font-size: 15px; line-height: 1.5;}
     .campo {margin-bottom: 20px;}
     label {display: block; margin-bottom: 8px; font-weight: 600; color: #4a5568; font-size: 14px;}
     input {
@@ -38,85 +38,84 @@
     .exito {background: #f0fff4; border: 2px solid #9ae6b4; color: #276749;}
     .error {background: #fff5f5; border: 2px solid #feb2b2; color: #c53030;}
     .enlace {display: block; text-align: center; margin-top: 20px; color: #3182ce; font-size: 14px; font-weight: 600; text-decoration: none;}
-    .oculto {display: none !important;}
   </style>
 </head>
 <body>
   <div class="caja">
-    <div id="contenido">
-      <h1>🔑 Nueva Contraseña</h1>
-      <p class="subtitulo">Escribí tu contraseña nueva</p>
+    <h1>🔑 Olvidé mi contraseña</h1>
+    <p class="subtitulo">Escribí tu correo y te mandamos el enlace para crear una clave nueva</p>
 
-      <form id="formClave">
-        <input type="hidden" id="usuarioId">
-        <div class="campo">
-          <label for="claveNueva">Contraseña nueva</label>
-          <input type="password" id="claveNueva" required placeholder="Mínimo 6 caracteres">
-        </div>
-        <div class="campo">
-          <label for="claveConfirmar">Confirmar contraseña</label>
-          <input type="password" id="claveConfirmar" required placeholder="Repetí la contraseña">
-        </div>
-        <button type="submit" id="btnGuardar" class="boton">✅ Guardar contraseña</button>
-      </form>
+    <form id="formRecuperar">
+      <div class="campo">
+        <label for="correo">Tu correo electrónico</label>
+        <input type="email" id="correo" required placeholder="tu@correo.com">
+      </div>
+      <button type="submit" id="btnEnviar" class="boton">📩 Enviar enlace</button>
+    </form>
 
-      <div id="mensaje" class="mensaje"></div>
+    <div id="mensaje" class="mensaje"></div>
 
-      <a href="iniciar-sesion.html" class="enlace">← Ir a Iniciar Sesión</a>
-    </div>
+    <a href="iniciar-sesion.html" class="enlace">← Volver a Iniciar Sesión</a>
   </div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ✅ Tomamos el ID de la dirección
-    const params = new URLSearchParams(window.location.search);
-    const usuarioId = params.get('id');
-    
-    if (!usuarioId) {
-      document.getElementById('contenido').innerHTML = `
-        <h1>⚠️ Enlace inválido</h1>
-        <p class="subtitulo">El enlace está incompleto o no es correcto.</p>
-        <a href="recuperar-contraseña.html" class="enlace">Volver a pedir el enlace</a>
-      `;
-    } else {
-      document.getElementById('usuarioId').value = usuarioId;
-    }
-
-    const formClave = document.getElementById('formClave');
-    const btnGuardar = document.getElementById('btnGuardar');
+    const formRecuperar = document.getElementById('formRecuperar');
+    const btnEnviar = document.getElementById('btnEnviar');
     const mensaje = document.getElementById('mensaje');
 
-    formClave?.addEventListener('submit', async (e) => {
+    formRecuperar.addEventListener('submit', async (e) => {
       e.preventDefault();
-      btnGuardar.disabled = true;
+      btnEnviar.disabled = true;
       mensaje.style.display = 'none';
 
-      const claveNueva = document.getElementById('claveNueva').value;
-      const claveConfirmar = document.getElementById('claveConfirmar').value;
-
-      if (claveNueva.length < 6) {
-        mensaje.className = 'mensaje error';
-        mensaje.innerHTML = '⚠️ Mínimo 6 caracteres';
-        mensaje.style.display = 'block';
-        btnGuardar.disabled = false;
-        return;
-      }
-
-      if (claveNueva !== claveConfirmar) {
-        mensaje.className = 'mensaje error';
-        mensaje.innerHTML = '⚠️ No coinciden las contraseñas';
-        mensaje.style.display = 'block';
-        btnGuardar.disabled = false;
-        return;
-      }
+      const correo = document.getElementById('correo').value.trim();
 
       try {
-        // ✅ Iniciamos sesión con el ID para poder cambiar la clave
-        // Alternativa: buscamos el correo y hacemos el cambio
-        const { data: usuario } = await supabaseClient
+        // ✅ Buscamos al usuario por su correo
+        const { data: usuario, error: errBusqueda } = await supabase
           .from('usuarios')
-         
+          .select('id, nombre, correo')
+          .eq('correo', correo)
+          .single();
+
+        if (errBusqueda) throw new Error("No encontramos ese correo");
+
+        // ✅ Llamamos a la función que mandamos por Resend
+        const funcionUrl = `${SUPABASE_URL}/functions/v1/enviar-recuperacion`;
+
+        const respuesta = await fetch(funcionUrl, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            correo: usuario.correo,
+            nombre: usuario.nombre,
+            enlace: `${window.location.origin}/crear-contraseña.html`
+          })
+        });
+
+        const resultado = await respuesta.json();
+
+        if (!respuesta.ok) throw new Error(resultado.error || "No se pudo enviar");
+
+        // ✅ Todo salió bien
+        mensaje.className = 'mensaje exito';
+        mensaje.innerHTML = `✅ ¡Listo! Revisá tu correo 📬<br>Te mandamos el enlace para crear tu contraseña nueva`;
+        mensaje.style.display = 'block';
+        formRecuperar.style.display = 'none';
+
+      } catch (err) {
+        mensaje.className = 'mensaje error';
+        mensaje.innerHTML = `❌ ${err.message}`;
+        mensaje.style.display = 'block';
+      }
+
+      btnEnviar.disabled = false;
+    });
+  </script>
+</body>
+</html>
