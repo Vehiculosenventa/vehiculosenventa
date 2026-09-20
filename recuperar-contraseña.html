@@ -2,52 +2,20 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Diagnóstico</title>
+  <title>Prueba</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    body { font-family: sans-serif; padding: 30px; max-width: 600px; margin: 0 auto; }
-    .ok { color: green; font-weight: bold; margin: 8px 0; }
-    .mal { color: red; font-weight: bold; margin: 8px 0; }
-    .info { color: #3182ce; margin: 8px 0; }
-  </style>
 </head>
 <body>
-  <h1>Diagnóstico</h1>
-  <div id="pasos"></div>
+  <h1>Prueba</h1>
+  <div id="resultado"></div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const pasos = document.getElementById('pasos');
-
-    function agregar(texto, clase) {
-      pasos.innerHTML += `<p class="${clase}">${texto}</p>`;
-    }
-
-    async function iniciar() {
-      agregar("1️⃣ Cliente conectado", "info");
-      
-      try {
-        agregar("2️⃣ Pidiendo datos...", "info");
-        
-        const { data, error } = await supabase
-          .from('usuarios')
-          .select('correo')
-          .limit(1);
-        
-        if (error) {
-          agregar(`❌ Error: ${error.message}`, "mal");
-        } else {
-          agregar(`✅ ${data.length} usuario(s)`, "ok");
-        }
-      } catch (e) {
-        agregar(`❌ Fallo: ${e.message}`, "mal");
-      }
-    }
-
-    iniciar();
+    
+    document.getElementById('resultado').innerHTML = "✅ Conectado";
   </script>
 </body>
 </html>
