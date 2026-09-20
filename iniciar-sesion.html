@@ -34,108 +34,52 @@
       font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 8px;
     }
     .boton:disabled {background: #a0aec0; cursor: not-allowed; opacity: 0.7;}
-    .boton-rojo {
-      background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
-      margin-top: 20px;
-    }
     .mensaje {margin-top: 20px; padding: 15px; border-radius: 12px; display: none; font-weight: 600; text-align: center;}
     .exito {background: #f0fff4; border: 2px solid #9ae6b4; color: #276749;}
     .error {background: #fff5f5; border: 2px solid #feb2b2; color: #c53030;}
     .enlace {display: block; text-align: center; margin-top: 20px; color: #3182ce; font-size: 14px; font-weight: 600; text-decoration: none;}
-    .oculto {display: none !important;}
-    .fila-saludo {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      gap: 15px;
-      margin-bottom: 25px;
-    }
-    .bienvenida {
-      color: #276749;
-      font-weight: 600;
-      font-size: 17px;
-      margin: 0;
-    }
-    .boton-chico {
-      padding: 8px 16px;
-      font-size: 14px;
-      width: auto;
-      margin: 0;
-    }
   </style>
 </head>
 <body>
   <div class="caja">
-    <div id="sinSesion">
-      <h1>🔐 Iniciar Sesión</h1>
-      <p class="subtitulo">Ingresá tus datos para entrar</p>
+    <h1>🔐 Iniciar Sesión</h1>
+    <p class="subtitulo">Ingresá tus datos para entrar</p>
 
-      <form id="formLogin">
-        <div class="campo">
-          <label for="correo">Correo electrónico</label>
-          <input type="email" id="correo" required placeholder="tu@correo.com">
-        </div>
-        <div class="campo">
-          <label for="contrasena">Contraseña</label>
-          <input type="password" id="contrasena" required placeholder="Tu contraseña">
-        </div>
-        <button type="submit" id="btnEntrar" class="boton">Entrar ✅</button>
-      </form>
-
-      <div id="mensaje" class="mensaje"></div>
-
-      <a href="registrarse.html" class="enlace">¿No tenés cuenta? Creá una</a>
-      <a href="index.html" class="enlace">← Volver al inicio</a>
-    </div>
-
-    <div id="conSesion" class="oculto">
-      <h1>✅ Conectado</h1>
-      
-      <div class="fila-saludo">
-        <p class="bienvenida" id="textoBienvenida"></p>
-        <button id="btnCerrar" class="boton boton-rojo boton-chico">🚪 Cerrar sesión</button>
+    <form id="formLogin">
+      <div class="campo">
+        <label for="correo">Correo electrónico</label>
+        <input type="email" id="correo" required placeholder="tu@correo.com">
       </div>
-      
-      <a href="mis-vehiculos.html" class="boton" style="text-align:center; text-decoration:none; display:block;">🚗 Ver Mis Vehículos</a>
-      <a href="index.html" class="enlace">← Ir a la Página Principal</a>
-    </div>
+      <div class="campo">
+        <label for="contrasena">Contraseña</label>
+        <input type="password" id="contrasena" required placeholder="Tu contraseña">
+      </div>
+      <button type="submit" id="btnEntrar" class="boton">Entrar ✅</button>
+    </form>
+
+    <div id="mensaje" class="mensaje"></div>
+
+    <a href="registrarse.html" class="enlace">¿No tenés cuenta? Creá una</a>
+    <a href="index.html" class="enlace">← Volver al inicio</a>
   </div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // ✅ NOMBRE CORRECTO: no se repite más
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const sinSesion = document.getElementById('sinSesion');
-    const conSesion = document.getElementById('conSesion');
-    const textoBienvenida = document.getElementById('textoBienvenida');
     const formLogin = document.getElementById('formLogin');
     const btnEntrar = document.getElementById('btnEntrar');
-    const btnCerrar = document.getElementById('btnCerrar');
     const mensaje = document.getElementById('mensaje');
 
-    async function verificarSesion() {
+    // ✅ Si ya tiene sesión → va directo a la principal
+    (async function verificarSesion() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (session) {
-        sinSesion.classList.add('oculto');
-        conSesion.classList.remove('oculto');
-        
-        const { data: usuario } = await supabaseClient
-          .from('usuarios')
-          .select('nombre')
-          .eq('correo', session.user.email)
-          .single();
-          
-        textoBienvenida.textContent = '¡Bienvenido, ' + (usuario?.nombre || session.user.email) + '! 🎉';
-      } else {
-        sinSesion.classList.remove('oculto');
-        conSesion.classList.add('oculto');
+        window.location.href = 'index.html';
       }
-    }
-
-    verificarSesion();
+    })();
 
     formLogin.addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -146,7 +90,7 @@
       const contrasena = document.getElementById('contrasena').value;
 
       try {
-        // ✅ Iniciamos sesión con Supabase
+        // ✅ Iniciamos sesión
         const { data, error } = await supabaseClient.auth.signInWithPassword({
           email: correo,
           password: contrasena
@@ -157,7 +101,7 @@
         // ✅ Verificamos que esté confirmado
         const { data: usuario } = await supabaseClient
           .from('usuarios')
-          .select('confirmado, nombre')
+          .select('confirmado')
           .eq('correo', correo)
           .single();
 
@@ -169,11 +113,8 @@
           return;
         }
 
-        mensaje.className = 'mensaje exito';
-        mensaje.innerHTML = '✅ ¡Bienvenido, ' + usuario.nombre + '!';
-        mensaje.style.display = 'block';
-
-        setTimeout(() => verificarSesion(), 1000);
+        // ✅ ÉXITO → va directo a la principal SIN carteles
+        window.location.href = 'index.html';
 
       } catch (err) {
         mensaje.className = 'mensaje error';
@@ -188,11 +129,6 @@
       } finally {
         btnEntrar.disabled = false;
       }
-    });
-
-    btnCerrar.addEventListener('click', async () => {
-      await supabaseClient.auth.signOut();
-      verificarSesion();
     });
   </script>
 </body>
