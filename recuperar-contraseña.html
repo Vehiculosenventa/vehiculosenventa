@@ -51,8 +51,8 @@ async function enviarEnlace() {
     // 1° Verificamos si el correo existe
     const { data, error: errorBusqueda } = await sb
       .from("usuarios")
-      .select("correo")
-      .eq("correo", correo)
+      .select("Email")
+      .eq("Email", correo)
       .limit(1);
 
     if (errorBusqueda) throw errorBusqueda;
