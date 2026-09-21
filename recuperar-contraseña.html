@@ -3,54 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lista Usuarios</title>
+  <title>Ver Nombres</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif;}
-    body {background: #f8fafc; padding: 40px 20px; max-width: 600px; margin: 0 auto;}
-    h1 {color: #2c5282; text-align: center; margin-bottom: 30px;}
-    button {width: 100%; padding: 15px; background: #3182ce; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer;}
-    .item {padding: 15px; margin: 10px 0; background: white; border-radius: 10px; border: 2px solid #c5d6e8;}
-    .si {color: #166534; font-weight: bold;}
-    .no {color: #b91c1c; font-weight: bold;}
-    .vacio {text-align: center; padding: 40px; color: #666; font-size: 18px;}
-    .error {padding: 20px; background: #fef3c7; border-radius: 10px; border: 2px solid #fbbf24; color: #92400e; margin-top: 20px;}
+    body {font-family: sans-serif; max-width: 500px; margin: 50px auto; padding: 20px;}
+    button {padding: 12px 30px; background: #3182ce; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;}
+    .lista {margin-top: 20px;}
+    .item {padding: 10px; border-bottom: 1px solid #ddd;}
   </style>
 </head>
 <body>
 
-  <h1>📋 Todos los Usuarios</h1>
-  <button onclick="mostrarTodo()">🔄 Mostrar todo</button>
-  <div id="contenido" style="margin-top: 25px;"></div>
+  <h1>Lista de Nombres</h1>
+  <button onclick="ver()">Ver todos</button>
+  <div id="lista" class="lista"></div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
+    // ✅ UNA SOLA VEZ — NO HAY OTRA
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function mostrarTodo() {
-      const div = document.getElementById('contenido');
-      div.innerHTML = '<p style="text-align:center; color:#666;">Cargando...</p>';
+    async function ver() {
+      const caja = document.getElementById('lista');
+      caja.innerHTML = '<p>Cargando...</p>';
 
+      // 👉 Lee la tabla "usuarios" y SOLO pide el campo "nombre"
       const { data, error } = await supabase
         .from('usuarios')
-        .select('*');
+        .select('nombre');
 
       if (error) {
-        div.innerHTML = `<div class="error">⚠️ Error: ${error.message}</div>`;
+        caja.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
       } else if (data.length === 0) {
-        div.innerHTML = '<p class="vacio">📭 La tabla está vacía</p>';
+        caja.innerHTML = '<p>No hay nombres todavía</p>';
       } else {
-        let html = `<p style="font-weight:bold; margin-bottom:15px;">✅ Total: ${data.length} usuario(s)</p>`;
-        data.forEach(u => {
-          html += `
-            <div class="item">
-              <strong>Correo:</strong> ${u.correo || 'Sin correo'}<br>
-              <strong>Confirmado:</strong> <span class="${u.confirmado ? 'si' : 'no'}">${u.confirmado}</span>
-            </div>`;
+        let html = '';
+        data.forEach(fila => {
+          html += `<div class="item">${fila.nombre}</div>`;
         });
-        div.innerHTML = html;
+        caja.innerHTML = html;
       }
     }
   </script>
