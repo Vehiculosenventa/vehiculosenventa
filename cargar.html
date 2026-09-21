@@ -205,12 +205,14 @@
 
   <div class="form-container">
     
+    <!-- ❌ Sin sesión: se ven estos 3 -->
     <div class="botones-sesion" id="caja-botones-sesion">
-      <a href="index.html" class="boton-sesion btn-ingresar">🔑 Ingresar</a>
+      <a href="iniciar-sesion.html" class="boton-sesion btn-ingresar">🔑 Ingresar</a>
       <a href="registrarse.html" class="boton-sesion btn-registrar">📝 Registrarse</a>
-      <a href="recuperar-contrasena.html" class="boton-sesion btn-olvide">¿Olvidaste tu contraseña?</a>
+      <a href="recuperar-contraseña.html" class="boton-sesion btn-olvide">¿Olvidaste tu contraseña?</a>
     </div>
 
+    <!-- ✅ Con sesión: SOLO aparece este -->
     <button id="btn-cerrar-sesion" class="boton boton-cerrar oculto" onclick="cerrarSesion()">
       🚪 Cerrar sesión
     </button>
@@ -483,7 +485,7 @@
         </label>
       </div>
 
-      <button type="submit" class="boton" id="btnGuardar">💾 Guardar Vehículo</button>
+      <button type="submit" class="boton" id="btnGuardar">🔒 Debés ingresar primero</button>
       <div id="mensaje" class="mensaje"></div>
     </form>
 
@@ -491,7 +493,7 @@
   </div>
 
   <script>
-    // === UNA SOLA VEZ — SIN REPETIR ✅ ===
+    // === INICIALIZAR SUPABASE UNA SOLA VEZ ✅ ===
     const SUPABASE_URL = "https://ikancehiaanhnuuykkio.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrYW5jZGlhaWFuaG51dXlra2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     const { createClient } = supabase;
@@ -509,10 +511,12 @@
       campo.value = campo.value.replace(/[^0-9]/g, '');
     }
 
-    function verificarSesion() {
-      const usuarioId = localStorage.getItem('usuario_id');
+    // ✅ VERIFICAR SESIÓN REAL DE SUPABASE
+    async function verificarSesion() {
+      const { data: { user } } = await supabase.auth.getUser();
       
-      if (!usuarioId) {
+      if (!user) {
+        // ❌ SIN SESION → se ven los 3 enlaces
         cajaBotonesSesion.classList.remove('oculto');
         btnCerrarSesion.classList.add('oculto');
         btnGuardar.disabled = true;
@@ -520,15 +524,16 @@
         return null;
       }
 
+      // ✅ CON SESION → desaparecen los 3, solo queda Cerrar sesión
       cajaBotonesSesion.classList.add('oculto');
       btnCerrarSesion.classList.remove('oculto');
       btnGuardar.disabled = false;
       btnGuardar.textContent = "💾 Guardar Vehículo";
-      return usuarioId;
+      return user.id;
     }
 
-    function cerrarSesion() {
-      localStorage.removeItem('usuario_id');
+    async function cerrarSesion() {
+      await supabase.auth.signOut();
       window.location.href = 'index.html';
     }
 
@@ -578,7 +583,7 @@
     formAuto.addEventListener('submit', async e => {
       e.preventDefault();
       
-      const usuarioId = verificarSesion();
+      const usuarioId = await verificarSesion();
       if (!usuarioId) {
         mensaje.textContent = "❌ Tenés que ingresar a tu cuenta primero";
         mensaje.className = "mensaje error";
@@ -648,7 +653,9 @@
       }
     });
 
+    // ✅ Actualizar apenas carga y si cambia sesión
     verificarSesion();
+    supabase.auth.onAuthStateChange(() => verificarSesion());
   </script>
 
 </body>
