@@ -20,7 +20,7 @@
   <div class="caja">
     <h1>🔑 Recuperar Contraseña</h1>
     <input type="email" id="correo" placeholder="Tu correo electrónico">
-    <button onclick="buscar()">Buscar</button>
+    <button onclick="enviar()">📩 Enviar enlace</button>
     <p id="mensaje"></p>
   </div>
 
@@ -28,30 +28,24 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // UNA SOLA VEZ ✅ — sin repetir
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function buscar() {
+    async function enviar() {
       const correo = document.getElementById('correo').value.trim();
       const msg = document.getElementById('mensaje');
-      msg.textContent = 'Buscando...';
+      msg.textContent = 'Enviando...';
       msg.className = '';
 
-      const { data, error } = await supabase
-        .from('usuarios')
-        .select('correo')
-        .eq('correo', correo)
-        .limit(1);
+      const { error } = await supabase.auth.resetPasswordForEmail(correo, {
+        redirectTo: 'https://vehiculosenventa.com.ar/crear-contraseña.html'
+      });
 
       if (error) {
-        msg.textContent = '❌ Error: ' + error.message;
+        msg.textContent = '❌ ' + error.message;
         msg.className = 'mal';
-      } else if (data.length > 0) {
-        msg.textContent = '✅ Correo encontrado — enviamos el enlace';
-        msg.className = 'ok';
       } else {
-        msg.textContent = '❌ No encontramos ese correo';
-        msg.className = 'mal';
+        msg.textContent = '✅ ¡Revisá tu correo! Te mandamos el enlace';
+        msg.className = 'ok';
       }
     }
   </script>
