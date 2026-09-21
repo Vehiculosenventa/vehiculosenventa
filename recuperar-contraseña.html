@@ -81,15 +81,13 @@
 </div>
 
 <script>
-// Tus datos de Supabasehttps://  
-const SUPABASE_URL = "uhdypavizwkkbygrvuex.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
+// Pegá tu clave completa de anon public acá abajo
+const SUPABASE_KEY = "PEGÁ-TU-CLAVE-COMPLETA-ACÁ";
 
-// Inicializamos Supabase
 const { createClient } = supabase;
 const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Función de recuperación — directa a Supabase
 async function enviarEnlace() {
   const correo = document.getElementById("correo").value.trim();
   const mensaje = document.getElementById("mensaje");
@@ -103,23 +101,19 @@ async function enviarEnlace() {
   }
 
   try {
-    // Enviamos el enlace — Supabase busca solo en la tabla de autenticación
-    const { error } = await sb.auth.resetPasswordForEmail(correo, {
-      redirectTo: "https://vehiculosenventa.com.ar/confirmar-contraseña.html"
+    // Llamamos a tu función: enviar-recuperacion
+    const { data, error } = await sb.functions.invoke("enviar-recuperacion", {
+      body: { correo: correo }
     });
 
     if (error) throw error;
 
-    mensaje.textContent = "✅ Enlace enviado! Revisá tu correo (y también Spam)";
+    mensaje.textContent = "✅ Enlace enviado! Revisá tu correo (también Spam)";
     mensaje.className = "mensaje exito";
     mensaje.style.display = "block";
 
   } catch (err) {
-    if (err.message.includes("User not found") || err.message.includes("no user")) {
-      mensaje.textContent = "❌ No encontramos ese correo";
-    } else {
-      mensaje.textContent = "❌ " + err.message;
-    }
+    mensaje.textContent = "❌ " + (err.message || "No se pudo enviar");
     mensaje.className = "mensaje error";
     mensaje.style.display = "block";
   }
