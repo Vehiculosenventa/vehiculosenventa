@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Fuerza recarga sin caché -->
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
@@ -203,7 +202,7 @@
     }
     .oculto { display: none !important; }
     .formulario-deshabilitado { opacity: 0.5; pointer-events: none; }
-    .depurar { font-size: 12px; margin-top: 10px; padding: 8px; background: #f0f0f0; border-radius: 8px; }
+    .depurar { font-size: 12px; margin-top: 15px; padding: 10px; background: #f0f0f0; border-radius: 8px; color: #333; }
   </style>
 </head>
 <body>
@@ -507,8 +506,8 @@
 
     <a href="index.html" class="volver">← Volver al inicio</a>
     
-    <!-- 🟢 Para depurar: te dice qué detecta -->
-    <div id="info-sesion" class="depurar" style="display:none;">Estado: comprobando...</div>
+    <!-- 🟢 Cartel de diagnóstico -->
+    <div id="info-sesion" class="depurar">🔍 Comprobando sesión...</div>
   </div>
 
   <script>
@@ -530,31 +529,47 @@
       campo.value = campo.value.replace(/[^0-9]/g, '');
     }
 
+    // ✅ DETECCIÓN MEJORADA — busca la sesión de 2 formas
     async function actualizarInterfaz() {
       console.log('🔍 Comprobando sesión...');
-      infoSesion.style.display = 'block';
       
+      // Forma 1: getUser()
       const { data: { user }, error } = await supabase.auth.getUser();
       
-      if (error) console.log('❌ Error al obtener usuario:', error);
-      console.log('👤 Usuario detectado:', user ? user.email : 'Ninguno');
-      infoSesion.textContent = user ? `✅ Sesión activa: ${user.email}` : '❌ Sin sesión';
+      if (error) console.log('❌ Error:', error);
       
-      if (!user) {
+      // Forma 2: también revisamos la sesión completa
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      const usuarioActivo = user || session?.user;
+      
+      console.log('👤 Usuario:', usuarioActivo?.email || 'Ninguno');
+      
+      if (usuarioActivo) {
+        // ✅ SÍ HAY SESIÓN → ocultar botones, mostrar formulario
+        infoSesion.textContent = `✅ SESIÓN ACTIVA: ${usuarioActivo.email}`;
+        infoSesion.style.background = '#e6fffa';
+        
+        cajaSinSesion.classList.add('oculto');
+        cajaConSesion.classList.remove('oculto');
+        formAuto.classList.remove('formulario-deshabilitado');
+        btnGuardar.disabled = false;
+        btnGuardar.textContent = "💾 Guardar Vehículo";
+        
+        return usuarioActivo.id;
+      } else {
+        // ❌ NO HAY SESIÓN → mostrar botones, bloquear formulario
+        infoSesion.textContent = "❌ SIN SESIÓN — Iniciá sesión desde la página principal";
+        infoSesion.style.background = '#fff5f5';
+        
         cajaSinSesion.classList.remove('oculto');
         cajaConSesion.classList.add('oculto');
         formAuto.classList.add('formulario-deshabilitado');
         btnGuardar.disabled = true;
         btnGuardar.textContent = "🔒 Debés ingresar primero";
+        
         return null;
       }
-
-      cajaSinSesion.classList.add('oculto');
-      cajaConSesion.classList.remove('oculto');
-      formAuto.classList.remove('formulario-deshabilitado');
-      btnGuardar.disabled = false;
-      btnGuardar.textContent = "💾 Guardar Vehículo";
-      return user.id;
     }
 
     async function cerrarSesion() {
@@ -678,6 +693,7 @@
       }
     });
 
+    // ✅ Ejecutar al cargar y si cambia la sesión
     actualizarInterfaz();
     supabase.auth.onAuthStateChange(() => actualizarInterfaz());
   </script>
