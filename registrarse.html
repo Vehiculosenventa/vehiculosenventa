@@ -14,7 +14,7 @@
       padding: 20px;
     }
     .caja {
-      background: #faf8f0; /* Cremita ✨ */
+      background: #faf8f0;
       padding: 40px 30px;
       border-radius: 16px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.08);
@@ -24,8 +24,6 @@
     h1 {text-align: center; color: #2c5282; margin-bottom: 30px; font-size: 22px;}
     .campo {margin-bottom: 20px; position: relative;}
     label {display: block; margin-bottom: 6px; color: #4a5568; font-weight: 500;}
-    
-    /* TODOS los campos iguales ✅ */
     .input-estilo {
       width: 100%; padding: 12px 15px;
       border: 1px solid #bdd1e1; border-radius: 8px;
@@ -33,19 +31,15 @@
       background: #ffffff;
     }
     .input-estilo:focus {outline: none; border-color: #6fa8d6; box-shadow: 0 0 0 3px rgba(111,168,214,0.2);}
-    
     .input-con-ojo {position: relative;}
-    .input-con-ojo .input-estilo {padding-right: 45px;} /* Espacio para el ojito */
-    
+    .input-con-ojo .input-estilo {padding-right: 45px;}
     .ojo {
       position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
       cursor: pointer; font-size: 20px; color: #6b7280;
       user-select: none;
     }
     .ojo:hover {color: #3182ce;}
-    
     .indicador {font-size: 13px; color: #718096; margin-top: 5px;}
-    
     button {
       width: 100%; padding: 14px;
       background: #5fa8d3;
@@ -54,10 +48,8 @@
       cursor: pointer; transition: background 0.3s;
     }
     button:hover {background: #4a90c4;}
-    
     .enlace {margin-top: 20px; text-align: center;}
     .enlace a {color: #5fa8d3; text-decoration: none;}
-    
     .error {color: #d64545; margin-top: -10px; margin-bottom: 12px; font-size: 14px; display: none;}
   </style>
 </head>
@@ -104,7 +96,7 @@
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Contadores de caracteres
+    // Contadores
     document.getElementById('contraseña').addEventListener('input', function() {
       document.getElementById('contadorContraseña').textContent = this.value.length + ' / 8';
     });
@@ -112,19 +104,14 @@
       document.getElementById('contadorRepetir').textContent = this.value.length + ' / 8';
     });
 
-    // === OJITO FUNCIONANDO BIEN 👁️🙈 ===
+    // Ojito 👁️🙈
     function toggleVer(idCampo, elemento) {
       const campo = document.getElementById(idCampo);
-      if (campo.type === 'password') {
-        campo.type = 'text';
-        elemento.textContent = '🙈'; // Se ve la contraseña
-      } else {
-        campo.type = 'password';
-        elemento.textContent = '👁️'; // Se oculta
-      }
+      campo.type = campo.type === 'password' ? 'text' : 'password';
+      elemento.textContent = campo.type === 'password' ? '👁️' : '🙈';
     }
 
-    // === REGISTRAR ===
+    // Registrar
     async function registrar() {
       const correo = document.getElementById('correo').value.trim();
       const contraseña = document.getElementById('contraseña').value;
@@ -133,7 +120,6 @@
 
       mensajeError.style.display = 'none';
 
-      // Validaciones
       if (contraseña.length < 6 || contraseña.length > 8) {
         mensajeError.style.display = 'block';
         return;
@@ -147,7 +133,6 @@
         return;
       }
 
-      // Enviar a Supabase
       const { data, error } = await supabase.auth.signUp({
         email: correo,
         password: contraseña,
@@ -156,14 +141,9 @@
         }
       });
 
-      if (error) {
-        alert("❌ " + error.message);
-      } else if (data.user && !data.session) {
-        alert("✅ Listo! Revisá tu correo para confirmar la cuenta");
-      } else {
-        alert("✅ Cuenta creada! Ya podés entrar");
-        window.location.href = "index.html";
-      }
+      if (error) alert("❌ " + error.message);
+      else if (data.user && !data.session) alert("✅ Listo! Revisá tu correo");
+      else { alert("✅ Cuenta creada!"); window.location.href = "index.html"; }
     }
   </script>
 </body>
