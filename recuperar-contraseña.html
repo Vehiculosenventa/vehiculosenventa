@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ver Nombres</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Recuperar Contraseña - Prueba</title>
+  <script src="https://jsdelivr.net"></script>
   <style>
     body {font-family: sans-serif; max-width: 500px; margin: 50px auto; padding: 20px;}
     button {padding: 12px 30px; background: #3182ce; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;}
@@ -14,22 +14,22 @@
 </head>
 <body>
 
-  <h1>Lista de Nombres</h1>
+  <h1>Lista de Nombres (Prueba)</h1>
+  <!-- El botón ahora llama a ver() de forma correcta -->
   <button onclick="ver()">Ver todos</button>
   <div id="lista" class="lista"></div>
 
   <script>
-    const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
+    const SUPABASE_URL = "https://supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // ✅ UNA SOLA VEZ — NO HAY OTRA
+    // Declarado una sola vez globalmente para evitar el error "already been declared"
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function ver() {
       const caja = document.getElementById('lista');
       caja.innerHTML = '<p>Cargando...</p>';
 
-      // 👉 Lee la tabla "usuarios" y SOLO pide el campo "nombre"
       const { data, error } = await supabase
         .from('usuarios')
         .select('nombre');
@@ -39,11 +39,8 @@
       } else if (data.length === 0) {
         caja.innerHTML = '<p>No hay nombres todavía</p>';
       } else {
-        let html = '';
-        data.forEach(fila => {
-          html += `<div class="item">${fila.nombre}</div>`;
-        });
-        caja.innerHTML = html;
+        // Renderizado optimizado
+        caja.innerHTML = data.map(fila => `<div class="item">${fila.nombre}</div>`).join('');
       }
     }
   </script>
