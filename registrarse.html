@@ -14,7 +14,7 @@
       padding: 20px;
     }
     .caja {
-      background: #faf8f0; /* Cremita suave que usábamos ✨ */
+      background: #faf8f0; /* Cremita suave ✨ */
       padding: 40px 30px;
       border-radius: 16px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.08);
@@ -22,15 +22,22 @@
       max-width: 420px;
     }
     h1 {text-align: center; color: #2c5282; margin-bottom: 30px; font-size: 22px;}
-    .campo {margin-bottom: 20px;}
+    .campo {margin-bottom: 20px; position: relative;}
     label {display: block; margin-bottom: 6px; color: #4a5568; font-weight: 500;}
-    input {
-      width: 100%; padding: 12px 15px;
+    .input-con-ojo {position: relative;}
+    .input-con-ojo input {
+      width: 100%; padding: 12px 45px 12px 15px;
       border: 1px solid #bdd1e1; border-radius: 8px;
       font-size: 16px;
       background: #ffffff;
     }
-    input:focus {outline: none; border-color: #6fa8d6; box-shadow: 0 0 0 3px rgba(111,168,214,0.2);}
+    .input-con-ojo input:focus {outline: none; border-color: #6fa8d6; box-shadow: 0 0 0 3px rgba(111,168,214,0.2);}
+    .ojo {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      cursor: pointer; font-size: 20px; color: #6b7280;
+      user-select: none;
+    }
+    .ojo:hover {color: #3182ce;}
     button {
       width: 100%; padding: 14px;
       background: #5fa8d3; /* Azul suave */
@@ -56,12 +63,18 @@
 
     <div class="campo">
       <label for="contraseña">Contraseña</label>
-      <input type="password" id="contraseña" placeholder="Mínimo 6 caracteres">
+      <div class="input-con-ojo">
+        <input type="password" id="contraseña" placeholder="Mínimo 6 caracteres">
+        <span class="ojo" onclick="toggleVer('contraseña', this)">👁️</span>
+      </div>
     </div>
 
     <div class="campo">
       <label for="repetir_contraseña">Repetir Contraseña</label>
-      <input type="password" id="repetir_contraseña" placeholder="Escribí la misma contraseña">
+      <div class="input-con-ojo">
+        <input type="password" id="repetir_contraseña" placeholder="Escribí la misma contraseña">
+        <span class="ojo" onclick="toggleVer('repetir_contraseña', this)">👁️</span>
+      </div>
     </div>
 
     <div class="error" id="mensaje_error">Las contraseñas no coinciden</div>
@@ -79,6 +92,18 @@
     const SUPABASE_KEY = 'PONÉ_TU_CLAVE_AQUÍ';
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Función del ojito 👁️
+    function toggleVer(idCampo, elemento) {
+      const campo = document.getElementById(idCampo);
+      if (campo.type === 'password') {
+        campo.type = 'text';
+        elemento.textContent = '🙈'; // Ojito tapado
+      } else {
+        campo.type = 'password';
+        elemento.textContent = '👁️'; // Ojito abierto
+      }
+    }
 
     async function registrar() {
       const correo = document.getElementById('correo').value.trim();
