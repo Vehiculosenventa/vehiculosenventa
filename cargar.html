@@ -511,8 +511,8 @@
       campo.value = campo.value.replace(/[^0-9]/g, '');
     }
 
-    // ✅ VERIFICAR SESIÓN REAL DE SUPABASE
-    async function verificarSesion() {
+    // ✅ VERIFICAR SESIÓN — ESPERA BIEN LA RESPUESTA
+    async function actualizarInterfaz() {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
@@ -583,7 +583,7 @@
     formAuto.addEventListener('submit', async e => {
       e.preventDefault();
       
-      const usuarioId = await verificarSesion();
+      const usuarioId = await actualizarInterfaz();
       if (!usuarioId) {
         mensaje.textContent = "❌ Tenés que ingresar a tu cuenta primero";
         mensaje.className = "mensaje error";
@@ -653,9 +653,9 @@
       }
     });
 
-    // ✅ Actualizar apenas carga y si cambia sesión
-    verificarSesion();
-    supabase.auth.onAuthStateChange(() => verificarSesion());
+    // ✅ CARGA INICIAL + SI CAMBIA SESIÓN EN CUALQUIER MOMENTO
+    actualizarInterfaz();
+    supabase.auth.onAuthStateChange(() => actualizarInterfaz());
   </script>
 
 </body>
