@@ -24,20 +24,26 @@
     h1 {text-align: center; color: #2c5282; margin-bottom: 30px; font-size: 22px;}
     .campo {margin-bottom: 20px; position: relative;}
     label {display: block; margin-bottom: 6px; color: #4a5568; font-weight: 500;}
-    .input-con-ojo {position: relative;}
-    .input-con-ojo input {
-      width: 100%; padding: 12px 45px 12px 15px;
+    /* TODOS los campos iguales ✅ */
+    .input-estilo {
+      width: 100%; padding: 12px 15px;
       border: 1px solid #bdd1e1; border-radius: 8px;
       font-size: 16px;
       background: #ffffff;
     }
-    .input-con-ojo input:focus {outline: none; border-color: #6fa8d6; box-shadow: 0 0 0 3px rgba(111,168,214,0.2);}
+    .input-estilo:focus {outline: none; border-color: #6fa8d6; box-shadow: 0 0 0 3px rgba(111,168,214,0.2);}
+    
+    .input-con-ojo {position: relative;}
+    .input-con-ojo .input-estilo {padding-right: 45px;} /* Espacio para el ojito */
     .ojo {
       position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
       cursor: pointer; font-size: 20px; color: #6b7280;
       user-select: none;
     }
     .ojo:hover {color: #3182ce;}
+    
+    .indicador {font-size: 13px; color: #718096; margin-top: 5px;}
+    
     button {
       width: 100%; padding: 14px;
       background: #5fa8d3; /* Azul suave */
@@ -58,26 +64,28 @@
 
     <div class="campo">
       <label for="correo">Correo Electrónico</label>
-      <input type="email" id="correo" placeholder="tu@correo.com">
+      <input type="email" id="correo" class="input-estilo" placeholder="tu@correo.com">
     </div>
 
     <div class="campo">
-      <label for="contraseña">Contraseña</label>
+      <label for="contraseña">Contraseña (máximo 8 caracteres)</label>
       <div class="input-con-ojo">
-        <input type="password" id="contraseña" placeholder="Mínimo 6 caracteres">
+        <input type="password" id="contraseña" class="input-estilo" placeholder="Entre 6 y 8 caracteres" maxlength="8">
         <span class="ojo" onclick="toggleVer('contraseña', this)">👁️</span>
       </div>
+      <div class="indicador" id="contadorContraseña">0 / 8 caracteres</div>
     </div>
 
     <div class="campo">
       <label for="repetir_contraseña">Repetir Contraseña</label>
       <div class="input-con-ojo">
-        <input type="password" id="repetir_contraseña" placeholder="Escribí la misma contraseña">
+        <input type="password" id="repetir_contraseña" class="input-estilo" placeholder="Repetí la contraseña" maxlength="8">
         <span class="ojo" onclick="toggleVer('repetir_contraseña', this)">👁️</span>
       </div>
+      <div class="indicador" id="contadorRepetir">0 / 8 caracteres</div>
     </div>
 
-    <div class="error" id="mensaje_error">Las contraseñas no coinciden</div>
+    <div class="error" id="mensaje_error">Las contraseñas no coinciden o no tienen entre 6 y 8 caracteres</div>
 
     <button onclick="registrar()">Crear Cuenta</button>
 
@@ -87,22 +95,25 @@
   </div>
 
   <script>
-    // Tus datos de Supabase
+    // Tus datos de Supabase — YA PUESTOS ✅
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Función del ojito 👁️
+    // Contar caracteres en tiempo real
+    document.getElementById('contraseña').addEventListener('input', function() {
+      document.getElementById('contadorContraseña').textContent = this.value.length + ' / 8 caracteres';
+    });
+    document.getElementById('repetir_contraseña').addEventListener('input', function() {
+      document.getElementById('contadorRepetir').textContent = this.value.length + ' / 8 caracteres';
+    });
+
+    // Ojito 👁️
     function toggleVer(idCampo, elemento) {
       const campo = document.getElementById(idCampo);
-      if (campo.type === 'password') {
-        campo.type = 'text';
-        elemento.textContent = '🙈'; // Ojito tapado
-      } else {
-        campo.type = 'password';
-        elemento.textContent = '👁️'; // Ojito abierto
-      }
+      campo.type = campo.type === 'password' ? 'text' : 'password';
+      elemento.textContent = campo.type === 'password' ? '👁️' : '🙈';
     }
 
     async function registrar() {
@@ -113,13 +124,20 @@
 
       mensajeError.style.display = 'none';
 
+      // Validar longitud: mínimo 6, máximo 8
+      if (contraseña.length < 6 || contraseña.length > 8) {
+        mensajeError.style.display = 'block';
+        return;
+      }
+
+      // Validar que coincidan
       if (contraseña !== repetirContraseña) {
         mensajeError.style.display = 'block';
         return;
       }
 
-      if (!correo || contraseña.length < 6) {
-        alert("Completá los datos correctamente (contraseña: mínimo 6 caracteres)");
+      if (!correo) {
+        alert("Escribí tu correo electrónico");
         return;
       }
 
