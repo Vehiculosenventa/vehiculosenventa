@@ -22,13 +22,9 @@
 
   <div class="caja">
     <h1>Recuperar Contraseña</h1>
-    
     <input type="email" id="correo" placeholder="Escribí tu correo electrónico">
-    
     <button onclick="enviarEnlace()">Enviar enlace de recuperación</button>
-    
     <div id="mensaje" class="mensaje"></div>
-    
     <a href="iniciar-sesion.html" class="volver">← Volver a iniciar sesión</a>
   </div>
 
@@ -41,7 +37,6 @@
     async function enviarEnlace() {
       const correo = document.getElementById('correo').value.trim();
       const mensaje = document.getElementById('mensaje');
-      
       mensaje.style.display = 'none';
       
       if (!correo) {
@@ -55,13 +50,11 @@
         const { error } = await supabase.auth.resetPasswordForEmail(correo, {
           redirectTo: 'https://vehiculosenventa.com.ar/cambiar-contraseña.html'
         });
-
         if (error) throw error;
-
+        
         mensaje.className = 'mensaje exito';
         mensaje.innerHTML = '✅ ¡Listo! Te enviamos el enlace a tu correo.<br>Revisá la bandeja de entrada (y el spam).';
         mensaje.style.display = 'block';
-        
       } catch (err) {
         mensaje.className = 'mensaje error';
         mensaje.textContent = '❌ ' + (err.message || 'Ocurrió un error, intentá de nuevo');
@@ -69,6 +62,5 @@
       }
     }
   </script>
-
 </body>
 </html>
