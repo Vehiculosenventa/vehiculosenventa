@@ -14,7 +14,7 @@
       padding: 20px;
     }
     .caja {
-      background: #faf8f0; /* Cremita suave ✨ */
+      background: #faf8f0; /* Cremita ✨ */
       padding: 40px 30px;
       border-radius: 16px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.08);
@@ -24,6 +24,7 @@
     h1 {text-align: center; color: #2c5282; margin-bottom: 30px; font-size: 22px;}
     .campo {margin-bottom: 20px; position: relative;}
     label {display: block; margin-bottom: 6px; color: #4a5568; font-weight: 500;}
+    
     /* TODOS los campos iguales ✅ */
     .input-estilo {
       width: 100%; padding: 12px 15px;
@@ -35,6 +36,7 @@
     
     .input-con-ojo {position: relative;}
     .input-con-ojo .input-estilo {padding-right: 45px;} /* Espacio para el ojito */
+    
     .ojo {
       position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
       cursor: pointer; font-size: 20px; color: #6b7280;
@@ -46,15 +48,16 @@
     
     button {
       width: 100%; padding: 14px;
-      background: #5fa8d3; /* Azul suave */
+      background: #5fa8d3;
       color: #ffffff; border: none;
       border-radius: 8px; font-size: 17px; font-weight: 600;
       cursor: pointer; transition: background 0.3s;
     }
     button:hover {background: #4a90c4;}
+    
     .enlace {margin-top: 20px; text-align: center;}
     .enlace a {color: #5fa8d3; text-decoration: none;}
-    .enlace a:hover {text-decoration: underline;}
+    
     .error {color: #d64545; margin-top: -10px; margin-bottom: 12px; font-size: 14px; display: none;}
   </style>
 </head>
@@ -68,12 +71,12 @@
     </div>
 
     <div class="campo">
-      <label for="contraseña">Contraseña (máximo 8 caracteres)</label>
+      <label for="contraseña">Contraseña (6 a 8 caracteres)</label>
       <div class="input-con-ojo">
-        <input type="password" id="contraseña" class="input-estilo" placeholder="Entre 6 y 8 caracteres" maxlength="8">
+        <input type="password" id="contraseña" class="input-estilo" placeholder="Mínimo 6, máximo 8" maxlength="8">
         <span class="ojo" onclick="toggleVer('contraseña', this)">👁️</span>
       </div>
-      <div class="indicador" id="contadorContraseña">0 / 8 caracteres</div>
+      <div class="indicador" id="contadorContraseña">0 / 8</div>
     </div>
 
     <div class="campo">
@@ -82,10 +85,10 @@
         <input type="password" id="repetir_contraseña" class="input-estilo" placeholder="Repetí la contraseña" maxlength="8">
         <span class="ojo" onclick="toggleVer('repetir_contraseña', this)">👁️</span>
       </div>
-      <div class="indicador" id="contadorRepetir">0 / 8 caracteres</div>
+      <div class="indicador" id="contadorRepetir">0 / 8</div>
     </div>
 
-    <div class="error" id="mensaje_error">Las contraseñas no coinciden o no tienen entre 6 y 8 caracteres</div>
+    <div class="error" id="mensaje_error">Las contraseñas no coinciden o tienen menos de 6 caracteres</div>
 
     <button onclick="registrar()">Crear Cuenta</button>
 
@@ -95,27 +98,33 @@
   </div>
 
   <script>
-    // Tus datos de Supabase — YA PUESTOS ✅
+    // === UNA SOLA VEZ — SIN DUPLICADOS ✅ ===
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Contar caracteres en tiempo real
+    // Contadores de caracteres
     document.getElementById('contraseña').addEventListener('input', function() {
-      document.getElementById('contadorContraseña').textContent = this.value.length + ' / 8 caracteres';
+      document.getElementById('contadorContraseña').textContent = this.value.length + ' / 8';
     });
     document.getElementById('repetir_contraseña').addEventListener('input', function() {
-      document.getElementById('contadorRepetir').textContent = this.value.length + ' / 8 caracteres';
+      document.getElementById('contadorRepetir').textContent = this.value.length + ' / 8';
     });
 
-    // Ojito 👁️
+    // === OJITO FUNCIONANDO BIEN 👁️🙈 ===
     function toggleVer(idCampo, elemento) {
       const campo = document.getElementById(idCampo);
-      campo.type = campo.type === 'password' ? 'text' : 'password';
-      elemento.textContent = campo.type === 'password' ? '👁️' : '🙈';
+      if (campo.type === 'password') {
+        campo.type = 'text';
+        elemento.textContent = '🙈'; // Se ve la contraseña
+      } else {
+        campo.type = 'password';
+        elemento.textContent = '👁️'; // Se oculta
+      }
     }
 
+    // === REGISTRAR ===
     async function registrar() {
       const correo = document.getElementById('correo').value.trim();
       const contraseña = document.getElementById('contraseña').value;
@@ -124,23 +133,21 @@
 
       mensajeError.style.display = 'none';
 
-      // Validar longitud: mínimo 6, máximo 8
+      // Validaciones
       if (contraseña.length < 6 || contraseña.length > 8) {
         mensajeError.style.display = 'block';
         return;
       }
-
-      // Validar que coincidan
       if (contraseña !== repetirContraseña) {
         mensajeError.style.display = 'block';
         return;
       }
-
       if (!correo) {
         alert("Escribí tu correo electrónico");
         return;
       }
 
+      // Enviar a Supabase
       const { data, error } = await supabase.auth.signUp({
         email: correo,
         password: contraseña,
