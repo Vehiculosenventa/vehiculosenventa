@@ -9,7 +9,7 @@
     body {font-family: sans-serif; max-width: 500px; margin: 50px auto; padding: 20px;}
     button {padding: 12px 30px; background: #3182ce; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer;}
     .lista {margin-top: 20px;}
-    .item {padding: 10px 0; border-bottom: 1px solid #ddd;}
+    .item {padding: 10px 0; border-bottom: 1px solid #ddd; font-size: 18px;}
   </style>
 </head>
 <body>
@@ -22,25 +22,25 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // ✅ UNA SOLA VEZ — NO HAY OTRA
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     async function mostrarTodo() {
       const caja = document.getElementById('lista');
       caja.innerHTML = '<p>Cargando...</p>';
 
+      // Lee EXACTAMENTE tu tabla: campo "nombre"
       const { data, error } = await supabase
         .from('usuarios')
-        .select('nombre');
+        .select('nombre, correo');
 
       if (error) {
         caja.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
       } else if (data.length === 0) {
         caja.innerHTML = '<p>No hay nombres todavía</p>';
       } else {
-        let html = '';
+        let html = `<p>✅ Encontré ${data.length} registro(s):</p>`;
         data.forEach(fila => {
-          html += `<div class="item">${fila.nombre || '(sin nombre)'}</div>`;
+          html += `<div class="item"><strong>${fila.nombre}</strong><br><small>${fila.correo}</small></div>`;
         });
         caja.innerHTML = html;
       }
