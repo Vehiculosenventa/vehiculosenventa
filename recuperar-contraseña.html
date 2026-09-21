@@ -103,7 +103,7 @@ async function enviarEnlace() {
   try {
     // Llamamos a tu función: enviar-recuperacion
     const { data, error } = await sb.functions.invoke("rapid-function", {
-      body: { email: correo }
+      body: { correo: correo }
     });
 
     if (error) throw error;
