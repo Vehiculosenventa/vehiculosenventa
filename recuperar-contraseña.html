@@ -3,30 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recuperar Contraseña</title>
+  <title>Ver Nombre</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
-    body {background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;}
-    .caja {background: #fff; border-radius: 16px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); max-width: 420px; width: 100%;}
-    h1 {text-align: center; color: #1e4976; margin-bottom: 25px; font-size: 22px;}
-    input {width: 100%; padding: 14px; margin-bottom: 18px; border: 2px solid #d1dce3; border-radius: 10px; font-size: 16px;}
-    button {width: 100%; padding: 14px; background: #2563eb; color: white; border: none; border-radius: 10px; font-size: 17px; font-weight: 600; cursor: pointer;}
-    .mensaje {margin-top: 20px; padding: 15px; border-radius: 10px; text-align: center; display: none;}
-    .exito {background: #dcfce7; color: #166534; border: 2px solid #86efac;}
-    .error {background: #fee2e2; color: #991b1b; border: 2px solid #fca5a5;}
-    .volver {display: block; text-align: center; margin-top: 20px; color: #2563eb; text-decoration: none;}
-  </style>
 </head>
 <body>
 
-  <div class="caja">
-    <h1>Recuperar Contraseña</h1>
-    <input type="email" id="correo" placeholder="Escribí tu correo electrónico">
-    <button onclick="enviarEnlace()">Enviar enlace de recuperación</button>
-    <div id="mensaje" class="mensaje"></div>
-    <a href="iniciar-sesion.html" class="volver">← Volver a iniciar sesión</a>
-  </div>
+  <h1>Nombre guardado:</h1>
+  <div id="nombre"></div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
@@ -34,33 +17,17 @@
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function enviarEnlace() {
-      const correo = document.getElementById('correo').value.trim();
-      const mensaje = document.getElementById('mensaje');
-      mensaje.style.display = 'none';
-      
-      if (!correo) {
-        mensaje.className = 'mensaje error';
-        mensaje.textContent = '⚠️ Escribí tu correo por favor';
-        mensaje.style.display = 'block';
-        return;
-      }
+    async function cargar() {
+      const { data } = await supabase
+        .from('usuarios')
+        .select('nombre')
+        .limit(1);
 
-      try {
-        const { error } = await supabase.auth.resetPasswordForEmail(correo, {
-          redirectTo: 'https://vehiculosenventa.com.ar/cambiar-contraseña.html'
-        });
-        if (error) throw error;
-        
-        mensaje.className = 'mensaje exito';
-        mensaje.innerHTML = '✅ ¡Listo! Te enviamos el enlace a tu correo.<br>Revisá la bandeja de entrada (y el spam).';
-        mensaje.style.display = 'block';
-      } catch (err) {
-        mensaje.className = 'mensaje error';
-        mensaje.textContent = '❌ ' + (err.message || 'Ocurrió un error, intentá de nuevo');
-        mensaje.style.display = 'block';
-      }
+      document.getElementById('nombre').textContent = data?.[0]?.nombre || 'No encontrado';
     }
+
+    cargar();
   </script>
+
 </body>
 </html>
