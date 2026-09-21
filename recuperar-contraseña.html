@@ -7,8 +7,8 @@
 </head>
 <body>
 
-  <p>Nombre:</p>
-  <p id="nombre"></p>
+  <h3>Resultado:</h3>
+  <pre id="salida" style="background:#f5f5f5; padding:15px;"></pre>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
@@ -16,16 +16,20 @@
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function verNombre() {
-      const { data } = await supabase
+    async function probar() {
+      const salida = document.getElementById('salida');
+      
+      const { data, error, count } = await supabase
         .from('usuarios')
-        .select('nombre')
-        .limit(1);
+        .select('*', { count: 'exact' });
 
-      document.getElementById('nombre').textContent = data?.[0]?.nombre || 'No hay datos';
+      salida.textContent = 
+        "Cantidad: " + count + "\n" +
+        "Error: " + JSON.stringify(error) + "\n" +
+        "Datos: " + JSON.stringify(data, null, 2);
     }
 
-    verNombre();
+    probar();
   </script>
 
 </body>
