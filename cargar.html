@@ -207,7 +207,7 @@
 
   <div class="form-container">
     
-    <!-- ❌ Sin sesión: se ven estos 3 + mensaje -->
+    <!-- ❌ SIN SESIÓN: se ven los 3 botones + mensaje -->
     <div id="caja-sin-sesion">
       <div class="botones-sesion">
         <a href="iniciar-sesion.html" class="boton-sesion btn-ingresar">🔑 Ingresar</a>
@@ -222,7 +222,7 @@
       <div class="separador">— Completá los datos del vehículo —</div>
     </div>
 
-    <!-- ✅ Con sesión: SOLO aparece Cerrar sesión -->
+    <!-- ✅ CON SESIÓN: SOLO Cerrar sesión -->
     <div id="caja-con-sesion" class="oculto">
       <button id="btn-cerrar-sesion" class="boton boton-cerrar" onclick="cerrarSesion()">
         🚪 Cerrar sesión
@@ -504,7 +504,6 @@
   </div>
 
   <script>
-    // === INICIALIZAR SUPABASE UNA SOLA VEZ ✅ ===
     const SUPABASE_URL = "https://ikancehiaanhnuuykkio.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrYW5jZGlhaWFuaG51dXlra2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     const { createClient } = supabase;
@@ -522,12 +521,11 @@
       campo.value = campo.value.replace(/[^0-9]/g, '');
     }
 
-    // ✅ DETECTAR SESIÓN Y CAMBIAR LA INTERFAZ
     async function actualizarInterfaz() {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        // ❌ SIN SESIÓN → se ven los 3 enlaces + mensaje
+        // ❌ SIN SESIÓN → se ven los 3 botones + mensaje + formulario bloqueado
         cajaSinSesion.classList.remove('oculto');
         cajaConSesion.classList.add('oculto');
         formAuto.classList.add('formulario-deshabilitado');
@@ -536,7 +534,7 @@
         return null;
       }
 
-      // ✅ CON SESIÓN → desaparecen los 3, solo queda Cerrar sesión
+      // ✅ CON SESIÓN → desaparecen los 3 botones, solo queda Cerrar sesión + formulario habilitado
       cajaSinSesion.classList.add('oculto');
       cajaConSesion.classList.remove('oculto');
       formAuto.classList.remove('formulario-deshabilitado');
@@ -666,7 +664,6 @@
       }
     });
 
-    // ✅ CARGA INICIAL + SI CAMBIA SESIÓN EN CUALQUIER MOMENTO
     actualizarInterfaz();
     supabase.auth.onAuthStateChange(() => actualizarInterfaz());
   </script>
