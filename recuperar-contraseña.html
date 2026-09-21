@@ -3,25 +3,25 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Buscar Correo</title>
+  <title>Lista Usuarios</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif;}
-    body {background: #f8fafc; padding: 40px; max-width: 500px; margin: 0 auto;}
+    body {background: #f8fafc; padding: 40px; max-width: 600px; margin: 0 auto;}
     h1 {color: #2c5282; text-align: center; margin-bottom: 30px;}
-    input {width: 100%; padding: 14px; border: 2px solid #c5d6e8; border-radius: 10px; font-size: 16px; margin-bottom: 20px;}
-    button {width: 100%; padding: 14px; background: #3182ce; color: white; border: none; border-radius: 10px; font-size: 17px; font-weight: bold; cursor: pointer;}
-    .si {margin-top: 25px; padding: 20px; background: #dcfce7; border-radius: 10px; border: 2px solid #4ade80; color: #166534; font-weight: bold; text-align: center;}
-    .no {margin-top: 25px; padding: 20px; background: #fee2e2; border-radius: 10px; border: 2px solid #f87171; color: #b91c1c; font-weight: bold; text-align: center;}
-    .error {margin-top: 25px; padding: 15px; background: #fef3c7; border-radius: 10px; border: 2px solid #fbbf24; color: #92400e;}
+    button {width: 100%; padding: 15px; background: #3182ce; color: white; border: none; border-radius: 10px; font-size: 18px; font-weight: bold; cursor: pointer;}
+    .item {padding: 15px; margin: 10px 0; background: white; border-radius: 10px; border: 2px solid #c5d6e8;}
+    .si {color: #166534; font-weight: bold;}
+    .no {color: #b91c1c; font-weight: bold;}
+    .vacio {text-align: center; padding: 40px; color: #666; font-size: 18px;}
+    .error {padding: 20px; background: #fef3c7; border-radius: 10px; border: 2px solid #fbbf24; color: #92400e; margin-top: 20px;}
   </style>
 </head>
 <body>
 
-  <h1>🔍 Buscar en la tabla</h1>
-  <input type="email" id="correo" placeholder="Escribí el correo">
-  <button onclick="buscar()">Buscar</button>
-  <div id="resultado"></div>
+  <h1>📋 Todos los Usuarios</h1>
+  <button onclick="mostrarTodo()">🔄 Mostrar todo</button>
+  <div id="contenido" style="margin-top: 25px;"></div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
@@ -29,28 +29,28 @@
     
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function buscar() {
-      const correo = document.getElementById('correo').value.trim();
-      const res = document.getElementById('resultado');
-      res.innerHTML = '<p style="text-align:center; color:#666;">Buscando...</p>';
+    async function mostrarTodo() {
+      const div = document.getElementById('contenido');
+      div.innerHTML = '<p style="text-align:center; color:#666;">Cargando...</p>';
 
       const { data, error } = await supabase
         .from('usuarios')
-        .select('correo, confirmado')
-        .eq('correo', correo)
-        .limit(1);
+        .select('*');
 
       if (error) {
-        res.innerHTML = `<div class="error">⚠️ Error: ${error.message}</div>`;
-      } else if (data.length > 0) {
-        res.innerHTML = `
-          <div class="si">
-            ✅ ENCONTRADO<br><br>
-            Correo: ${data[0].correo}<br>
-            Confirmado: ${data[0].confirmado}
-          </div>`;
+        div.innerHTML = `<div class="error">⚠️ Error: ${error.message}</div>`;
+      } else if (data.length === 0) {
+        div.innerHTML = '<p class="vacio">📭 La tabla está vacía</p>';
       } else {
-        res.innerHTML = `<div class="no">❌ NO SE ENCONTRÓ</div>`;
+        let html = `<p style="font-weight:bold; margin-bottom:15px;">✅ Total: ${data.length} usuario(s)</p>`;
+        data.forEach(u => {
+          html += `
+            <div class="item">
+              <strong>Correo:</strong> ${u.correo || 'Sin correo'}<br>
+              <strong>Confirmado:</strong> <span class="${u.confirmado ? 'si' : 'no'}">${u.confirmado}</span>
+            </div>`;
+        });
+        div.innerHTML = html;
       }
     }
   </script>
