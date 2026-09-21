@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+il<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
@@ -103,7 +103,7 @@ async function enviarEnlace() {
   try {
     // Llamamos a tu función: enviar-recuperacion
     const { data, error } = await sb.functions.invoke("rapid-function", {
-      body: { correo: correo }
+      body: { email: correo }
     });
 
     if (error) throw error;
