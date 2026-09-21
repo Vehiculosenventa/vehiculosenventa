@@ -3,51 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recuperar Contraseña</title>
+  <title>Buscar Correo</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
-    body {background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px;}
-    .caja {background: #f8fafc; padding: 35px; border-radius: 20px; width: 100%; max-width: 450px; box-shadow: 0 5px 20px rgba(0,0,0,0.08);}
-    h1 {color: #2c5282; text-align: center; margin-bottom: 25px; font-size: 22px;}
-    input {width: 100%; padding: 13px; border: 2px solid #c5d6e8; border-radius: 10px; font-size: 16px; margin-bottom: 20px;}
+    * {box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif;}
+    body {background: #f8fafc; padding: 40px; max-width: 500px; margin: 0 auto;}
+    h1 {color: #2c5282; text-align: center; margin-bottom: 30px;}
+    input {width: 100%; padding: 14px; border: 2px solid #c5d6e8; border-radius: 10px; font-size: 16px; margin-bottom: 20px;}
     button {width: 100%; padding: 14px; background: #3182ce; color: white; border: none; border-radius: 10px; font-size: 17px; font-weight: bold; cursor: pointer;}
-    .ok {color: #166534; margin-top: 20px; font-weight: bold;}
-    .mal {color: #c53030; margin-top: 20px; font-weight: bold;}
+    .si {margin-top: 25px; padding: 20px; background: #dcfce7; border-radius: 10px; border: 2px solid #4ade80; color: #166534; font-weight: bold; text-align: center;}
+    .no {margin-top: 25px; padding: 20px; background: #fee2e2; border-radius: 10px; border: 2px solid #f87171; color: #b91c1c; font-weight: bold; text-align: center;}
+    .error {margin-top: 25px; padding: 15px; background: #fef3c7; border-radius: 10px; border: 2px solid #fbbf24; color: #92400e;}
   </style>
 </head>
 <body>
-  <div class="caja">
-    <h1>🔑 Recuperar Contraseña</h1>
-    <input type="email" id="correo" placeholder="Tu correo electrónico">
-    <button onclick="enviar()">📩 Enviar enlace</button>
-    <p id="mensaje"></p>
-  </div>
+
+  <h1>🔍 Buscar en la tabla</h1>
+  <input type="email" id="correo" placeholder="Escribí el correo">
+  <button onclick="buscar()">Buscar</button>
+  <div id="resultado"></div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
+    // UNA SOLA VEZ ✅
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function enviar() {
+    async function buscar() {
       const correo = document.getElementById('correo').value.trim();
-      const msg = document.getElementById('mensaje');
-      msg.textContent = 'Enviando...';
-      msg.className = '';
+      const res = document.getElementById('resultado');
+      res.innerHTML = '<p style="text-align:center; color:#666;">Buscando...</p>';
 
-      const { error } = await supabase.auth.resetPasswordForEmail(correo, {
-        redirectTo: 'https://vehiculosenventa.com.ar/crear-contraseña.html'
-      });
+      const { data, error } = await supabase
+        .from('usuarios')
+        .select('correo, confirmado')
+        .eq('correo', correo)
+        .limit(1);
 
       if (error) {
-        msg.textContent = '❌ ' + error.message;
-        msg.className = 'mal';
+        res.innerHTML = `<div class="error">⚠️ Error: ${error.message}</div>`;
+      } else if (data.length > 0) {
+        res.innerHTML = `
+          <div class="si">
+            ✅ ENCONTRADO<br><br>
+            Correo: ${data[0].correo}<br>
+            Confirmado: ${data[0].confirmado}
+          </div>`;
       } else {
-        msg.textContent = '✅ ¡Revisá tu correo! Te mandamos el enlace';
-        msg.className = 'ok';
+        res.innerHTML = `<div class="no">❌ NO SE ENCONTRÓ</div>`;
       }
     }
   </script>
+
 </body>
 </html>
