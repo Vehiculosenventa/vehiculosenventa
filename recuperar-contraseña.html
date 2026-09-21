@@ -2,14 +2,13 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ver Nombre</title>
+  <title>Prueba Nombre</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 
-  <h1>Nombre guardado:</h1>
-  <div id="nombre"></div>
+  <p>Nombre:</p>
+  <p id="nombre"></p>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
@@ -17,16 +16,16 @@
 
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function cargar() {
+    async function verNombre() {
       const { data } = await supabase
         .from('usuarios')
         .select('nombre')
         .limit(1);
 
-      document.getElementById('nombre').textContent = data?.[0]?.nombre || 'No encontrado';
+      document.getElementById('nombre').textContent = data?.[0]?.nombre || 'No hay datos';
     }
 
-    cargar();
+    verNombre();
   </script>
 
 </body>
