@@ -55,3 +55,20 @@
         const { error } = await supabase.auth.resetPasswordForEmail(correo, {
           redirectTo: 'https://vehiculosenventa.com.ar/cambiar-contraseña.html'
         });
+
+        if (error) throw error;
+
+        mensaje.className = 'mensaje exito';
+        mensaje.innerHTML = '✅ ¡Listo! Te enviamos el enlace a tu correo.<br>Revisá la bandeja de entrada (y el spam).';
+        mensaje.style.display = 'block';
+        
+      } catch (err) {
+        mensaje.className = 'mensaje error';
+        mensaje.textContent = '❌ ' + (err.message || 'Ocurrió un error, intentá de nuevo');
+        mensaje.style.display = 'block';
+      }
+    }
+  </script>
+
+</body>
+</html>
