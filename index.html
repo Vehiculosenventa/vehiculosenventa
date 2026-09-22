@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Crear Cuenta - Vehículos en Venta</title>
   <link rel="icon" href="data:,">
-  
-  <!-- Librería de Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
   <style>
     * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
     body {
@@ -52,8 +49,6 @@
     button:hover {background: #4a90c4;}
     button:active {transform: scale(0.98);}
     button:disabled {background: #94b8d1; cursor: not-allowed; opacity: 0.7;}
-    .enlace {margin-top: 20px; text-align: center;}
-    .enlace a {color: #5fa8d3; text-decoration: none;}
     .error {color: #d64545; margin-top: -10px; margin-bottom: 12px; font-size: 14px; display: none;}
     .exito {color: #2f855a; margin-top: 10px; font-size: 14px; display: none;}
     .cargando {color: #3182ce; margin-top: 10px; font-size: 14px; display: none;}
@@ -94,16 +89,16 @@
   </div>
 
   <script>
-    // Configuración
+    // Configuración Supabase
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    // Crear cliente UNA SOLA VEZ
+    // Cliente ÚNICO — sin duplicados
     let supabase;
-    if (!window._miCliente) {
-      window._miCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    if (!window._supabase) {
+      window._supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
-    supabase = window._miCliente;
+    supabase = window._supabase;
 
     // Elementos
     const pass1 = document.getElementById('pass1');
@@ -137,7 +132,7 @@
       exitoMsg.textContent = '';
     }
 
-    // === REGISTRO QUE ENVÍA EL CORREO ===
+    // === FUNCIÓN DE REGISTRO ===
     async function registrar() {
       limpiarMensajes();
       
@@ -169,7 +164,7 @@
       cargando.style.display = 'block';
 
       try {
-        // Enviar a Supabase → esto dispara el correo de confirmación
+        // Envía la solicitud → Supabase genera y envía el correo
         const { data, error } = await supabase.auth.signUp({
           email: correo,
           password: pass1.value,
