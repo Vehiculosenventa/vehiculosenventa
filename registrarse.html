@@ -87,14 +87,13 @@
       <a href="index.html">Volver al inicio</a>
     </div>
   </div>
-
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // === ÚNICA DECLARACIÓN — NO repetir en ningún otro lugar ✅ ===
+    // ✅ ÚNICA declaración — no repetir
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+    
     const pass1 = document.getElementById('pass1');
     const pass2 = document.getElementById('pass2');
     const ver1 = document.getElementById('ver1');
@@ -105,17 +104,17 @@
     const errorMsg = document.getElementById('errorMsg');
     const exitoMsg = document.getElementById('exitoMsg');
     const cargando = document.getElementById('cargando');
-
+    
     pass1.addEventListener('input', () => cont1.textContent = `${pass1.value.length} / 8`);
     pass2.addEventListener('input', () => cont2.textContent = `${pass2.value.length} / 8`);
-
+    
     function alternarVer(input, ojo) {
       input.type = input.type === 'password' ? 'text' : 'password';
       ojo.textContent = input.type === 'password' ? '👁️' : '🙈';
     }
     ver1.addEventListener('click', () => alternarVer(pass1, ver1));
     ver2.addEventListener('click', () => alternarVer(pass2, ver2));
-
+    
     function limpiarMensajes() {
       errorMsg.style.display = 'none';
       exitoMsg.style.display = 'none';
@@ -123,28 +122,28 @@
       errorMsg.textContent = '';
       exitoMsg.textContent = '';
     }
-
+    
     async function registrar() {
       limpiarMensajes();
       const correo = document.getElementById('correo').value.trim();
-
+      
       if (!correo) { errorMsg.textContent = "Escribí tu correo electrónico"; errorMsg.style.display = 'block'; return; }
       if (!correo.includes('@') || !correo.includes('.')) { errorMsg.textContent = "Correo inválido"; errorMsg.style.display = 'block'; return; }
       if (pass1.value.length < 6 || pass1.value.length > 8) { errorMsg.textContent = "Entre 6 y 8 caracteres"; errorMsg.style.display = 'block'; return; }
       if (pass1.value !== pass2.value) { errorMsg.textContent = "Las contraseñas no coinciden"; errorMsg.style.display = 'block'; return; }
-
+      
       botonCrear.disabled = true;
       cargando.style.display = 'block';
-
+      
       try {
         const { data, error } = await supabase.auth.signUp({
           email: correo,
           password: pass1.value,
           options: { emailRedirectTo: "https://vehiculosenventa.com.ar/confirmar.html" }
         });
-
+        
         if (error) throw error;
-
+        
         if (data.user && !data.session) {
           exitoMsg.textContent = "✅ Revisá tu correo para confirmar la cuenta";
           exitoMsg.style.display = 'block';
@@ -165,6 +164,7 @@
         cargando.style.display = 'none';
       }
     }
+    
     botonCrear.addEventListener('click', registrar);
   </script>
 </body>
