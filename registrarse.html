@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Crear Cuenta - Vehículos en Venta</title>
   <link rel="icon" href="data:,">
+  <!-- Librería de Supabase PRIMERO, en el <head> -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
@@ -87,13 +88,19 @@
       <a href="index.html">Volver al inicio</a>
     </div>
   </div>
+
+  <!-- ✅ EL CÓDIGO VA AQUÍ, AL FINAL, ANTES DE </body> -->
   <script>
+    console.log('🟢 Página cargada — iniciando código...');
+
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-    
-    // ✅ ÚNICA declaración — no repetir
+
+    // Crear cliente
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    
+    console.log('✅ Cliente Supabase creado');
+
+    // Tomar elementos del formulario
     const pass1 = document.getElementById('pass1');
     const pass2 = document.getElementById('pass2');
     const ver1 = document.getElementById('ver1');
@@ -104,17 +111,19 @@
     const errorMsg = document.getElementById('errorMsg');
     const exitoMsg = document.getElementById('exitoMsg');
     const cargando = document.getElementById('cargando');
-    
-    pass1.addEventListener('input', () => cont1.textContent = `${pass1.value.length} / 8`);
-    pass2.addEventListener('input', () => cont2.textContent = `${pass2.value.length} / 8`);
-    
+
+    // Contadores
+    pass1.addEventListener('input', () => { cont1.textContent = `${pass1.value.length} / 8`; });
+    pass2.addEventListener('input', () => { cont2.textContent = `${pass2.value.length} / 8`; });
+
+    // Ver/ocultar contraseña
     function alternarVer(input, ojo) {
       input.type = input.type === 'password' ? 'text' : 'password';
       ojo.textContent = input.type === 'password' ? '👁️' : '🙈';
     }
     ver1.addEventListener('click', () => alternarVer(pass1, ver1));
     ver2.addEventListener('click', () => alternarVer(pass2, ver2));
-    
+
     function limpiarMensajes() {
       errorMsg.style.display = 'none';
       exitoMsg.style.display = 'none';
@@ -122,28 +131,50 @@
       errorMsg.textContent = '';
       exitoMsg.textContent = '';
     }
-    
+
     async function registrar() {
+      console.log('▶️ Botón presionado — empezando registro');
       limpiarMensajes();
+
       const correo = document.getElementById('correo').value.trim();
-      
-      if (!correo) { errorMsg.textContent = "Escribí tu correo electrónico"; errorMsg.style.display = 'block'; return; }
-      if (!correo.includes('@') || !correo.includes('.')) { errorMsg.textContent = "Correo inválido"; errorMsg.style.display = 'block'; return; }
-      if (pass1.value.length < 6 || pass1.value.length > 8) { errorMsg.textContent = "Entre 6 y 8 caracteres"; errorMsg.style.display = 'block'; return; }
-      if (pass1.value !== pass2.value) { errorMsg.textContent = "Las contraseñas no coinciden"; errorMsg.style.display = 'block'; return; }
-      
+      console.log('📝 Correo:', correo);
+
+      if (!correo) {
+        errorMsg.textContent = "Escribí tu correo electrónico";
+        errorMsg.style.display = 'block';
+        return;
+      }
+      if (!correo.includes('@') || !correo.includes('.')) {
+        errorMsg.textContent = "Correo inválido";
+        errorMsg.style.display = 'block';
+        return;
+      }
+      if (pass1.value.length < 6 || pass1.value.length > 8) {
+        errorMsg.textContent = "Entre 6 y 8 caracteres";
+        errorMsg.style.display = 'block';
+        return;
+      }
+      if (pass1.value !== pass2.value) {
+        errorMsg.textContent = "Las contraseñas no coinciden";
+        errorMsg.style.display = 'block';
+        return;
+      }
+
       botonCrear.disabled = true;
       cargando.style.display = 'block';
-      
+
       try {
+        console.log('📤 Enviando a Supabase...');
         const { data, error } = await supabase.auth.signUp({
           email: correo,
           password: pass1.value,
           options: { emailRedirectTo: "https://vehiculosenventa.com.ar/confirmar.html" }
         });
-        
+
+        console.log('📬 Respuesta:', { data, error });
+
         if (error) throw error;
-        
+
         if (data.user && !data.session) {
           exitoMsg.textContent = "✅ Revisá tu correo para confirmar la cuenta";
           exitoMsg.style.display = 'block';
@@ -153,6 +184,7 @@
           setTimeout(() => window.location.href = "index.html", 2000);
         }
       } catch (err) {
+        console.error('❌ Error:', err);
         let msg = "Error al crear la cuenta";
         if (err.message.includes("User already registered")) msg = "⚠️ Este correo ya está registrado";
         else if (err.message.includes("invalid email")) msg = "Correo inválido";
@@ -164,8 +196,10 @@
         cargando.style.display = 'none';
       }
     }
-    
+
+    // Conectar botón — UNA SOLA VEZ
     botonCrear.addEventListener('click', registrar);
+    console.log('✅ Botón conectado — todo listo');
   </script>
 </body>
 </html>
