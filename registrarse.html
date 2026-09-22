@@ -90,11 +90,11 @@
   </div>
 
   <script>
-    // === CONFIGURACIÓN — UNA SOLA VEZ ✅ ===
+    // === UNA SOLA VEZ — NO repetir más abajo ✅ ===
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // ⚠️ SOLO UNA VEZ — creamos el cliente aquí
+    // ⬇️ ESTA LÍNEA VA AQUÍ Y NO SE REPITE ✅
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // Referencias
@@ -142,19 +142,16 @@
         errorMsg.style.display = 'block';
         return;
       }
-      
       if (!correo.includes('@') || !correo.includes('.')) {
         errorMsg.textContent = "Ingresá un correo electrónico válido";
         errorMsg.style.display = 'block';
         return;
       }
-      
       if (pass1.value.length < 6 || pass1.value.length > 8) {
         errorMsg.textContent = "La contraseña debe tener entre 6 y 8 caracteres";
         errorMsg.style.display = 'block';
         return;
       }
-      
       if (pass1.value !== pass2.value) {
         errorMsg.textContent = "Las contraseñas no coinciden";
         errorMsg.style.display = 'block';
@@ -166,7 +163,7 @@
       cargando.style.display = 'block';
 
       try {
-        // Usamos el cliente que ya creamos arriba
+        // Usamos la instancia ya creada — NO volver a declarar ✅
         const { data, error } = await supabase.auth.signUp({
           email: correo,
           password: pass1.value,
