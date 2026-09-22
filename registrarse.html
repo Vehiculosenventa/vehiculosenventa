@@ -66,23 +66,23 @@
       <label for="contraseña">Contraseña (6 a 8 caracteres)</label>
       <div class="input-con-ojo">
         <input type="password" id="contraseña" class="input-estilo" placeholder="Mínimo 6, máximo 8" maxlength="8">
-        <span class="ojo" onclick="toggleVer('contraseña', this)">👁️</span>
+        <span class="ojo" id="ojo1">👁️</span>
       </div>
-      <div class="indicador" id="contadorContraseña">0 / 8</div>
+      <div class="indicador" id="cont1">0 / 8</div>
     </div>
 
     <div class="campo">
       <label for="repetir_contraseña">Repetir Contraseña</label>
       <div class="input-con-ojo">
         <input type="password" id="repetir_contraseña" class="input-estilo" placeholder="Repetí la contraseña" maxlength="8">
-        <span class="ojo" onclick="toggleVer('repetir_contraseña', this)">👁️</span>
+        <span class="ojo" id="ojo2">👁️</span>
       </div>
-      <div class="indicador" id="contadorRepetir">0 / 8</div>
+      <div class="indicador" id="cont2">0 / 8</div>
     </div>
 
     <div class="error" id="mensaje_error">Las contraseñas no coinciden o tienen menos de 6 caracteres</div>
 
-    <button onclick="registrar()">Crear Cuenta</button>
+    <button id="botonCrear">Crear Cuenta</button>
 
     <div class="enlace">
       <a href="index.html">Volver al inicio</a>
@@ -97,35 +97,49 @@
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // Contadores
-    document.getElementById('contraseña').addEventListener('input', function() {
-      document.getElementById('contadorContraseña').textContent = this.value.length + ' / 8';
+    const pass1 = document.getElementById('contraseña');
+    const pass2 = document.getElementById('repetir_contraseña');
+    document.getElementById('cont1').textContent = pass1.value.length + ' / 8';
+    document.getElementById('cont2').textContent = pass2.value.length + ' / 8';
+    pass1.addEventListener('input', () => {
+      document.getElementById('cont1').textContent = pass1.value.length + ' / 8';
     });
-    document.getElementById('repetir_contraseña').addEventListener('input', function() {
-      document.getElementById('contadorRepetir').textContent = this.value.length + ' / 8';
+    pass2.addEventListener('input', () => {
+      document.getElementById('cont2').textContent = pass2.value.length + ' / 8';
     });
 
-    // Ojito 👁️🙈
-    function toggleVer(idCampo, elemento) {
-      const campo = document.getElementById(idCampo);
-      campo.type = campo.type === 'password' ? 'text' : 'password';
-      elemento.textContent = campo.type === 'password' ? '👁️' : '🙈';
+    // === OJITOS QUE FUNCIONAN BIEN 👁️🙈 ===
+    function configurarOjo(inputId, ojoId) {
+      const input = document.getElementById(inputId);
+      const ojo = document.getElementById(ojoId);
+      ojo.addEventListener('click', () => {
+        if (input.type === 'password') {
+          input.type = 'text';
+          ojo.textContent = '🙈'; // SE VE
+        } else {
+          input.type = 'password';
+          ojo.textContent = '👁️'; // SE OCULTA
+        }
+      });
     }
+    configurarOjo('contraseña', 'ojo1');
+    configurarOjo('repetir_contraseña', 'ojo2');
 
     // Registrar
     async function registrar() {
       const correo = document.getElementById('correo').value.trim();
-      const contraseña = document.getElementById('contraseña').value;
-      const repetirContraseña = document.getElementById('repetir_contraseña').value;
-      const mensajeError = document.getElementById('mensaje_error');
+      const contraseña = pass1.value;
+      const repetir = pass2.value;
+      const error = document.getElementById('mensaje_error');
 
-      mensajeError.style.display = 'none';
+      error.style.display = 'none';
 
       if (contraseña.length < 6 || contraseña.length > 8) {
-        mensajeError.style.display = 'block';
+        error.style.display = 'block';
         return;
       }
-      if (contraseña !== repetirContraseña) {
-        mensajeError.style.display = 'block';
+      if (contraseña !== repetir) {
+        error.style.display = 'block';
         return;
       }
       if (!correo) {
@@ -133,18 +147,17 @@
         return;
       }
 
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error: e } = await supabase.auth.signUp({
         email: correo,
         password: contraseña,
-        options: {
-          emailRedirectTo: "https://vehiculosenventa.com.ar/confirmar.html"
-        }
+        options: { emailRedirectTo: "https://vehiculosenventa.com.ar/confirmar.html" }
       });
 
-      if (error) alert("❌ " + error.message);
+      if (e) alert("❌ " + e.message);
       else if (data.user && !data.session) alert("✅ Listo! Revisá tu correo");
       else { alert("✅ Cuenta creada!"); window.location.href = "index.html"; }
     }
+    document.getElementById('botonCrear').addEventListener('click', registrar);
   </script>
 </body>
 </html>
