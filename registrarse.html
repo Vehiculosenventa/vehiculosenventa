@@ -59,16 +59,12 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    // Cliente ÚNICO de Supabase — evita la advertencia de instancias duplicadas
+    // Cliente ÚNICO de Supabase — sin duplicados
     let supabaseCliente = null;
 
     async function cargarSupabase() {
-      // Si ya existe, lo devolvemos directamente
-      if (supabaseCliente) {
-        return supabaseCliente;
-      }
-
-      // Cargamos la librería solo la primera vez
+      if (supabaseCliente) return supabaseCliente;
+      
       if (!window.supabase) {
         await new Promise(resolve => {
           const script = document.createElement('script');
@@ -77,74 +73,58 @@
           document.head.appendChild(script);
         });
       }
-
-      // Creamos el cliente UNA SOLA VEZ
+      
       supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       return supabaseCliente;
     }
 
-    // Botón ver/ocultar contraseña
+    // Botones ver/ocultar contraseña
     function configurarBotonVer(inputId, botonId) {
       const input = document.getElementById(inputId);
       const boton = document.getElementById(botonId);
-      
       boton.addEventListener('click', () => {
-        if (input.type === 'password') {
-          input.type = 'text';
-          boton.textContent = '🙈';
-          boton.title = 'Ocultar contraseña';
-        } else {
-          input.type = 'password';
-          boton.textContent = '👁️';
-          boton.title = 'Ver contraseña';
-        }
+        input.type = input.type === 'password' ? 'text' : 'password';
+        boton.textContent = input.type === 'password' ? '👁️' : '🙈';
+        boton.title = input.type === 'password' ? 'Ver contraseña' : 'Ocultar contraseña';
       });
     }
-
-    // Activar ambos botones de contraseña
     configurarBotonVer('contraseña', 'btnVerContra');
     configurarBotonVer('confirmarContraseña', 'btnVerConfirmar');
 
-    // Elementos del formulario
+    // Elementos
     const form = document.getElementById('formRegistro');
     const mensaje = document.getElementById('mensaje');
     const btn = document.getElementById('btnRegistrar');
 
-    // Mostrar mensaje
     function mostrarMensaje(texto, tipo) {
       mensaje.textContent = texto;
       mensaje.className = 'mensaje ' + tipo;
+      mensaje.style.display = 'block';
     }
 
-    // Enviar formulario
+    // Envío del formulario — SIN funciones, directo con Supabase
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
-      // Ocultar mensaje anterior
-      mensaje.className = 'mensaje';
       mensaje.style.display = 'none';
       
-      // Obtener valores
       const nombre = document.getElementById('nombre').value.trim();
       const correo = document.getElementById('correo').value.trim();
       const contraseña = document.getElementById('contraseña').value;
       const confirmarContraseña = document.getElementById('confirmarContraseña').value;
 
-      // Validar que coincidan
+      // Validar contraseñas
       if (contraseña !== confirmarContraseña) {
-        mostrarMensaje('❌ Las contraseñas no coinciden. Escribilas iguales.', 'error');
-        mensaje.style.display = 'block';
+        mostrarMensaje('❌ Las contraseñas no coinciden.', 'error');
         return;
       }
 
-      // Bloquear botón
       btn.disabled = true;
       btn.textContent = 'Creando cuenta...';
 
       try {
         const supabase = await cargarSupabase();
         
-        // Registrar usuario
+        // ✅ Registro DIRECTO — Supabase envía el correo por SMTP automáticamente
         const { data, error } = await supabase.auth.signUp({
           email: correo,
           password: contraseña,
@@ -156,16 +136,15 @@
 
         if (error) throw error;
 
-        // Éxito
-        mostrarMensaje('✅ Cuenta creada. Revisá tu correo y confirmá tu cuenta para ingresar.', 'exito');
-        mensaje.style.display = 'block';
+        mostrarMensaje(
+          '✅ Cuenta creada. Revisá tu correo y confirmá tu cuenta para ingresar.',
+          'exito'
+        );
         form.reset();
 
       } catch (err) {
         mostrarMensaje('❌ ' + (err.message || 'Error al crear cuenta.'), 'error');
-        mensaje.style.display = 'block';
       } finally {
-        // Restaurar botón
         btn.disabled = false;
         btn.textContent = 'Crear cuenta';
       }
