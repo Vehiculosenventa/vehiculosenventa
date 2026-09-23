@@ -48,11 +48,10 @@
   <a href="iniciar-sesion.html" class="volver">← Ya tengo cuenta — Iniciar sesión</a>
 
   <script>
-    // Configuración completa de Supabase
+    // EXACTAMENTE IGUAL QUE ANOCHE
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-
-    // Cargar librería de Supabase
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    
     async function cargarSupabase() {
       if (!window.supabase) {
         await new Promise(res => {
@@ -62,7 +61,7 @@
           document.head.appendChild(s);
         });
       }
-      return window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+      return window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 
     const form = document.getElementById('formRegistro');
@@ -75,13 +74,11 @@
       mensaje.className = 'mensaje';
       mensaje.textContent = '';
       
-      // Obtener valores del formulario
       const nombre = document.getElementById('nombre').value.trim();
       const correo = document.getElementById('correo').value.trim();
       const contraseña = document.getElementById('contraseña').value;
       const confirmarContraseña = document.getElementById('confirmarContraseña').value;
 
-      // Verificar que las contraseñas coincidan
       if (contraseña !== confirmarContraseña) {
         mensaje.textContent = '❌ Las contraseñas no coinciden. Escribilas iguales.';
         mensaje.classList.add('error');
@@ -94,13 +91,10 @@
       try {
         const supabase = await cargarSupabase();
         
-        // Registrar usuario con nombre incluido
         const { data, error } = await supabase.auth.signUp({
           email: correo,
           password: contraseña,
-          options: {
-            data: { nombre: nombre }
-          }
+          options: { data: { nombre: nombre } }
         });
 
         if (error) throw error;
@@ -109,7 +103,7 @@
         mensaje.classList.add('exito');
         form.reset();
       } catch (err) {
-        mensaje.textContent = '❌ ' + (err.message || 'No se pudo crear la cuenta. Intentá nuevamente.');
+        mensaje.textContent = '❌ ' + (err.message || 'Error al crear cuenta.');
         mensaje.classList.add('error');
       } finally {
         btn.disabled = false;
