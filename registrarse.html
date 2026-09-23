@@ -4,30 +4,154 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Registrarse — Vehículos en Venta</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
-    * { box-sizing: border-box; font-family: system-ui, sans-serif; }
-    body { max-width: 450px; margin: 3rem auto; padding: 0 1.5rem; background: #f8fafc; }
-    h1 { color: #1e293b; text-align: center; }
-    .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
-    label { display: block; margin-top: 1rem; font-weight: 500; color: #334155; }
-    .input-con-boton { position: relative; }
-    input { width: 100%; padding: 0.85rem 3rem 0.85rem 0.85rem; margin: 0.5rem 0 0; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; }
-    .btn-ver { position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: transparent; border: none; font-size: 1.25rem; cursor: pointer; padding: 0; color: #64748b; }
-    .btn-ver:hover { color: #1e293b; }
-    button[type="submit"] { width: 100%; padding: 0.9rem; margin-top: 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-    button[type="submit"]:hover { background: #1d4ed8; }
-    button[type="submit"]:disabled { background: #94a3b8; cursor: not-allowed; }
-    .mensaje { margin-top: 1rem; padding: 0.9rem; border-radius: 8px; display: none; }
-    .exito { background: #dcfce7; color: #166534; display: block; }
-    .error { background: #fee2e2; color: #991b1b; display: block; }
-    .volver { display: block; text-align: center; margin-top: 1.5rem; color: #475569; text-decoration: none; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+    h1 {
+      color: #2c5282;
+      text-align: center;
+      font-size: 24px;
+      margin-bottom: 25px;
+      font-weight: 800;
+    }
+    .tarjeta {
+      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
+      padding: 35px 25px;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.12);
+      border: 1px solid #e2d9c8;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+    h2 {
+      color: #2c5282;
+      text-align: center;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .subtitulo {
+      text-align: center;
+      color: #5a6872;
+      margin-bottom: 25px;
+      font-size: 15px;
+    }
+    label {
+      display: block;
+      margin-top: 18px;
+      margin-bottom: 6px;
+      font-weight: 600;
+      color: #2d3748;
+    }
+    .input-con-boton {
+      position: relative;
+    }
+    input {
+      width: 100%;
+      padding: 1rem 3rem 1rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #3182ce;
+      box-shadow: 0 0 0 4px rgba(49, 130, 206, 0.15);
+    }
+    .btn-ver {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0;
+      color: #718096;
+      transition: color 0.2s;
+    }
+    .btn-ver:hover {
+      color: #2c5282;
+    }
+    button[type="submit"] {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 25px;
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(49, 130, 206, 0.25);
+    }
+    button[type="submit"]:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .mensaje {
+      margin-top: 1.2rem;
+      padding: 1rem;
+      border-radius: 10px;
+      display: none;
+      text-align: center;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    .exito {
+      background: #c6f6d5;
+      color: #22543d;
+      display: block;
+    }
+    .error {
+      background: #fed7d7;
+      color: #9b2c2c;
+      display: block;
+    }
+    .volver {
+      display: block;
+      text-align: center;
+      margin-top: 25px;
+      color: #4a5568;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .volver:hover {
+      color: #3182ce;
+      text-decoration: underline;
+    }
+    .volver-inicio {
+      margin-top: 20px;
+      color: #3182ce;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
   <h1>🚗 Vehículos en Venta</h1>
-  <div class="card">
+  
+  <div class="tarjeta">
     <h2>Crear tu cuenta</h2>
-    <p>Completá tus datos para empezar a publicar y buscar vehículos.</p>
+    <p class="subtitulo">Completá tus datos para empezar a publicar y buscar vehículos.</p>
+    
     <form id="formRegistro">
       <label for="nombre">Nombre completo</label>
       <input type="text" id="nombre" required placeholder="Tu nombre y apellido">
@@ -47,36 +171,21 @@
         <button type="button" class="btn-ver" id="btnVerConfirmar" title="Ver contraseña">👁️</button>
       </div>
 
-      <button type="submit" id="btnRegistrar">Crear cuenta</button>
+      <button type="submit" id="btnRegistrar">Crear cuenta ✅</button>
       
       <div id="mensaje" class="mensaje"></div>
     </form>
   </div>
+
   <a href="iniciar-sesion.html" class="volver">← Ya tengo cuenta — Iniciar sesión</a>
+  <a href="index.html" class="volver volver-inicio">← Volver a la página principal</a>
 
   <script>
-    // Configuración de Supabase
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    // Cliente ÚNICO de Supabase — sin duplicados
-    let supabaseCliente = null;
-
-    async function cargarSupabase() {
-      if (supabaseCliente) return supabaseCliente;
-      
-      if (!window.supabase) {
-        await new Promise(resolve => {
-          const script = document.createElement('script');
-          script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-          script.onload = resolve;
-          document.head.appendChild(script);
-        });
-      }
-      
-      supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      return supabaseCliente;
-    }
+    // ✅ Una sola instancia de Supabase
+    const supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // Botones ver/ocultar contraseña
     function configurarBotonVer(inputId, botonId) {
@@ -91,7 +200,6 @@
     configurarBotonVer('contraseña', 'btnVerContra');
     configurarBotonVer('confirmarContraseña', 'btnVerConfirmar');
 
-    // Elementos
     const form = document.getElementById('formRegistro');
     const mensaje = document.getElementById('mensaje');
     const btn = document.getElementById('btnRegistrar');
@@ -102,7 +210,6 @@
       mensaje.style.display = 'block';
     }
 
-    // Envío del formulario — SIN funciones, directo con Supabase
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       mensaje.style.display = 'none';
@@ -112,7 +219,6 @@
       const contraseña = document.getElementById('contraseña').value;
       const confirmarContraseña = document.getElementById('confirmarContraseña').value;
 
-      // Validar contraseñas
       if (contraseña !== confirmarContraseña) {
         mostrarMensaje('❌ Las contraseñas no coinciden.', 'error');
         return;
@@ -122,15 +228,12 @@
       btn.textContent = 'Creando cuenta...';
 
       try {
-        const supabase = await cargarSupabase();
-        
-        // ✅ Registro DIRECTO — Supabase envía el correo por SMTP automáticamente
-        const { data, error } = await supabase.auth.signUp({
+        const { data, error } = await supabaseCliente.auth.signUp({
           email: correo,
           password: contraseña,
           options: {
             data: { nombre: nombre },
-            emailRedirectTo: window.location.origin + '/confirmar.html'
+            emailRedirectTo: window.location.origin + '/confirmar-correo.html'
           }
         });
 
@@ -143,10 +246,14 @@
         form.reset();
 
       } catch (err) {
-        mostrarMensaje('❌ ' + (err.message || 'Error al crear cuenta.'), 'error');
+        let texto = err.message || 'Error al crear cuenta.';
+        if (texto.includes('User already registered')) {
+          texto = 'Este correo ya tiene una cuenta. Iniciá sesión.';
+        }
+        mostrarMensaje('❌ ' + texto, 'error');
       } finally {
         btn.disabled = false;
-        btn.textContent = 'Crear cuenta';
+        btn.textContent = 'Crear cuenta ✅';
       }
     });
   </script>
