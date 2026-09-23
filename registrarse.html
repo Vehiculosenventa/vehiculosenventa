@@ -10,10 +10,13 @@
     h1 { color: #1e293b; text-align: center; }
     .card { background: white; padding: 2rem; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
     label { display: block; margin-top: 1rem; font-weight: 500; color: #334155; }
-    input { width: 100%; padding: 0.85rem; margin: 0.5rem 0 0; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; }
-    button { width: 100%; padding: 0.9rem; margin-top: 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
-    button:hover { background: #1d4ed8; }
-    button:disabled { background: #94a3b8; cursor: not-allowed; }
+    .input-con-boton { position: relative; }
+    input { width: 100%; padding: 0.85rem 3rem 0.85rem 0.85rem; margin: 0.5rem 0 0; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 1rem; }
+    .btn-ver { position: absolute; right: 0.75rem; top: 50%; transform: translateY(-50%); background: transparent; border: none; font-size: 1.25rem; cursor: pointer; padding: 0; color: #64748b; }
+    .btn-ver:hover { color: #1e293b; }
+    button[type="submit"] { width: 100%; padding: 0.9rem; margin-top: 1.5rem; background: #2563eb; color: white; border: none; border-radius: 8px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    button[type="submit"]:hover { background: #1d4ed8; }
+    button[type="submit"]:disabled { background: #94a3b8; cursor: not-allowed; }
     .mensaje { margin-top: 1rem; padding: 0.9rem; border-radius: 8px; display: none; }
     .exito { background: #dcfce7; color: #166534; display: block; }
     .error { background: #fee2e2; color: #991b1b; display: block; }
@@ -34,10 +37,16 @@
       <input type="email" id="correo" required placeholder="tu@correo.com">
 
       <label for="contraseña">Contraseña</label>
-      <input type="password" id="contraseña" required minlength="6" placeholder="Mínimo 6 caracteres">
+      <div class="input-con-boton">
+        <input type="password" id="contraseña" required minlength="6" placeholder="Mínimo 6 caracteres">
+        <button type="button" class="btn-ver" id="btnVerContra" title="Ver contraseña">👁️</button>
+      </div>
 
       <label for="confirmarContraseña">Confirmar contraseña</label>
-      <input type="password" id="confirmarContraseña" required minlength="6" placeholder="Repetí la contraseña">
+      <div class="input-con-boton">
+        <input type="password" id="confirmarContraseña" required minlength="6" placeholder="Repetí la contraseña">
+        <button type="button" class="btn-ver" id="btnVerConfirmar" title="Ver contraseña">👁️</button>
+      </div>
 
       <button type="submit" id="btnRegistrar">Crear cuenta</button>
       
@@ -62,6 +71,28 @@
       }
       return window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
+
+    // Función para ver/ocultar contraseña
+    function configurarBotonVer(inputId, botonId) {
+      const input = document.getElementById(inputId);
+      const boton = document.getElementById(botonId);
+      
+      boton.addEventListener('click', () => {
+        if (input.type === 'password') {
+          input.type = 'text';
+          boton.textContent = '🙈';
+          boton.title = 'Ocultar contraseña';
+        } else {
+          input.type = 'password';
+          boton.textContent = '👁️';
+          boton.title = 'Ver contraseña';
+        }
+      });
+    }
+
+    // Activar los dos botones
+    configurarBotonVer('contraseña', 'btnVerContra');
+    configurarBotonVer('confirmarContraseña', 'btnVerConfirmar');
 
     const form = document.getElementById('formRegistro');
     const mensaje = document.getElementById('mensaje');
