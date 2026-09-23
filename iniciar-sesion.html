@@ -56,7 +56,7 @@
     }
     input {
       width: 100%;
-      padding: 1rem 1rem 1rem 1rem;
+      padding: 1rem 3rem 1rem 1rem;
       border: 2px solid #e2e8f0;
       border-radius: 12px;
       font-size: 1rem;
@@ -125,7 +125,6 @@
       color: #4a5568;
       text-decoration: none;
       font-weight: 500;
-      transition: color 0.2s;
     }
     .volver:hover {
       color: #3182ce;
@@ -145,7 +144,7 @@
       <label for="contraseña">Contraseña</label>
       <div class="input-contenedor">
         <input type="password" id="contraseña" required placeholder="Tu contraseña">
-        <button type="button" id="btnVer" class="btn-ver" title="Ver contraseña">👁️</button>
+        <button type="button" id="btnVer" class="btn-ver">👁️</button>
       </div>
 
       <button type="submit" id="botonIngresar" class="boton-ingresar">Ingresar ✅</button>
@@ -160,8 +159,18 @@
     // Credenciales
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+
+    // Esperar a que Supabase cargue y crear cliente
+    let supabase;
     
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    function iniciarSupabase() {
+      if (!window.supabase) {
+        mostrarMensaje('⏳ Cargando...', 'error');
+        return false;
+      }
+      supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      return true;
+    }
 
     // Botón ver/ocultar contraseña
     const inputContra = document.getElementById('contraseña');
@@ -169,7 +178,6 @@
     btnVer.addEventListener('click', () => {
       inputContra.type = inputContra.type === 'password' ? 'text' : 'password';
       btnVer.textContent = inputContra.type === 'password' ? '👁️' : '🙈';
-      btnVer.title = inputContra.type === 'password' ? 'Ver contraseña' : 'Ocultar contraseña';
     });
 
     // Elementos
@@ -186,6 +194,12 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       mensaje.className = 'mensaje';
+
+      // Verificar que Supabase esté listo
+      if (!iniciarSupabase()) {
+        setTimeout(() => form.dispatchEvent(new Event('submit')), 300);
+        return;
+      }
 
       const correo = document.getElementById('correo').value.trim();
       const contraseña = document.getElementById('contraseña').value;
@@ -204,7 +218,6 @@
         // ✅ Ingresó bien
         mostrarMensaje('✅ ¡Bienvenido! Redirigiendo...', 'exito');
         
-        // Ir a la página principal
         setTimeout(() => {
           window.location.href = 'index.html';
         }, 1200);
