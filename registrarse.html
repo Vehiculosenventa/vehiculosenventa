@@ -5,10 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Crear Cuenta - Vehículos en Venta</title>
   <link rel="icon" href="data:,">
-  
-  <!-- Librería de Supabase - SOLO UNA VEZ -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  
   <style>
     * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
     body {
@@ -52,8 +49,6 @@
     button:hover {background: #4a90c4;}
     button:active {transform: scale(0.98);}
     button:disabled {background: #94b8d1; cursor: not-allowed; opacity: 0.7;}
-    .enlace {margin-top: 20px; text-align: center;}
-    .enlace a {color: #5fa8d3; text-decoration: none;}
     .error {color: #d64545; margin-top: -10px; margin-bottom: 12px; font-size: 14px; display: none;}
     .exito {color: #2f855a; margin-top: 10px; font-size: 14px; display: none;}
     .cargando {color: #3182ce; margin-top: 10px; font-size: 14px; display: none;}
@@ -91,25 +86,16 @@
     <div class="exito" id="exitoMsg"></div>
     
     <button id="botonCrear">Crear Cuenta</button>
-    
-    <div class="enlace">
-      <a href="index.html">Volver al inicio</a>
-    </div>
   </div>
 
   <script>
-    // Configuración de Supabase
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    // Crear cliente UNA SOLA VEZ — protegido contra duplicados
-    let supabase;
-    if (!window._sbClient) {
-      window._sbClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    if (!window._sb) {
+      window._sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
-    supabase = window._sbClient;
 
-    // Elementos del formulario
     const pass1 = document.getElementById('pass1');
     const pass2 = document.getElementById('pass2');
     const ver1 = document.getElementById('ver1');
@@ -121,11 +107,9 @@
     const exitoMsg = document.getElementById('exitoMsg');
     const cargando = document.getElementById('cargando');
 
-    // Contadores de caracteres
     pass1.addEventListener('input', () => cont1.textContent = `${pass1.value.length} / 8`);
     pass2.addEventListener('input', () => cont2.textContent = `${pass2.value.length} / 8`);
 
-    // Mostrar/ocultar contraseña
     function alternarVer(input, ojo) {
       input.type = input.type === 'password' ? 'text' : 'password';
       ojo.textContent = input.type === 'password' ? '👁️' : '🙈';
@@ -133,7 +117,6 @@
     ver1.addEventListener('click', () => alternarVer(pass1, ver1));
     ver2.addEventListener('click', () => alternarVer(pass2, ver2));
 
-    // Limpiar mensajes
     function limpiarMensajes() {
       errorMsg.style.display = 'none';
       exitoMsg.style.display = 'none';
@@ -142,53 +125,29 @@
       exitoMsg.textContent = '';
     }
 
-    // === FUNCIÓN DE REGISTRO QUE ENVÍA EL CORREO ===
     async function registrar() {
       limpiarMensajes();
-      
       const correo = document.getElementById('correo').value.trim();
       
-      // Validaciones
-      if (!correo) {
-        errorMsg.textContent = "Escribí tu correo electrónico";
-        errorMsg.style.display = 'block';
-        return;
-      }
-      if (!correo.includes('@') || !correo.includes('.')) {
-        errorMsg.textContent = "Correo inválido";
-        errorMsg.style.display = 'block';
-        return;
-      }
-      if (pass1.value.length < 6 || pass1.value.length > 8) {
-        errorMsg.textContent = "Entre 6 y 8 caracteres";
-        errorMsg.style.display = 'block';
-        return;
-      }
-      if (pass1.value !== pass2.value) {
-        errorMsg.textContent = "Las contraseñas no coinciden";
-        errorMsg.style.display = 'block';
-        return;
-      }
+      if (!correo) { errorMsg.textContent = "Escribí tu correo electrónico"; errorMsg.style.display = 'block'; return; }
+      if (!correo.includes('@') || !correo.includes('.')) { errorMsg.textContent = "Correo inválido"; errorMsg.style.display = 'block'; return; }
+      if (pass1.value.length < 6 || pass1.value.length > 8) { errorMsg.textContent = "Entre 6 y 8 caracteres"; errorMsg.style.display = 'block'; return; }
+      if (pass1.value !== pass2.value) { errorMsg.textContent = "Las contraseñas no coinciden"; errorMsg.style.display = 'block'; return; }
       
-      // Mostrar estado de carga
       botonCrear.disabled = true;
       cargando.style.display = 'block';
 
       try {
-        // 📤 Enviar solicitud a Supabase — ESTO GENERA EL CORREO
-        const { data, error } = await supabase.auth.signUp({
+        const { data, error } = await window._sb.auth.signUp({
           email: correo,
           password: pass1.value,
-          options: {
-            emailRedirectTo: "https://vehiculosenventa.com.ar/confirmar.html"
-          }
+          options: { emailRedirectTo: "https://vehiculosenventa.com.ar/confirmar.html" }
         });
 
         if (error) throw error;
 
-        // Éxito — correo enviado
         if (data.user && !data.session) {
-          exitoMsg.textContent = "✅ Correo enviado. Revisá tu bandeja de entrada";
+          exitoMsg.textContent = "✅ Cuenta creada. Revisá tu correo";
           exitoMsg.style.display = 'block';
         } else if (data.session) {
           exitoMsg.textContent = "✅ Cuenta lista. Redirigiendo...";
@@ -197,15 +156,9 @@
         }
       } catch (err) {
         let msg = "No se pudo registrar";
-        if (err.message.includes("User already registered")) {
-          msg = "⚠️ Este correo ya está registrado";
-        } else if (err.message.includes("invalid email")) {
-          msg = "Correo inválido";
-        } else if (err.message.includes("signup_disabled")) {
-          msg = "❌ Los registros están desactivados en Supabase";
-        } else {
-          msg = "❌ " + err.message;
-        }
+        if (err.message.includes("User already registered")) msg = "⚠️ Este correo ya está registrado";
+        else if (err.message.includes("invalid email")) msg = "Correo inválido";
+        else msg = "❌ " + err.message;
         errorMsg.textContent = msg;
         errorMsg.style.display = 'block';
       } finally {
@@ -214,7 +167,6 @@
       }
     }
 
-    // Conectar botón
     botonCrear.addEventListener('click', registrar);
   </script>
 </body>
