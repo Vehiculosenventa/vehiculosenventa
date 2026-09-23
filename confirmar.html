@@ -3,106 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Confirmando cuenta...</title>
-  <link rel="icon" href="data:,">
+  <title>Confirmado - Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', sans-serif;}
     body {
-      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      background: linear-gradient(135deg, #dceaf5, #cfe0ee);
       min-height: 100vh;
       display: flex; justify-content: center; align-items: center;
       padding: 20px;
     }
     .caja {
       background: #faf8f0;
-      padding: 50px 35px;
+      padding: 40px 30px;
       border-radius: 16px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      text-align: center;
-      max-width: 420px;
-      width: 100%;
+      max-width: 420px; width: 100%; text-align: center;
     }
-    .icono {font-size: 50px; margin-bottom: 20px;}
-    h1 {color: #2c5282; font-size: 22px; margin-bottom: 12px;}
-    p {color: #4a5568; font-size: 16px; line-height: 1.6; margin-bottom: 25px;}
-    .cargando {color: #3182ce;}
-    .exito {color: #2f855a; display: none;}
-    .error {color: #d64545; display: none;}
-    .boton {
-      display: inline-block;
-      padding: 12px 28px;
-      background: #5fa8d3;
-      color: #fff;
-      border-radius: 8px;
-      text-decoration: none;
-      font-weight: 600;
-      transition: background 0.3s;
+    h1 {color: #2c5282; margin-bottom: 15px; font-size: 22px;}
+    .exito {color: #2f855a; font-size: 18px; margin: 20px 0;}
+    .error {color: #d64545; font-size: 16px; margin: 20px 0; display: none;}
+    .cargando {color: #3182ce; font-size: 16px; margin: 20px 0;}
+    button {
+      background: #5fa8d3; color: #fff; border: none;
+      padding: 12px 24px; border-radius: 8px; font-size: 16px;
+      cursor: pointer; margin-top: 10px; transition: background 0.3s;
     }
-    .boton:hover {background: #4a90c4;}
+    button:hover {background: #4a90c4;}
   </style>
 </head>
 <body>
   <div class="caja">
-    <div class="icono" id="icono">⏳</div>
-    <h1 id="titulo">Confirmando tu cuenta</h1>
-    <p id="mensaje" class="cargando">Un momento por favor...</p>
-    <a href="index.html" class="boton" id="botonVolver" style="display:none;">Ir al inicio</a>
+    <h1>Confirmando tu cuenta...</h1>
+    <div class="cargando" id="cargando">✅ Verificando...</div>
+    <div class="exito" id="exito" style="display:none;">
+      ✅ ¡Cuenta confirmada con éxito!<br>
+      Ya podés iniciar sesión.
+    </div>
+    <div class="error" id="error"></div>
+    <button id="botonIr" style="display:none;" onclick="window.location.href='index.html'">
+      Ir al inicio
+    </button>
   </div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-
-    if (!window._sb) {
-      window._sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    }
-
-    const icono = document.getElementById('icono');
-    const titulo = document.getElementById('titulo');
-    const mensaje = document.getElementById('mensaje');
-    const botonVolver = document.getElementById('botonVolver');
-
+    
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
     async function confirmar() {
-      const params = new URLSearchParams(window.location.search);
-      const token_hash = params.get('token_hash');
-      const type = params.get('type');
-
-      if (!token_hash || !type) {
-        icono.textContent = '❌';
-        titulo.textContent = 'Enlace inválido';
-        mensaje.textContent = 'Faltan datos de confirmación. Probablemente el enlace está incompleto o ya fue usado.';
-        mensaje.className = 'error';
-        botonVolver.style.display = 'inline-block';
+      const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+      
+      if (error) {
+        document.getElementById('cargando').style.display = 'none';
+        document.getElementById('error').textContent = "❌ " + error.message;
+        document.getElementById('error').style.display = 'block';
         return;
       }
-
-      try {
-        const { data, error } = await window._sb.auth.verifyOtp({
-          token_hash,
-          type
-        });
-
-        if (error) throw error;
-
-        icono.textContent = '✅';
-        titulo.textContent = '¡Cuenta confirmada!';
-        mensaje.textContent = 'Tu correo fue verificado correctamente. Ya podés iniciar sesión.';
-        mensaje.className = 'exito';
-        
-        // Redirigir automáticamente después de 3 segundos
-        setTimeout(() => {
-          window.location.href = "index.html";
-        }, 3000);
-      } catch (err) {
-        icono.textContent = '❌';
-        titulo.textContent = 'No se pudo confirmar';
-        mensaje.textContent = err.message || 'El enlace puede haber expirado o ya fue utilizado.';
-        mensaje.className = 'error';
-        botonVolver.style.display = 'inline-block';
-      }
+      
+      document.getElementById('cargando').style.display = 'none';
+      document.getElementById('exito').style.display = 'block';
+      document.getElementById('botonIr').style.display = 'inline-block';
     }
-
+    
     confirmar();
   </script>
 </body>
