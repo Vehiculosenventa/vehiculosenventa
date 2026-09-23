@@ -44,7 +44,6 @@
   <div class="caja">
     <h1>🔐 Iniciar Sesión</h1>
     <p class="subtitulo">Ingresá tus datos para entrar</p>
-
     <form id="formLogin">
       <div class="campo">
         <label for="correo">Correo electrónico</label>
@@ -56,26 +55,22 @@
       </div>
       <button type="submit" id="btnEntrar" class="boton">Entrar ✅</button>
     </form>
-
     <div id="mensaje" class="mensaje"></div>
-
-    <a href="registrarse.html" class="enlace">¿No tenés cuenta? Creá una</a>
+    <a href="index.html" class="enlace">¿No tenés cuenta? Creá una</a>
     <a href="index.html" class="enlace">← Volver al inicio</a>
   </div>
-
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     const formLogin = document.getElementById('formLogin');
     const btnEntrar = document.getElementById('btnEntrar');
     const mensaje = document.getElementById('mensaje');
 
-    // ✅ Si ya tiene sesión → va directo a la principal
+    // Si ya tiene sesión → va directo a la página principal
     (async function verificarSesion() {
-      const { data: { session } } = await supabaseClient.auth.getSession();
+      const { data: { session } } = await supabase.auth.getSession();
       if (session) {
         window.location.href = 'index.html';
       }
@@ -85,46 +80,49 @@
       e.preventDefault();
       btnEntrar.disabled = true;
       mensaje.style.display = 'none';
-
+      
       const correo = document.getElementById('correo').value.trim();
       const contrasena = document.getElementById('contrasena').value;
 
       try {
-        // ✅ Iniciamos sesión
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
+        // Iniciar sesión
+        const { data, error } = await supabase.auth.signInWithPassword({
           email: correo,
           password: contrasena
         });
-
+        
         if (error) throw error;
 
-        // ✅ Verificamos que esté confirmado
-        const { data: usuario } = await supabaseClient
-          .from('usuarios')
-          .select('confirmado')
+        // Verificar si confirmó el correo desde nuestra tabla
+        const { data: filaUsuario, error: errorTabla } = await supabase
+          .from('usuario')
+          .select('verificado')
           .eq('correo', correo)
           .single();
 
-        if (!usuario?.confirmado) {
+        // Si no está verificado → no deja entrar
+        if (errorTabla || !filaUsuario || !filaUsuario.verificado) {
           mensaje.className = 'mensaje error';
-          mensaje.innerHTML = '⚠️ Confirmá tu cuenta desde el correo primero';
+          mensaje.innerHTML = '⚠️ Primero confirmá tu cuenta desde el correo que te enviamos';
           mensaje.style.display = 'block';
-          await supabaseClient.auth.signOut();
+          await supabase.auth.signOut();
           return;
         }
 
-        // ✅ ÉXITO → va directo a la principal SIN carteles
+        // ✅ Todo bien → entra a la página principal
         window.location.href = 'index.html';
 
       } catch (err) {
         mensaje.className = 'mensaje error';
-        if (err.message.includes('Invalid login')) {
+        
+        if (err.message.includes('Invalid login credentials')) {
           mensaje.innerHTML = '❌ Correo o contraseña incorrectos';
         } else if (err.message.includes('Email not confirmed')) {
-          mensaje.innerHTML = '⚠️ Confirmá tu cuenta desde el correo primero';
+          mensaje.innerHTML = '⚠️ Primero confirmá tu cuenta desde el correo';
         } else {
           mensaje.innerHTML = '❌ ' + err.message;
         }
+        
         mensaje.style.display = 'block';
       } finally {
         btnEntrar.disabled = false;
