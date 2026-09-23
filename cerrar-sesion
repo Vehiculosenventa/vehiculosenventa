@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar Sesión - Vehículos en Venta</title>
+  <meta http-equiv="refresh" content="2; url=index.html">
+  <title>Sesión Cerrada - Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
@@ -18,97 +19,44 @@
     .caja {
       background: white;
       border-radius: 20px;
-      padding: 40px;
+      padding: 50px 40px;
       width: 100%;
       max-width: 420px;
+      text-align: center;
       box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
     h1 {
       color: #2c5282;
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 24px;
+      font-size: 26px;
+      margin-bottom: 15px;
     }
-    .campo {
+    p {
+      color: #5a6872;
+      font-size: 17px;
+      margin-bottom: 25px;
+    }
+    .icono {
+      font-size: 50px;
       margin-bottom: 20px;
     }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-      color: #333;
-    }
-    input {
-      width: 100%;
-      padding: 14px;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      font-size: 16px;
-    }
-    input:focus {
-      outline: none;
-      border-color: #3182ce;
-    }
-    button {
-      width: 100%;
-      padding: 15px;
+    .boton {
+      display: inline-block;
+      padding: 14px 30px;
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
       color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      transform: translateY(-2px);
-    }
-    .mensaje {
-      margin-top: 20px;
-      padding: 12px;
-      border-radius: 10px;
-      text-align: center;
-      font-weight: bold;
-      display: none;
-    }
-    .error { background: #ffebee; color: #c53030; display: block; }
-    .exito { background: #e8f5e9; color: #2e7d32; display: block; }
-    .enlace {
-      margin-top: 20px;
-      text-align: center;
-    }
-    .enlace a {
-      color: #3182ce;
       text-decoration: none;
+      border-radius: 10px;
+      font-size: 16px;
       font-weight: bold;
     }
   </style>
 </head>
 <body>
   <div class="caja">
-    <h1>🔐 Iniciar Sesión</h1>
-    
-    <form id="formLogin">
-      <div class="campo">
-        <label for="correo">Correo electrónico</label>
-        <input type="email" id="correo" required>
-      </div>
-      
-      <div class="campo">
-        <label for="clave">Contraseña</label>
-        <input type="password" id="clave" required>
-      </div>
-      
-      <button type="submit">Entrar</button>
-    </form>
-
-    <div id="mensaje" class="mensaje"></div>
-
-    <div class="enlace">
-      <p>¿No tenés cuenta? <a href="registrarse.html">Registrarse</a></p>
-      <p style="margin-top:10px;"><a href="index.html">← Volver al inicio</a></p>
-    </div>
+    <div class="icono">👋</div>
+    <h1>Sesión cerrada</h1>
+    <p>Gracias por visitarnos.<br>Vas a ser redirigido a la página principal...</p>
+    <a href="index.html" class="boton">🔙 Volver ahora</a>
   </div>
 
   <script>
@@ -116,54 +64,11 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    
-    const formLogin = document.getElementById('formLogin');
-    const mensaje = document.getElementById('mensaje');
 
-    formLogin.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      const correo = document.getElementById('correo').value;
-      const clave = document.getElementById('clave').value;
-
-      mensaje.className = 'mensaje';
-      mensaje.textContent = '';
-
-      // 1. Iniciar sesión
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email: correo,
-        password: clave
-      });
-
-      if (error) {
-        mensaje.className = 'mensaje error';
-        mensaje.textContent = '❌ ' + error.message;
-        return;
-      }
-
-      // 2. Verificar si está confirmado en la tabla
-      const { data: fila, error: errorTabla } = await supabase
-        .from('usuario')
-        .select('verificado')
-        .eq('correo', correo)
-        .single();
-
-      if (errorTabla || !fila || !fila.verificado) {
-        mensaje.className = 'mensaje error';
-        mensaje.textContent = '⚠️ Primero confirmá tu cuenta desde el correo';
-        await supabase.auth.signOut();
-        return;
-      }
-
-      // ✅ TODO BIEN → llevar a la página principal
-      mensaje.className = 'mensaje exito';
-      mensaje.textContent = '✅ Entrando...';
-      
-      // IR A index.html AHORA MISMO
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 800);
-    });
+    // Asegurar que se cierra todo
+    (async () => {
+      await supabase.auth.signOut();
+    })();
   </script>
 </body>
 </html>
