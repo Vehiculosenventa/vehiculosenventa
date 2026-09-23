@@ -6,42 +6,42 @@
   <title>Confirmar Correo — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
-    * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', sans-serif;}
-    
-    /* Fondo de afuera — azul clarito */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+    }
     body {
       background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
       min-height: 100vh;
-      display: flex; justify-content: center; align-items: center;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       padding: 20px;
     }
-    
-    /* Tarjeta — color cremita */
     .caja {
       background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
       padding: 45px 30px;
       border-radius: 24px;
-      box-shadow: 0 10px 30px rgba(44,82,130,0.12);
+      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.12);
       border: 1px solid #e2d9c8;
       max-width: 420px;
       width: 100%;
       text-align: center;
     }
-    
     h1 {
       color: #2c5282;
       margin-bottom: 25px;
       font-size: 22px;
       font-weight: 800;
     }
-    
     .cargando {
       color: #3182ce;
       font-size: 17px;
       margin: 25px 0;
       font-weight: 600;
     }
-    
     .spinner {
       display: inline-block;
       width: 24px;
@@ -53,11 +53,9 @@
       margin-left: 10px;
       vertical-align: middle;
     }
-    
     @keyframes girar {
       to { transform: rotate(360deg); }
     }
-    
     .exito {
       color: #2f855a;
       font-size: 18px;
@@ -66,7 +64,6 @@
       line-height: 1.7;
       font-weight: 600;
     }
-    
     .error {
       color: #d64545;
       font-size: 16px;
@@ -75,7 +72,6 @@
       line-height: 1.6;
       font-weight: 600;
     }
-    
     .boton {
       display: inline-block;
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
@@ -89,12 +85,11 @@
       margin-top: 15px;
       text-decoration: none;
       transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 12px rgba(49,130,206,0.2);
+      box-shadow: 0 4px 12px rgba(49, 130, 206, 0.2);
     }
-    
     .boton:hover {
       transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(49,130,206,0.25);
+      box-shadow: 0 6px 16px rgba(49, 130, 206, 0.25);
     }
   </style>
 </head>
@@ -123,20 +118,18 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
     async function confirmar() {
       try {
-        const { data, error } = await supabaseClient.auth.exchangeCodeForSession(window.location.href);
+        const { data, error } = await supabaseCliente.auth.exchangeCodeForSession(window.location.href);
         
         if (error) throw error;
         
-        // ✅ ÉXITO
         document.getElementById('cargando').style.display = 'none';
         document.getElementById('exito').style.display = 'block';
         document.getElementById('botonIr').style.display = 'inline-block';
         
-        // ⏳ Va sola a la página principal en 2 segundos
         setTimeout(() => {
           window.location.href = 'index.html';
         }, 2000);
