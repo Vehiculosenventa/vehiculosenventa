@@ -6,9 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vehículos en Venta">
-  <meta name="theme-color" content="#1565C0">
   <title>Vehículos en Venta</title>
-  <link rel="manifest" href="app.webmanifest">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     * {
@@ -22,7 +20,6 @@
       min-height: 100vh;
       padding: 20px;
     }
-    /* --- BOTONES ARRIBA A LA DERECHA --- */
     .barra-superior {
       text-align: right;
       margin-bottom: 20px;
@@ -141,30 +138,25 @@
   </style>
 </head>
 <body>
-  <!-- BOTONES ARRIBA A LA DERECHA -->
   <div class="barra-superior">
     <span id="saludo" class="saludo"></span>
     <a id="btn-registrar" href="registrarse.html" class="boton-sesion boton-registrar">✨ Registrarse</a>
     <a id="btn-iniciar" href="iniciar-sesion.html" class="boton-sesion boton-entrar">🔐 Iniciar sesión</a>
     <button id="btn-cerrar" class="boton-sesion boton-cerrar">🚪 Cerrar sesión</button>
   </div>
+
   <div class="caja-principal">
     <h1>🚗 Vehículos en Venta</h1>
     <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
     La plataforma de vehículos de Rosario y la región</p>
-    <a href="cargar.html" class="boton">
-      📄 <span>Ingresar Vehículo</span>
-    </a>
-    <a href="ver.html" class="boton">
-      📋 <span>Ver Vehículos — Catálogo</span>
-    </a>
-    <a href="buscar.html" class="boton">
-      🔍 <span>Buscar Vehículo</span>
-    </a>
-    <a href="mis-vehiculos.html" class="boton">
-      ❤️ <span>Mis Vehículos</span>
-    </a>
+    
+    <a href="cargar.html" class="boton">📄 <span>Ingresar Vehículo</span></a>
+    <a href="ver.html" class="boton">📋 <span>Ver Vehículos — Catálogo</span></a>
+    <a href="buscar.html" class="boton">🔍 <span>Buscar Vehículo</span></a>
+    <a href="mis-vehiculos.html" class="boton">❤️ <span>Mis Vehículos</span></a>
+    
     <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
+    
     <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
   </div>
 
@@ -188,23 +180,20 @@
       const { data: { session } } = await supabase.auth.getSession();
       
       if (session) {
-        // ✅ Conectado: ocultar los de entrada
+        // Conectado: ocultar registrar y entrar
         btnRegistrar.style.display = 'none';
         btnIniciar.style.display = 'none';
         enlaceOlvidada.style.display = 'none';
-        
-        // Mostrar cerrar sesión
         btnCerrar.style.display = 'inline-block';
         
-        // Saludo con nombre
+        // Mostrar nombre del usuario
         const nombre = session.user.user_metadata?.nombre || session.user.email;
         saludo.textContent = `¡Hola, ${nombre}! 🎉`;
       } else {
-        // 🔒 Sin conectar: todo vuelve a la normalidad
+        // Sin sesión: mostrar todo
         btnRegistrar.style.display = 'inline-block';
         btnIniciar.style.display = 'inline-block';
         enlaceOlvidada.style.display = 'inline-block';
-        
         btnCerrar.style.display = 'none';
         saludo.textContent = '';
       }
@@ -219,7 +208,7 @@
       }
     });
 
-    // Cambios en tiempo real
+    // Actualizar cuando cambie la sesión
     supabase.auth.onAuthStateChange(() => {
       verificarSesion();
     });
@@ -249,7 +238,7 @@
       }
     }
 
-    // Al cargar la página
+    // Al cargar todo
     document.addEventListener('DOMContentLoaded', () => {
       verificarSesion();
       contarVisitaPrincipal();
