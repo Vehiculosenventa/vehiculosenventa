@@ -158,14 +158,11 @@
   </div>
 
   <script>
-    // Credenciales
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    // Crear cliente UNA SOLA VEZ
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Botón ver/ocultar contraseña — arreglado ✅
     const inputContra = document.getElementById('contraseña');
     const btnVer = document.getElementById('btnVer');
     
@@ -179,7 +176,6 @@
       }
     });
 
-    // Elementos
     const form = document.getElementById('formIngreso');
     const mensaje = document.getElementById('mensaje');
     const boton = document.getElementById('botonIngresar');
@@ -189,7 +185,6 @@
       mensaje.className = 'mensaje ' + tipo;
     }
 
-    // Envío del formulario
     form.addEventListener('submit', async function(e) {
       e.preventDefault();
       mensaje.className = 'mensaje';
@@ -201,7 +196,6 @@
       boton.textContent = 'Ingresando...';
 
       try {
-        // ✅ Acá busca el usuario en Supabase
         const { data, error } = await supabase.auth.signInWithPassword({
           email: correo,
           password: contraseña
@@ -209,7 +203,6 @@
 
         if (error) throw error;
 
-        // ✅ Usuario encontrado y conectado
         mostrarMensaje('✅ ¡Bienvenido! Redirigiendo...', 'exito');
         
         setTimeout(function() {
