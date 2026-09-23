@@ -3,111 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar Sesión - Vehículos en Venta</title>
+  <title>Iniciar Sesión</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-    body {
-      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
-    .caja {
-      background: white;
-      border-radius: 20px;
-      padding: 40px;
-      width: 100%;
-      max-width: 420px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    }
-    h1 {
-      color: #2c5282;
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 24px;
-    }
-    .campo {
-      margin-bottom: 20px;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      font-weight: bold;
-      color: #333;
-    }
-    input {
-      width: 100%;
-      padding: 14px;
-      border: 2px solid #ddd;
-      border-radius: 10px;
-      font-size: 16px;
-    }
-    input:focus {
-      outline: none;
-      border-color: #3182ce;
-    }
-    button {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    button:hover {
-      transform: translateY(-2px);
-    }
-    .mensaje {
-      margin-top: 20px;
-      padding: 12px;
-      border-radius: 10px;
-      text-align: center;
-      font-weight: bold;
-      display: none;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif; }
+    body { background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .caja { background: #fff; border-radius: 20px; padding: 40px; max-width: 420px; width: 100%; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+    h1 { text-align: center; color: #2c5282; margin-bottom: 30px; }
+    .campo { margin-bottom: 20px; }
+    label { display: block; margin-bottom: 8px; font-weight: 700; }
+    input { width: 100%; padding: 14px; border: 2px solid #ddd; border-radius: 10px; font-size: 16px; }
+    button { width: 100%; padding: 15px; background: #3182ce; color: #fff; border: none; border-radius: 10px; font-size: 18px; font-weight: 700; cursor: pointer; }
+    .mensaje { margin-top: 20px; padding: 12px; border-radius: 10px; text-align: center; font-weight: 700; display: none; }
     .error { background: #ffebee; color: #c53030; display: block; }
-    .exito { background: #e8f5e9; color: #2e7d32; display: block; }
-    .enlace {
-      margin-top: 20px;
-      text-align: center;
-    }
-    .enlace a {
-      color: #3182ce;
-      text-decoration: none;
-      font-weight: bold;
-    }
+    .ok { background: #e8f5e9; color: #2e7d32; display: block; }
+    .enlaces { margin-top: 25px; text-align: center; }
+    .enlaces a { display: block; margin: 10px 0; color: #3182ce; text-decoration: none; font-weight: 700; }
   </style>
 </head>
 <body>
   <div class="caja">
     <h1>🔐 Iniciar Sesión</h1>
     
-    <form id="formLogin">
+    <form id="form">
       <div class="campo">
-        <label for="correo">Correo electrónico</label>
+        <label>Correo electrónico</label>
         <input type="email" id="correo" required>
       </div>
-      
       <div class="campo">
-        <label for="clave">Contraseña</label>
+        <label>Contraseña</label>
         <input type="password" id="clave" required>
       </div>
-      
       <button type="submit">Entrar</button>
     </form>
 
     <div id="mensaje" class="mensaje"></div>
 
-    <div class="enlace">
-      <p>¿No tenés cuenta? <a href="registrarse.html">Registrarse</a></p>
-      <p style="margin-top:10px;"><a href="index.html">← Volver al inicio</a></p>
+    <div class="enlaces">
+      <a href="registrarse.html">📝 No tengo cuenta — Registrarme</a>
+      <a href="index.html">← Volver a la página principal</a>
     </div>
   </div>
 
@@ -117,19 +51,17 @@
     
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
-    const formLogin = document.getElementById('formLogin');
+    const form = document.getElementById('form');
     const mensaje = document.getElementById('mensaje');
 
-    formLogin.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      
       const correo = document.getElementById('correo').value;
       const clave = document.getElementById('clave').value;
 
       mensaje.className = 'mensaje';
-      mensaje.textContent = '';
 
-      // 1. Iniciar sesión
+      // Iniciar sesión
       const { data, error } = await supabase.auth.signInWithPassword({
         email: correo,
         password: clave
@@ -141,28 +73,24 @@
         return;
       }
 
-      // 2. Verificar si está confirmado en la tabla
-      const { data: fila, error: errorTabla } = await supabase
+      // Verificar si confirmó el correo
+      const { data: fila } = await supabase
         .from('usuario')
         .select('verificado')
         .eq('correo', correo)
         .single();
 
-      if (errorTabla || !fila || !fila.verificado) {
+      if (!fila || !fila.verificado) {
         mensaje.className = 'mensaje error';
         mensaje.textContent = '⚠️ Primero confirmá tu cuenta desde el correo';
         await supabase.auth.signOut();
         return;
       }
 
-      // ✅ TODO BIEN → llevar a la página principal
-      mensaje.className = 'mensaje exito';
+      // Todo bien → ir al inicio
+      mensaje.className = 'mensaje ok';
       mensaje.textContent = '✅ Entrando...';
-      
-      // IR A index.html AHORA MISMO
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 800);
+      setTimeout(() => window.location.href = 'index.html', 800);
     });
   </script>
 </body>
