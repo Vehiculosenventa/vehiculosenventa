@@ -3,13 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Vehículos en Venta">
-  <meta name="theme-color" content="#1565C0">
   <title>Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
@@ -17,7 +10,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;
+      font-family: 'Segoe UI', Roboto, sans-serif;
     }
     body {
       background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
@@ -46,11 +39,6 @@
       color: #3182ce;
       border: 2px solid #3182ce;
       vertical-align: middle;
-      transition: all 0.3s ease;
-    }
-    .boton-entrar:hover {
-      background: #ebf4fb;
-      transform: translateY(-1px);
     }
     .enlace-olvidada {
       display: block;
@@ -58,9 +46,6 @@
       font-size: 14px;
       color: #3182ce;
       text-decoration: none;
-    }
-    .enlace-olvidada:hover {
-      text-decoration: underline;
     }
     .boton-cerrar {
       display: none;
@@ -72,16 +57,9 @@
       background: transparent;
       color: #c53030;
       cursor: pointer;
-      vertical-align: middle;
-      text-decoration: underline;
-      transition: all 0.2s ease;
     }
     .boton-cerrar.activo {
       display: inline-block;
-    }
-    .boton-cerrar:hover {
-      color: #9b2c2c;
-      background: rgba(197, 48, 48, 0.08);
     }
     .oculto { display: none !important; }
     .caja-principal {
@@ -105,8 +83,6 @@
       color: #5a6872;
       font-size: 17px;
       margin-bottom: 35px;
-      font-weight: 500;
-      line-height: 1.5;
     }
     .boton {
       display: flex;
@@ -114,23 +90,16 @@
       justify-content: center;
       gap: 12px;
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #ffffff;
+      color: #fff;
       text-decoration: none;
       font-size: 20px;
       font-weight: 700;
       padding: 20px 26px;
       border-radius: 16px;
       margin-bottom: 16px;
-      transition: all 0.35s ease;
       border: none;
-      box-shadow: 0 6px 16px rgba(49, 130, 206, 0.18);
       cursor: pointer;
       width: 100%;
-    }
-    .boton:hover {
-      transform: translateY(-2px);
-      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
-      box-shadow: 0 8px 20px rgba(49, 130, 206, 0.25);
     }
     .pie-pagina {
       margin-top: 30px;
@@ -146,39 +115,34 @@
       color: #c53030;
       font-weight: 600;
       display: none;
+      text-align: center;
     }
   </style>
 </head>
 <body>
   <div class="barra-superior">
-    <!-- 🔒 SIN SESIÓN -->
-    <div id="sinSesion">
-      <a id="btn-entrar" href="iniciar-sesion.html" class="boton-entrar">🔐 Iniciar sesión</a>
-      <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
+    <!-- 🔒 SIN SESIÓN → Solo se ve esto -->
+    <div id="botonesSinSesion">
+      <a href="iniciar-sesion.html" class="boton-entrar">🔐 Iniciar sesión</a>
+      <a href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
     </div>
-    <!-- ✅ CON SESIÓN -->
-    <div id="conSesion" class="oculto">
-      <span id="saludo" class="saludo"></span>
-      <button id="btn-cerrar" class="boton-cerrar activo">🚪 Cerrar sesión</button>
+
+    <!-- ✅ CON SESIÓN → Solo se ve esto -->
+    <div id="botonesConSesion" class="oculto">
+      <span class="saludo">¡Hola! 🎉</span>
+      <button id="btnCerrar" class="boton-cerrar activo">🚪 Cerrar sesión</button>
     </div>
   </div>
 
-  <div id="caja-contenido" class="caja-principal oculto">
+  <!-- Los botones principales SOLO aparecen cuando estás conectado y confirmado -->
+  <div id="contenidoPrincipal" class="oculto caja-principal">
     <h1>🚗 Vehículos en Venta</h1>
     <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
     La plataforma de vehículos de Rosario y toda la región</p>
-    <a href="cargar.html" class="boton">
-      📄 <span>Ingresar Vehículo</span>
-    </a>
-    <a href="ver.html" class="boton">
-      📋 <span>Ver Vehículos — Catálogo</span>
-    </a>
-    <a href="buscar.html" class="boton">
-      🔍 <span>Buscar Vehículo</span>
-    </a>
-    <a href="mis-vehiculos.html" class="boton">
-      ❤️ <span>Mis Vehículos</span>
-    </a>
+    <a href="cargar.html" class="boton">📄 Ingresar Vehículo</a>
+    <a href="ver.html" class="boton">📋 Ver Vehículos — Catálogo</a>
+    <a href="buscar.html" class="boton">🔍 Buscar Vehículo</a>
+    <a href="mis-vehiculos.html" class="boton">❤️ Mis Vehículos</a>
     <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
   </div>
 
@@ -189,62 +153,57 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    const sinSesion = document.getElementById('sinSesion');
-    const conSesion = document.getElementById('conSesion');
-    const saludo = document.getElementById('saludo');
-    const btnCerrar = document.getElementById('btn-cerrar');
-    const cajaContenido = document.getElementById('caja-contenido');
+    
+    const botonesSinSesion = document.getElementById('botonesSinSesion');
+    const botonesConSesion = document.getElementById('botonesConSesion');
+    const contenidoPrincipal = document.getElementById('contenidoPrincipal');
     const mensaje = document.getElementById('mensaje');
+    const btnCerrar = document.getElementById('btnCerrar');
 
-    // ✅ VERIFICAR SESIÓN
-    async function verificarSesion() {
-      sinSesion.classList.add('oculto');
-      conSesion.classList.add('oculto');
-      cajaContenido.classList.add('oculto');
+    async function actualizarPagina() {
+      // Ocultar TODO al empezar
+      botonesSinSesion.classList.add('oculto');
+      botonesConSesion.classList.add('oculto');
+      contenidoPrincipal.classList.add('oculto');
       mensaje.style.display = 'none';
 
       const { data: { session } } = await supabase.auth.getSession();
-      
+
       if (!session) {
-        // 🔒 SIN SESIÓN → mostrar entrar y olvidé contraseña
-        sinSesion.classList.remove('oculto');
+        // 🔒 SIN SESIÓN → se ve "Iniciar sesión" y "Olvidaste..."
+        botonesSinSesion.classList.remove('oculto');
         return;
       }
 
-      // ✅ HAY SESIÓN → verificar confirmación
-      const { data: filaUsuario, error: errorTabla } = await supabase
+      // ✅ HAY SESIÓN → verificar si confirmó el correo
+      const { data: fila } = await supabase
         .from('usuario')
         .select('verificado')
         .eq('correo', session.user.email)
         .single();
 
-      if (errorTabla || !filaUsuario || !filaUsuario.verificado) {
-        // ⏳ NO CONFIRMÓ → avisar y salir
-        mensaje.textContent = '⚠️ Primero confirmá tu cuenta desde el correo';
+      if (!fila || !fila.verificado) {
+        // ⏳ NO CONFIRMÓ → aviso y salir
+        mensaje.textContent = '⚠️ Confirmá tu cuenta desde el correo primero';
         mensaje.style.display = 'block';
         await supabase.auth.signOut();
-        setTimeout(() => {
-          window.location.href = 'iniciar-sesion.html';
-        }, 3000);
+        setTimeout(() => window.location.href = 'iniciar-sesion.html', 3000);
         return;
       }
 
-      // ✅ TODO BIEN → ocultar entrar, mostrar cerrar y contenido
-      sinSesion.classList.add('oculto');        // Desaparece "Iniciar sesión"
-      conSesion.classList.remove('oculto');     // Aparece saludo + "Cerrar sesión"
-      cajaContenido.classList.remove('oculto');  // Aparecen los botones
-      saludo.textContent = '¡Hola! 🎉';
+      // ✅ TODO BIEN → desaparecen los de entrar, aparece "Cerrar sesión" + todo el contenido
+      botonesSinSesion.classList.add('oculto');      // Se van "Iniciar" y "Olvidaste"
+      botonesConSesion.classList.remove('oculto');   // Aparece saludo + "Cerrar sesión"
+      contenidoPrincipal.classList.remove('oculto'); // Aparecen todos los botones
     }
 
-    // ✅ CERRAR SESIÓN → ir a la página que quieras
+    // Cerrar sesión → ir a la página de despedida
     btnCerrar.addEventListener('click', async () => {
       await supabase.auth.signOut();
-      // Cambiá acá por la página a donde quieras que vaya
       window.location.href = 'cerrar-sesion.html';
-      // Si querés que vaya al inicio: window.location.href = 'index.html';
     });
 
-    document.addEventListener('DOMContentLoaded', verificarSesion);
+    document.addEventListener('DOMContentLoaded', actualizarPagina);
   </script>
 </body>
 </html>
