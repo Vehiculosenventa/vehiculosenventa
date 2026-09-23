@@ -3,68 +3,149 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Confirmado - Vehículos en Venta</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Confirmar Correo — Vehículos en Venta</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', sans-serif;}
+    
+    /* Fondo de afuera — azul clarito */
     body {
-      background: linear-gradient(135deg, #dceaf5, #cfe0ee);
+      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
       min-height: 100vh;
       display: flex; justify-content: center; align-items: center;
       padding: 20px;
     }
+    
+    /* Tarjeta — color cremita */
     .caja {
-      background: #faf8f0;
-      padding: 40px 30px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-      max-width: 420px; width: 100%; text-align: center;
+      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
+      padding: 45px 30px;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(44,82,130,0.12);
+      border: 1px solid #e2d9c8;
+      max-width: 420px;
+      width: 100%;
+      text-align: center;
     }
-    h1 {color: #2c5282; margin-bottom: 15px; font-size: 22px;}
-    .exito {color: #2f855a; font-size: 18px; margin: 20px 0;}
-    .error {color: #d64545; font-size: 16px; margin: 20px 0; display: none;}
-    .cargando {color: #3182ce; font-size: 16px; margin: 20px 0;}
-    button {
-      background: #5fa8d3; color: #fff; border: none;
-      padding: 12px 24px; border-radius: 8px; font-size: 16px;
-      cursor: pointer; margin-top: 10px; transition: background 0.3s;
+    
+    h1 {
+      color: #2c5282;
+      margin-bottom: 25px;
+      font-size: 22px;
+      font-weight: 800;
     }
-    button:hover {background: #4a90c4;}
+    
+    .cargando {
+      color: #3182ce;
+      font-size: 17px;
+      margin: 25px 0;
+      font-weight: 600;
+    }
+    
+    .spinner {
+      display: inline-block;
+      width: 24px;
+      height: 24px;
+      border: 3px solid #bfdbfe;
+      border-top-color: #3182ce;
+      border-radius: 50%;
+      animation: girar 1s linear infinite;
+      margin-left: 10px;
+      vertical-align: middle;
+    }
+    
+    @keyframes girar {
+      to { transform: rotate(360deg); }
+    }
+    
+    .exito {
+      color: #2f855a;
+      font-size: 18px;
+      margin: 25px 0;
+      display: none;
+      line-height: 1.7;
+      font-weight: 600;
+    }
+    
+    .error {
+      color: #d64545;
+      font-size: 16px;
+      margin: 25px 0;
+      display: none;
+      line-height: 1.6;
+      font-weight: 600;
+    }
+    
+    .boton {
+      display: inline-block;
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: #fff;
+      border: none;
+      padding: 13px 30px;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 15px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 12px rgba(49,130,206,0.2);
+    }
+    
+    .boton:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(49,130,206,0.25);
+    }
   </style>
 </head>
 <body>
   <div class="caja">
-    <h1>Confirmando tu cuenta...</h1>
-    <div class="cargando" id="cargando">✅ Verificando...</div>
-    <div class="exito" id="exito" style="display:none;">
-      ✅ ¡Cuenta confirmada con éxito!<br>
-      Ya podés iniciar sesión.
+    <h1>Verificando tu correo</h1>
+    
+    <div class="cargando" id="cargando">
+      Procesando tu cuenta...<span class="spinner"></span>
     </div>
+    
+    <div class="exito" id="exito">
+      ✅ ¡Cuenta confirmada con éxito!<br>
+      Tu correo ya está verificado.<br>
+      Redirigiendo a la página principal...
+    </div>
+    
     <div class="error" id="error"></div>
-    <button id="botonIr" style="display:none;" onclick="window.location.href='index.html'">
+    
+    <a id="botonIr" href="index.html" class="boton" style="display:none;">
       Ir al inicio
-    </button>
+    </a>
   </div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
     async function confirmar() {
-      const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
-      
-      if (error) {
+      try {
+        const { data, error } = await supabaseClient.auth.exchangeCodeForSession(window.location.href);
+        
+        if (error) throw error;
+        
+        // ✅ ÉXITO
         document.getElementById('cargando').style.display = 'none';
-        document.getElementById('error').textContent = "❌ " + error.message;
+        document.getElementById('exito').style.display = 'block';
+        document.getElementById('botonIr').style.display = 'inline-block';
+        
+        // ⏳ Va sola a la página principal en 2 segundos
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 2000);
+        
+      } catch (err) {
+        document.getElementById('cargando').style.display = 'none';
+        document.getElementById('error').innerHTML = "❌ " + err.message;
         document.getElementById('error').style.display = 'block';
-        return;
       }
-      
-      document.getElementById('cargando').style.display = 'none';
-      document.getElementById('exito').style.display = 'block';
-      document.getElementById('botonIr').style.display = 'inline-block';
     }
     
     confirmar();
