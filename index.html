@@ -17,13 +17,11 @@
       padding: 0;
       font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;
     }
-
     body {
       background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
       min-height: 100vh;
       padding: 20px;
     }
-
     /* --- BOTONES ARRIBA A LA DERECHA --- */
     .barra-superior {
       text-align: right;
@@ -63,23 +61,12 @@
       border: none;
       display: none;
     }
-    .boton-eliminar {
-      background: #fff;
-      color: #c53030;
-      border: 2px solid #c53030;
-      display: none;
-    }
-    .boton-eliminar:hover {
-      background: #fff5f5;
-      transform: translateY(-1px);
-    }
     .saludo {
       display: inline-block;
       margin-right: 15px;
       color: #2c5282;
       font-weight: 600;
     }
-
     .caja-principal {
       background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
       border-radius: 28px;
@@ -92,19 +79,16 @@
       animation: entradaSuave 0.7s ease-out;
       border: 1px solid #e2d9c8;
     }
-
     @keyframes entradaSuave {
       from { opacity: 0; transform: translateY(25px); }
       to { opacity: 1; transform: translateY(0); }
     }
-
     h1 {
       color: #2c5282;
       font-size: 34px;
       font-weight: 800;
       margin-bottom: 12px;
     }
-
     .subtitulo {
       color: #5a6872;
       font-size: 17px;
@@ -112,7 +96,6 @@
       font-weight: 500;
       line-height: 1.5;
     }
-
     .boton {
       display: flex;
       align-items: center;
@@ -132,13 +115,11 @@
       cursor: pointer;
       width: 100%;
     }
-
     .boton:hover {
       transform: translateY(-2px);
       background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
       box-shadow: 0 8px 20px rgba(49, 130, 206, 0.25);
     }
-
     .enlace-olvidada {
       display: inline-block;
       margin-top: 25px;
@@ -152,7 +133,6 @@
       color: #2b6cb0;
       text-decoration: underline;
     }
-
     .pie-pagina {
       margin-top: 30px;
       font-size: 13px;
@@ -161,21 +141,17 @@
   </style>
 </head>
 <body>
-
   <!-- BOTONES ARRIBA A LA DERECHA -->
   <div class="barra-superior">
     <span id="saludo" class="saludo"></span>
     <a id="btn-registrar" href="registrarse.html" class="boton-sesion boton-registrar">✨ Registrarse</a>
     <a id="btn-iniciar" href="iniciar-sesion.html" class="boton-sesion boton-entrar">🔐 Iniciar sesión</a>
-    <a id="btn-eliminar" href="eliminar-cuenta.html" class="boton-sesion boton-eliminar">⚠️ Eliminar Cuenta</a>
     <button id="btn-cerrar" class="boton-sesion boton-cerrar">🚪 Cerrar sesión</button>
   </div>
-
   <div class="caja-principal">
     <h1>🚗 Vehículos en Venta</h1>
     <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
     La plataforma de vehículos de Rosario y la región</p>
-
     <a href="cargar.html" class="boton">
       📄 <span>Ingresar Vehículo</span>
     </a>
@@ -188,90 +164,96 @@
     <a href="mis-vehiculos.html" class="boton">
       ❤️ <span>Mis Vehículos</span>
     </a>
-
     <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
-
     <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
   </div>
 
   <script>
-    // Tus credenciales del proyecto NUEVO
+    // Credenciales
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    
+    // Inicializar Supabase
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    // Elementos de la página
+    // Elementos
     const saludo = document.getElementById('saludo');
     const btnRegistrar = document.getElementById('btn-registrar');
     const btnIniciar = document.getElementById('btn-iniciar');
-    const btnEliminar = document.getElementById('btn-eliminar');
     const btnCerrar = document.getElementById('btn-cerrar');
     const enlaceOlvidada = document.getElementById('enlace-olvidada');
 
-    // ✅ VERIFICAR SESIÓN UNA SOLA VEZ al cargar
-    function verificarSesion() {
-      const usuarioId = localStorage.getItem('usuario_id');
-      const usuarioNombre = localStorage.getItem('usuario_nombre');
-
-      if (usuarioId) {
-        // ✅ CONECTADO: ocultar los de entrar, mostrar Eliminar y Cerrar
+    // Verificar sesión
+    async function verificarSesion() {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (session) {
+        // ✅ Conectado: ocultar los de entrada
         btnRegistrar.style.display = 'none';
         btnIniciar.style.display = 'none';
         enlaceOlvidada.style.display = 'none';
-        btnEliminar.style.display = 'inline-block';
+        
+        // Mostrar cerrar sesión
         btnCerrar.style.display = 'inline-block';
-        saludo.textContent = '¡Hola, ' + usuarioNombre + '! 🎉';
+        
+        // Saludo con nombre
+        const nombre = session.user.user_metadata?.nombre || session.user.email;
+        saludo.textContent = `¡Hola, ${nombre}! 🎉`;
       } else {
-        // 🔒 SIN CONECTAR: mostrar Registrar y Entrar, ocultar Eliminar y Cerrar
+        // 🔒 Sin conectar: todo vuelve a la normalidad
         btnRegistrar.style.display = 'inline-block';
         btnIniciar.style.display = 'inline-block';
         enlaceOlvidada.style.display = 'inline-block';
-        btnEliminar.style.display = 'none';
+        
         btnCerrar.style.display = 'none';
         saludo.textContent = '';
       }
     }
 
-    // ✅ CERRAR SESIÓN
-    btnCerrar.addEventListener('click', () => {
-      localStorage.removeItem('usuario_id');
-      localStorage.removeItem('usuario_nombre');
-      verificarSesion();
-      window.location.href = 'index.html';
+    // Cerrar sesión
+    btnCerrar.addEventListener('click', async () => {
+      if (confirm('¿Seguro querés cerrar sesión?')) {
+        await supabase.auth.signOut();
+        verificarSesion();
+        window.location.href = 'index.html';
+      }
     });
 
-    // ✅ CONTADOR DE VISITAS — UNA SOLA VEZ
+    // Cambios en tiempo real
+    supabase.auth.onAuthStateChange(() => {
+      verificarSesion();
+    });
+
+    // Contador de visitas
     async function contarVisitaPrincipal() {
       try {
-        const { data, error } = await supabaseClient
+        const { data, error } = await supabase
           .from('visitas')
           .select('cantidad')
           .eq('pagina', 'principal');
-
+        
         if (error) return;
-
+        
         if (data.length === 0) {
-          await supabaseClient
+          await supabase
             .from('visitas')
             .insert([{ pagina: 'principal', cantidad: 1 }]);
         } else {
-          await supabaseClient
+          await supabase
             .from('visitas')
             .update({ cantidad: data[0].cantidad + 1 })
             .eq('pagina', 'principal');
         }
       } catch (err) {
-        console.log('Error:', err.message);
+        console.log('Error en contador:', err.message);
       }
     }
 
-    // ✅ EJECUTAR TODO UNA SOLA VEZ al cargar
+    // Al cargar
     document.addEventListener('DOMContentLoaded', () => {
       verificarSesion();
       contarVisitaPrincipal();
     });
   </script>
-
 </body>
 </html>
