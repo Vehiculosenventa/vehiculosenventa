@@ -28,7 +28,6 @@
   <div class="card">
     <h2>Crear tu cuenta</h2>
     <p>Completá tus datos para empezar a publicar y buscar vehículos.</p>
-
     <form id="formRegistro">
       <label for="nombre">Nombre completo</label>
       <input type="text" id="nombre" required placeholder="Tu nombre y apellido">
@@ -53,26 +52,38 @@
       <div id="mensaje" class="mensaje"></div>
     </form>
   </div>
-
   <a href="iniciar-sesion.html" class="volver">← Ya tengo cuenta — Iniciar sesión</a>
 
   <script>
+    // Configuración de Supabase
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-    
+
+    // Cliente ÚNICO de Supabase — evita la advertencia de instancias duplicadas
+    let supabaseCliente = null;
+
     async function cargarSupabase() {
+      // Si ya existe, lo devolvemos directamente
+      if (supabaseCliente) {
+        return supabaseCliente;
+      }
+
+      // Cargamos la librería solo la primera vez
       if (!window.supabase) {
-        await new Promise(res => {
-          const s = document.createElement('script');
-          s.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
-          s.onload = res;
-          document.head.appendChild(s);
+        await new Promise(resolve => {
+          const script = document.createElement('script');
+          script.src = 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js';
+          script.onload = resolve;
+          document.head.appendChild(script);
         });
       }
-      return window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+      // Creamos el cliente UNA SOLA VEZ
+      supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      return supabaseCliente;
     }
 
-    // Función para ver/ocultar contraseña
+    // Botón ver/ocultar contraseña
     function configurarBotonVer(inputId, botonId) {
       const input = document.getElementById(inputId);
       const boton = document.getElementById(botonId);
@@ -90,37 +101,50 @@
       });
     }
 
-    // Activar los dos botones
+    // Activar ambos botones de contraseña
     configurarBotonVer('contraseña', 'btnVerContra');
     configurarBotonVer('confirmarContraseña', 'btnVerConfirmar');
 
+    // Elementos del formulario
     const form = document.getElementById('formRegistro');
     const mensaje = document.getElementById('mensaje');
     const btn = document.getElementById('btnRegistrar');
 
+    // Mostrar mensaje
+    function mostrarMensaje(texto, tipo) {
+      mensaje.textContent = texto;
+      mensaje.className = 'mensaje ' + tipo;
+    }
+
+    // Enviar formulario
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
+      // Ocultar mensaje anterior
       mensaje.className = 'mensaje';
-      mensaje.textContent = '';
+      mensaje.style.display = 'none';
       
+      // Obtener valores
       const nombre = document.getElementById('nombre').value.trim();
       const correo = document.getElementById('correo').value.trim();
       const contraseña = document.getElementById('contraseña').value;
       const confirmarContraseña = document.getElementById('confirmarContraseña').value;
 
+      // Validar que coincidan
       if (contraseña !== confirmarContraseña) {
-        mensaje.textContent = '❌ Las contraseñas no coinciden. Escribilas iguales.';
-        mensaje.classList.add('error');
+        mostrarMensaje('❌ Las contraseñas no coinciden. Escribilas iguales.', 'error');
+        mensaje.style.display = 'block';
         return;
       }
 
+      // Bloquear botón
       btn.disabled = true;
       btn.textContent = 'Creando cuenta...';
 
       try {
         const supabase = await cargarSupabase();
         
+        // Registrar usuario
         const { data, error } = await supabase.auth.signUp({
           email: correo,
           password: contraseña,
@@ -132,13 +156,16 @@
 
         if (error) throw error;
 
-        mensaje.innerHTML = '✅ Cuenta creada. Revisá tu correo y confirmá tu cuenta para ingresar.';
-        mensaje.classList.add('exito');
+        // Éxito
+        mostrarMensaje('✅ Cuenta creada. Revisá tu correo y confirmá tu cuenta para ingresar.', 'exito');
+        mensaje.style.display = 'block';
         form.reset();
+
       } catch (err) {
-        mensaje.textContent = '❌ ' + (err.message || 'Error al crear cuenta.');
-        mensaje.classList.add('error');
+        mostrarMensaje('❌ ' + (err.message || 'Error al crear cuenta.'), 'error');
+        mensaje.style.display = 'block';
       } finally {
+        // Restaurar botón
         btn.disabled = false;
         btn.textContent = 'Crear cuenta';
       }
