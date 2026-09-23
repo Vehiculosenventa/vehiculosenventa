@@ -48,7 +48,6 @@
   <a href="iniciar-sesion.html" class="volver">← Ya tengo cuenta — Iniciar sesión</a>
 
   <script>
-    // EXACTAMENTE IGUAL QUE ANOCHE
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
@@ -94,7 +93,10 @@
         const { data, error } = await supabase.auth.signUp({
           email: correo,
           password: contraseña,
-          options: { data: { nombre: nombre } }
+          options: {
+            data: { nombre: nombre },
+            emailRedirectTo: window.location.origin + '/confirmar.html'
+          }
         });
 
         if (error) throw error;
