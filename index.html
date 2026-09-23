@@ -9,7 +9,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
     body { background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%); min-height: 100vh; padding: 20px; }
     .barra-superior { text-align: right; margin-bottom: 20px; }
-    
+
     .boton-entrar, .boton-registrar {
       display: inline-block;
       padding: 12px 24px;
@@ -17,19 +17,11 @@
       font-size: 16px;
       font-weight: 700;
       text-decoration: none;
-      border: none;
-      cursor: pointer;
       margin-left: 10px;
     }
-    .boton-entrar {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff;
-    }
-    .boton-registrar {
-      background: #fff;
-      color: #2b6cb0;
-      border: 2px solid #2b6cb0;
-    }
+    .boton-entrar { background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%); color: #fff; }
+    .boton-registrar { background: #fff; color: #2b6cb0; border: 2px solid #2b6cb0; }
+
     .boton-cerrar {
       display: none;
       padding: 12px 24px;
@@ -43,7 +35,7 @@
     }
     .boton-cerrar.activo { display: inline-block; }
     .oculto { display: none !important; }
-    
+
     .caja-principal {
       background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
       border-radius: 28px;
@@ -59,24 +51,20 @@
       display: flex; align-items: center; justify-content: center; gap: 12px;
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
       color: #fff; text-decoration: none; font-size: 20px; font-weight: 700;
-      padding: 20px 26px; border-radius: 16px; margin-bottom: 16px; border: none;
-      cursor: pointer; width: 100%;
+      padding: 20px 26px; border-radius: 16px; margin-bottom: 16px; width: 100%;
     }
   </style>
 </head>
 <body>
   <div class="barra-superior">
-    <!-- 🔒 SIN SESIÓN -->
-    <div id="areaSinSesion">
+    <div id="sinSesion">
       <a href="iniciar-sesion.html" class="boton-entrar">🔐 Iniciar sesión</a>
       <a href="registrarse.html" class="boton-registrar">📝 Registrarse</a>
     </div>
-
-    <!-- ✅ CON SESIÓN -->
     <button id="btnCerrar" class="boton-cerrar">🚪 Cerrar sesión</button>
   </div>
 
-  <div id="contenidoPrincipal" class="oculto caja-principal">
+  <div id="contenido" class="oculto caja-principal">
     <h1>🚗 Vehículos en Venta</h1>
     <p class="subtitulo">Publicá • Buscá • Vendé con total confianza</p>
     <a href="cargar.html" class="boton">📄 Ingresar Vehículo</a>
@@ -91,39 +79,36 @@
     
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
-    const areaSinSesion = document.getElementById('areaSinSesion');
+    const sinSesion = document.getElementById('sinSesion');
     const btnCerrar = document.getElementById('btnCerrar');
-    const contenidoPrincipal = document.getElementById('contenidoPrincipal');
+    const contenido = document.getElementById('contenido');
 
-    async function actualizarVista() {
+    async function verificar() {
       // Empezar todo oculto
-      areaSinSesion.classList.add('oculto');
+      sinSesion.classList.add('oculto');
       btnCerrar.classList.remove('activo');
-      contenidoPrincipal.classList.add('oculto');
+      contenido.classList.add('oculto');
 
-      // Verificar sesión
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session) {
-        // 🔒 Sin sesión → mostrar Iniciar + Registrarse
-        areaSinSesion.classList.remove('oculto');
+        // Sin sesión → mostrar botones de entrada
+        sinSesion.classList.remove('oculto');
         return;
       }
 
-      // ✅ Con sesión → mostrar Cerrar sesión + contenido
-      areaSinSesion.classList.add('oculto');
+      // Con sesión → mostrar Cerrar sesión + contenido
+      sinSesion.classList.add('oculto');
       btnCerrar.classList.add('activo');
-      contenidoPrincipal.classList.remove('oculto');
+      contenido.classList.remove('oculto');
     }
 
-    // Acción del botón Cerrar sesión
     btnCerrar.addEventListener('click', async () => {
       await supabase.auth.signOut();
       window.location.href = 'cerrar-sesion.html';
     });
 
-    // Ejecutar al cargar la página
-    document.addEventListener('DOMContentLoaded', actualizarVista);
+    document.addEventListener('DOMContentLoaded', verificar);
   </script>
 </body>
 </html>
