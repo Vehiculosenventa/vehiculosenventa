@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sesión Cerrada - Vehículos en Venta</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;
+    }
+    body {
+      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .caja {
+      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
+      border-radius: 28px;
+      padding: 55px 40px;
+      width: 100%;
+      max-width: 500px;
+      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.08);
+      text-align: center;
+      border: 1px solid #e2d9c8;
+    }
+    .icono {
+      font-size: 60px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #2c5282;
+      font-size: 28px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+    .mensaje {
+      color: #5a6872;
+      font-size: 17px;
+      margin-bottom: 35px;
+      line-height: 1.5;
+    }
+    .boton {
+      display: block;
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 700;
+      padding: 16px 26px;
+      border-radius: 14px;
+      margin-bottom: 14px;
+      transition: all 0.35s ease;
+      border: none;
+      cursor: pointer;
+      width: 100%;
+    }
+    .boton:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(49, 130, 206, 0.25);
+    }
+    .boton-secundario {
+      background: #fff;
+      color: #3182ce;
+      border: 2px solid #3182ce;
+    }
+    .boton-secundario:hover {
+      background: #ebf4fb;
+      color: #2b6cb0;
+    }
+  </style>
+</head>
+<body>
+  <div class="caja">
+    <div class="icono">👋</div>
+    <h1>Sesión cerrada con éxito</h1>
+    <p class="mensaje">
+      Gracias por visitar Vehículos en Venta.<br>
+      Tu sesión se cerró de forma segura.
+    </p>
+    
+    <a href="iniciar-sesion.html" class="boton">
+      🔐 Iniciar sesión
+    </a>
+    
+    <a href="index.html" class="boton boton-secundario">
+      🏠 Volver al inicio
+    </a>
+  </div>
+</body>
+</html>
