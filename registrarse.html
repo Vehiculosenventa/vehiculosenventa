@@ -48,9 +48,11 @@
   <a href="iniciar-sesion.html" class="volver">← Ya tengo cuenta — Iniciar sesión</a>
 
   <script>
+    // Configuración completa de Supabase
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
+    // Cargar librería de Supabase
     async function cargarSupabase() {
       if (!window.supabase) {
         await new Promise(res => {
@@ -73,6 +75,7 @@
       mensaje.className = 'mensaje';
       mensaje.textContent = '';
       
+      // Obtener valores del formulario
       const nombre = document.getElementById('nombre').value.trim();
       const correo = document.getElementById('correo').value.trim();
       const contraseña = document.getElementById('contraseña').value;
@@ -91,6 +94,7 @@
       try {
         const supabase = await cargarSupabase();
         
+        // Registrar usuario con nombre incluido
         const { data, error } = await supabase.auth.signUp({
           email: correo,
           password: contraseña,
