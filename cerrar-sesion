@@ -3,94 +3,167 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sesión Cerrada - Vehículos en Venta</title>
+  <title>Iniciar Sesión - Vehículos en Venta</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
     body {
       background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
       min-height: 100vh;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       padding: 20px;
     }
     .caja {
-      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
-      border-radius: 28px;
-      padding: 55px 40px;
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
       width: 100%;
-      max-width: 500px;
-      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.08);
-      text-align: center;
-      border: 1px solid #e2d9c8;
-    }
-    .icono {
-      font-size: 60px;
-      margin-bottom: 20px;
+      max-width: 420px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
     h1 {
       color: #2c5282;
-      font-size: 28px;
-      font-weight: 800;
-      margin-bottom: 12px;
+      text-align: center;
+      margin-bottom: 30px;
+      font-size: 24px;
+    }
+    .campo {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+    input {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #ddd;
+      border-radius: 10px;
+      font-size: 16px;
+    }
+    input:focus {
+      outline: none;
+      border-color: #3182ce;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    button:hover {
+      transform: translateY(-2px);
     }
     .mensaje {
-      color: #5a6872;
-      font-size: 17px;
-      margin-bottom: 35px;
-      line-height: 1.5;
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 10px;
+      text-align: center;
+      font-weight: bold;
+      display: none;
     }
-    .boton {
-      display: block;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 18px;
-      font-weight: 700;
-      padding: 16px 26px;
-      border-radius: 14px;
-      margin-bottom: 14px;
-      transition: all 0.35s ease;
-      border: none;
-      cursor: pointer;
-      width: 100%;
+    .error { background: #ffebee; color: #c53030; display: block; }
+    .exito { background: #e8f5e9; color: #2e7d32; display: block; }
+    .enlace {
+      margin-top: 20px;
+      text-align: center;
     }
-    .boton:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(49, 130, 206, 0.25);
-    }
-    .boton-secundario {
-      background: #fff;
+    .enlace a {
       color: #3182ce;
-      border: 2px solid #3182ce;
-    }
-    .boton-secundario:hover {
-      background: #ebf4fb;
-      color: #2b6cb0;
+      text-decoration: none;
+      font-weight: bold;
     }
   </style>
 </head>
 <body>
   <div class="caja">
-    <div class="icono">👋</div>
-    <h1>Sesión cerrada con éxito</h1>
-    <p class="mensaje">
-      Gracias por visitar Vehículos en Venta.<br>
-      Tu sesión se cerró de forma segura.
-    </p>
+    <h1>🔐 Iniciar Sesión</h1>
     
-    <a href="iniciar-sesion.html" class="boton">
-      🔐 Iniciar sesión
-    </a>
-    
-    <a href="index.html" class="boton boton-secundario">
-      🏠 Volver al inicio
-    </a>
+    <form id="formLogin">
+      <div class="campo">
+        <label for="correo">Correo electrónico</label>
+        <input type="email" id="correo" required>
+      </div>
+      
+      <div class="campo">
+        <label for="clave">Contraseña</label>
+        <input type="password" id="clave" required>
+      </div>
+      
+      <button type="submit">Entrar</button>
+    </form>
+
+    <div id="mensaje" class="mensaje"></div>
+
+    <div class="enlace">
+      <p>¿No tenés cuenta? <a href="registrarse.html">Registrarse</a></p>
+      <p style="margin-top:10px;"><a href="index.html">← Volver al inicio</a></p>
+    </div>
   </div>
+
+  <script>
+    const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    
+    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    
+    const formLogin = document.getElementById('formLogin');
+    const mensaje = document.getElementById('mensaje');
+
+    formLogin.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      
+      const correo = document.getElementById('correo').value;
+      const clave = document.getElementById('clave').value;
+
+      mensaje.className = 'mensaje';
+      mensaje.textContent = '';
+
+      // 1. Iniciar sesión
+      const { data, error } = await supabase.auth.signInWithPassword({
+        email: correo,
+        password: clave
+      });
+
+      if (error) {
+        mensaje.className = 'mensaje error';
+        mensaje.textContent = '❌ ' + error.message;
+        return;
+      }
+
+      // 2. Verificar si está confirmado en la tabla
+      const { data: fila, error: errorTabla } = await supabase
+        .from('usuario')
+        .select('verificado')
+        .eq('correo', correo)
+        .single();
+
+      if (errorTabla || !fila || !fila.verificado) {
+        mensaje.className = 'mensaje error';
+        mensaje.textContent = '⚠️ Primero confirmá tu cuenta desde el correo';
+        await supabase.auth.signOut();
+        return;
+      }
+
+      // ✅ TODO BIEN → llevar a la página principal
+      mensaje.className = 'mensaje exito';
+      mensaje.textContent = '✅ Entrando...';
+      
+      // IR A index.html AHORA MISMO
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 800);
+    });
+  </script>
 </body>
 </html>
