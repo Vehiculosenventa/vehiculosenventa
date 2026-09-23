@@ -6,7 +6,9 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vehículos en Venta">
+  <meta name="theme-color" content="#1565C0">
   <title>Vehículos en Venta</title>
+  <link rel="manifest" href="app.webmanifest">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     * {
@@ -161,36 +163,30 @@
   </div>
 
   <script>
-    // Credenciales
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-    
-    // Inicializar Supabase UNA SOLA VEZ
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Elementos
+    // ✅ UNA SOLA VEZ — sin duplicados
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
     const saludo = document.getElementById('saludo');
     const btnRegistrar = document.getElementById('btn-registrar');
     const btnIniciar = document.getElementById('btn-iniciar');
     const btnCerrar = document.getElementById('btn-cerrar');
     const enlaceOlvidada = document.getElementById('enlace-olvidada');
 
-    // Verificar sesión
     async function verificarSesion() {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await supabaseClient.auth.getSession();
       
       if (session) {
-        // Conectado: ocultar registrar y entrar
         btnRegistrar.style.display = 'none';
         btnIniciar.style.display = 'none';
         enlaceOlvidada.style.display = 'none';
         btnCerrar.style.display = 'inline-block';
         
-        // Mostrar nombre del usuario
         const nombre = session.user.user_metadata?.nombre || session.user.email;
         saludo.textContent = `¡Hola, ${nombre}! 🎉`;
       } else {
-        // Sin sesión: mostrar todo
         btnRegistrar.style.display = 'inline-block';
         btnIniciar.style.display = 'inline-block';
         enlaceOlvidada.style.display = 'inline-block';
@@ -199,50 +195,19 @@
       }
     }
 
-    // Cerrar sesión
     btnCerrar.addEventListener('click', async () => {
       if (confirm('¿Seguro querés cerrar sesión?')) {
-        await supabase.auth.signOut();
+        await supabaseClient.auth.signOut();
         verificarSesion();
         window.location.href = 'index.html';
       }
     });
 
-    // Actualizar cuando cambie la sesión
-    supabase.auth.onAuthStateChange(() => {
+    supabaseClient.auth.onAuthStateChange(() => {
       verificarSesion();
     });
 
-    // Contador de visitas
-    async function contarVisitaPrincipal() {
-      try {
-        const { data, error } = await supabase
-          .from('visitas')
-          .select('cantidad')
-          .eq('pagina', 'principal');
-        
-        if (error) return;
-        
-        if (data.length === 0) {
-          await supabase
-            .from('visitas')
-            .insert([{ pagina: 'principal', cantidad: 1 }]);
-        } else {
-          await supabase
-            .from('visitas')
-            .update({ cantidad: data[0].cantidad + 1 })
-            .eq('pagina', 'principal');
-        }
-      } catch (err) {
-        console.log('Error en contador:', err.message);
-      }
-    }
-
-    // Al cargar todo
-    document.addEventListener('DOMContentLoaded', () => {
-      verificarSesion();
-      contarVisitaPrincipal();
-    });
+    document.addEventListener('DOMContentLoaded', verificarSesion);
   </script>
 </body>
 </html>
