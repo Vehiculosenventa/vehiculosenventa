@@ -3,207 +3,176 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Vehículos en Venta</title>
+  <title>Crear Cuenta - Vehículos en Venta</title>
+  <link rel="icon" href="data:,">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Roboto, sans-serif;
-    }
+    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
     body {
       background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
       min-height: 100vh;
+      display: flex; justify-content: center; align-items: center;
       padding: 20px;
     }
-    .barra-superior {
-      text-align: right;
-      margin-bottom: 20px;
-    }
-    .saludo {
-      display: inline-block;
-      margin-right: 12px;
-      color: #2c5282;
-      font-weight: 600;
-      vertical-align: middle;
-    }
-    .boton-entrar {
-      display: inline-block;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      background: #fff;
-      color: #3182ce;
-      border: 2px solid #3182ce;
-      vertical-align: middle;
-    }
-    .enlace-olvidada {
-      display: block;
-      margin-top: 6px;
-      font-size: 14px;
-      color: #3182ce;
-      text-decoration: none;
-    }
-    .boton-cerrar {
-      display: none;
-      padding: 8px 16px;
-      border-radius: 8px;
-      font-size: 14px;
-      font-weight: 600;
-      border: none;
-      background: transparent;
-      color: #c53030;
-      cursor: pointer;
-    }
-    .boton-cerrar.activo {
-      display: inline-block;
-    }
-    .oculto { display: none !important; }
-    .caja-principal {
-      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
-      border-radius: 28px;
-      padding: 55px 40px;
-      width: 100%;
-      max-width: 540px;
-      margin: 0 auto;
-      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.08);
-      text-align: center;
-      border: 1px solid #e2d9c8;
-    }
-    h1 {
-      color: #2c5282;
-      font-size: 34px;
-      font-weight: 800;
-      margin-bottom: 12px;
-    }
-    .subtitulo {
-      color: #5a6872;
-      font-size: 17px;
-      margin-bottom: 35px;
-    }
-    .boton {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff;
-      text-decoration: none;
-      font-size: 20px;
-      font-weight: 700;
-      padding: 20px 26px;
+    .caja {
+      background: #faf8f0;
+      padding: 40px 30px;
       border-radius: 16px;
-      margin-bottom: 16px;
-      border: none;
-      cursor: pointer;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.08);
       width: 100%;
+      max-width: 420px;
     }
-    .pie-pagina {
-      margin-top: 30px;
-      font-size: 13px;
-      color: #718096;
+    h1 {text-align: center; color: #2c5282; margin-bottom: 30px; font-size: 22px;}
+    .campo {margin-bottom: 20px; position: relative;}
+    label {display: block; margin-bottom: 6px; color: #4a5568; font-weight: 500;}
+    .input-estilo {
+      width: 100%; padding: 12px 15px;
+      border: 1px solid #bdd1e1; border-radius: 8px;
+      font-size: 16px;
+      background: #fff;
     }
-    .mensaje {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 12px;
-      background: #fff5f5;
-      border: 2px solid #feb2b2;
-      color: #c53030;
-      font-weight: 600;
-      display: none;
-      text-align: center;
+    .input-estilo:focus {outline: none; border-color: #6fa8d6; box-shadow: 0 0 0 3px rgba(111,168,214,0.2);}
+    .input-con-ojo {position: relative;}
+    .input-con-ojo .input-estilo {padding-right: 45px;}
+    .ojo {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      cursor: pointer; font-size: 20px; color: #6b7280; user-select: none;
     }
+    .ojo:hover {color: #3182ce;}
+    .indicador {font-size: 13px; color: #718096; margin-top: 5px;}
+    button {
+      width: 100%; padding: 14px;
+      background: #5fa8d3; color: #fff; border: none;
+      border-radius: 8px; font-size: 17px; font-weight: 600;
+      cursor: pointer; transition: background 0.3s;
+    }
+    button:hover {background: #4a90c4;}
+    button:active {transform: scale(0.98);}
+    button:disabled {background: #94b8d1; cursor: not-allowed; opacity: 0.7;}
+    .error {color: #d64545; margin-top: -10px; margin-bottom: 12px; font-size: 14px; display: none;}
+    .exito {color: #2f855a; margin-top: 10px; font-size: 14px; display: none;}
+    .cargando {color: #3182ce; margin-top: 10px; font-size: 14px; display: none;}
   </style>
 </head>
 <body>
-  <div class="barra-superior">
-    <!-- 🔒 SIN SESIÓN → Solo se ve esto -->
-    <div id="botonesSinSesion">
-      <a href="iniciar-sesion.html" class="boton-entrar">🔐 Iniciar sesión</a>
-      <a href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
+  <div class="caja">
+    <h1>Crear tu Cuenta</h1>
+    
+    <div class="campo">
+      <label for="correo">Correo Electrónico</label>
+      <input type="email" id="correo" class="input-estilo" placeholder="tu@correo.com">
     </div>
-
-    <!-- ✅ CON SESIÓN → Solo se ve esto -->
-    <div id="botonesConSesion" class="oculto">
-      <span class="saludo">¡Hola! 🎉</span>
-      <button id="btnCerrar" class="boton-cerrar activo">🚪 Cerrar sesión</button>
+    
+    <div class="campo">
+      <label for="pass1">Contraseña (6 a 8 caracteres)</label>
+      <div class="input-con-ojo">
+        <input type="password" id="pass1" class="input-estilo" placeholder="Mínimo 6, máximo 8" maxlength="8">
+        <span class="ojo" id="ver1">👁️</span>
+      </div>
+      <div class="indicador" id="cont1">0 / 8</div>
     </div>
+    
+    <div class="campo">
+      <label for="pass2">Repetir Contraseña</label>
+      <div class="input-con-ojo">
+        <input type="password" id="pass2" class="input-estilo" placeholder="Repetí la contraseña" maxlength="8">
+        <span class="ojo" id="ver2">👁️</span>
+      </div>
+      <div class="indicador" id="cont2">0 / 8</div>
+    </div>
+    
+    <div class="error" id="errorMsg"></div>
+    <div class="cargando" id="cargando">⏳ Enviando correo de verificación...</div>
+    <div class="exito" id="exitoMsg"></div>
+    
+    <button id="botonCrear">Crear Cuenta</button>
   </div>
-
-  <!-- Los botones principales SOLO aparecen cuando estás conectado y confirmado -->
-  <div id="contenidoPrincipal" class="oculto caja-principal">
-    <h1>🚗 Vehículos en Venta</h1>
-    <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
-    La plataforma de vehículos de Rosario y toda la región</p>
-    <a href="cargar.html" class="boton">📄 Ingresar Vehículo</a>
-    <a href="ver.html" class="boton">📋 Ver Vehículos — Catálogo</a>
-    <a href="buscar.html" class="boton">🔍 Buscar Vehículo</a>
-    <a href="mis-vehiculos.html" class="boton">❤️ Mis Vehículos</a>
-    <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
-  </div>
-
-  <div id="mensaje" class="mensaje"></div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-    
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    
-    const botonesSinSesion = document.getElementById('botonesSinSesion');
-    const botonesConSesion = document.getElementById('botonesConSesion');
-    const contenidoPrincipal = document.getElementById('contenidoPrincipal');
-    const mensaje = document.getElementById('mensaje');
-    const btnCerrar = document.getElementById('btnCerrar');
 
-    async function actualizarPagina() {
-      // Ocultar TODO al empezar
-      botonesSinSesion.classList.add('oculto');
-      botonesConSesion.classList.add('oculto');
-      contenidoPrincipal.classList.add('oculto');
-      mensaje.style.display = 'none';
-
-      const { data: { session } } = await supabase.auth.getSession();
-
-      if (!session) {
-        // 🔒 SIN SESIÓN → se ve "Iniciar sesión" y "Olvidaste..."
-        botonesSinSesion.classList.remove('oculto');
-        return;
-      }
-
-      // ✅ HAY SESIÓN → verificar si confirmó el correo
-      const { data: fila } = await supabase
-        .from('usuario')
-        .select('verificado')
-        .eq('correo', session.user.email)
-        .single();
-
-      if (!fila || !fila.verificado) {
-        // ⏳ NO CONFIRMÓ → aviso y salir
-        mensaje.textContent = '⚠️ Confirmá tu cuenta desde el correo primero';
-        mensaje.style.display = 'block';
-        await supabase.auth.signOut();
-        setTimeout(() => window.location.href = 'iniciar-sesion.html', 3000);
-        return;
-      }
-
-      // ✅ TODO BIEN → desaparecen los de entrar, aparece "Cerrar sesión" + todo el contenido
-      botonesSinSesion.classList.add('oculto');      // Se van "Iniciar" y "Olvidaste"
-      botonesConSesion.classList.remove('oculto');   // Aparece saludo + "Cerrar sesión"
-      contenidoPrincipal.classList.remove('oculto'); // Aparecen todos los botones
+    // Cliente UNA SOLA VEZ — sin duplicados
+    if (!window._sb) {
+      window._sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     }
 
-    // Cerrar sesión → ir a la página de despedida
-    btnCerrar.addEventListener('click', async () => {
-      await supabase.auth.signOut();
-      window.location.href = 'cerrar-sesion.html';
-    });
+    // Elementos
+    const pass1 = document.getElementById('pass1');
+    const pass2 = document.getElementById('pass2');
+    const ver1 = document.getElementById('ver1');
+    const ver2 = document.getElementById('ver2');
+    const cont1 = document.getElementById('cont1');
+    const cont2 = document.getElementById('cont2');
+    const botonCrear = document.getElementById('botonCrear');
+    const errorMsg = document.getElementById('errorMsg');
+    const exitoMsg = document.getElementById('exitoMsg');
+    const cargando = document.getElementById('cargando');
 
-    document.addEventListener('DOMContentLoaded', actualizarPagina);
+    // Contadores
+    pass1.addEventListener('input', () => cont1.textContent = `${pass1.value.length} / 8`);
+    pass2.addEventListener('input', () => cont2.textContent = `${pass2.value.length} / 8`);
+
+    // Ver/ocultar contraseña
+    function alternarVer(input, ojo) {
+      input.type = input.type === 'password' ? 'text' : 'password';
+      ojo.textContent = input.type === 'password' ? '👁️' : '🙈';
+    }
+    ver1.addEventListener('click', () => alternarVer(pass1, ver1));
+    ver2.addEventListener('click', () => alternarVer(pass2, ver2));
+
+    function limpiarMensajes() {
+      errorMsg.style.display = 'none';
+      exitoMsg.style.display = 'none';
+      cargando.style.display = 'none';
+      errorMsg.textContent = '';
+      exitoMsg.textContent = '';
+    }
+
+    // Registro
+    async function registrar() {
+      limpiarMensajes();
+      const correo = document.getElementById('correo').value.trim();
+      
+      if (!correo) { errorMsg.textContent = "Escribí tu correo electrónico"; errorMsg.style.display = 'block'; return; }
+      if (!correo.includes('@') || !correo.includes('.')) { errorMsg.textContent = "Correo inválido"; errorMsg.style.display = 'block'; return; }
+      if (pass1.value.length < 6 || pass1.value.length > 8) { errorMsg.textContent = "Entre 6 y 8 caracteres"; errorMsg.style.display = 'block'; return; }
+      if (pass1.value !== pass2.value) { errorMsg.textContent = "Las contraseñas no coinciden"; errorMsg.style.display = 'block'; return; }
+      
+      botonCrear.disabled = true;
+      cargando.style.display = 'block';
+
+      try {
+        const { data, error } = await window._sb.auth.signUp({
+          email: correo,
+          password: pass1.value,
+          options: { emailRedirectTo: "https://vehiculosenventa.com.ar/confirmar.html" }
+        });
+
+        if (error) throw error;
+
+        if (data.user && !data.session) {
+          exitoMsg.textContent = "✅ Correo enviado. Revisá tu bandeja de entrada";
+          exitoMsg.style.display = 'block';
+        } else if (data.session) {
+          exitoMsg.textContent = "✅ Cuenta creada.";
+          exitoMsg.style.display = 'block';
+        }
+      } catch (err) {
+        let msg = "No se pudo registrar";
+        if (err.message.includes("User already registered")) msg = "⚠️ Este correo ya está registrado";
+        else if (err.message.includes("invalid email")) msg = "Correo inválido";
+        else if (err.message.includes("signup_disabled")) msg = "❌ Los registros están desactivados en Supabase";
+        else msg = "❌ " + err.message;
+        errorMsg.textContent = msg;
+        errorMsg.style.display = 'block';
+      } finally {
+        botonCrear.disabled = false;
+        cargando.style.display = 'none';
+      }
+    }
+
+    botonCrear.addEventListener('click', registrar);
   </script>
 </body>
 </html>
