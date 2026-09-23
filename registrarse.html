@@ -36,6 +36,9 @@
       <label for="contraseña">Contraseña</label>
       <input type="password" id="contraseña" required minlength="6" placeholder="Mínimo 6 caracteres">
 
+      <label for="confirmarContraseña">Confirmar contraseña</label>
+      <input type="password" id="confirmarContraseña" required minlength="6" placeholder="Repetí la contraseña">
+
       <button type="submit" id="btnRegistrar">Crear cuenta</button>
       
       <div id="mensaje" class="mensaje"></div>
@@ -45,11 +48,9 @@
   <a href="iniciar-sesion.html" class="volver">← Ya tengo cuenta — Iniciar sesión</a>
 
   <script>
-    // Configuración de Supabase
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // Cargar librería de Supabase
     async function cargarSupabase() {
       if (!window.supabase) {
         await new Promise(res => {
@@ -69,39 +70,41 @@
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      // Limpiar mensajes
       mensaje.className = 'mensaje';
       mensaje.textContent = '';
       
-      // Obtener valores del formulario
       const nombre = document.getElementById('nombre').value.trim();
       const correo = document.getElementById('correo').value.trim();
       const contraseña = document.getElementById('contraseña').value;
+      const confirmarContraseña = document.getElementById('confirmarContraseña').value;
 
-      // Estado de carga
+      // Verificar que las contraseñas coincidan
+      if (contraseña !== confirmarContraseña) {
+        mensaje.textContent = '❌ Las contraseñas no coinciden. Escribilas iguales.';
+        mensaje.classList.add('error');
+        return;
+      }
+
       btn.disabled = true;
       btn.textContent = 'Creando cuenta...';
 
       try {
         const supabase = await cargarSupabase();
         
-        // Registrar usuario con el nombre incluido
         const { data, error } = await supabase.auth.signUp({
           email: correo,
           password: contraseña,
           options: {
-            data: { nombre: nombre } // ← El nombre se guarda en el perfil
+            data: { nombre: nombre }
           }
         });
 
         if (error) throw error;
 
-        // Éxito
         mensaje.innerHTML = '✅ Cuenta creada. Revisá tu correo y confirmá tu cuenta para ingresar.';
         mensaje.classList.add('exito');
         form.reset();
       } catch (err) {
-        // Error
         mensaje.textContent = '❌ ' + (err.message || 'No se pudo crear la cuenta. Intentá nuevamente.');
         mensaje.classList.add('error');
       } finally {
