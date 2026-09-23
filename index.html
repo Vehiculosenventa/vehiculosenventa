@@ -6,142 +6,33 @@
   <title>Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Roboto, sans-serif;
-    }
-    body {
-      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
-      min-height: 100vh;
-      padding: 20px;
-    }
-    .barra-superior {
-      text-align: right;
-      margin-bottom: 20px;
-    }
-    .boton-entrar {
-      display: inline-block;
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 700;
-      text-decoration: none;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .boton-entrar:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(49, 130, 206, 0.25);
-    }
-    .boton-cerrar {
-      display: none;
-      padding: 12px 24px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 700;
-      background: transparent;
-      color: #c53030;
-      border: 2px solid #c53030;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-    .boton-cerrar.activo {
-      display: inline-block;
-    }
-    .boton-cerrar:hover {
-      background: #c53030;
-      color: #fff;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+    body { background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%); min-height: 100vh; padding: 20px; }
+    .barra-superior { text-align: right; margin-bottom: 20px; }
+    .boton-entrar { display: inline-block; padding: 12px 24px; border-radius: 12px; font-size: 16px; font-weight: 700; text-decoration: none; background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%); color: #fff; border: none; cursor: pointer; }
+    .boton-cerrar { display: none; padding: 12px 24px; border-radius: 12px; font-size: 16px; font-weight: 700; background: transparent; color: #c53030; border: 2px solid #c53030; cursor: pointer; }
+    .boton-cerrar.activo { display: inline-block; }
     .oculto { display: none !important; }
-    .caja-principal {
-      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
-      border-radius: 28px;
-      padding: 55px 40px;
-      width: 100%;
-      max-width: 540px;
-      margin: 40px auto 0;
-      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.08);
-      text-align: center;
-      border: 1px solid #e2d9c8;
-    }
-    h1 {
-      color: #2c5282;
-      font-size: 34px;
-      font-weight: 800;
-      margin-bottom: 12px;
-    }
-    .subtitulo {
-      color: #5a6872;
-      font-size: 17px;
-      margin-bottom: 35px;
-    }
-    .boton {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 12px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff;
-      text-decoration: none;
-      font-size: 20px;
-      font-weight: 700;
-      padding: 20px 26px;
-      border-radius: 16px;
-      margin-bottom: 16px;
-      border: none;
-      cursor: pointer;
-      width: 100%;
-      transition: all 0.35s ease;
-    }
-    .boton:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(49, 130, 206, 0.25);
-    }
-    .pie-pagina {
-      margin-top: 30px;
-      font-size: 13px;
-      color: #718096;
-    }
-    .mensaje {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 12px;
-      background: #fff5f5;
-      border: 2px solid #feb2b2;
-      color: #c53030;
-      font-weight: 600;
-      display: none;
-      text-align: center;
-    }
+    .caja-principal { background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%); border-radius: 28px; padding: 55px 40px; max-width: 540px; margin: 40px auto 0; text-align: center; border: 1px solid #e2d9c8; }
+    h1 { color: #2c5282; font-size: 34px; font-weight: 800; margin-bottom: 12px; }
+    .subtitulo { color: #5a6872; font-size: 17px; margin-bottom: 35px; }
+    .boton { display: flex; align-items: center; justify-content: center; gap: 12px; background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%); color: #fff; text-decoration: none; font-size: 20px; font-weight: 700; padding: 20px 26px; border-radius: 16px; margin-bottom: 16px; border: none; cursor: pointer; width: 100%; }
   </style>
 </head>
 <body>
   <div class="barra-superior">
-    <!-- 🔒 SIN SESIÓN → Botón que lleva a iniciar-sesion.html -->
     <a id="btnEntrar" href="iniciar-sesion.html" class="boton-entrar">🔐 Iniciar sesión</a>
-
-    <!-- ✅ CON SESIÓN → Botón que lleva a cerrar-sesion.html -->
     <button id="btnCerrar" class="boton-cerrar">🚪 Cerrar sesión</button>
   </div>
 
-  <!-- Contenido → Solo cuando estás conectado y confirmado -->
   <div id="contenido" class="oculto caja-principal">
     <h1>🚗 Vehículos en Venta</h1>
-    <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
-    La plataforma de vehículos de Rosario y toda la región</p>
+    <p class="subtitulo">Publicá • Buscá • Vendé con total confianza</p>
     <a href="cargar.html" class="boton">📄 Ingresar Vehículo</a>
     <a href="ver.html" class="boton">📋 Ver Vehículos — Catálogo</a>
     <a href="buscar.html" class="boton">🔍 Buscar Vehículo</a>
     <a href="mis-vehiculos.html" class="boton">❤️ Mis Vehículos</a>
-    <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
   </div>
-
-  <div id="mensaje" class="mensaje"></div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
@@ -152,44 +43,29 @@
     const btnEntrar = document.getElementById('btnEntrar');
     const btnCerrar = document.getElementById('btnCerrar');
     const contenido = document.getElementById('contenido');
-    const mensaje = document.getElementById('mensaje');
 
     async function verificar() {
+      // Empezar todo oculto
       btnEntrar.style.display = 'none';
       btnCerrar.classList.remove('activo');
       contenido.classList.add('oculto');
-      mensaje.style.display = 'none';
 
+      // Obtener sesión
       const { data: { session } } = await supabase.auth.getSession();
 
       if (!session) {
-        // 🔒 Sin sesión → ve solo "Iniciar sesión"
+        // Sin sesión → mostrar Iniciar
         btnEntrar.style.display = 'inline-block';
         return;
       }
 
-      // ✅ Hay sesión → verificar confirmación
-      const { data: fila } = await supabase
-        .from('usuario')
-        .select('verificado')
-        .eq('correo', session.user.email)
-        .single();
-
-      if (!fila || !fila.verificado) {
-        mensaje.textContent = '⚠️ Confirmá tu cuenta desde el correo primero';
-        mensaje.style.display = 'block';
-        await supabase.auth.signOut();
-        setTimeout(() => window.location.href = 'iniciar-sesion.html', 3000);
-        return;
-      }
-
-      // ✅ Todo bien → cambia los botones
+      // Con sesión → mostrar todo directamente porque ya está confirmado
       btnEntrar.style.display = 'none';
       btnCerrar.classList.add('activo');
       contenido.classList.remove('oculto');
     }
 
-    // 🚪 Cerrar sesión → lleva a cerrar-sesion.html
+    // Cerrar sesión
     btnCerrar.addEventListener('click', async () => {
       await supabase.auth.signOut();
       window.location.href = 'cerrar-sesion.html';
