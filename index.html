@@ -3,256 +3,233 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Vehículos en Venta">
-  <meta name="theme-color" content="#1565C0">
-  <title>Vehículos en Venta</title>
-  <link rel="manifest" href="app.webmanifest">
+  <title>Iniciar sesión — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     * {
-      box-sizing: border-box;
       margin: 0;
       padding: 0;
+      box-sizing: border-box;
       font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;
     }
     body {
       background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
       min-height: 100vh;
-      padding: 20px;
-    }
-    /* --- BOTONES ARRIBA A LA DERECHA --- */
-    .barra-superior {
-      text-align: right;
-      margin-bottom: 20px;
-    }
-    .boton-sesion {
-      display: inline-block;
-      padding: 10px 20px;
-      margin-left: 10px;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s ease;
-    }
-    .boton-registrar {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff;
-      border: none;
-    }
-    .boton-registrar:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(49,130,206,0.2);
-    }
-    .boton-entrar {
-      background: #fff;
-      color: #3182ce;
-      border: 2px solid #3182ce;
-    }
-    .boton-entrar:hover {
-      background: #ebf4fb;
-      transform: translateY(-1px);
-    }
-    .boton-cerrar {
-      background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
-      color: #fff;
-      border: none;
-      display: none;
-    }
-    .saludo {
-      display: inline-block;
-      margin-right: 15px;
-      color: #2c5282;
-      font-weight: 600;
-    }
-    .caja-principal {
-      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
-      border-radius: 28px;
-      padding: 55px 40px;
-      width: 100%;
-      max-width: 540px;
-      margin: 0 auto;
-      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.08);
-      text-align: center;
-      animation: entradaSuave 0.7s ease-out;
-      border: 1px solid #e2d9c8;
-    }
-    @keyframes entradaSuave {
-      from { opacity: 0; transform: translateY(25px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    h1 {
-      color: #2c5282;
-      font-size: 34px;
-      font-weight: 800;
-      margin-bottom: 12px;
-    }
-    .subtitulo {
-      color: #5a6872;
-      font-size: 17px;
-      margin-bottom: 35px;
-      font-weight: 500;
-      line-height: 1.5;
-    }
-    .boton {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #ffffff;
-      text-decoration: none;
-      font-size: 20px;
-      font-weight: 700;
-      padding: 20px 26px;
-      border-radius: 16px;
-      margin-bottom: 16px;
-      transition: all 0.35s ease;
-      border: none;
-      box-shadow: 0 6px 16px rgba(49, 130, 206, 0.18);
-      cursor: pointer;
+      padding: 20px;
+    }
+    .tarjeta {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.08);
       width: 100%;
+      max-width: 440px;
+      animation: entradaSuave 0.6s ease-out;
     }
-    .boton:hover {
-      transform: translateY(-2px);
-      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
-      box-shadow: 0 8px 20px rgba(49, 130, 206, 0.25);
+    @keyframes entradaSuave {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .enlace-olvidada {
-      display: inline-block;
-      margin-top: 25px;
-      color: #3182ce;
-      font-size: 15px;
+    h1 {
+      text-align: center;
+      color: #2c5282;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
+    }
+    .subtitulo {
+      text-align: center;
+      color: #5a6872;
+      margin-bottom: 2rem;
+    }
+    label {
+      display: block;
+      margin-top: 1.2rem;
+      margin-bottom: 0.4rem;
       font-weight: 600;
-      text-decoration: none;
-      transition: color 0.2s ease;
+      color: #2d3748;
     }
-    .enlace-olvidada:hover {
-      color: #2b6cb0;
-      text-decoration: underline;
+    .input-contenedor {
+      position: relative;
     }
-    .pie-pagina {
-      margin-top: 30px;
-      font-size: 13px;
+    input {
+      width: 100%;
+      padding: 1rem 3rem 1rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus {
+      outline: none;
+      border-color: #3182ce;
+      box-shadow: 0 0 0 4px rgba(49, 130, 206, 0.15);
+    }
+    .btn-ver {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
       color: #718096;
+      padding: 0;
+      line-height: 1;
+    }
+    .boton-ingresar {
+      width: 100%;
+      padding: 1rem;
+      margin-top: 1.8rem;
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .boton-ingresar:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(49, 130, 206, 0.25);
+    }
+    .boton-ingresar:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .mensaje {
+      margin-top: 1.2rem;
+      padding: 1rem;
+      border-radius: 10px;
+      display: none;
+      text-align: center;
+      font-weight: 600;
+    }
+    .error {
+      background: #fed7d7;
+      color: #9b2c2c;
+      display: block;
+    }
+    .exito {
+      background: #c6f6d5;
+      color: #22543d;
+      display: block;
+    }
+    .volver {
+      display: block;
+      text-align: center;
+      margin-top: 1.5rem;
+      color: #4a5568;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    .volver:hover {
+      color: #3182ce;
+      text-decoration: underline;
     }
   </style>
 </head>
 <body>
-  <!-- BOTONES ARRIBA A LA DERECHA -->
-  <div class="barra-superior">
-    <span id="saludo" class="saludo"></span>
-    <a id="btn-registrar" href="registrarse.html" class="boton-sesion boton-registrar">✨ Registrarse</a>
-    <a id="btn-iniciar" href="iniciar-sesion.html" class="boton-sesion boton-entrar">🔐 Iniciar sesión</a>
-    <button id="btn-cerrar" class="boton-sesion boton-cerrar">🚪 Cerrar sesión</button>
-  </div>
-  <div class="caja-principal">
-    <h1>🚗 Vehículos en Venta</h1>
-    <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
-    La plataforma de vehículos de Rosario y la región</p>
-    <a href="cargar.html" class="boton">
-      📄 <span>Ingresar Vehículo</span>
-    </a>
-    <a href="ver.html" class="boton">
-      📋 <span>Ver Vehículos — Catálogo</span>
-    </a>
-    <a href="buscar.html" class="boton">
-      🔍 <span>Buscar Vehículo</span>
-    </a>
-    <a href="mis-vehiculos.html" class="boton">
-      ❤️ <span>Mis Vehículos</span>
-    </a>
-    <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
-    <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
+  <div class="tarjeta">
+    <h1>🔐 Iniciar sesión</h1>
+    <p class="subtitulo">Ingresá tus datos para entrar</p>
+
+    <form id="formIngreso">
+      <label for="correo">Correo electrónico</label>
+      <input type="email" id="correo" required placeholder="tu@correo.com">
+
+      <label for="contraseña">Contraseña</label>
+      <div class="input-contenedor">
+        <input type="password" id="contraseña" required placeholder="Tu contraseña">
+        <button type="button" id="btnVer" class="btn-ver">👁️</button>
+      </div>
+
+      <button type="submit" id="botonIngresar" class="boton-ingresar">Ingresar ✅</button>
+      
+      <div id="mensaje" class="mensaje"></div>
+    </form>
+
+    <a href="index.html" class="volver">← Volver al inicio</a>
   </div>
 
   <script>
     // Credenciales
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+
+    // Crear cliente UNA SOLA VEZ
+    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    // Botón ver/ocultar contraseña — arreglado ✅
+    const inputContra = document.getElementById('contraseña');
+    const btnVer = document.getElementById('btnVer');
     
-    // Inicializar Supabase
-    const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    btnVer.addEventListener('click', function() {
+      if (inputContra.type === 'password') {
+        inputContra.type = 'text';
+        btnVer.textContent = '🙈';
+      } else {
+        inputContra.type = 'password';
+        btnVer.textContent = '👁️';
+      }
+    });
 
     // Elementos
-    const saludo = document.getElementById('saludo');
-    const btnRegistrar = document.getElementById('btn-registrar');
-    const btnIniciar = document.getElementById('btn-iniciar');
-    const btnCerrar = document.getElementById('btn-cerrar');
-    const enlaceOlvidada = document.getElementById('enlace-olvidada');
+    const form = document.getElementById('formIngreso');
+    const mensaje = document.getElementById('mensaje');
+    const boton = document.getElementById('botonIngresar');
 
-    // Verificar sesión
-    async function verificarSesion() {
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      if (session) {
-        // ✅ Conectado: ocultar los de entrada
-        btnRegistrar.style.display = 'none';
-        btnIniciar.style.display = 'none';
-        enlaceOlvidada.style.display = 'none';
-        
-        // Mostrar cerrar sesión
-        btnCerrar.style.display = 'inline-block';
-        
-        // Saludo con nombre
-        const nombre = session.user.user_metadata?.nombre || session.user.email;
-        saludo.textContent = `¡Hola, ${nombre}! 🎉`;
-      } else {
-        // 🔒 Sin conectar: todo vuelve a la normalidad
-        btnRegistrar.style.display = 'inline-block';
-        btnIniciar.style.display = 'inline-block';
-        enlaceOlvidada.style.display = 'inline-block';
-        
-        btnCerrar.style.display = 'none';
-        saludo.textContent = '';
-      }
+    function mostrarMensaje(texto, tipo) {
+      mensaje.textContent = texto;
+      mensaje.className = 'mensaje ' + tipo;
     }
 
-    // Cerrar sesión
-    btnCerrar.addEventListener('click', async () => {
-      if (confirm('¿Seguro querés cerrar sesión?')) {
-        await supabase.auth.signOut();
-        verificarSesion();
-        window.location.href = 'index.html';
-      }
-    });
+    // Envío del formulario
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      mensaje.className = 'mensaje';
 
-    // Cambios en tiempo real
-    supabase.auth.onAuthStateChange(() => {
-      verificarSesion();
-    });
+      const correo = document.getElementById('correo').value.trim();
+      const contraseña = document.getElementById('contraseña').value;
 
-    // Contador de visitas
-    async function contarVisitaPrincipal() {
+      boton.disabled = true;
+      boton.textContent = 'Ingresando...';
+
       try {
-        const { data, error } = await supabase
-          .from('visitas')
-          .select('cantidad')
-          .eq('pagina', 'principal');
-        
-        if (error) return;
-        
-        if (data.length === 0) {
-          await supabase
-            .from('visitas')
-            .insert([{ pagina: 'principal', cantidad: 1 }]);
-        } else {
-          await supabase
-            .from('visitas')
-            .update({ cantidad: data[0].cantidad + 1 })
-            .eq('pagina', 'principal');
-        }
-      } catch (err) {
-        console.log('Error en contador:', err.message);
-      }
-    }
+        // ✅ Acá busca el usuario en Supabase
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email: correo,
+          password: contraseña
+        });
 
-    // Al cargar
-    document.addEventListener('DOMContentLoaded', () => {
-      verificarSesion();
-      contarVisitaPrincipal();
+        if (error) throw error;
+
+        // ✅ Usuario encontrado y conectado
+        mostrarMensaje('✅ ¡Bienvenido! Redirigiendo...', 'exito');
+        
+        setTimeout(function() {
+          window.location.href = 'index.html';
+        }, 1200);
+
+      } catch (err) {
+        let textoError = '';
+        if (err.message.includes('Invalid login credentials')) {
+          textoError = 'Correo o contraseña incorrectos.';
+        } else if (err.message.includes('Email not confirmed')) {
+          textoError = 'Primero confirmá tu correo desde el mensaje que te enviamos.';
+        } else {
+          textoError = err.message;
+        }
+        mostrarMensaje('❌ ' + textoError, 'error');
+      } finally {
+        boton.disabled = false;
+        boton.textContent = 'Ingresar ✅';
+      }
     });
   </script>
 </body>
