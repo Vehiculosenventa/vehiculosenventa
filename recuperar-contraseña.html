@@ -1,124 +1,97 @@
-il<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recuperar Contraseña - Vehículos en Venta</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Recuperar Contraseña — Vehículos en Venta</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
-    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif;}
     body {
       background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      display: flex; justify-content: center; align-items: center;
       padding: 20px;
     }
     .caja {
-      background: #f8fafc;
-      padding: 35px 25px;
-      border-radius: 16px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 420px;
+      background: #faf8f0; /* Cremita de siempre */
+      padding: 40px 30px;
+      border-radius: 24px;
+      max-width: 420px; width: 100%;
+      box-shadow: 0 8px 25px rgba(44, 82, 130, 0.12);
+      border: 1px solid #f0e9d6;
     }
-    h2 {
-      text-align: center;
-      color: #1e40af;
-      margin-bottom: 25px;
-      font-size: 1.4rem;
-    }
+    h1 {color: #2c5282; text-align: center; margin-bottom: 10px; font-size: 22px; font-weight: 800;}
+    .subtitulo {color: #5a6872; text-align: center; margin-bottom: 25px; font-size: 15px; line-height: 1.5;}
+    label {display: block; margin-bottom: 8px; margin-top: 10px; font-weight: 600; color: #2c5282;}
     input {
-      width: 100%;
-      padding: 14px;
-      margin-bottom: 20px;
-      border: 1px solid #cbd5e1;
-      border-radius: 10px;
-      font-size: 1rem;
-      background: #ffffff;
+      width: 100%; padding: 14px 16px; border: 2px solid #ddd; border-radius: 12px;
+      font-size: 15px; background: #fff;
     }
-    button {
-      width: 100%;
-      padding: 14px;
-      background: #3b82f6;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.3s;
+    input:focus {outline: none; border-color: #3182ce;}
+    .boton-azul {
+      width: 100%; padding: 14px; background: linear-gradient(135deg, #3182ce, #2b6cb0); color: #fff;
+      border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 20px;
+      transition: transform 0.2s;
     }
-    button:hover {
-      background: #2563eb;
+    .boton-azul:hover {transform: translateY(-2px);}
+    .mensaje {margin-top: 20px; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; display: none;}
+    .exito {background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7;}
+    .error {background: #ffebee; color: #c62828; border: 2px solid #ef9a9a;}
+    .enlace-volver {
+      display: block; text-align: center; margin-top: 25px;
+      color: #3182ce; font-weight: 600; text-decoration: none;
     }
-    .mensaje {
-      margin-top: 20px;
-      padding: 12px;
-      border-radius: 8px;
-      text-align: center;
-      font-weight: 500;
-      display: none;
-    }
-    .error {
-      background: #fee2e2;
-      color: #b91c1c;
-    }
-    .exito {
-      background: #dcfce7;
-      color: #166534;
-    }
+    .enlace-volver:hover {text-decoration: underline;}
   </style>
 </head>
 <body>
-
 <div class="caja">
-  <h2>🔑 Recuperar Contraseña</h2>
-  <input type="email" id="correo" placeholder="Escribí tu correo electrónico">
-  <button onclick="enviarEnlace()">Enviar enlace de recuperación</button>
+  <h1>🔑 Recuperar Contraseña</h1>
+  <p class="subtitulo">Escribí tu correo y te enviamos un enlace para crear una contraseña nueva</p>
+
+  <label for="correo">Correo electrónico</label>
+  <input type="email" id="correo" placeholder="tu@correo.com" required>
+
+  <button id="btnEnviar" class="boton-azul">📧 Enviar Enlace</button>
+
   <div id="mensaje" class="mensaje"></div>
+
+  <a href="index.html" class="enlace-volver">← Volver al Inicio</a>
 </div>
 
 <script>
 const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-// Pegá tu clave completa de anon public acá abajo
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-const { createClient } = supabase;
-const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-async function enviarEnlace() {
-  const correo = document.getElementById("correo").value.trim();
-  const mensaje = document.getElementById("mensaje");
-  mensaje.style.display = "none";
+function mostrarMensaje(texto, tipo) {
+  const m = document.getElementById('mensaje');
+  m.style.display = 'block';
+  m.className = 'mensaje ' + tipo;
+  m.textContent = texto;
+}
 
+document.getElementById('btnEnviar').addEventListener('click', async () => {
+  const correo = document.getElementById('correo').value.trim();
   if (!correo) {
-    mensaje.textContent = "⚠️ Escribí tu correo";
-    mensaje.className = "mensaje error";
-    mensaje.style.display = "block";
+    mostrarMensaje('⚠️ Escribí tu correo', 'error');
     return;
   }
 
   try {
-    // Llamamos a tu función: enviar-recuperacion
-    const { data, error } = await sb.functions.invoke("rapid-function", {
-      body: { correo: correo }
+    const { error } = await supabase.auth.resetPasswordForEmail(correo, {
+      redirectTo: window.location.origin + '/confirmar-contraseña.html'
     });
 
     if (error) throw error;
-
-    mensaje.textContent = "✅ Enlace enviado! Revisá tu correo (también Spam)";
-    mensaje.className = "mensaje exito";
-    mensaje.style.display = "block";
-
+    mostrarMensaje('✅ Enlace enviado! Revisá tu correo 📬', 'exito');
+    document.getElementById('correo').value = '';
   } catch (err) {
-    mensaje.textContent = "❌ " + (err.message || "No se pudo enviar");
-    mensaje.className = "mensaje error";
-    mensaje.style.display = "block";
+    mostrarMensaje('❌ Error: ' + err.message, 'error');
   }
-}
+});
 </script>
-
 </body>
 </html>
