@@ -3,404 +3,259 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-  <meta http-equiv="Pragma" content="no-cache">
-  <meta http-equiv="Expires" content="0">
-  <title>Ingresar Vehículo — Vehículos en Venta</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <title>Registrarse — Vehículos en Venta</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;
+      font-family: 'Segoe UI', Roboto, sans-serif;
     }
     body {
       background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
-      padding: 20px;
-      max-width: 850px;
-      margin: 0 auto;
       min-height: 100vh;
+      padding: 40px 20px;
     }
     h1 {
-      text-align: center;
       color: #2c5282;
-      margin-bottom: 20px;
+      text-align: center;
       font-size: 24px;
+      margin-bottom: 25px;
+      font-weight: 800;
     }
-    .form-container {
-      background: #faf8f0;
-      padding: 25px;
-      border-radius: 18px;
-      box-shadow: 0 6px 16px rgba(44,82,130,0.08);
-      border: 1px solid #e2d9c0;
+    .tarjeta {
+      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
+      padding: 35px 25px;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.12);
+      border: 1px solid #e2d9c8;
+      max-width: 440px;
+      margin: 0 auto;
     }
-    .fila { display: flex; gap: 15px; margin-bottom: 18px; flex-wrap: wrap; }
-    .campo { flex: 1 1 45%; min-width: 160px; }
-    .campo-completo { flex: 1 1 100%; margin-bottom: 18px; }
+    h2 {
+      color: #2c5282;
+      text-align: center;
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    .subtitulo {
+      text-align: center;
+      color: #5a6872;
+      margin-bottom: 25px;
+      font-size: 15px;
+    }
     label {
       display: block;
-      margin-bottom: 7px;
+      margin-top: 18px;
+      margin-bottom: 6px;
       font-weight: 600;
-      color: #4a5568;
-      font-size: 14px;
-    }
-    input, select, textarea {
-      width: 100%;
-      padding: 12px 15px;
-      border: 2px solid #c5d6e8;
-      border-radius: 10px;
-      font-size: 15px;
-      background: #fff;
       color: #2d3748;
-      transition: all 0.2s ease;
     }
-    input:focus, select:focus, textarea:focus {
+    .input-con-boton {
+      position: relative;
+    }
+    input {
+      width: 100%;
+      padding: 1rem 3rem 1rem 1rem;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    input:focus {
       outline: none;
       border-color: #3182ce;
-      box-shadow: 0 0 0 3px rgba(49,130,206,0.15);
+      box-shadow: 0 0 0 4px rgba(49, 130, 206, 0.15);
     }
-    .fila-chk { display: flex; gap: 30px; margin-bottom: 18px; flex-wrap: wrap; }
-    .campo-chk { display: flex; align-items: center; gap: 8px; }
-    .campo-chk input { width: auto; margin: 0; }
-    .boton {
+    .btn-ver {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: transparent;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      padding: 0;
+      color: #718096;
+      transition: color 0.2s;
+    }
+    .btn-ver:hover {
+      color: #2c5282;
+    }
+    button[type="submit"] {
       width: 100%;
-      padding: 15px;
+      padding: 1rem;
+      margin-top: 25px;
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff;
+      color: white;
       border: none;
       border-radius: 12px;
-      font-size: 17px;
+      font-size: 1.1rem;
       font-weight: 700;
       cursor: pointer;
-      margin-top: 10px;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(49,130,206,0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
     }
-    .boton:hover {
-      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
-      transform: translateY(-1px);
+    button[type="submit"]:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 16px rgba(49, 130, 206, 0.25);
     }
-    .boton:disabled {
-      background: #a0aec0;
+    button[type="submit"]:disabled {
+      opacity: 0.7;
       cursor: not-allowed;
       transform: none;
-      opacity: 0.7;
-    }
-    .boton-cerrar {
-      background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
-      margin-bottom: 20px;
-      padding: 12px 20px;
-      font-size: 15px;
     }
     .mensaje {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 12px;
+      margin-top: 1.2rem;
+      padding: 1rem;
+      border-radius: 10px;
       display: none;
+      text-align: center;
       font-weight: 600;
-      font-size: 15px;
       line-height: 1.5;
     }
-    .exito { background: #f0f7ee; color: #276749; border: 1px solid #9ae6b4; }
-    .error { background: #fef2f2; color: #c53030; border: 1px solid #feb2b2; }
-    .mensaje-info { background: #ebf8ff; color: #2c5282; border: 1px solid #bee3f8; display: block; }
+    .exito {
+      background: #c6f6d5;
+      color: #22543d;
+      display: block;
+    }
+    .error {
+      background: #fed7d7;
+      color: #9b2c2c;
+      display: block;
+    }
     .volver {
-      display: inline-block;
-      margin-top: 22px;
-      color: #3182ce;
-      text-decoration: none;
-      font-weight: 600;
-      padding: 10px 18px;
-      background: rgba(255,255,255,0.6);
-      border-radius: 10px;
-      transition: all 0.2s ease;
-    }
-    .volver:hover { background: #ebf8ff; text-decoration: underline; }
-    .foto-seccion { margin: 28px 0 15px; }
-    .foto-titulo-seccion {
-      font-size: 19px;
-      font-weight: 700;
-      color: #2c5282;
-      margin-bottom: 20px;
-    }
-    .foto-tarjeta {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 15px 18px;
-      margin-bottom: 12px;
-      background: #fff;
-      border-radius: 14px;
-      border: 2px solid #c5d6e8;
-      transition: all 0.2s ease;
-      cursor: pointer;
-    }
-    .foto-tarjeta:hover { border-color: #3182ce; background: #ebf8ff; }
-    .foto-nombre {
-      font-weight: 700;
-      font-size: 15px;
-      color: #2c5282;
-      flex: 1;
-    }
-    .foto-mini {
-      width: 80px; height: 60px;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #f7fafc;
-      border: 2px dashed #cbd5e0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .foto-mini-img { width: 100%; height: 100%; object-fit: cover; display: none; }
-    .foto-sin { font-size: 11px; color: #a0aec0; }
-    .foto-input-oculto { display: none; }
-    .botones-sesion {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-      justify-content: center;
-      flex-wrap: nowrap;
-    }
-    .boton-sesion {
-      flex: 1;
-      max-width: 200px;
-      padding: 12px 16px;
-      border-radius: 12px;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      border: none;
-      cursor: pointer;
-      font-size: 15px;
-      text-align: center;
-      white-space: nowrap;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff;
-    }
-    .boton-sesion:hover {
-      transform: translateY(-1px);
-      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
-    }
-    .btn-olvide {
-      background: transparent;
-      color: #3182ce;
-      text-decoration: underline;
-      padding: 10px 14px;
       display: block;
       text-align: center;
-      margin-top: 15px;
+      margin-top: 25px;
+      color: #4a5568;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+    .volver:hover {
+      color: #3182ce;
+      text-decoration: underline;
+    }
+    .volver-inicio {
+      margin-top: 20px;
+      color: #3182ce;
       font-weight: 600;
     }
-    .separador {
-      text-align: center;
-      margin: 20px 0;
-      color: #718096;
-      font-size: 14px;
-    }
-    .oculto { display: none !important; }
-    .formulario-deshabilitado { opacity: 0.5; pointer-events: none; }
   </style>
 </head>
 <body>
-
-  <h1>🚗 Ingresar Vehículo</h1>
-
-  <div class="form-container">
+  <h1>🚗 Vehículos en Venta</h1>
+  
+  <div class="tarjeta">
+    <h2>Crear tu cuenta</h2>
+    <p class="subtitulo">Completá tus datos para empezar a publicar y buscar vehículos.</p>
     
-    <div id="caja-sin-sesion">
-      <div class="botones-sesion">
-        <a href="iniciar-sesion.html" class="boton-sesion">🔑 Iniciar Sesión</a>
-        <a href="registrarse.html" class="boton-sesion">📝 Registrarse</a>
+    <form id="formRegistro">
+      <label for="nombre">Nombre completo</label>
+      <input type="text" id="nombre" required placeholder="Tu nombre y apellido">
+
+      <label for="correo">Correo electrónico</label>
+      <input type="email" id="correo" required placeholder="tu@correo.com">
+
+      <label for="contraseña">Contraseña</label>
+      <div class="input-con-boton">
+        <input type="password" id="contraseña" required minlength="6" placeholder="Mínimo 6 caracteres">
+        <button type="button" class="btn-ver" id="btnVerContra" title="Ver contraseña">👁️</button>
       </div>
+
+      <label for="confirmarContraseña">Confirmar contraseña</label>
+      <div class="input-con-boton">
+        <input type="password" id="confirmarContraseña" required minlength="6" placeholder="Repetí la contraseña">
+        <button type="button" class="btn-ver" id="btnVerConfirmar" title="Ver contraseña">👁️</button>
+      </div>
+
+      <button type="submit" id="btnRegistrar">Crear cuenta ✅</button>
       
-      <div class="mensaje mensaje-info">
-        🔒 Debés ingresar a tu cuenta para poder publicar un vehículo.
-      </div>
-      
-      <a href="recuperar-contraseña.html" class="btn-olvide">Olvidé mi contraseña</a>
-      
-      <div class="separador">— Completá los datos del vehículo —</div>
-    </div>
-
-    <div id="caja-con-sesion" class="oculto">
-      <button id="btn-cerrar-sesion" class="boton boton-cerrar">
-        🚪 Cerrar Sesión
-      </button>
-      <div class="separador">— Completá los datos del vehículo —</div>
-    </div>
-
-    <form id="formAuto">
-      
-      <div class="fila">
-        <div class="campo-completo">
-          <label>Tipo de Vehículo *</label>
-          <select id="tipo_vehiculo" required>
-            <option value="">Seleccionar...</option>
-            <option value="Auto">🚗 Auto</option>
-            <option value="Camioneta">🚙 Camioneta / Pick-up</option>
-            <option value="4x4">⛰️ 4x4 / Todoterreno</option>
-            <option value="SUV">🏔️ SUV / Crossover</option>
-            <option value="Furgon">📦 Furgón / Utilitario</option>
-            <option value="Cuatriciclo">🏍️ Cuatriciclo</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo">
-          <label>Marca</label>
-          <input type="text" id="marca" placeholder="Ej: Toyota, Ford, Chevrolet" required>
-        </div>
-        <div class="campo">
-          <label>Modelo</label>
-          <input type="text" id="modelo" placeholder="Ej: Corolla, Fiesta, Cruze" required>
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo">
-          <label>Año</label>
-          <input type="text" id="anio" placeholder="Solo números" oninput="soloNumeros(this)" maxlength="4" required>
-        </div>
-        <div class="campo">
-          <label>Kilometraje</label>
-          <input type="text" id="kilometraje" placeholder="Solo números" oninput="soloNumeros(this)">
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo">
-          <label>Precio $</label>
-          <input type="text" id="precio" placeholder="Solo números" oninput="soloNumeros(this)" required>
-        </div>
-        <div class="campo">
-          <label>Provincia</label>
-          <select id="provincia">
-            <option value="">Seleccionar...</option>
-            <option value="Santa Fe">Santa Fe</option>
-            <option value="Buenos Aires">Buenos Aires</option>
-            <option value="Córdoba">Córdoba</option>
-            <option value="Entre Ríos">Entre Ríos</option>
-            <option value="Otra">Otra</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo-completo">
-          <label>Descripción</label>
-          <textarea id="descripcion" rows="4" placeholder="Detalles del vehículo..."></textarea>
-        </div>
-      </div>
-
-      <button type="submit" class="boton" id="btnGuardar">💾 Publicar Vehículo</button>
       <div id="mensaje" class="mensaje"></div>
     </form>
-
-    <a href="index.html" class="volver">← Volver a la página principal</a>
   </div>
 
+  <a href="iniciar-sesion.html" class="volver">← Ya tengo cuenta — Iniciar sesión</a>
+  <a href="index.html" class="volver volver-inicio">← Volver a la página principal</a>
+
   <script>
-    // ✅ Misma forma que en registrarse — SIN repetir nada
-    const SUPABASE_URL = "https://ikancehiaanhnuuykkio.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrYW5jZGlhaWFuaG51dXlra2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+
+    // ✅ Una sola instancia de Supabase
     const supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    const cajaSinSesion = document.getElementById('caja-sin-sesion');
-    const cajaConSesion = document.getElementById('caja-con-sesion');
-    const formAuto = document.getElementById('formAuto');
-    const btnGuardar = document.getElementById('btnGuardar');
+    // Botones ver/ocultar contraseña
+    function configurarBotonVer(inputId, botonId) {
+      const input = document.getElementById(inputId);
+      const boton = document.getElementById(botonId);
+      boton.addEventListener('click', () => {
+        input.type = input.type === 'password' ? 'text' : 'password';
+        boton.textContent = input.type === 'password' ? '👁️' : '🙈';
+        boton.title = input.type === 'password' ? 'Ver contraseña' : 'Ocultar contraseña';
+      });
+    }
+    configurarBotonVer('contraseña', 'btnVerContra');
+    configurarBotonVer('confirmarContraseña', 'btnVerConfirmar');
+
+    const form = document.getElementById('formRegistro');
     const mensaje = document.getElementById('mensaje');
+    const btn = document.getElementById('btnRegistrar');
 
-    // ✅ Solo números
-    function soloNumeros(campo) {
-      campo.value = campo.value.replace(/[^0-9]/g, '');
+    function mostrarMensaje(texto, tipo) {
+      mensaje.textContent = texto;
+      mensaje.className = 'mensaje ' + tipo;
+      mensaje.style.display = 'block';
     }
 
-    // ✅ Actualizar vista según sesión
-    async function actualizarInterfaz() {
-      const { data: { session } } = await supabaseCliente.auth.getSession();
-      const haySesion = !!session;
-      
-      if (haySesion) {
-        cajaSinSesion.classList.add('oculto');
-        cajaConSesion.classList.remove('oculto');
-        formAuto.classList.remove('formulario-deshabilitado');
-        btnGuardar.disabled = false;
-      } else {
-        cajaSinSesion.classList.remove('oculto');
-        cajaConSesion.classList.add('oculto');
-        formAuto.classList.add('formulario-deshabilitado');
-        btnGuardar.disabled = true;
-      }
-    }
-
-    // ✅ Cerrar sesión
-    document.getElementById('btn-cerrar-sesion').addEventListener('click', async () => {
-      await supabaseCliente.auth.signOut();
-      actualizarInterfaz();
-    });
-
-    // ✅ Detectar cambios de sesión
-    supabaseCliente.auth.onAuthStateChange(() => {
-      actualizarInterfaz();
-    });
-
-    // ✅ Enviar formulario
-    formAuto.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
+      mensaje.style.display = 'none';
       
-      const { data: { session } } = await supabaseCliente.auth.getSession();
-      if (!session) {
-        mensaje.textContent = "🔒 Debés iniciar sesión para publicar";
-        mensaje.className = "mensaje error";
-        mensaje.style.display = "block";
+      const nombre = document.getElementById('nombre').value.trim();
+      const correo = document.getElementById('correo').value.trim();
+      const contraseña = document.getElementById('contraseña').value;
+      const confirmarContraseña = document.getElementById('confirmarContraseña').value;
+
+      if (contraseña !== confirmarContraseña) {
+        mostrarMensaje('❌ Las contraseñas no coinciden.', 'error');
         return;
       }
 
-      btnGuardar.disabled = true;
-      btnGuardar.textContent = "Guardando...";
-      mensaje.style.display = "none";
+      btn.disabled = true;
+      btn.textContent = 'Creando cuenta...';
 
       try {
-        const datos = {
-          tipo_vehiculo: document.getElementById('tipo_vehiculo').value,
-          marca: document.getElementById('marca').value.trim(),
-          modelo: document.getElementById('modelo').value.trim(),
-          anio: parseInt(document.getElementById('anio').value) || null,
-          kilometraje: parseInt(document.getElementById('kilometraje').value) || null,
-          precio: parseInt(document.getElementById('precio').value) || null,
-          provincia: document.getElementById('provincia').value,
-          descripcion: document.getElementById('descripcion').value.trim(),
-          usuario_id: session.user.id,
-          creado_en: new Date()
-        };
+        const { data, error } = await supabaseCliente.auth.signUp({
+          email: correo,
+          password: contraseña,
+          options: {
+            data: { nombre: nombre },
+            emailRedirectTo: window.location.origin + '/confirmar.html'
+          }
+        });
 
-        const { error } = await supabaseCliente.from('autos').insert([datos]);
-        
         if (error) throw error;
 
-        mensaje.textContent = "✅ Vehículo publicado correctamente";
-        mensaje.className = "mensaje exito";
-        mensaje.style.display = "block";
-        formAuto.reset();
-        
+        mostrarMensaje(
+          '✅ Cuenta creada. Revisá tu correo y confirmá tu cuenta para ingresar.',
+          'exito'
+        );
+        form.reset();
+
       } catch (err) {
-        mensaje.textContent = "❌ Error: " + err.message;
-        mensaje.className = "mensaje error";
-        mensaje.style.display = "block";
+        let texto = err.message || 'Error al crear cuenta.';
+        if (texto.includes('User already registered')) {
+          texto = 'Este correo ya tiene una cuenta. Iniciá sesión.';
+        }
+        mostrarMensaje('❌ ' + texto, 'error');
       } finally {
-        btnGuardar.disabled = false;
-        btnGuardar.textContent = "💾 Publicar Vehículo";
+        btn.disabled = false;
+        btn.textContent = 'Crear cuenta ✅';
       }
     });
-
-    // ✅ Al cargar la página
-    actualizarInterfaz();
   </script>
-
 </body>
 </html>
