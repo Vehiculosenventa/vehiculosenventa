@@ -180,12 +180,10 @@
       font-size: 15px;
       text-align: center;
       white-space: nowrap;
-    }
-    .btn-ingresar, .btn-registrar {
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
       color: #fff;
     }
-    .btn-ingresar:hover, .btn-registrar:hover { 
+    .boton-sesion:hover {
       transform: translateY(-1px);
       background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
     }
@@ -217,8 +215,8 @@
     
     <div id="caja-sin-sesion">
       <div class="botones-sesion">
-        <a href="iniciar-sesion.html" class="boton-sesion btn-ingresar">🔑 Iniciar Sesión</a>
-        <a href="registrarse.html" class="boton-sesion btn-registrar">📝 Registrarse</a>
+        <a href="iniciar-sesion.html" class="boton-sesion">🔑 Iniciar Sesión</a>
+        <a href="registrarse.html" class="boton-sesion">📝 Registrarse</a>
       </div>
       
       <div class="mensaje mensaje-info" style="display:block;">
@@ -513,8 +511,11 @@
   <script>
     const SUPABASE_URL = "https://ikancehiaanhnuuykkio.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrYW5jZGlhaWFuaG51dXlra2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    
+    // ✅ ACÁ ESTABA LO QUE FALTABA — UNA SOLA VEZ, SIN REPETIR
     const { createClient } = supabase;
-  
+    const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
     const selectCiudad = document.getElementById('ciudad');
     const campoLibre = document.getElementById('campo_ciudad_libre');
     const cajaSinSesion = document.getElementById('caja-sin-sesion');
@@ -528,7 +529,7 @@
       campo.value = campo.value.replace(/[^0-9]/g, '');
     }
 
-    // ✅ Verifica sesión — NO redirige
+    // ✅ Verifica sesión y muestra/oculta botones
     async function actualizarInterfaz() {
       const { data: { session } } = await supabase.auth.getSession();
       const haySesion = !!session;
@@ -548,14 +549,14 @@
       }
     }
 
-    // ✅ Cerrar sesión → se queda acá
+    // ✅ Cerrar sesión
     async function cerrarSesion() {
       await supabase.auth.signOut();
       actualizarInterfaz();
     }
     document.getElementById('btn-cerrar-sesion').addEventListener('click', cerrarSesion);
 
-    // ✅ Detecta cambios de sesión en tiempo real
+    // ✅ Detecta cambios de sesión
     supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
         actualizarInterfaz();
