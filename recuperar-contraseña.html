@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Recuperar Contraseña — Vehículos en Venta</title>
+  <title>Confirmar Contraseña — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif;}
@@ -24,11 +24,17 @@
     h1 {color: #2c5282; text-align: center; margin-bottom: 10px; font-size: 22px; font-weight: 800;}
     .subtitulo {color: #5a6872; text-align: center; margin-bottom: 25px; font-size: 15px; line-height: 1.5;}
     label {display: block; margin-bottom: 8px; margin-top: 10px; font-weight: 600; color: #2c5282;}
+    .grupo-input {position: relative;}
     input {
-      width: 100%; padding: 14px 16px; border: 2px solid #ddd; border-radius: 12px;
+      width: 100%; padding: 14px 45px 14px 16px; border: 2px solid #ddd; border-radius: 12px;
       font-size: 15px; background: #fff;
     }
     input:focus {outline: none; border-color: #3182ce;}
+    .ojito {
+      position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; font-size: 20px; cursor: pointer; padding: 0;
+      line-height: 1;
+    }
     .boton-azul {
       width: 100%; padding: 14px; background: linear-gradient(135deg, #3182ce, #2b6cb0); color: #fff;
       border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 20px;
@@ -47,13 +53,22 @@
 </head>
 <body>
 <div class="caja">
-  <h1>🔑 Recuperar Contraseña</h1>
-  <p class="subtitulo">Escribí tu correo y te enviamos un enlace para crear una contraseña nueva</p>
+  <h1>🔑 Contraseña Nueva</h1>
+  <p class="subtitulo">Escribí tu contraseña nueva dos veces para confirmarla</p>
 
-  <label for="correo">Correo electrónico</label>
-  <input type="email" id="correo" placeholder="tu@correo.com" required>
+  <label for="claveNueva">Contraseña nueva (máximo 8 caracteres)</label>
+  <div class="grupo-input">
+    <input type="password" id="claveNueva" placeholder="Escribí tu contraseña nueva" maxlength="8">
+    <button type="button" class="ojito" id="ojo1">👁️</button>
+  </div>
 
-  <button id="btnEnviar" class="boton-azul">📧 Enviar Enlace</button>
+  <label for="claveRepetir">Repetir contraseña</label>
+  <div class="grupo-input">
+    <input type="password" id="claveRepetir" placeholder="Repetí la contraseña" maxlength="8">
+    <button type="button" class="ojito" id="ojo2">👁️</button>
+  </div>
+
+  <button id="btnGuardar" class="boton-azul">✅ Guardar Contraseña</button>
 
   <div id="mensaje" class="mensaje"></div>
 
@@ -64,7 +79,7 @@
 const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-// ✅ UNA SOLA VEZ — ASÍ ESTÁ BIEN
+// ✅ UNA SOLA VEZ — sin duplicados
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 function mostrarMensaje(texto, tipo) {
@@ -74,21 +89,46 @@ function mostrarMensaje(texto, tipo) {
   m.textContent = texto;
 }
 
-document.getElementById('btnEnviar').addEventListener('click', async () => {
-  const correo = document.getElementById('correo').value.trim();
-  if (!correo) {
-    mostrarMensaje('⚠️ Escribí tu correo', 'error');
+// ✅ OJITO 1 — Ver/Ocultar primera contraseña
+document.getElementById('ojo1').addEventListener('click', () => {
+  const campo = document.getElementById('claveNueva');
+  campo.type = campo.type === 'password' ? 'text' : 'password';
+  document.getElementById('ojo1').textContent = campo.type === 'password' ? '👁️' : '🙈';
+});
+
+// ✅ OJITO 2 — Ver/Ocultar repetir contraseña
+document.getElementById('ojo2').addEventListener('click', () => {
+  const campo = document.getElementById('claveRepetir');
+  campo.type = campo.type === 'password' ? 'text' : 'password';
+  document.getElementById('ojo2').textContent = campo.type === 'password' ? '👁️' : '🙈';
+});
+
+// ✅ Guardar contraseña nueva
+document.getElementById('btnGuardar').addEventListener('click', async () => {
+  const c1 = document.getElementById('claveNueva').value;
+  const c2 = document.getElementById('claveRepetir').value;
+
+  if (!c1 || !c2) {
+    mostrarMensaje('⚠️ Completá ambos campos', 'error');
+    return;
+  }
+  if (c1 !== c2) {
+    mostrarMensaje('⚠️ Las contraseñas no coinciden', 'error');
+    return;
+  }
+  if (c1.length < 6) {
+    mostrarMensaje('⚠️ Mínimo 6 caracteres', 'error');
     return;
   }
 
   try {
-    const { error } = await supabaseClient.auth.resetPasswordForEmail(correo, {
-      redirectTo: window.location.origin + '/confirmar-contraseña.html'
-    });
-
+    const { error } = await supabaseClient.auth.updateUser({ password: c1 });
     if (error) throw error;
-    mostrarMensaje('✅ Enlace enviado! Revisá tu correo 📬', 'exito');
-    document.getElementById('correo').value = '';
+    
+    mostrarMensaje('✅ Contraseña cambiada con éxito! Yendo al inicio...', 'exito');
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 2000);
   } catch (err) {
     mostrarMensaje('❌ Error: ' + err.message, 'error');
   }
