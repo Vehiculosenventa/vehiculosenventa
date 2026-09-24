@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Ingresar Vehículo</title>
+  <title>Ingresar Vehículo — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {
@@ -163,36 +163,39 @@
     .botones-sesion {
       display: flex;
       gap: 12px;
-      margin-bottom: 15px;
+      margin-bottom: 20px;
       flex-wrap: wrap;
       justify-content: center;
     }
     .boton-sesion {
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-weight: 600;
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 12px;
+      font-weight: 700;
       text-decoration: none;
       transition: all 0.2s ease;
       border: none;
       cursor: pointer;
-      font-size: 14px;
+      font-size: 16px;
+      text-align: center;
     }
-    .btn-ingresar {
+    .btn-ingresar, .btn-registrar {
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
       color: #fff;
     }
-    .btn-ingresar:hover { transform: translateY(-1px); }
-    .btn-registrar {
-      background: #f0f4f8;
-      color: #2c5282;
-      border: 2px solid #c5d6e8;
+    .btn-ingresar:hover, .btn-registrar:hover { 
+      transform: translateY(-1px);
+      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
     }
-    .btn-registrar:hover { border-color: #3182ce; background: #ebf4fb; }
     .btn-olvide {
       background: transparent;
       color: #3182ce;
       text-decoration: underline;
-      padding: 8px 12px;
+      padding: 10px 14px;
+      display: block;
+      text-align: center;
+      margin-top: 15px;
+      font-weight: 600;
     }
     .separador {
       text-align: center;
@@ -202,7 +205,6 @@
     }
     .oculto { display: none !important; }
     .formulario-deshabilitado { opacity: 0.5; pointer-events: none; }
-    .depurar { font-size: 12px; margin-top: 15px; padding: 10px; background: #f0f0f0; border-radius: 8px; color: #333; }
   </style>
 </head>
 <body>
@@ -211,25 +213,26 @@
 
   <div class="form-container">
     
-    <!-- ❌ SIN SESIÓN -->
+    <!-- ❌ SIN SESIÓN → aparece esto -->
     <div id="caja-sin-sesion">
       <div class="botones-sesion">
-        <a href="iniciar-sesion.html" class="boton-sesion btn-ingresar">🔑 Ingresar</a>
+        <a href="iniciar-sesion.html" class="boton-sesion btn-ingresar">🔑 Iniciar Sesión</a>
         <a href="registrarse.html" class="boton-sesion btn-registrar">📝 Registrarse</a>
-        <a href="recuperar-contraseña.html" class="boton-sesion btn-olvide">¿Olvidaste tu contraseña?</a>
       </div>
       
       <div class="mensaje mensaje-info" style="display:block;">
         🔒 Debés ingresar a tu cuenta para poder publicar un vehículo.
       </div>
       
+      <a href="recuperar-contraseña.html" class="btn-olvide">Olvidé mi contraseña</a>
+      
       <div class="separador">— Completá los datos del vehículo —</div>
     </div>
 
-    <!-- ✅ CON SESIÓN -->
+    <!-- ✅ CON SESIÓN → aparece esto -->
     <div id="caja-con-sesion" class="oculto">
-      <button id="btn-cerrar-sesion" class="boton boton-cerrar" onclick="cerrarSesion()">
-        🚪 Cerrar sesión
+      <button id="btn-cerrar-sesion" class="boton boton-cerrar">
+        🚪 Cerrar Sesión
       </button>
       <div class="separador">— Completá los datos del vehículo —</div>
     </div>
@@ -505,9 +508,6 @@
     </form>
 
     <a href="index.html" class="volver">← Volver al inicio</a>
-    
-    <!-- 🟢 Cartel de diagnóstico -->
-    <div id="info-sesion" class="depurar">🔍 Comprobando sesión...</div>
   </div>
 
   <script>
@@ -523,51 +523,30 @@
     const formAuto = document.getElementById('formAuto');
     const btnGuardar = document.getElementById('btnGuardar');
     const mensaje = document.getElementById('mensaje');
-    const infoSesion = document.getElementById('info-sesion');
 
+    // ✅ Solo números — no deja escribir letras
     function soloNumeros(campo) {
       campo.value = campo.value.replace(/[^0-9]/g, '');
     }
 
-    // ✅ DETECCIÓN MEJORADA — busca la sesión de 2 formas
     async function actualizarInterfaz() {
-      console.log('🔍 Comprobando sesión...');
-      
-      // Forma 1: getUser()
-      const { data: { user }, error } = await supabase.auth.getUser();
-      
-      if (error) console.log('❌ Error:', error);
-      
-      // Forma 2: también revisamos la sesión completa
+      const { data: { user } } = await supabase.auth.getUser();
       const { data: { session } } = await supabase.auth.getSession();
-      
       const usuarioActivo = user || session?.user;
       
-      console.log('👤 Usuario:', usuarioActivo?.email || 'Ninguno');
-      
       if (usuarioActivo) {
-        // ✅ SÍ HAY SESIÓN → ocultar botones, mostrar formulario
-        infoSesion.textContent = `✅ SESIÓN ACTIVA: ${usuarioActivo.email}`;
-        infoSesion.style.background = '#e6fffa';
-        
         cajaSinSesion.classList.add('oculto');
         cajaConSesion.classList.remove('oculto');
         formAuto.classList.remove('formulario-deshabilitado');
         btnGuardar.disabled = false;
         btnGuardar.textContent = "💾 Guardar Vehículo";
-        
         return usuarioActivo.id;
       } else {
-        // ❌ NO HAY SESIÓN → mostrar botones, bloquear formulario
-        infoSesion.textContent = "❌ SIN SESIÓN — Iniciá sesión desde la página principal";
-        infoSesion.style.background = '#fff5f5';
-        
         cajaSinSesion.classList.remove('oculto');
         cajaConSesion.classList.add('oculto');
         formAuto.classList.add('formulario-deshabilitado');
         btnGuardar.disabled = true;
         btnGuardar.textContent = "🔒 Debés ingresar primero";
-        
         return null;
       }
     }
@@ -576,6 +555,7 @@
       await supabase.auth.signOut();
       window.location.href = 'index.html';
     }
+    document.getElementById('btn-cerrar-sesion').addEventListener('click', cerrarSesion);
 
     selectCiudad.addEventListener('change', () => {
       campoLibre.style.display = selectCiudad.value === 'Otra ciudad' ? 'block' : 'none';
@@ -693,7 +673,6 @@
       }
     });
 
-    // ✅ Ejecutar al cargar y si cambia la sesión
     actualizarInterfaz();
     supabase.auth.onAuthStateChange(() => actualizarInterfaz());
   </script>
