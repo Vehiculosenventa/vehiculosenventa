@@ -225,9 +225,29 @@
       }
 
       btn.disabled = true;
-      btn.textContent = 'Creando cuenta...';
+      btn.textContent = 'Verificando...';
 
       try {
+        // ✅ PRIMERO: preguntar si el correo ya existe en la tabla usuarios
+        const { data: usuarios, error: errorBusqueda } = await supabaseCliente
+          .from('usuarios')
+          .select('correo')
+          .eq('correo', correo)
+          .maybeSingle();
+
+        if (errorBusqueda) {
+          console.log('Error buscando usuario:', errorBusqueda);
+        }
+
+        // ✅ Si lo encontró → ya existe
+        if (usuarios) {
+          mostrarMensaje('⚠️ Este correo ya tiene cuenta. Iniciá sesión.', 'error');
+          btn.disabled = false;
+          btn.textContent = 'Crear cuenta ✅';
+          return;
+        }
+
+        // ✅ No existe → crear cuenta nueva
         const { data, error } = await supabaseCliente.auth.signUp({
           email: correo,
           password: contraseña,
@@ -237,7 +257,16 @@
           }
         });
 
-        if (error) throw error;
+        if (error) {
+          // Por si acaso la tabla no lo encontró pero auth sí lo tiene
+          if (error.message.includes('already registered') || error.message.includes('User already')) {
+            mostrarMensaje('⚠️ Este correo ya tiene cuenta. Iniciá sesión.', 'error');
+            btn.disabled = false;
+            btn.textContent = 'Crear cuenta ✅';
+            return;
+          }
+          throw error;
+        }
 
         mostrarMensaje(
           '✅ Cuenta creada. Revisá tu correo y confirmá tu cuenta para ingresar.',
@@ -246,12 +275,7 @@
         form.reset();
 
       } catch (err) {
-        let texto = err.message || 'Error al crear cuenta.';
-        // ✅ Si el correo ya está registrado
-        if (texto.includes('User already registered') || texto.includes('already registered')) {
-          texto = '⚠️ Este correo ya tiene cuenta. Iniciá sesión.';
-        }
-        mostrarMensaje('❌ ' + texto, 'error');
+        mostrarMensaje('❌ ' + (err.message || 'Error al crear cuenta.'), 'error');
       } finally {
         btn.disabled = false;
         btn.textContent = 'Crear cuenta ✅';
