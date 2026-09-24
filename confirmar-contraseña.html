@@ -14,7 +14,7 @@
       padding: 20px;
     }
     .caja {
-      background: #faf8f0; /* Cremita de siempre */
+      background: #faf8f0;
       padding: 40px 30px;
       border-radius: 24px;
       max-width: 420px; width: 100%;
@@ -26,13 +26,14 @@
     label {display: block; margin-bottom: 8px; margin-top: 10px; font-weight: 600; color: #2c5282;}
     .grupo-input {position: relative;}
     input {
-      width: 100%; padding: 14px 16px; border: 2px solid #ddd; border-radius: 12px;
+      width: 100%; padding: 14px 45px 14px 16px; border: 2px solid #ddd; border-radius: 12px;
       font-size: 15px; background: #fff;
     }
     input:focus {outline: none; border-color: #3182ce;}
     .ojito {
       position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
       background: none; border: none; font-size: 20px; cursor: pointer; padding: 0;
+      line-height: 1;
     }
     .boton-azul {
       width: 100%; padding: 14px; background: linear-gradient(135deg, #3182ce, #2b6cb0); color: #fff;
@@ -43,7 +44,6 @@
     .mensaje {margin-top: 20px; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; display: none;}
     .exito {background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7;}
     .error {background: #ffebee; color: #c62828; border: 2px solid #ef9a9a;}
-    .oculto {display: none !important;}
     .enlace-volver {
       display: block; text-align: center; margin-top: 25px;
       color: #3182ce; font-weight: 600; text-decoration: none;
@@ -53,39 +53,33 @@
 </head>
 <body>
 <div class="caja">
-  <h1 id="titulo">🔐 Verificando...</h1>
-  <p id="subtitulo" class="subtitulo">Un momento por favor</p>
+  <h1>🔑 Contraseña Nueva</h1>
+  <p class="subtitulo">Escribí tu contraseña nueva dos veces para confirmarla</p>
 
-  <div id="formularioClave" class="oculto">
-    <label for="claveNueva">Contraseña nueva (máximo 8 caracteres)</label>
-    <div class="grupo-input">
-      <input type="password" id="claveNueva" placeholder="Escribí tu contraseña nueva" maxlength="8">
-      <button type="button" class="ojito" id="ojo1">👁️</button>
-    </div>
-
-    <label for="claveRepetir">Repetir contraseña</label>
-    <div class="grupo-input">
-      <input type="password" id="claveRepetir" placeholder="Repetí la contraseña" maxlength="8">
-      <button type="button" class="ojito" id="ojo2">👁️</button>
-    </div>
-
-    <button id="btnGuardar" class="boton-azul">✅ Guardar Contraseña</button>
+  <label for="claveNueva">Contraseña nueva (máximo 8 caracteres)</label>
+  <div class="grupo-input">
+    <input type="password" id="claveNueva" placeholder="Escribí tu contraseña nueva" maxlength="8">
+    <button type="button" class="ojito" id="ojo1">👁️</button>
   </div>
+
+  <label for="claveRepetir">Repetir contraseña</label>
+  <div class="grupo-input">
+    <input type="password" id="claveRepetir" placeholder="Repetí la contraseña" maxlength="8">
+    <button type="button" class="ojito" id="ojo2">👁️</button>
+  </div>
+
+  <button id="btnGuardar" class="boton-azul">✅ Guardar Contraseña</button>
 
   <div id="mensaje" class="mensaje"></div>
 
-  <a id="enlaceVolver" href="index.html" class="enlace-volver">← Volver al Inicio</a>
+  <a href="index.html" class="enlace-volver">← Volver al Inicio</a>
 </div>
 
 <script>
 const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-const titulo = document.getElementById('titulo');
-const subtitulo = document.getElementById('subtitulo');
-const formularioClave = document.getElementById('formularioClave');
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 function mostrarMensaje(texto, tipo) {
   const m = document.getElementById('mensaje');
@@ -94,32 +88,21 @@ function mostrarMensaje(texto, tipo) {
   m.textContent = texto;
 }
 
-// Ojitos ver/ocultar contraseña
+// Ojito 1
 document.getElementById('ojo1').addEventListener('click', () => {
-  const i = document.getElementById('claveNueva');
-  i.type = i.type === 'password' ? 'text' : 'password';
+  const campo = document.getElementById('claveNueva');
+  campo.type = campo.type === 'password' ? 'text' : 'password';
+  document.getElementById('ojo1').textContent = campo.type === 'password' ? '👁️' : '🙈';
 });
+
+// Ojito 2
 document.getElementById('ojo2').addEventListener('click', () => {
-  const i = document.getElementById('claveRepetir');
-  i.type = i.type === 'password' ? 'text' : 'password';
+  const campo = document.getElementById('claveRepetir');
+  campo.type = campo.type === 'password' ? 'text' : 'password';
+  document.getElementById('ojo2').textContent = campo.type === 'password' ? '👁️' : '🙈';
 });
 
-// Verificar el enlace al entrar
-async function iniciar() {
-  const { data: { session }, error } = await supabase.auth.getSession();
-  
-  if (session) {
-    titulo.textContent = '🔑 Crear Contraseña Nueva';
-    subtitulo.textContent = 'Escribí tu contraseña nueva';
-    formularioClave.classList.remove('oculto');
-  } else {
-    titulo.textContent = '❌ Enlace Inválido';
-    subtitulo.textContent = 'El enlace venció o ya fue usado';
-    mostrarMensaje('Pedí un enlace nuevo desde la página de recuperar contraseña', 'error');
-  }
-}
-
-// Guardar contraseña nueva
+// Guardar contraseña
 document.getElementById('btnGuardar').addEventListener('click', async () => {
   const c1 = document.getElementById('claveNueva').value;
   const c2 = document.getElementById('claveRepetir').value;
@@ -138,10 +121,10 @@ document.getElementById('btnGuardar').addEventListener('click', async () => {
   }
 
   try {
-    const { error } = await supabase.auth.updateUser({ password: c1 });
+    const { error } = await supabaseClient.auth.updateUser({ password: c1 });
     if (error) throw error;
     
-    mostrarMensaje('✅ Contraseña actualizada! Redirigiendo...', 'exito');
+    mostrarMensaje('✅ Contraseña cambiada! Yendo al inicio...', 'exito');
     setTimeout(() => {
       window.location.href = 'index.html';
     }, 2000);
@@ -149,8 +132,6 @@ document.getElementById('btnGuardar').addEventListener('click', async () => {
     mostrarMensaje('❌ Error: ' + err.message, 'error');
   }
 });
-
-iniciar();
 </script>
 </body>
 </html>
