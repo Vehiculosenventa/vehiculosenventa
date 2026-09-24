@@ -159,15 +159,15 @@
       <label for="correo">Correo electrónico</label>
       <input type="email" id="correo" required placeholder="tu@correo.com">
 
-      <label for="contraseña">Contraseña</label>
+      <label for="contraseña">Contraseña (máximo 8 caracteres)</label>
       <div class="input-con-boton">
-        <input type="password" id="contraseña" required minlength="6" placeholder="Mínimo 6 caracteres">
+        <input type="password" id="contraseña" required minlength="6" maxlength="8" placeholder="Mínimo 6, máximo 8 caracteres">
         <button type="button" class="btn-ver" id="btnVerContra" title="Ver contraseña">👁️</button>
       </div>
 
       <label for="confirmarContraseña">Confirmar contraseña</label>
       <div class="input-con-boton">
-        <input type="password" id="confirmarContraseña" required minlength="6" placeholder="Repetí la contraseña">
+        <input type="password" id="confirmarContraseña" required minlength="6" maxlength="8" placeholder="Repetí la contraseña">
         <button type="button" class="btn-ver" id="btnVerConfirmar" title="Ver contraseña">👁️</button>
       </div>
 
@@ -247,8 +247,9 @@
 
       } catch (err) {
         let texto = err.message || 'Error al crear cuenta.';
-        if (texto.includes('User already registered')) {
-          texto = 'Este correo ya tiene una cuenta. Iniciá sesión.';
+        // ✅ Si el correo ya está registrado
+        if (texto.includes('User already registered') || texto.includes('already registered')) {
+          texto = '⚠️ Este correo ya tiene cuenta. Iniciá sesión.';
         }
         mostrarMensaje('❌ ' + texto, 'error');
       } finally {
