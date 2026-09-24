@@ -178,6 +178,7 @@
       cursor: pointer;
       font-size: 16px;
       text-align: center;
+      min-width: 160px;
     }
     .btn-ingresar, .btn-registrar {
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
@@ -213,7 +214,7 @@
 
   <div class="form-container">
     
-    <!-- ❌ SIN SESIÓN → aparece esto -->
+    <!-- ❌ SIN SESIÓN -->
     <div id="caja-sin-sesion">
       <div class="botones-sesion">
         <a href="iniciar-sesion.html" class="boton-sesion btn-ingresar">🔑 Iniciar Sesión</a>
@@ -229,7 +230,7 @@
       <div class="separador">— Completá los datos del vehículo —</div>
     </div>
 
-    <!-- ✅ CON SESIÓN → aparece esto -->
+    <!-- ✅ CON SESIÓN -->
     <div id="caja-con-sesion" class="oculto">
       <button id="btn-cerrar-sesion" class="boton boton-cerrar">
         🚪 Cerrar Sesión
@@ -524,17 +525,19 @@
     const btnGuardar = document.getElementById('btnGuardar');
     const mensaje = document.getElementById('mensaje');
 
-    // ✅ Solo números — no deja escribir letras
+    // ✅ SOLO NÚMEROS — no deja escribir nada que no sea 0-9
     function soloNumeros(campo) {
       campo.value = campo.value.replace(/[^0-9]/g, '');
     }
 
+    // ✅ DETECCIÓN MEJORADA — revisa de las dos formas
     async function actualizarInterfaz() {
-      const { data: { user } } = await supabase.auth.getUser();
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { user }, error: errorUser } = await supabase.auth.getUser();
+      const { data: { session }, error: errorSesion } = await supabase.auth.getSession();
       const usuarioActivo = user || session?.user;
       
       if (usuarioActivo) {
+        // ✅ HAY SESIÓN → ocultar botones, mostrar formulario
         cajaSinSesion.classList.add('oculto');
         cajaConSesion.classList.remove('oculto');
         formAuto.classList.remove('formulario-deshabilitado');
@@ -542,6 +545,7 @@
         btnGuardar.textContent = "💾 Guardar Vehículo";
         return usuarioActivo.id;
       } else {
+        // ❌ SIN SESIÓN → mostrar botones, bloquear formulario
         cajaSinSesion.classList.remove('oculto');
         cajaConSesion.classList.add('oculto');
         formAuto.classList.add('formulario-deshabilitado');
@@ -673,6 +677,7 @@
       }
     });
 
+    // ✅ Ejecutar al cargar y si cambia la sesión
     actualizarInterfaz();
     supabase.auth.onAuthStateChange(() => actualizarInterfaz());
   </script>
