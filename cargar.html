@@ -162,23 +162,22 @@
     .foto-input-oculto { display: none; }
     .botones-sesion {
       display: flex;
-      gap: 12px;
+      gap: 15px;
       margin-bottom: 20px;
-      flex-wrap: wrap;
       justify-content: center;
+      flex-wrap: wrap;
     }
     .boton-sesion {
-      flex: 1;
-      padding: 14px 20px;
+      padding: 12px 24px;
       border-radius: 12px;
       font-weight: 700;
       text-decoration: none;
       transition: all 0.2s ease;
       border: none;
       cursor: pointer;
-      font-size: 16px;
+      font-size: 15px;
       text-align: center;
-      min-width: 160px;
+      white-space: nowrap;
     }
     .btn-ingresar, .btn-registrar {
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
@@ -214,7 +213,6 @@
 
   <div class="form-container">
     
-    <!-- ❌ SIN SESIÓN -->
     <div id="caja-sin-sesion">
       <div class="botones-sesion">
         <a href="iniciar-sesion.html" class="boton-sesion btn-ingresar">🔑 Iniciar Sesión</a>
@@ -230,7 +228,6 @@
       <div class="separador">— Completá los datos del vehículo —</div>
     </div>
 
-    <!-- ✅ CON SESIÓN -->
     <div id="caja-con-sesion" class="oculto">
       <button id="btn-cerrar-sesion" class="boton boton-cerrar">
         🚪 Cerrar Sesión
@@ -286,7 +283,7 @@
       <div class="fila">
         <div class="campo">
           <label>Año</label>
-          <input type="text" id="anio" placeholder="Solo números" oninput="soloNumeros(this)" required>
+          <input type="text" id="anio" placeholder="Solo números" oninput="soloNumeros(this)" onkeypress="return soloNumerosTecla(event)" required>
         </div>
         <div class="campo">
           <label>🔄 Transmisión</label>
@@ -301,11 +298,11 @@
       <div class="fila">
         <div class="campo">
           <label>Kilometraje</label>
-          <input type="text" id="kilometraje" placeholder="Solo números" oninput="soloNumeros(this)">
+          <input type="text" id="kilometraje" placeholder="Solo números" oninput="soloNumeros(this)" onkeypress="return soloNumerosTecla(event)">
         </div>
         <div class="campo">
           <label>Precio</label>
-          <input type="text" id="precio" placeholder="Solo números" oninput="soloNumeros(this)" required>
+          <input type="text" id="precio" placeholder="Solo números" oninput="soloNumeros(this)" onkeypress="return soloNumerosTecla(event)" required>
         </div>
       </div>
 
@@ -525,19 +522,30 @@
     const btnGuardar = document.getElementById('btnGuardar');
     const mensaje = document.getElementById('mensaje');
 
-    // ✅ SOLO NÚMEROS — no deja escribir nada que no sea 0-9
-    function soloNumeros(campo) {
-      campo.value = campo.value.replace(/[^0-9]/g, '');
+    // ✅ BLOQUEA AL TECLADO — SOLO NÚMEROS
+    function soloNumerosTecla(event) {
+      const codigo = event.which || event.keyCode;
+      if (codigo < 48 || codigo > 57) {
+        event.preventDefault();
+        return false;
+      }
+      return true;
     }
 
-    // ✅ DETECCIÓN MEJORADA — revisa de las dos formas
+    // ✅ LIMPIA SI ALGO SE COLO
+    function soloNumeros(campo) {
+      const valorLimpio = campo.value.replace(/[^0-9]/g, '');
+      if (campo.value !== valorLimpio) {
+        campo.value = valorLimpio;
+      }
+    }
+
     async function actualizarInterfaz() {
-      const { data: { user }, error: errorUser } = await supabase.auth.getUser();
-      const { data: { session }, error: errorSesion } = await supabase.auth.getSession();
+      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { session } } = await supabase.auth.getSession();
       const usuarioActivo = user || session?.user;
       
       if (usuarioActivo) {
-        // ✅ HAY SESIÓN → ocultar botones, mostrar formulario
         cajaSinSesion.classList.add('oculto');
         cajaConSesion.classList.remove('oculto');
         formAuto.classList.remove('formulario-deshabilitado');
@@ -545,7 +553,6 @@
         btnGuardar.textContent = "💾 Guardar Vehículo";
         return usuarioActivo.id;
       } else {
-        // ❌ SIN SESIÓN → mostrar botones, bloquear formulario
         cajaSinSesion.classList.remove('oculto');
         cajaConSesion.classList.add('oculto');
         formAuto.classList.add('formulario-deshabilitado');
@@ -640,7 +647,7 @@
           anio: parseInt(document.getElementById('anio').value) || null,
           transmision: document.getElementById('transmision').value,
           kilometraje: parseInt(document.getElementById('kilometraje').value) || null,
-          precio: document.getElementById('precio').value.trim(),
+          precio: parseInt(document.getElementById('precio').value) || null,
           dueno: document.getElementById('dueno').value.trim(),
           direccion: document.getElementById('direccion').value.trim(),
           ciudad: ciudadValor,
@@ -677,7 +684,6 @@
       }
     });
 
-    // ✅ Ejecutar al cargar y si cambia la sesión
     actualizarInterfaz();
     supabase.auth.onAuthStateChange(() => actualizarInterfaz());
   </script>
