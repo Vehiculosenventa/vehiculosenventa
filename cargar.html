@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -283,7 +284,7 @@
       <div class="fila">
         <div class="campo">
           <label>Año</label>
-          <input type="text" id="anio" placeholder="Solo números" oninput="soloNumeros(this)" required>
+          <input type="text" id="anio" placeholder="Solo números" maxlength="4" required>
         </div>
         <div class="campo">
           <label>🔄 Transmisión</label>
@@ -298,11 +299,11 @@
       <div class="fila">
         <div class="campo">
           <label>Kilometraje</label>
-          <input type="text" id="kilometraje" placeholder="Solo números" oninput="soloNumeros(this)">
+          <input type="text" id="kilometraje" placeholder="Solo números">
         </div>
         <div class="campo">
           <label>Precio</label>
-          <input type="text" id="precio" placeholder="Solo números" oninput="soloNumeros(this)" required>
+          <input type="text" id="precio" placeholder="Solo números" required>
         </div>
       </div>
 
@@ -382,7 +383,7 @@
 
         <label class="foto-tarjeta">
           <div class="foto-nombre">📷 Motor
-            <input type="file" class="foto-input-oculto" id="foto1" accept="image/*" capture="environment" onchange="verFoto(1, this)">
+            <input type="file" class="foto-input-oculto" id="foto1" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
             <img id="img1" class="foto-mini-img">
@@ -392,7 +393,7 @@
 
         <label class="foto-tarjeta">
           <div class="foto-nombre">📷 Frente
-            <input type="file" class="foto-input-oculto" id="foto2" accept="image/*" capture="environment" onchange="verFoto(2, this)">
+            <input type="file" class="foto-input-oculto" id="foto2" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
             <img id="img2" class="foto-mini-img">
@@ -402,7 +403,7 @@
 
         <label class="foto-tarjeta">
           <div class="foto-nombre">📷 Lateral izquierdo
-            <input type="file" class="foto-input-oculto" id="foto3" accept="image/*" capture="environment" onchange="verFoto(3, this)">
+            <input type="file" class="foto-input-oculto" id="foto3" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
             <img id="img3" class="foto-mini-img">
@@ -412,7 +413,7 @@
 
         <label class="foto-tarjeta">
           <div class="foto-nombre">📷 Lateral derecho
-            <input type="file" class="foto-input-oculto" id="foto4" accept="image/*" capture="environment" onchange="verFoto(4, this)">
+            <input type="file" class="foto-input-oculto" id="foto4" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
             <img id="img4" class="foto-mini-img">
@@ -422,7 +423,7 @@
 
         <label class="foto-tarjeta">
           <div class="foto-nombre">📷 Parte trasera
-            <input type="file" class="foto-input-oculto" id="foto5" accept="image/*" capture="environment" onchange="verFoto(5, this)">
+            <input type="file" class="foto-input-oculto" id="foto5" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
             <img id="img5" class="foto-mini-img">
@@ -432,7 +433,7 @@
 
         <label class="foto-tarjeta">
           <div class="foto-nombre">📷 Interior 1
-            <input type="file" class="foto-input-oculto" id="foto6" accept="image/*" capture="environment" onchange="verFoto(6, this)">
+            <input type="file" class="foto-input-oculto" id="foto6" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
             <img id="img6" class="foto-mini-img">
@@ -442,7 +443,7 @@
 
         <label class="foto-tarjeta">
           <div class="foto-nombre">📷 Interior 2
-            <input type="file" class="foto-input-oculto" id="foto7" accept="image/*" capture="environment" onchange="verFoto(7, this)">
+            <input type="file" class="foto-input-oculto" id="foto7" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
             <img id="img7" class="foto-mini-img">
@@ -452,7 +453,7 @@
 
         <label class="foto-tarjeta">
           <div class="foto-nombre">📷 Interior 3
-            <input type="file" class="foto-input-oculto" id="foto8" accept="image/*" capture="environment" onchange="verFoto(8, this)">
+            <input type="file" class="foto-input-oculto" id="foto8" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
             <img id="img8" class="foto-mini-img">
@@ -462,7 +463,7 @@
 
         <label class="foto-tarjeta">
           <div class="foto-nombre">📷 Interior 4
-            <input type="file" class="foto-input-oculto" id="foto9" accept="image/*" capture="environment" onchange="verFoto(9, this)">
+            <input type="file" class="foto-input-oculto" id="foto9" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
             <img id="img9" class="foto-mini-img">
@@ -472,7 +473,7 @@
 
         <label class="foto-tarjeta">
           <div class="foto-nombre">📷 Ruedas
-            <input type="file" class="foto-input-oculto" id="foto10" accept="image/*" capture="environment" onchange="verFoto(10, this)">
+            <input type="file" class="foto-input-oculto" id="foto10" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
             <img id="img10" class="foto-mini-img">
@@ -482,7 +483,7 @@
 
         <label class="foto-tarjeta">
           <div class="foto-nombre">📷 Extras 1
-            <input type="file" class="foto-input-oculto" id="foto11" accept="image/*" capture="environment" onchange="verFoto(11, this)">
+            <input type="file" class="foto-input-oculto" id="foto11" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
             <img id="img11" class="foto-mini-img">
@@ -492,7 +493,7 @@
 
         <label class="foto-tarjeta">
           <div class="foto-nombre">📷 Extras 2
-            <input type="file" class="foto-input-oculto" id="foto12" accept="image/*" capture="environment" onchange="verFoto(12, this)">
+            <input type="file" class="foto-input-oculto" id="foto12" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
             <img id="img12" class="foto-mini-img">
@@ -509,13 +510,20 @@
   </div>
 
   <script>
+    // ✅ DATOS DE SUPABASE
     const SUPABASE_URL = "https://ikancehiaanhnuuykkio.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrYW5jZGlhaWFuaG51dXlra2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // ✅ ACÁ ESTABA LO QUE FALTABA — UNA SOLA VEZ, SIN REPETIR
+    // ✅ CREAMOS SUPABASE LO PRIMERO
     const { createClient } = supabase;
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // ✅ FUNCIÓN DE SOLO NÚMEROS
+    function soloNumeros(campo) {
+      campo.value = campo.value.replace(/[^0-9]/g, '');
+    }
+
+    // ✅ REFERENCIAS
     const selectCiudad = document.getElementById('ciudad');
     const campoLibre = document.getElementById('campo_ciudad_libre');
     const cajaSinSesion = document.getElementById('caja-sin-sesion');
@@ -524,12 +532,12 @@
     const btnGuardar = document.getElementById('btnGuardar');
     const mensaje = document.getElementById('mensaje');
 
-    // ✅ SOLO NÚMEROS — Año, Kilometraje, Precio
-    function soloNumeros(campo) {
-      campo.value = campo.value.replace(/[^0-9]/g, '');
-    }
+    // ✅ ASIGNAMOS A LOS CAMPOS
+    document.getElementById('anio').addEventListener('input', function() { soloNumeros(this); });
+    document.getElementById('kilometraje').addEventListener('input', function() { soloNumeros(this); });
+    document.getElementById('precio').addEventListener('input', function() { soloNumeros(this); });
 
-    // ✅ Verifica sesión y muestra/oculta botones
+    // ✅ DETECTA SESIÓN INMEDIATAMENTE
     async function actualizarInterfaz() {
       const { data: { session } } = await supabase.auth.getSession();
       const haySesion = !!session;
@@ -556,7 +564,7 @@
     }
     document.getElementById('btn-cerrar-sesion').addEventListener('click', cerrarSesion);
 
-    // ✅ Detecta cambios de sesión
+    // ✅ ESCUCHA CAMBIOS DE SESIÓN EN TIEMPO REAL
     supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
         actualizarInterfaz();
@@ -578,6 +586,16 @@
           sin.style.display = 'none';
         };
         lector.readAsDataURL(input.files[0]);
+      }
+    }
+
+    // Conectar fotos
+    for (let i = 1; i <= 12; i++) {
+      const input = document.getElementById(`foto${i}`);
+      if (input) {
+        input.addEventListener('change', function(e) {
+          verFoto(i, e.target);
+        });
       }
     }
 
@@ -625,7 +643,7 @@
         const fotos = {};
         for (let i = 1; i <= 12; i++) {
           const input = document.getElementById(`foto${i}`);
-          fotos[`foto${i}`] = await leerArchivoComoTexto(input.files[0]);
+          fotos[`foto${i}`] = input.files[0] ? await leerArchivoComoTexto(input.files[0]) : null;
         }
 
         let ciudadValor = selectCiudad.value;
@@ -665,8 +683,10 @@
         campoLibre.style.display = 'none';
         
         for (let i = 1; i <= 12; i++) {
-          document.getElementById(`img${i}`).style.display = 'none';
-          document.getElementById(`sin${i}`).style.display = 'block';
+          const img = document.getElementById(`img${i}`);
+          const sin = document.getElementById(`sin${i}`);
+          if (img) img.style.display = 'none';
+          if (sin) sin.style.display = 'block';
         }
         
       } catch (err) {
@@ -679,6 +699,7 @@
       }
     });
 
+    // ✅ SE FIJA EN LA SESIÓN EN CUANTO CARGA LA PÁGINA
     actualizarInterfaz();
   </script>
 
