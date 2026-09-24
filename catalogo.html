@@ -13,7 +13,7 @@
     }
 
     body {
-      background: linear-gradient(135deg, #d9eaf7 0%, #b8d8f8 100%);
+      background: linear-gradient(135deg, #5fa8d3 0%, #3b82b8 100%);
       min-height: 100vh;
       padding: 20px;
     }
@@ -25,7 +25,7 @@
 
     h1 {
       text-align: center;
-      color: #2c5282;
+      color: #ffffff;
       margin-bottom: 10px;
       font-size: 26px;
       font-weight: 800;
@@ -33,7 +33,7 @@
 
     .subtitulo {
       text-align: center;
-      color: #4a769b;
+      color: #e0edf7;
       margin-bottom: 35px;
       font-size: 16px;
     }
@@ -53,26 +53,20 @@
     .tarjeta-tipo {
       position: relative;
       border-radius: 18px;
-      padding: 0;
-      text-align: center;
+      overflow: hidden;
       cursor: pointer;
       border: none;
-      transition: all 0.3s ease;
-      overflow: hidden;
+      transition: transform 0.3s ease;
+      height: 200px;
     }
 
     .tarjeta-tipo:hover {
       transform: translateY(-4px);
-      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .tarjeta-tipo.seleccionado {
-      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.4);
     }
 
     .tarjeta-tipo img {
       width: 100%;
-      height: 200px;
+      height: 100%;
       object-fit: cover;
       display: block;
     }
@@ -85,26 +79,27 @@
       color: #ffffff;
       font-size: 17px;
       font-weight: 700;
-      padding: 12px;
+      padding: 14px;
+      text-align: center;
       margin: 0;
-      background: none;
-      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
+      background: linear-gradient(to top, rgba(0,0,0,0.6), transparent);
+      text-shadow: 0 1px 3px rgba(0,0,0,0.8);
     }
 
     .volver {
       display: inline-block;
       margin-top: 35px;
-      color: #3182ce;
+      color: #ffffff;
       text-decoration: none;
       font-weight: 600;
-      padding: 10px 18px;
-      background: rgba(255,255,255,0.7);
+      padding: 10px 24px;
+      background: rgba(255,255,255,0.2);
       border-radius: 10px;
-      transition: all 0.2s ease;
+      transition: background 0.2s ease;
     }
 
     .volver:hover {
-      background: #dceaf5;
+      background: rgba(255,255,255,0.35);
     }
   </style>
 </head>
@@ -141,7 +136,7 @@
         <h3>📦 Furgón / Utilitario</h3>
       </div>
 
-      <div class="tarjeta-tipo" data-tipo="Suv" onclick="irAVehiculos('Suv')">
+      <div class="tarjeta-tipo" data-tipo="SUV" onclick="irAVehiculos('SUV')">
         <img src="imagenes/suv.jpg" alt="SUV / Crossover">
         <h3>🏔️ SUV / Crossover</h3>
       </div>
@@ -154,7 +149,6 @@
     </div>
 
     <a href="index.html" class="volver">← Volver al Inicio</a>
-    <a href="ver-vehiculos.html?tipo=Auto" class="volver">Ver Vehículos</a>
   </div>
 
   <script>
