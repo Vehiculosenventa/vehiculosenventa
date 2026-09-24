@@ -36,6 +36,7 @@
       text-decoration: none;
       transition: all 0.3s ease;
     }
+    /* ✅ Registrarse — botón azul grande */
     .boton-registrar {
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
       color: #fff;
@@ -45,20 +46,31 @@
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(49,130,206,0.2);
     }
+    /* ✅ Iniciar sesión — igual que Registrarse, azul grande */
     .boton-entrar {
-      background: #fff;
-      color: #3182ce;
-      border: 2px solid #3182ce;
-    }
-    .boton-entrar:hover {
-      background: #ebf4fb;
-      transform: translateY(-1px);
-    }
-    .boton-cerrar {
-      background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
       color: #fff;
       border: none;
-      display: none;
+    }
+    .boton-entrar:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(49,130,206,0.2);
+    }
+    /* ✅ Cerrar sesión — CHIQUITITO, IGUAL que "Olvidaste tu contraseña" */
+    .enlace-cerrar {
+      display: inline-block;
+      margin-left: 15px;
+      color: #3182ce;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+    }
+    .enlace-cerrar:hover {
+      color: #2b6cb0;
+      text-decoration: underline;
     }
     .saludo {
       display: inline-block;
@@ -119,6 +131,7 @@
       background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
       box-shadow: 0 8px 20px rgba(49, 130, 206, 0.25);
     }
+    /* ✅ Olvidaste tu contraseña — igual que siempre */
     .enlace-olvidada {
       display: inline-block;
       margin-top: 25px;
@@ -137,14 +150,23 @@
       font-size: 13px;
       color: #718096;
     }
+    .oculto {display: none !important;}
   </style>
 </head>
 <body>
   <div class="barra-superior">
     <span id="saludo" class="saludo"></span>
-    <a id="btn-registrar" href="registrarse.html" class="boton-sesion boton-registrar">✨ Registrarse</a>
-    <a id="btn-iniciar" href="iniciar-sesion.html" class="boton-sesion boton-entrar">🔐 Iniciar sesión</a>
-    <button id="btn-cerrar" class="boton-sesion boton-cerrar">🚪 Cerrar sesión</button>
+    
+    <!-- Sin sesión: dos botones azules grandes -->
+    <span id="botonesSinSesion">
+      <a id="btn-registrar" href="registrarse.html" class="boton-sesion boton-registrar">✨ Registrarse</a>
+      <a id="btn-iniciar" href="iniciar-sesion.html" class="boton-sesion boton-entrar">🔐 Iniciar sesión</a>
+    </span>
+    
+    <!-- Con sesión: Cerrar sesión → chiquitito, igual que Olvidaste tu contraseña -->
+    <span id="botonesConSesion" class="oculto">
+      <button id="btn-cerrar" class="enlace-cerrar">🚪 Cerrar sesión</button>
+    </span>
   </div>
 
   <div class="caja-principal">
@@ -157,6 +179,7 @@
     <a href="buscar.html" class="boton">🔍 <span>Buscar Vehículo</span></a>
     <a href="mis-vehiculos.html" class="boton">❤️ <span>Mis Vehículos</span></a>
     
+    <!-- Olvidaste tu contraseña → solo cuando NO hay sesión -->
     <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
     
     <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
@@ -166,12 +189,12 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    // ✅ UNA SOLA VEZ — sin duplicados
+    // ✅ Una sola declaración
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const saludo = document.getElementById('saludo');
-    const btnRegistrar = document.getElementById('btn-registrar');
-    const btnIniciar = document.getElementById('btn-iniciar');
+    const botonesSinSesion = document.getElementById('botonesSinSesion');
+    const botonesConSesion = document.getElementById('botonesConSesion');
     const btnCerrar = document.getElementById('btn-cerrar');
     const enlaceOlvidada = document.getElementById('enlace-olvidada');
 
@@ -179,18 +202,18 @@
       const { data: { session } } = await supabaseClient.auth.getSession();
       
       if (session) {
-        btnRegistrar.style.display = 'none';
-        btnIniciar.style.display = 'none';
+        // ✅ Conectado → ocultar botones grandes, mostrar "Cerrar sesión" chiquito
+        botonesSinSesion.classList.add('oculto');
+        botonesConSesion.classList.remove('oculto');
         enlaceOlvidada.style.display = 'none';
-        btnCerrar.style.display = 'inline-block';
         
         const nombre = session.user.user_metadata?.nombre || session.user.email;
         saludo.textContent = `¡Hola, ${nombre}! 🎉`;
       } else {
-        btnRegistrar.style.display = 'inline-block';
-        btnIniciar.style.display = 'inline-block';
+        // ❌ No conectado → mostrar botones grandes y "Olvidaste tu contraseña"
+        botonesSinSesion.classList.remove('oculto');
+        botonesConSesion.classList.add('oculto');
         enlaceOlvidada.style.display = 'inline-block';
-        btnCerrar.style.display = 'none';
         saludo.textContent = '';
       }
     }
