@@ -3,167 +3,164 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mis Vehículos — Vehículos en Venta</title>
+  <title>Eliminar Cuenta - Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
-    * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif;}
+    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
     body {
       background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
       min-height: 100vh;
-      display: flex; justify-content: center; align-items: center;
+      display: flex; align-items: center; justify-content: center;
       padding: 20px;
     }
     .caja {
-      background: linear-gradient(135deg, #e8e0d0 0%, #d9cfb8 100%);
-      padding: 45px 30px;
-      border-radius: 24px;
-      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.15);
-      border: 1px solid #c4b89f;
-      max-width: 420px;
-      width: 100%;
+      background: white; border-radius: 12px; padding: 35px;
+      max-width: 450px; width: 100%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
     }
-    h1 {
-      color: #2c5282;
-      text-align: center;
-      margin-bottom: 30px;
-      font-size: 22px;
-      font-weight: 800;
-    }
-    label {
-      display: block;
-      color: #2c5282;
-      font-weight: 600;
-      margin-bottom: 8px;
-      margin-top: 18px;
-    }
+    h1 {color: #d32f2f; text-align: center; margin-bottom: 20px; font-size: 1.5rem;}
+    .aviso {color: #555; text-align: center; margin-bottom: 25px; line-height: 1.6;}
+    label {display: block; margin-bottom: 6px; font-weight: 600; color: #444;}
     input {
-      width: 100%;
-      padding: 12px 15px;
-      border: 1px solid #b8c8d8;
-      border-radius: 10px;
-      font-size: 15px;
-      background: #fff;
+      width: 100%; padding: 12px 15px; margin-bottom: 20px;
+      border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;
     }
-    input:focus {
-      outline: none;
-      border-color: #3182ce;
-      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.15);
+    input:focus {outline: none; border-color: #d32f2f;}
+    .boton-rojo {
+      width: 100%; padding: 14px; background: #d32f2f; color: white;
+      border: none; border-radius: 8px; font-size: 1rem; font-weight: bold;
+      cursor: pointer; margin-bottom: 10px;
     }
-    .boton-borrar {
-      width: 100%;
-      background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
-      color: #fff;
-      border: none;
-      padding: 14px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 25px;
-      transition: transform 0.2s;
+    .boton-rojo:hover {background: #b71c1c;}
+    .boton-gris {
+      width: 100%; padding: 12px; background: transparent;
+      color: #1565C0; border: 2px solid #1565C0;
+      border-radius: 8px; font-size: 1rem; cursor: pointer;
     }
-    .boton-borrar:hover {
-      transform: translateY(-2px);
-    }
-    .mensaje {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 10px;
-      text-align: center;
-      font-weight: 600;
-      display: none;
-    }
-    .exito {background: #f0fff4; color: #22543d; border: 1px solid #9ae6b4;}
-    .error {background: #fff5f5; color: #742a2a; border: 1px solid #feb2b2;}
-    .volver {
-      display: block;
-      text-align: center;
-      margin-top: 25px;
-      color: #2b6cb0;
-      text-decoration: none;
-      font-weight: 600;
-    }
+    .boton-gris:hover {background: #e3f2fd;}
+    .mensaje {margin-top: 20px; padding: 15px; border-radius: 8px; text-align: center; font-weight: 600; display: none;}
+    .exito {background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7;}
+    .error {background: #ffebee; color: #c62828; border: 2px solid #ef9a9a;}
+    .oculto {display: none !important;}
   </style>
 </head>
 <body>
-  <div class="caja">
-    <h1>🗑️ Borrar Usuario</h1>
+<div class="caja">
+  <h1>⚠️ Eliminar mi cuenta</h1>
+  <p class="aviso">Se borrará tu cuenta y tus vehículos.<br>Esta acción NO se puede deshacer ❌</p>
 
-    <form id="formBorrar">
-      <label for="correo">Correo del usuario a borrar</label>
-      <input type="email" id="correo" placeholder="correo@ejemplo.com" required>
+  <div id="formulario">
+    <label for="correo">Correo electrónico</label>
+    <input type="email" id="correo" placeholder="tu@correo.com">
 
-      <label for="clave">Tu contraseña de administrador</label>
-      <input type="password" id="clave" placeholder="Escribí tu clave" required>
+    <label for="pass">Contraseña</label>
+    <input type="password" id="pass" placeholder="Tu contraseña" maxlength="8">
 
-      <button type="submit" class="boton-borrar">🗑️ Borrar Usuario</button>
-    </form>
-
-    <div id="mensajeExito" class="mensaje exito">
-      ✅ Usuario borrado correctamente
-    </div>
-    <div id="mensajeError" class="mensaje error"></div>
-
-    <a href="index.html" class="volver">← Volver a la página principal</a>
+    <button onclick="verificar()" class="boton-rojo">Verificar →</button>
+    <button onclick="window.location.href='index.html'" class="boton-gris">Cancelar</button>
   </div>
 
-  <script>
-    const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+  <div id="confirmar" class="oculto">
+    <p class="aviso"><strong>¿Estás SEGURO?</strong><br>Se borra TODO y no se puede recuperar ❌</p>
+    <button onclick="borrarTodo()" class="boton-rojo">🗑️ SÍ, ELIMINAR TODO</button>
+    <button onclick="volver()" class="boton-gris">No, mejor no</button>
+  </div>
+
+  <div id="mensaje" class="mensaje"></div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+
+// ✅ UNA SOLA VEZ — sin duplicados
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+const usuarioId = localStorage.getItem('usuario_id');
+
+if (!usuarioId) {
+  alert('❌ Primero debés iniciar sesión');
+  window.location.href = 'iniciar-sesion.html';
+}
+
+function mostrarMensaje(texto, tipo) {
+  const m = document.getElementById('mensaje');
+  m.style.display = 'block';
+  m.className = 'mensaje ' + tipo;
+  m.textContent = texto;
+}
+
+async function verificar() {
+  const correo = document.getElementById('correo').value.trim();
+  const pass = document.getElementById('pass').value;
+
+  if (!correo || !pass) {
+    mostrarMensaje('⚠️ Escribí correo y contraseña', 'error');
+    return;
+  }
+
+  const { data, error } = await supabaseClient
+    .from('usuarios')
+    .select('id, correo, nombre')
+    .eq('id', usuarioId)
+    .eq('correo', correo)
+    .eq('contraseña', pass)
+    .maybeSingle();
+
+  if (error) {
+    mostrarMensaje('❌ Error: ' + error.message, 'error');
+    return;
+  }
+
+  if (!data) {
+    mostrarMensaje('❌ Correo o contraseña incorrectos', 'error');
+    return;
+  }
+
+  document.getElementById('formulario').classList.add('oculto');
+  document.getElementById('confirmar').classList.remove('oculto');
+  mostrarMensaje('✅ Bienvenido, ' + data.nombre + '. Confirmá abajo.', 'exito');
+}
+
+async function borrarTodo() {
+  if (!confirm('¿BORRAR TODO DE VERDAD? No hay vuelta atrás ❌')) return;
+
+  try {
+    // 1️⃣ Borrar vehículos
+    const { error: e1 } = await supabaseClient
+      .from('autos')
+      .delete()
+      .eq('usuario_id', usuarioId);
     
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    if (e1) throw new Error('Vehículos: ' + e1.message);
 
-    // ⚠️ PONÉ TU CONTRASEÑA AQUÍ
-    const CLAVE_ADMIN = "poné-tu-contraseña-aquí";
+    // 2️⃣ Borrar usuario
+    const { error: e2 } = await supabaseClient
+      .from('usuarios')
+      .delete()
+      .eq('id', usuarioId);
+    
+    if (e2) throw new Error('Cuenta: ' + e2.message);
 
-    document.getElementById('formBorrar').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const correo = document.getElementById('correo').value.trim();
-      const clave = document.getElementById('clave').value;
+    // ✅ Éxito
+    localStorage.clear();
+    mostrarMensaje('✅ Cuenta eliminada. Nos vemos pronto 👋', 'exito');
+    
+    setTimeout(() => {
+      window.location.href = 'index.html';
+    }, 2500);
 
-      // Ocultar mensajes
-      document.getElementById('mensajeExito').style.display = 'none';
-      document.getElementById('mensajeError').style.display = 'none';
+  } catch (err) {
+    mostrarMensaje('❌ ' + err.message, 'error');
+  }
+}
 
-      // Verificar tu clave
-      if (clave !== CLAVE_ADMIN) {
-        document.getElementById('mensajeError').textContent = "❌ Contraseña incorrecta";
-        document.getElementById('mensajeError').style.display = 'block';
-        return;
-      }
+function volver() {
+  document.getElementById('confirmar').classList.add('oculto');
+  document.getElementById('formulario').classList.remove('oculto');
+  document.getElementById('mensaje').style.display = 'none';
+}
+</script>
 
-      try {
-        // Buscar por correo
-        const { data: usuario, error: buscarError } = await supabase
-          .from('usuario')
-          .select('id, correo')
-          .eq('correo', correo)
-          .single();
-
-        if (buscarError || !usuario) {
-          document.getElementById('mensajeError').textContent = "❌ No se encontró ese correo";
-          document.getElementById('mensajeError').style.display = 'block';
-          return;
-        }
-
-        // Borrar
-        const { error: borrarError } = await supabase
-          .from('usuario')
-          .delete()
-          .eq('correo', correo);
-
-        if (borrarError) throw borrarError;
-
-        // Éxito
-        document.getElementById('mensajeExito').style.display = 'block';
-        document.getElementById('formBorrar').reset();
-
-      } catch (err) {
-        document.getElementById('mensajeError').textContent = "❌ Error: " + err.message;
-        document.getElementById('mensajeError').style.display = 'block';
-      }
-    });
-  </script>
 </body>
 </html>
