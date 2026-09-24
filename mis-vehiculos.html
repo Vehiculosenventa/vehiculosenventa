@@ -14,12 +14,12 @@
       padding: 20px;
     }
     .caja {
-      background: linear-gradient(135deg, #e8e0d0 0%, #d9cfb8 100%);
+      background: #faf8f0; /* Cremita clarito de siempre ✨ */
       padding: 40px 30px;
       border-radius: 24px;
       max-width: 420px; width: 100%;
-      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.15);
-      border: 1px solid #c4b89f;
+      box-shadow: 0 8px 25px rgba(44, 82, 130, 0.12);
+      border: 1px solid #f0e9d6;
     }
     h1 {color: #d32f2f; text-align: center; margin-bottom: 20px; font-size: 22px; font-weight: 800;}
     .cargando {text-align: center; color: #3182ce; font-weight: 600; padding: 20px;}
@@ -66,12 +66,12 @@
     <a href="index.html" class="boton-azul" style="background:linear-gradient(135deg,#718096,#4a5568)">Volver al Inicio</a>
   </div>
 
-  <!-- ✅ Conectado → deja borrar solo por correo -->
+  <!-- ✅ Conectado -->
   <div id="bloqueConectado" class="oculto">
     <div class="aviso-sesion conectado">✅ Conectado como: <span id="correoActivo"></span></div>
 
     <label for="correoBorrar">Correo del usuario a borrar</label>
-    <input type="email" id="correoBorrar" placeholder="correo@ejemplo.com" required>
+    <input type="email" id="correoBorrar" placeholder="correo@ejemplo.com">
 
     <button id="btnBorrar" class="boton-rojo">🗑️ Borrar Usuario</button>
 
@@ -85,23 +85,27 @@
 const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+// ✅ UNA SOLA VEZ — sin duplicados
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ✅ Detectar sesión REAL
+// Detectar sesión REAL
 async function revisarSesion() {
-  const { data: { session } } = await supabase.auth.getSession();
-  
-  document.getElementById('cargando').classList.add('oculto');
+  try {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+    
+    document.getElementById('cargando').classList.add('oculto');
 
-  if (!session) {
-    // ❌ No hay sesión
-    document.getElementById('bloqueNoConectado').classList.remove('oculto');
-    return;
+    if (!session) {
+      document.getElementById('bloqueNoConectado').classList.remove('oculto');
+      return;
+    }
+
+    document.getElementById('correoActivo').textContent = session.user.email;
+    document.getElementById('bloqueConectado').classList.remove('oculto');
+    
+  } catch (err) {
+    document.getElementById('cargando').textContent = "❌ Error: " + err.message;
   }
-
-  // ✅ Sí está conectado
-  document.getElementById('correoActivo').textContent = session.user.email;
-  document.getElementById('bloqueConectado').classList.remove('oculto');
 }
 
 function mostrarMensaje(texto, tipo) {
@@ -111,33 +115,34 @@ function mostrarMensaje(texto, tipo) {
   m.textContent = texto;
 }
 
-// Borrar usuario SOLO por correo
-document.getElementById('btnBorrar').addEventListener('click', async function() {
-  const correo = document.getElementById('correoBorrar').value.trim();
+// Borrar usuario
+document.addEventListener('click', async function(e) {
+  if (e.target && e.target.id === 'btnBorrar') {
+    const correo = document.getElementById('correoBorrar').value.trim();
 
-  if (!correo) {
-    mostrarMensaje('⚠️ Escribí el correo a borrar', 'error');
-    return;
-  }
+    if (!correo) {
+      mostrarMensaje('⚠️ Escribí el correo a borrar', 'error');
+      return;
+    }
 
-  try {
-    // Borrar de la tabla usuario
-    const { error } = await supabase
-      .from('usuario')
-      .delete()
-      .eq('correo', correo);
+    try {
+      const { error } = await supabaseClient
+        .from('usuario')
+        .delete()
+        .eq('correo', correo);
 
-    if (error) throw error;
+      if (error) throw error;
 
-    mostrarMensaje('✅ Usuario borrado correctamente', 'exito');
-    document.getElementById('correoBorrar').value = '';
+      mostrarMensaje('✅ Usuario borrado correctamente', 'exito');
+      document.getElementById('correoBorrar').value = '';
 
-  } catch (err) {
-    mostrarMensaje('❌ Error: ' + err.message, 'error');
+    } catch (err) {
+      mostrarMensaje('❌ Error: ' + err.message, 'error');
+    }
   }
 });
 
-// Ejecutar al cargar
+// Ejecutar
 revisarSesion();
 </script>
 </body>
