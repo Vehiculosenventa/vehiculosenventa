@@ -13,7 +13,7 @@
     }
 
     body {
-      background: linear-gradient(135deg, #e0edff 0%, #c5dfff 100%);
+      background: linear-gradient(135deg, #d9eaf7 0%, #b8d8f8 100%);
       min-height: 100vh;
       padding: 20px;
     }
@@ -33,7 +33,7 @@
 
     .subtitulo {
       text-align: center;
-      color: #4a76a8;
+      color: #4a769b;
       margin-bottom: 35px;
       font-size: 16px;
     }
@@ -51,39 +51,44 @@
     }
 
     .tarjeta-tipo {
-      background: #ffffff;
+      position: relative;
       border-radius: 18px;
-      padding: 15px;
+      padding: 0;
       text-align: center;
       cursor: pointer;
-      border: 3px solid transparent;
+      border: none;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(44, 82, 130, 0.08);
+      overflow: hidden;
     }
 
     .tarjeta-tipo:hover {
       transform: translateY(-4px);
-      border-color: #3182ce;
-      box-shadow: 0 8px 20px rgba(49, 130, 206, 0.15);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
     }
 
     .tarjeta-tipo.seleccionado {
-      border-color: #2b6cb0;
-      background: #ebf4fb;
+      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.4);
     }
 
     .tarjeta-tipo img {
       width: 100%;
-      height: 130px;
+      height: 200px;
       object-fit: cover;
-      border-radius: 12px;
-      margin-bottom: 12px;
+      display: block;
     }
 
     .tarjeta-tipo h3 {
-      color: #2c5282;
-      font-size: 16px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      color: #ffffff;
+      font-size: 17px;
       font-weight: 700;
+      padding: 12px;
+      margin: 0;
+      background: none;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.85);
     }
 
     .volver {
@@ -136,7 +141,7 @@
         <h3>📦 Furgón / Utilitario</h3>
       </div>
 
-      <div class="tarjeta-tipo" data-tipo="SUV" onclick="irAVehiculos('SUV')">
+      <div class="tarjeta-tipo" data-tipo="Suv" onclick="irAVehiculos('Suv')">
         <img src="imagenes/suv.jpg" alt="SUV / Crossover">
         <h3>🏔️ SUV / Crossover</h3>
       </div>
@@ -149,6 +154,7 @@
     </div>
 
     <a href="index.html" class="volver">← Volver al Inicio</a>
+    <a href="ver-vehiculos.html?tipo=Auto" class="volver">Ver Vehículos</a>
   </div>
 
   <script>
