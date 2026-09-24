@@ -14,31 +14,67 @@
       padding: 20px;
     }
     .caja {
-      background: white; border-radius: 12px; padding: 35px;
+      background: linear-gradient(135deg, #e8e0d0 0%, #d9cfb8 100%);
+      border-radius: 24px; padding: 35px;
       max-width: 450px; width: 100%;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.15);
+      border: 1px solid #c4b89f;
     }
     h1 {color: #d32f2f; text-align: center; margin-bottom: 20px; font-size: 1.5rem;}
     .aviso {color: #555; text-align: center; margin-bottom: 25px; line-height: 1.6;}
+    .sesion-info {
+      background: #e6f2e6;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #9ae6b4;
+      color: #22543d;
+      font-weight: 600;
+      text-align: center;
+    }
+    .no-sesion {
+      background: #fff3cd;
+      padding: 15px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      border: 1px solid #fde68a;
+      text-align: center;
+      color: #744210;
+      font-weight: 600;
+    }
     label {display: block; margin-bottom: 6px; font-weight: 600; color: #444;}
     input {
       width: 100%; padding: 12px 15px; margin-bottom: 20px;
       border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;
+      background: #fff;
     }
     input:focus {outline: none; border-color: #d32f2f;}
     .boton-rojo {
-      width: 100%; padding: 14px; background: #d32f2f; color: white;
-      border: none; border-radius: 8px; font-size: 1rem; font-weight: bold;
+      width: 100%; padding: 14px; background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%); color: white;
+      border: none; border-radius: 12px; font-size: 1rem; font-weight: bold;
       cursor: pointer; margin-bottom: 10px;
+      transition: transform 0.2s;
     }
-    .boton-rojo:hover {background: #b71c1c;}
+    .boton-rojo:hover {transform: translateY(-2px);}
+    .boton-azul {
+      width: 100%; padding: 12px; background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: #fff; border: none;
+      border-radius: 12px; font-size: 1rem; cursor: pointer;
+      font-weight: 600;
+      text-decoration: none; display: block; text-align: center;
+      margin-bottom: 10px;
+      transition: transform 0.2s;
+    }
+    .boton-azul:hover {transform: translateY(-2px);}
     .boton-gris {
       width: 100%; padding: 12px; background: transparent;
-      color: #1565C0; border: 2px solid #1565C0;
-      border-radius: 8px; font-size: 1rem; cursor: pointer;
+      color: #2b6cb0; border: 2px solid #2b6cb0;
+      border-radius: 12px; font-size: 1rem; cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s;
     }
-    .boton-gris:hover {background: #e3f2fd;}
-    .mensaje {margin-top: 20px; padding: 15px; border-radius: 8px; text-align: center; font-weight: 600; display: none;}
+    .boton-gris:hover {background: #e3f2fd; transform: translateY(-2px);}
+    .mensaje {margin-top: 20px; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; display: none;}
     .exito {background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7;}
     .error {background: #ffebee; color: #c62828; border: 2px solid #ef9a9a;}
     .oculto {display: none !important;}
@@ -47,26 +83,42 @@
 <body>
 <div class="caja">
   <h1>⚠️ Eliminar mi cuenta</h1>
-  <p class="aviso">Se borrará tu cuenta y tus vehículos.<br>Esta acción NO se puede deshacer ❌</p>
 
-  <div id="formulario">
-    <label for="correo">Correo electrónico</label>
-    <input type="email" id="correo" placeholder="tu@correo.com">
-
-    <label for="pass">Contraseña</label>
-    <input type="password" id="pass" placeholder="Tu contraseña" maxlength="8">
-
-    <button onclick="verificar()" class="boton-rojo">Verificar →</button>
-    <button onclick="window.location.href='index.html'" class="boton-gris">Cancelar</button>
+  <!-- Si NO hay sesión -->
+  <div id="sinSesion">
+    <div class="no-sesion">
+      🔒 Debés iniciar sesión primero
+    </div>
+    <a href="iniciar-sesion.html" class="boton-azul">Ir a Iniciar Sesión</a>
+    <a href="index.html" class="boton-gris">Volver al Inicio</a>
   </div>
 
-  <div id="confirmar" class="oculto">
-    <p class="aviso"><strong>¿Estás SEGURO?</strong><br>Se borra TODO y no se puede recuperar ❌</p>
-    <button onclick="borrarTodo()" class="boton-rojo">🗑️ SÍ, ELIMINAR TODO</button>
-    <button onclick="volver()" class="boton-gris">No, mejor no</button>
-  </div>
+  <!-- Si SÍ hay sesión -->
+  <div id="conSesion" class="oculto">
+    <div class="sesion-info">
+      ✅ Conectado como: <span id="nombreUsuario"></span>
+    </div>
+    <p class="aviso">Se borrará tu cuenta y tus vehículos.<br>Esta acción NO se puede deshacer ❌</p>
 
-  <div id="mensaje" class="mensaje"></div>
+    <div id="formulario">
+      <label for="correo">Correo electrónico</label>
+      <input type="email" id="correo" placeholder="tu@correo.com">
+
+      <label for="pass">Contraseña</label>
+      <input type="password" id="pass" placeholder="Tu contraseña" maxlength="8">
+
+      <button onclick="verificar()" class="boton-rojo">Verificar →</button>
+      <button onclick="window.location.href='index.html'" class="boton-gris">Cancelar</button>
+    </div>
+
+    <div id="confirmar" class="oculto">
+      <p class="aviso"><strong>¿Estás SEGURO?</strong><br>Se borra TODO y no se puede recuperar ❌</p>
+      <button onclick="borrarTodo()" class="boton-rojo">🗑️ SÍ, ELIMINAR TODO</button>
+      <button onclick="volver()" class="boton-gris">No, mejor no</button>
+    </div>
+
+    <div id="mensaje" class="mensaje"></div>
+  </div>
 </div>
 
 <script>
@@ -76,11 +128,26 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 // ✅ UNA SOLA VEZ — sin duplicados
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+// Revisar sesión
 const usuarioId = localStorage.getItem('usuario_id');
+const correoGuardado = localStorage.getItem('correo_usuario');
 
 if (!usuarioId) {
-  alert('❌ Primero debés iniciar sesión');
-  window.location.href = 'iniciar-sesion.html';
+  // Sin sesión → mostrar aviso y botón de ir a iniciar
+  document.getElementById('sinSesion').classList.remove('oculto');
+  document.getElementById('conSesion').classList.add('oculto');
+} else {
+  // Con sesión → mostrar formulario
+  document.getElementById('sinSesion').classList.add('oculto');
+  document.getElementById('conSesion').classList.remove('oculto');
+  
+  // Mostrar nombre o correo del usuario
+  document.getElementById('nombreUsuario').textContent = correoGuardado || 'Usuario conectado';
+  
+  // Rellenar correo automáticamente
+  if (correoGuardado) {
+    document.getElementById('correo').value = correoGuardado;
+  }
 }
 
 function mostrarMensaje(texto, tipo) {
@@ -100,12 +167,11 @@ async function verificar() {
   }
 
   const { data, error } = await supabaseClient
-    .from('usuarios')
+    .from('usuario')
     .select('id, correo, nombre')
     .eq('id', usuarioId)
     .eq('correo', correo)
-    .eq('contraseña', pass)
-    .maybeSingle();
+    .single();
 
   if (error) {
     mostrarMensaje('❌ Error: ' + error.message, 'error');
@@ -113,36 +179,28 @@ async function verificar() {
   }
 
   if (!data) {
-    mostrarMensaje('❌ Correo o contraseña incorrectos', 'error');
+    mostrarMensaje('❌ Correo no coincide con la sesión', 'error');
     return;
   }
 
   document.getElementById('formulario').classList.add('oculto');
   document.getElementById('confirmar').classList.remove('oculto');
-  mostrarMensaje('✅ Bienvenido, ' + data.nombre + '. Confirmá abajo.', 'exito');
+  mostrarMensaje('✅ Bienvenido, ' + (data.nombre || data.correo) + '. Confirmá abajo.', 'exito');
 }
 
 async function borrarTodo() {
   if (!confirm('¿BORRAR TODO DE VERDAD? No hay vuelta atrás ❌')) return;
 
   try {
-    // 1️⃣ Borrar vehículos
-    const { error: e1 } = await supabaseClient
-      .from('autos')
-      .delete()
-      .eq('usuario_id', usuarioId);
-    
-    if (e1) throw new Error('Vehículos: ' + e1.message);
-
-    // 2️⃣ Borrar usuario
+    // Borrar usuario de la tabla
     const { error: e2 } = await supabaseClient
-      .from('usuarios')
+      .from('usuario')
       .delete()
       .eq('id', usuarioId);
     
     if (e2) throw new Error('Cuenta: ' + e2.message);
 
-    // ✅ Éxito
+    // Cerrar sesión
     localStorage.clear();
     mostrarMensaje('✅ Cuenta eliminada. Nos vemos pronto 👋', 'exito');
     
