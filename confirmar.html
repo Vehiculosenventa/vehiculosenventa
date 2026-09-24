@@ -99,7 +99,8 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // ✅ UNA SOLA VEZ — sin duplicados
+    const supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
     function mostrarListo() {
       document.getElementById('cargando').style.display = 'none';
@@ -112,29 +113,35 @@
     }
     
     async function iniciar() {
+      // Seguridad: si tarda más de 5s → pasa igual
+      const seguro = setTimeout(mostrarListo, 5000);
+      
       try {
-        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+        const { error } = await supabaseCliente.auth.exchangeCodeForSession(window.location.href);
+        
+        clearTimeout(seguro);
         
         if (!error) {
           mostrarListo();
           return;
         }
         
-        // Si ya estaba confirmado o el enlace ya se usó → igual mostramos listo
+        // Cualquier mensaje de "ya estaba confirmado" → listo
         if (
           error.message.includes('already confirmed') ||
           error.message.includes('verification') ||
           error.message.includes('invalid') ||
-          error.message.includes('expired')
+          error.message.includes('expired') ||
+          error.message.includes('code')
         ) {
           mostrarListo();
           return;
         }
         
-        // Cualquier otra cosa → igual llevamos al inicio
         mostrarListo();
         
       } catch (err) {
+        clearTimeout(seguro);
         mostrarListo();
       }
     }
