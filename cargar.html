@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -243,12 +242,13 @@
           <label>Tipo de Vehículo *</label>
           <select id="tipo_vehiculo" required>
             <option value="">Seleccionar...</option>
-            <option value="Auto">🚗 Auto</option>
-            <option value="Camioneta">🚙 Camioneta / Pick-up</option>
-            <option value="4x4">⛰️ 4x4 / Todoterreno</option>
-            <option value="SUV">🏔️ SUV / Crossover</option>
-            <option value="Furgon">📦 Furgón / Utilitario</option>
-            <option value="Cuatriciclo">🏍️ Cuatriciclo</option>
+            <option value="Auto">Auto</option>
+            <option value="Camioneta">Camioneta / Pick-up</option>
+            <option value="4x4">4x4 / Todoterreno</option>
+            <option value="SUV">SUV / Crossover</option>
+            <option value="Furgon">Furgón / Utilitario</option>
+            <option value="Cuatriciclo">Cuatriciclo</option>
+            <option value="Moto">Moto</option>
           </select>
         </div>
       </div>
@@ -270,7 +270,7 @@
           <input type="text" id="version" placeholder="Ej: XEi, 1.6 LT, Limited" required>
         </div>
         <div class="campo">
-          <label>⛽ Combustible</label>
+          <label>Combustible</label>
           <select id="combustible">
             <option value="">Seleccionar...</option>
             <option>Nafta</option>
@@ -287,7 +287,7 @@
           <input type="text" id="anio" placeholder="Solo números" maxlength="4" required>
         </div>
         <div class="campo">
-          <label>🔄 Transmisión</label>
+          <label>Transmisión</label>
           <select id="transmision">
             <option value="">Seleccionar...</option>
             <option>Manual</option>
@@ -320,7 +320,7 @@
 
       <div class="fila">
         <div class="campo">
-          <label>🏙️ Ciudad</label>
+          <label>Ciudad</label>
           <select id="ciudad">
             <option value="">Seleccionar...</option>
             <option>Acebal</option>
@@ -346,7 +346,7 @@
           </select>
         </div>
         <div class="campo" id="campo_ciudad_libre" style="display:none;">
-          <label>✍️ Escribí tu ciudad</label>
+          <label>Escribí tu ciudad</label>
           <input type="text" id="ciudad_libre" placeholder="Tu ciudad...">
         </div>
       </div>
@@ -379,10 +379,10 @@
       </div>
 
       <div class="foto-seccion">
-        <div class="foto-titulo-seccion">📸 Fotos del vehículo</div>
+        <div class="foto-titulo-seccion">Fotos del vehículo</div>
 
         <label class="foto-tarjeta">
-          <div class="foto-nombre">📷 Motor
+          <div class="foto-nombre">Motor
             <input type="file" class="foto-input-oculto" id="foto1" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
@@ -392,7 +392,7 @@
         </label>
 
         <label class="foto-tarjeta">
-          <div class="foto-nombre">📷 Frente
+          <div class="foto-nombre">Frente
             <input type="file" class="foto-input-oculto" id="foto2" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
@@ -402,7 +402,7 @@
         </label>
 
         <label class="foto-tarjeta">
-          <div class="foto-nombre">📷 Lateral izquierdo
+          <div class="foto-nombre">Lateral izquierdo
             <input type="file" class="foto-input-oculto" id="foto3" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
@@ -412,7 +412,7 @@
         </label>
 
         <label class="foto-tarjeta">
-          <div class="foto-nombre">📷 Lateral derecho
+          <div class="foto-nombre">Lateral derecho
             <input type="file" class="foto-input-oculto" id="foto4" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
@@ -422,7 +422,7 @@
         </label>
 
         <label class="foto-tarjeta">
-          <div class="foto-nombre">📷 Parte trasera
+          <div class="foto-nombre">Parte trasera
             <input type="file" class="foto-input-oculto" id="foto5" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
@@ -432,7 +432,7 @@
         </label>
 
         <label class="foto-tarjeta">
-          <div class="foto-nombre">📷 Interior 1
+          <div class="foto-nombre">Interior 1
             <input type="file" class="foto-input-oculto" id="foto6" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
@@ -442,7 +442,7 @@
         </label>
 
         <label class="foto-tarjeta">
-          <div class="foto-nombre">📷 Interior 2
+          <div class="foto-nombre">Interior 2
             <input type="file" class="foto-input-oculto" id="foto7" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
@@ -452,7 +452,7 @@
         </label>
 
         <label class="foto-tarjeta">
-          <div class="foto-nombre">📷 Interior 3
+          <div class="foto-nombre">Interior 3
             <input type="file" class="foto-input-oculto" id="foto8" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
@@ -462,7 +462,7 @@
         </label>
 
         <label class="foto-tarjeta">
-          <div class="foto-nombre">📷 Interior 4
+          <div class="foto-nombre">Interior 4
             <input type="file" class="foto-input-oculto" id="foto9" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
@@ -472,7 +472,7 @@
         </label>
 
         <label class="foto-tarjeta">
-          <div class="foto-nombre">📷 Ruedas
+          <div class="foto-nombre">Ruedas
             <input type="file" class="foto-input-oculto" id="foto10" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
@@ -482,7 +482,7 @@
         </label>
 
         <label class="foto-tarjeta">
-          <div class="foto-nombre">📷 Extras 1
+          <div class="foto-nombre">Extras 1
             <input type="file" class="foto-input-oculto" id="foto11" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
@@ -492,7 +492,7 @@
         </label>
 
         <label class="foto-tarjeta">
-          <div class="foto-nombre">📷 Extras 2
+          <div class="foto-nombre">Extras 2
             <input type="file" class="foto-input-oculto" id="foto12" accept="image/*" capture="environment">
           </div>
           <div class="foto-mini">
