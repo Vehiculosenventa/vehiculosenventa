@@ -3,83 +3,50 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Eliminar Cuenta - Vehículos en Venta</title>
+  <title>Borrar Usuario — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
-    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', sans-serif;}
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif;}
     body {
       background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
       min-height: 100vh;
-      display: flex; align-items: center; justify-content: center;
+      display: flex; justify-content: center; align-items: center;
       padding: 20px;
     }
     .caja {
       background: linear-gradient(135deg, #e8e0d0 0%, #d9cfb8 100%);
-      border-radius: 24px; padding: 35px;
-      max-width: 450px; width: 100%;
+      padding: 40px 30px;
+      border-radius: 24px;
+      max-width: 420px; width: 100%;
       box-shadow: 0 10px 30px rgba(44, 82, 130, 0.15);
       border: 1px solid #c4b89f;
     }
-    h1 {color: #d32f2f; text-align: center; margin-bottom: 20px; font-size: 1.5rem;}
-    .aviso {color: #555; text-align: center; margin-bottom: 25px; line-height: 1.6;}
-    .sesion-info {
-      background: #e6f2e6;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      border: 1px solid #9ae6b4;
-      color: #22543d;
-      font-weight: 600;
-      text-align: center;
+    h1 {color: #d32f2f; text-align: center; margin-bottom: 20px; font-size: 22px; font-weight: 800;}
+    .cargando {text-align: center; color: #3182ce; font-weight: 600; padding: 20px;}
+    .aviso-sesion {
+      padding: 12px; border-radius: 10px; margin-bottom: 20px; text-align: center; font-weight: 600;
     }
-    .no-sesion {
-      background: #fff3cd;
-      padding: 15px;
-      border-radius: 10px;
-      margin-bottom: 20px;
-      border: 1px solid #fde68a;
-      text-align: center;
-      color: #744210;
-      font-weight: 600;
-    }
-    .cargando {
-      text-align: center;
-      color: #3182ce;
-      font-weight: 600;
-      padding: 20px;
-    }
-    label {display: block; margin-bottom: 6px; font-weight: 600; color: #444;}
+    .conectado {background: #e6f2e6; color: #22543d; border: 1px solid #9ae6b4;}
+    .no-conectado {background: #fff3cd; color: #744210; border: 1px solid #fde68a;}
+    label {display: block; margin-bottom: 6px; margin-top: 18px; font-weight: 600; color: #2c5282;}
     input {
-      width: 100%; padding: 12px 15px; margin-bottom: 20px;
-      border: 2px solid #ddd; border-radius: 8px; font-size: 1rem;
-      background: #fff;
+      width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 10px;
+      font-size: 15px; background: #fff;
     }
     input:focus {outline: none; border-color: #d32f2f;}
     .boton-rojo {
-      width: 100%; padding: 14px; background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%); color: white;
-      border: none; border-radius: 12px; font-size: 1rem; font-weight: bold;
-      cursor: pointer; margin-bottom: 10px;
+      width: 100%; padding: 14px; background: linear-gradient(135deg, #e53e3e, #c53030); color: #fff;
+      border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 25px;
       transition: transform 0.2s;
     }
     .boton-rojo:hover {transform: translateY(-2px);}
     .boton-azul {
-      width: 100%; padding: 12px; background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff; border: none;
-      border-radius: 12px; font-size: 1rem; cursor: pointer;
-      font-weight: 600;
-      text-decoration: none; display: block; text-align: center;
-      margin-bottom: 10px;
-      transition: transform 0.2s;
+      display: block; width: 100%; padding: 12px;
+      background: linear-gradient(135deg, #3182ce, #2b6cb0); color: #fff;
+      border: none; border-radius: 12px; font-size: 16px; font-weight: 600;
+      text-align: center; text-decoration: none; margin-top: 10px; transition: transform 0.2s;
     }
     .boton-azul:hover {transform: translateY(-2px);}
-    .boton-gris {
-      width: 100%; padding: 12px; background: transparent;
-      color: #2b6cb0; border: 2px solid #2b6cb0;
-      border-radius: 12px; font-size: 1rem; cursor: pointer;
-      font-weight: 600;
-      transition: transform 0.2s;
-    }
-    .boton-gris:hover {background: #e3f2fd; transform: translateY(-2px);}
     .mensaje {margin-top: 20px; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; display: none;}
     .exito {background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7;}
     .error {background: #ffebee; color: #c62828; border: 2px solid #ef9a9a;}
@@ -88,45 +55,29 @@
 </head>
 <body>
 <div class="caja">
-  <h1>⚠️ Eliminar mi cuenta</h1>
+  <h1>🗑️ Borrar Usuario</h1>
 
-  <!-- Cargando -->
   <div id="cargando" class="cargando">🔍 Verificando sesión...</div>
 
-  <!-- Si NO hay sesión -->
-  <div id="sinSesion" class="oculto">
-    <div class="no-sesion">
-      🔒 Debés iniciar sesión primero
-    </div>
+  <!-- ❌ No conectado -->
+  <div id="bloqueNoConectado" class="oculto">
+    <div class="aviso-sesion no-conectado">🔒 Debés iniciar sesión primero</div>
     <a href="iniciar-sesion.html" class="boton-azul">Ir a Iniciar Sesión</a>
-    <a href="index.html" class="boton-gris">Volver al Inicio</a>
+    <a href="index.html" class="boton-azul" style="background:linear-gradient(135deg,#718096,#4a5568)">Volver al Inicio</a>
   </div>
 
-  <!-- Si SÍ hay sesión -->
-  <div id="conSesion" class="oculto">
-    <div class="sesion-info">
-      ✅ Conectado como: <span id="nombreUsuario"></span>
-    </div>
-    <p class="aviso">Se borrará tu cuenta.<br>Esta acción NO se puede deshacer ❌</p>
+  <!-- ✅ Conectado → deja borrar solo por correo -->
+  <div id="bloqueConectado" class="oculto">
+    <div class="aviso-sesion conectado">✅ Conectado como: <span id="correoActivo"></span></div>
 
-    <div id="formulario">
-      <label for="correo">Correo electrónico</label>
-      <input type="email" id="correo" placeholder="tu@correo.com">
+    <label for="correoBorrar">Correo del usuario a borrar</label>
+    <input type="email" id="correoBorrar" placeholder="correo@ejemplo.com" required>
 
-      <label for="pass">Contraseña</label>
-      <input type="password" id="pass" placeholder="Tu contraseña" maxlength="8">
-
-      <button onclick="verificar()" class="boton-rojo">Verificar →</button>
-      <button onclick="window.location.href='index.html'" class="boton-gris">Cancelar</button>
-    </div>
-
-    <div id="confirmar" class="oculto">
-      <p class="aviso"><strong>¿Estás SEGURO?</strong><br>Se borra TODO y no se puede recuperar ❌</p>
-      <button onclick="borrarTodo()" class="boton-rojo">🗑️ SÍ, ELIMINAR TODO</button>
-      <button onclick="volver()" class="boton-gris">No, mejor no</button>
-    </div>
+    <button id="btnBorrar" class="boton-rojo">🗑️ Borrar Usuario</button>
 
     <div id="mensaje" class="mensaje"></div>
+
+    <a href="index.html" class="boton-azul" style="margin-top:20px">Volver al Inicio</a>
   </div>
 </div>
 
@@ -134,31 +85,23 @@
 const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-let usuarioActivo = null;
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// ✅ Revisar sesión REAL de Supabase
+// ✅ Detectar sesión REAL
 async function revisarSesion() {
-  // 1. Obtener sesión de Supabase
-  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  const { data: { session } } = await supabase.auth.getSession();
   
   document.getElementById('cargando').classList.add('oculto');
 
-  if (!session || error) {
-    // ❌ No hay sesión → mostrar botón de iniciar
-    document.getElementById('sinSesion').classList.remove('oculto');
+  if (!session) {
+    // ❌ No hay sesión
+    document.getElementById('bloqueNoConectado').classList.remove('oculto');
     return;
   }
 
-  // ✅ Hay sesión real
-  usuarioActivo = session.user;
-  document.getElementById('conSesion').classList.remove('oculto');
-  
-  // Mostrar correo del usuario conectado
-  document.getElementById('nombreUsuario').textContent = usuarioActivo.email;
-  
-  // Llenar el campo correo automáticamente
-  document.getElementById('correo').value = usuarioActivo.email;
+  // ✅ Sí está conectado
+  document.getElementById('correoActivo').textContent = session.user.email;
+  document.getElementById('bloqueConectado').classList.remove('oculto');
 }
 
 function mostrarMensaje(texto, tipo) {
@@ -168,74 +111,34 @@ function mostrarMensaje(texto, tipo) {
   m.textContent = texto;
 }
 
-async function verificar() {
-  const correo = document.getElementById('correo').value.trim();
-  const pass = document.getElementById('pass').value;
+// Borrar usuario SOLO por correo
+document.getElementById('btnBorrar').addEventListener('click', async function() {
+  const correo = document.getElementById('correoBorrar').value.trim();
 
-  if (!correo || !pass) {
-    mostrarMensaje('⚠️ Escribí correo y contraseña', 'error');
+  if (!correo) {
+    mostrarMensaje('⚠️ Escribí el correo a borrar', 'error');
     return;
   }
-
-  // Verificar que el correo coincida con la sesión activa
-  if (correo !== usuarioActivo.email) {
-    mostrarMensaje('❌ El correo no coincide con tu cuenta', 'error');
-    return;
-  }
-
-  // Verificar contraseña iniciando sesión
-  const { error: loginError } = await supabaseClient.auth.signInWithPassword({
-    email: correo,
-    password: pass
-  });
-
-  if (loginError) {
-    mostrarMensaje('❌ Contraseña incorrecta', 'error');
-    return;
-  }
-
-  // Todo bien → mostrar confirmación
-  document.getElementById('formulario').classList.add('oculto');
-  document.getElementById('confirmar').classList.remove('oculto');
-  mostrarMensaje('✅ Verificado. Confirmá abajo.', 'exito');
-}
-
-async function borrarTodo() {
-  if (!confirm('¿BORRAR TODO DE VERDAD? No hay vuelta atrás ❌')) return;
 
   try {
     // Borrar de la tabla usuario
-    const { error: e2 } = await supabaseClient
+    const { error } = await supabase
       .from('usuario')
       .delete()
-      .eq('id', usuarioActivo.id);
-    
-    if (e2) throw new Error('Cuenta: ' + e2.message);
+      .eq('correo', correo);
 
-    // Cerrar sesión
-    await supabaseClient.auth.signOut();
-    localStorage.clear();
-    
-    mostrarMensaje('✅ Cuenta eliminada. Nos vemos pronto 👋', 'exito');
-    
-    setTimeout(() => {
-      window.location.href = 'index.html';
-    }, 2500);
+    if (error) throw error;
+
+    mostrarMensaje('✅ Usuario borrado correctamente', 'exito');
+    document.getElementById('correoBorrar').value = '';
 
   } catch (err) {
-    mostrarMensaje('❌ ' + err.message, 'error');
+    mostrarMensaje('❌ Error: ' + err.message, 'error');
   }
-}
+});
 
-function volver() {
-  document.getElementById('confirmar').classList.add('oculto');
-  document.getElementById('formulario').classList.remove('oculto');
-  document.getElementById('mensaje').style.display = 'none';
-}
-
-// Iniciar revisión de sesión al cargar la página
+// Ejecutar al cargar
 revisarSesion();
 </script>
-
 </body>
 </html>
