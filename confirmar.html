@@ -6,146 +6,57 @@
   <title>Confirmar — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
-    * {margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif;}
-    body {
-      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
-      min-height: 100vh;
-      display: flex; justify-content: center; align-items: center;
-      padding: 20px;
-    }
-    .caja {
-      background: linear-gradient(135deg, #e8e0d0 0%, #d9cfb8 100%);
-      padding: 50px 35px;
-      border-radius: 24px;
-      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.15);
-      border: 1px solid #c4b89f;
-      max-width: 420px;
-      width: 100%;
-      text-align: center;
-    }
-    h1 {
-      color: #2c5282;
-      margin-bottom: 30px;
-      font-size: 22px;
-      font-weight: 800;
-    }
-    .cargando {
-      color: #3182ce;
-      font-size: 17px;
-      margin: 25px 0;
-      font-weight: 600;
-    }
-    .spinner {
-      display: inline-block;
-      width: 26px;
-      height: 26px;
-      border: 3px solid #bfdbfe;
-      border-top-color: #3182ce;
-      border-radius: 50%;
-      animation: girar 1s linear infinite;
-      margin-left: 10px;
-      vertical-align: middle;
-    }
-    @keyframes girar {
-      to { transform: rotate(360deg); }
-    }
-    .exito {
-      color: #2f855a;
-      font-size: 19px;
-      margin: 25px 0;
-      line-height: 1.8;
-      font-weight: 700;
-      display: none;
-    }
-    .boton {
-      display: inline-block;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff;
-      border: none;
-      padding: 14px 32px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 20px;
-      text-decoration: none;
-      transition: transform 0.2s;
-    }
-    .boton:hover {
-      transform: translateY(-2px);
-    }
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif;}
+    body {background: linear-gradient(135deg, #dceaf5, #cfe0ee); min-height:100vh; display:flex; justify-content:center; align-items:center; padding:20px;}
+    .caja {background: linear-gradient(135deg, #e8e0d0, #d9cfb8); padding:50px 35px; border-radius:24px; text-align:center; max-width:420px; width:100%; box-shadow:0 10px 30px rgba(44,82,130,0.15); border:1px solid #c4b89f;}
+    h1 {color:#2c5282; margin-bottom:30px; font-size:22px; font-weight:800;}
+    .cargando {color:#3182ce; font-size:17px; margin:25px 0; font-weight:600;}
+    .spinner {display:inline-block; width:26px; height:26px; border:3px solid #bfdbfe; border-top-color:#3182ce; border-radius:50%; animation:girar 1s linear infinite; margin-left:10px; vertical-align:middle;}
+    @keyframes girar {to{transform:rotate(360deg);}}
+    .exito {color:#2f855a; font-size:19px; margin:25px 0; line-height:1.8; font-weight:700; display:none;}
+    .boton {display:inline-block; background:linear-gradient(135deg,#3182ce,#2b6cb0); color:#fff; border:none; padding:14px 32px; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; margin-top:20px; text-decoration:none;}
+    .boton:hover {transform:translateY(-2px);}
   </style>
 </head>
 <body>
   <div class="caja">
     <h1>Verificando tu correo</h1>
-    
-    <div class="cargando" id="cargando">
-      Procesando tu cuenta...<span class="spinner"></span>
-    </div>
-    
-    <div class="exito" id="exito">
-      ✅ ¡Correo verificado con éxito!<br>
-      Tu cuenta ya está activa.<br>
-      Redirigiendo a la página principal...
-    </div>
-    
-    <a id="botonIr" href="index.html" class="boton" style="display:none;">
-      Ir a la página principal
-    </a>
+    <div class="cargando" id="cargando">Procesando tu cuenta...<span class="spinner"></span></div>
+    <div class="exito" id="exito">✅ ¡Correo verificado con éxito!<br>Tu cuenta ya está activa.<br>Redirigiendo a la página principal...</div>
+    <a id="botonIr" href="index.html" class="boton" style="display:none;">Ir a la página principal</a>
   </div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // ✅ UNA SOLA VEZ — sin duplicados
-    const supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // Una sola declaración, sin repetir NADA
+    const clienteSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     
     function mostrarListo() {
       document.getElementById('cargando').style.display = 'none';
       document.getElementById('exito').style.display = 'block';
       document.getElementById('botonIr').style.display = 'inline-block';
-      
-      setTimeout(() => {
-        window.location.href = 'index.html';
-      }, 3000);
+      setTimeout(() => window.location.href = 'index.html', 3000);
     }
     
     async function iniciar() {
-      // Seguridad: si tarda más de 5s → pasa igual
-      const seguro = setTimeout(mostrarListo, 5000);
-      
+      const tiempoLimite = setTimeout(mostrarListo, 5000);
       try {
-        const { error } = await supabaseCliente.auth.exchangeCodeForSession(window.location.href);
-        
-        clearTimeout(seguro);
-        
-        if (!error) {
+        const { error } = await clienteSupabase.auth.exchangeCodeForSession(window.location.href);
+        clearTimeout(tiempoLimite);
+        if (!error) { mostrarListo(); return; }
+        const mensaje = error.message || '';
+        if (mensaje.includes('already confirmed') || mensaje.includes('verification') || mensaje.includes('invalid') || mensaje.includes('expired')) {
           mostrarListo();
           return;
         }
-        
-        // Cualquier mensaje de "ya estaba confirmado" → listo
-        if (
-          error.message.includes('already confirmed') ||
-          error.message.includes('verification') ||
-          error.message.includes('invalid') ||
-          error.message.includes('expired') ||
-          error.message.includes('code')
-        ) {
-          mostrarListo();
-          return;
-        }
-        
         mostrarListo();
-        
       } catch (err) {
-        clearTimeout(seguro);
+        clearTimeout(tiempoLimite);
         mostrarListo();
       }
     }
-    
     iniciar();
   </script>
 </body>
