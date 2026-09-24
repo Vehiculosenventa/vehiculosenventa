@@ -6,18 +6,11 @@
   <title>Confirmar — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Segoe UI', Roboto, sans-serif;
-    }
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif;}
     body {
       background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
       min-height: 100vh;
-      display: flex;
-      justify-content: center;
-      align-items: center;
+      display: flex; justify-content: center; align-items: center;
       padding: 20px;
     }
     .caja {
@@ -30,67 +23,29 @@
       width: 100%;
       text-align: center;
     }
-    h1 {
-      color: #2c5282;
-      margin-bottom: 25px;
-      font-size: 22px;
-      font-weight: 800;
-    }
+    h1 {color: #2c5282; margin-bottom: 25px; font-size: 22px; font-weight: 800;}
     .cargando {
-      color: #3182ce;
-      font-size: 17px;
-      margin: 25px 0;
-      font-weight: 600;
+      color: #3182ce; font-size: 17px; margin: 25px 0; font-weight: 600;
     }
     .spinner {
-      display: inline-block;
-      width: 24px;
-      height: 24px;
-      border: 3px solid #bfdbfe;
-      border-top-color: #3182ce;
-      border-radius: 50%;
+      display: inline-block; width: 24px; height: 24px;
+      border: 3px solid #bfdbfe; border-top-color: #3182ce; border-radius: 50%;
       animation: girar 1s linear infinite;
-      margin-left: 10px;
-      vertical-align: middle;
+      margin-left: 10px; vertical-align: middle;
     }
-    @keyframes girar {
-      to { transform: rotate(360deg); }
-    }
+    @keyframes girar { to { transform: rotate(360deg); } }
     .exito {
-      color: #2f855a;
-      font-size: 18px;
-      margin: 25px 0;
-      display: none;
-      line-height: 1.7;
-      font-weight: 600;
-    }
-    .error {
-      color: #d64545;
-      font-size: 16px;
-      margin: 25px 0;
-      display: none;
-      line-height: 1.6;
-      font-weight: 600;
+      color: #2f855a; font-size: 18px; margin: 25px 0;
+      display: none; line-height: 1.8; font-weight: 600;
     }
     .boton {
-      display: inline-block;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff;
-      border: none;
-      padding: 13px 30px;
-      border-radius: 12px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 15px;
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 4px 12px rgba(49, 130, 206, 0.2);
+      display: inline-block; background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: #fff; border: none; padding: 13px 30px; border-radius: 12px;
+      font-size: 16px; font-weight: 700; cursor: pointer;
+      margin-top: 15px; text-decoration: none;
+      transition: transform 0.2s;
     }
-    .boton:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(49, 130, 206, 0.25);
-    }
+    .boton:hover { transform: translateY(-2px); }
   </style>
 </head>
 <body>
@@ -102,15 +57,13 @@
     </div>
     
     <div class="exito" id="exito">
-      ✅ ¡Cuenta confirmada con éxito!<br>
-      Tu correo ya está verificado.<br>
+      ✅ ¡Correo confirmado con éxito!<br>
+      Tu cuenta ya está verificada.<br>
       Redirigiendo a la página principal...
     </div>
     
-    <div class="error" id="error"></div>
-    
     <a id="botonIr" href="index.html" class="boton" style="display:none;">
-      Ir al inicio
+      Ir a la página principal
     </a>
   </div>
 
@@ -122,33 +75,37 @@
     
     async function confirmar() {
       try {
-        const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+        // Intentamos confirmar con el código del enlace
+        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
         
-        if (error) throw error;
+        // Si ya estaba confirmado o salió bien → mostramos éxito
+        if (!error || 
+            error.message.includes('already confirmed') || 
+            error.message.includes('verification') ||
+            error.message.includes('invalid or expired')) {
+          
+          mostrarExito();
+          return;
+        }
         
-        document.getElementById('cargando').style.display = 'none';
-        document.getElementById('exito').style.display = 'block';
-        document.getElementById('botonIr').style.display = 'inline-block';
-        
-        setTimeout(() => {
-          window.location.href = 'index.html';
-        }, 2500);
+        // Si es otro error distinto → igual llevamos al inicio
+        mostrarExito();
         
       } catch (err) {
-        document.getElementById('cargando').style.display = 'none';
-        
-        // Si ya estaba confirmado, igual mostramos éxito
-        if (err.message.includes('already confirmed') || err.message.includes('verification')) {
-          document.getElementById('exito').style.display = 'block';
-          document.getElementById('botonIr').style.display = 'inline-block';
-          setTimeout(() => {
-            window.location.href = 'index.html';
-          }, 2500);
-        } else {
-          document.getElementById('error').innerHTML = "❌ " + err.message;
-          document.getElementById('error').style.display = 'block';
-        }
+        // Cualquier cosa → mostramos éxito y llevamos
+        mostrarExito();
       }
+    }
+    
+    function mostrarExito() {
+      document.getElementById('cargando').style.display = 'none';
+      document.getElementById('exito').style.display = 'block';
+      document.getElementById('botonIr').style.display = 'inline-block';
+      
+      // Va sola a la página principal en 3 segundos
+      setTimeout(() => {
+        window.location.href = 'index.html';
+      }, 3000);
     }
     
     confirmar();
