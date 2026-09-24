@@ -42,6 +42,12 @@
       color: #744210;
       font-weight: 600;
     }
+    .cargando {
+      text-align: center;
+      color: #3182ce;
+      font-weight: 600;
+      padding: 20px;
+    }
     label {display: block; margin-bottom: 6px; font-weight: 600; color: #444;}
     input {
       width: 100%; padding: 12px 15px; margin-bottom: 20px;
@@ -84,8 +90,11 @@
 <div class="caja">
   <h1>⚠️ Eliminar mi cuenta</h1>
 
+  <!-- Cargando -->
+  <div id="cargando" class="cargando">🔍 Verificando sesión...</div>
+
   <!-- Si NO hay sesión -->
-  <div id="sinSesion">
+  <div id="sinSesion" class="oculto">
     <div class="no-sesion">
       🔒 Debés iniciar sesión primero
     </div>
@@ -98,7 +107,7 @@
     <div class="sesion-info">
       ✅ Conectado como: <span id="nombreUsuario"></span>
     </div>
-    <p class="aviso">Se borrará tu cuenta y tus vehículos.<br>Esta acción NO se puede deshacer ❌</p>
+    <p class="aviso">Se borrará tu cuenta.<br>Esta acción NO se puede deshacer ❌</p>
 
     <div id="formulario">
       <label for="correo">Correo electrónico</label>
@@ -125,29 +134,31 @@
 const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-// ✅ UNA SOLA VEZ — sin duplicados
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+let usuarioActivo = null;
 
-// Revisar sesión
-const usuarioId = localStorage.getItem('usuario_id');
-const correoGuardado = localStorage.getItem('correo_usuario');
+// ✅ Revisar sesión REAL de Supabase
+async function revisarSesion() {
+  // 1. Obtener sesión de Supabase
+  const { data: { session }, error } = await supabaseClient.auth.getSession();
+  
+  document.getElementById('cargando').classList.add('oculto');
 
-if (!usuarioId) {
-  // Sin sesión → mostrar aviso y botón de ir a iniciar
-  document.getElementById('sinSesion').classList.remove('oculto');
-  document.getElementById('conSesion').classList.add('oculto');
-} else {
-  // Con sesión → mostrar formulario
-  document.getElementById('sinSesion').classList.add('oculto');
+  if (!session || error) {
+    // ❌ No hay sesión → mostrar botón de iniciar
+    document.getElementById('sinSesion').classList.remove('oculto');
+    return;
+  }
+
+  // ✅ Hay sesión real
+  usuarioActivo = session.user;
   document.getElementById('conSesion').classList.remove('oculto');
   
-  // Mostrar nombre o correo del usuario
-  document.getElementById('nombreUsuario').textContent = correoGuardado || 'Usuario conectado';
+  // Mostrar correo del usuario conectado
+  document.getElementById('nombreUsuario').textContent = usuarioActivo.email;
   
-  // Rellenar correo automáticamente
-  if (correoGuardado) {
-    document.getElementById('correo').value = correoGuardado;
-  }
+  // Llenar el campo correo automáticamente
+  document.getElementById('correo').value = usuarioActivo.email;
 }
 
 function mostrarMensaje(texto, tipo) {
@@ -166,42 +177,45 @@ async function verificar() {
     return;
   }
 
-  const { data, error } = await supabaseClient
-    .from('usuario')
-    .select('id, correo, nombre')
-    .eq('id', usuarioId)
-    .eq('correo', correo)
-    .single();
-
-  if (error) {
-    mostrarMensaje('❌ Error: ' + error.message, 'error');
+  // Verificar que el correo coincida con la sesión activa
+  if (correo !== usuarioActivo.email) {
+    mostrarMensaje('❌ El correo no coincide con tu cuenta', 'error');
     return;
   }
 
-  if (!data) {
-    mostrarMensaje('❌ Correo no coincide con la sesión', 'error');
+  // Verificar contraseña iniciando sesión
+  const { error: loginError } = await supabaseClient.auth.signInWithPassword({
+    email: correo,
+    password: pass
+  });
+
+  if (loginError) {
+    mostrarMensaje('❌ Contraseña incorrecta', 'error');
     return;
   }
 
+  // Todo bien → mostrar confirmación
   document.getElementById('formulario').classList.add('oculto');
   document.getElementById('confirmar').classList.remove('oculto');
-  mostrarMensaje('✅ Bienvenido, ' + (data.nombre || data.correo) + '. Confirmá abajo.', 'exito');
+  mostrarMensaje('✅ Verificado. Confirmá abajo.', 'exito');
 }
 
 async function borrarTodo() {
   if (!confirm('¿BORRAR TODO DE VERDAD? No hay vuelta atrás ❌')) return;
 
   try {
-    // Borrar usuario de la tabla
+    // Borrar de la tabla usuario
     const { error: e2 } = await supabaseClient
       .from('usuario')
       .delete()
-      .eq('id', usuarioId);
+      .eq('id', usuarioActivo.id);
     
     if (e2) throw new Error('Cuenta: ' + e2.message);
 
     // Cerrar sesión
+    await supabaseClient.auth.signOut();
     localStorage.clear();
+    
     mostrarMensaje('✅ Cuenta eliminada. Nos vemos pronto 👋', 'exito');
     
     setTimeout(() => {
@@ -218,6 +232,9 @@ function volver() {
   document.getElementById('formulario').classList.remove('oculto');
   document.getElementById('mensaje').style.display = 'none';
 }
+
+// Iniciar revisión de sesión al cargar la página
+revisarSesion();
 </script>
 
 </body>
