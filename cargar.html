@@ -283,7 +283,7 @@
       <div class="fila">
         <div class="campo">
           <label>Año</label>
-          <input type="text" id="anio" placeholder="Solo números" oninput="soloNumeros(this)" onkeypress="return soloNumerosTecla(event)" required>
+          <input type="text" id="anio" placeholder="Solo números" oninput="soloNumeros(this)" required>
         </div>
         <div class="campo">
           <label>🔄 Transmisión</label>
@@ -298,11 +298,11 @@
       <div class="fila">
         <div class="campo">
           <label>Kilometraje</label>
-          <input type="text" id="kilometraje" placeholder="Solo números" oninput="soloNumeros(this)" onkeypress="return soloNumerosTecla(event)">
+          <input type="text" id="kilometraje" placeholder="Solo números" oninput="soloNumeros(this)">
         </div>
         <div class="campo">
           <label>Precio</label>
-          <input type="text" id="precio" placeholder="Solo números" oninput="soloNumeros(this)" onkeypress="return soloNumerosTecla(event)" required>
+          <input type="text" id="precio" placeholder="Solo números" oninput="soloNumeros(this)" required>
         </div>
       </div>
 
@@ -522,22 +522,9 @@
     const btnGuardar = document.getElementById('btnGuardar');
     const mensaje = document.getElementById('mensaje');
 
-    // ✅ BLOQUEA AL TECLADO — SOLO NÚMEROS
-    function soloNumerosTecla(event) {
-      const codigo = event.which || event.keyCode;
-      if (codigo < 48 || codigo > 57) {
-        event.preventDefault();
-        return false;
-      }
-      return true;
-    }
-
-    // ✅ LIMPIA SI ALGO SE COLO
+    // ✅ SOLO NÚMEROS — Año, Kilometraje, Precio
     function soloNumeros(campo) {
-      const valorLimpio = campo.value.replace(/[^0-9]/g, '');
-      if (campo.value !== valorLimpio) {
-        campo.value = valorLimpio;
-      }
+      campo.value = campo.value.replace(/[^0-9]/g, '');
     }
 
     async function actualizarInterfaz() {
