@@ -144,7 +144,7 @@
     .oculto { display: none !important; }
     .campo-otra-ciudad { margin-top: 10px; }
     
-    /* === ESTILOS DE LAS FOTOS === */
+    /* === FOTOS === */
     .seccion-fotos {
       margin-top: 20px;
       padding-top: 15px;
@@ -443,7 +443,7 @@
         </div>
       </div>
 
-      <!-- === 8 CAMPOS DE FOTOS === -->
+      <!-- === 8 FOTOS === -->
       <div class="seccion-fotos">
         <div class="titulo-fotos">📸 Fotos del vehículo</div>
         
@@ -453,49 +453,42 @@
           <div class="foto-cuadro" id="vista_foto1">Sin foto</div>
           <input type="file" class="foto-input" id="foto1" accept="image/*">
         </div>
-        
         <div class="foto-linea">
           <button type="button" class="foto-boton" id="btn_foto2">📷</button>
           <span class="foto-nombre">Foto 2</span>
           <div class="foto-cuadro" id="vista_foto2">Sin foto</div>
           <input type="file" class="foto-input" id="foto2" accept="image/*">
         </div>
-        
         <div class="foto-linea">
           <button type="button" class="foto-boton" id="btn_foto3">📷</button>
           <span class="foto-nombre">Foto 3</span>
           <div class="foto-cuadro" id="vista_foto3">Sin foto</div>
           <input type="file" class="foto-input" id="foto3" accept="image/*">
         </div>
-        
         <div class="foto-linea">
           <button type="button" class="foto-boton" id="btn_foto4">📷</button>
           <span class="foto-nombre">Foto 4</span>
           <div class="foto-cuadro" id="vista_foto4">Sin foto</div>
           <input type="file" class="foto-input" id="foto4" accept="image/*">
         </div>
-        
         <div class="foto-linea">
           <button type="button" class="foto-boton" id="btn_foto5">📷</button>
           <span class="foto-nombre">Foto 5</span>
           <div class="foto-cuadro" id="vista_foto5">Sin foto</div>
           <input type="file" class="foto-input" id="foto5" accept="image/*">
         </div>
-        
         <div class="foto-linea">
           <button type="button" class="foto-boton" id="btn_foto6">📷</button>
           <span class="foto-nombre">Foto 6</span>
           <div class="foto-cuadro" id="vista_foto6">Sin foto</div>
           <input type="file" class="foto-input" id="foto6" accept="image/*">
         </div>
-        
         <div class="foto-linea">
           <button type="button" class="foto-boton" id="btn_foto7">📷</button>
           <span class="foto-nombre">Foto 7</span>
           <div class="foto-cuadro" id="vista_foto7">Sin foto</div>
           <input type="file" class="foto-input" id="foto7" accept="image/*">
         </div>
-        
         <div class="foto-linea">
           <button type="button" class="foto-boton" id="btn_foto8">📷</button>
           <span class="foto-nombre">Foto 8</span>
@@ -503,13 +496,11 @@
           <input type="file" class="foto-input" id="foto8" accept="image/*">
         </div>
       </div>
-      <!-- === FIN DE LAS FOTOS === -->
 
       <button type="submit" class="boton" id="btnEnviar" disabled>✅ Publicar Vehículo</button>
     </form>
 
     <div id="mensaje" class="mensaje"></div>
-
     <a href="index.html" class="volver">← Volver a la página principal</a>
   </div>
 
@@ -519,10 +510,7 @@
 
     let supabaseClient = null;
     let usuarioIdActivo = null;
-    let fotosBase64 = {
-      foto1: null, foto2: null, foto3: null, foto4: null,
-      foto5: null, foto6: null, foto7: null, foto8: null
-    };
+    let fotosBase64 = {foto1:null,foto2:null,foto3:null,foto4:null,foto5:null,foto6:null,foto7:null,foto8:null};
 
     function getSupabase() {
       if (!supabaseClient) {
@@ -531,90 +519,96 @@
       return supabaseClient;
     }
 
-    // === PREVISUALIZACIÓN DE FOTOS ===
-    function configurarFoto(numero) {
-      const btn = document.getElementById(`btn_foto${numero}`);
-      const input = document.getElementById(`foto${numero}`);
-      const vista = document.getElementById(`vista_foto${numero}`);
-
-      btn.addEventListener('click', () => input.click());
-
-      input.addEventListener('change', (e) => {
-        const archivo = e.target.files[0];
-        if (!archivo) return;
-
+    // === FOTOS ===
+    function configurarFoto(n) {
+      const btn = document.getElementById(`btn_foto${n}`);
+      const input = document.getElementById(`foto${n}`);
+      const vista = document.getElementById(`vista_foto${n}`);
+      btn.onclick = () => input.click();
+      input.onchange = (e) => {
+        const arch = e.target.files[0];
+        if (!arch) return;
         const lector = new FileReader();
-        lector.onload = function(event) {
-          fotosBase64[`foto${numero}`] = event.target.result;
-          vista.innerHTML = `<img src="${event.target.result}" alt="Foto ${numero}">`;
+        lector.onload = (ev) => {
+          fotosBase64[`foto${n}`] = ev.target.result;
+          vista.innerHTML = `<img src="${ev.target.result}">`;
         };
-        lector.readAsDataURL(archivo);
-      });
+        lector.readAsDataURL(arch);
+      };
     }
 
+    // === VERIFICAR SESIÓN — ARREGLADO ===
     async function verificarSesion() {
       const correo = localStorage.getItem('correo_usuario');
       const nombre = localStorage.getItem('nombre_usuario');
-      const bloqueCargando = document.getElementById('cargando');
-      const bloqueNoConectado = document.getElementById('bloqueNoConectado');
-      const bloqueConectado = document.getElementById('bloqueConectado');
-      const formulario = document.getElementById('formAuto');
-      const campos = formulario.querySelectorAll('input, select, textarea, button');
+      const cargando = document.getElementById('cargando');
+      const noConectado = document.getElementById('bloqueNoConectado');
+      const conectado = document.getElementById('bloqueConectado');
+      const form = document.getElementById('formAuto');
+      const campos = form.querySelectorAll('input, select, textarea, button');
 
       if (correo && nombre) {
-        // Conectado
-        const sb = getSupabase();
-        const { data: usuario } = await sb.from('usuarios').select('id').eq('correo', correo).single();
-        usuarioIdActivo = usuario?.id;
-
-        bloqueCargando.classList.add('oculto');
-        bloqueNoConectado.classList.add('oculto');
-        bloqueConectado.classList.remove('oculto');
+        // ✅ SÍ ESTÁ CONECTADO
+        cargando.classList.add('oculto');
+        noConectado.classList.add('oculto');
+        conectado.classList.remove('oculto');
         campos.forEach(c => c.disabled = false);
+        
+        // Obtener id del usuario
+        const sb = getSupabase();
+        const { data } = await sb.from('usuarios').select('id').eq('correo', correo).maybeSingle();
+        usuarioIdActivo = data?.id;
       } else {
-        // No conectado
-        bloqueCargando.classList.add('oculto');
-        bloqueNoConectado.classList.remove('oculto');
-        bloqueConectado.classList.add('oculto');
-        formulario.style.opacity = '0.4';
+        // ❌ NO ESTÁ CONECTADO
+        cargando.classList.add('oculto');
+        noConectado.classList.remove('oculto');
+        conectado.classList.add('oculto');
+        form.style.opacity = '0.4';
       }
     }
 
-    document.getElementById('ciudad').addEventListener('change', function() {
-      const campoOtra = document.getElementById('campoOtraCiudad');
+    // Cambiar ciudad
+    document.getElementById('ciudad').onchange = function() {
+      const otra = document.getElementById('campoOtraCiudad');
       const inputOtra = document.getElementById('otra_ciudad');
       if (this.value === 'otra') {
-        campoOtra.classList.remove('oculto');
+        otra.classList.remove('oculto');
         inputOtra.disabled = false;
       } else {
-        campoOtra.classList.add('oculto');
+        otra.classList.add('oculto');
         inputOtra.disabled = true;
         inputOtra.value = '';
       }
-    });
+    };
 
-    document.getElementById('btn-cerrar-sesion').addEventListener('click', () => {
-      localStorage.removeItem('correo_usuario');
-      localStorage.removeItem('nombre_usuario');
-      localStorage.removeItem('usuario_id');
+    // Cerrar sesión
+    document.getElementById('btn-cerrar-sesion').onclick = () => {
+      localStorage.clear();
       window.location.href = 'index.html';
-    });
+    };
 
-    document.getElementById('formAuto').addEventListener('submit', async function(e) {
+    // Enviar formulario
+    document.getElementById('formAuto').onsubmit = async function(e) {
       e.preventDefault();
-      
-      const mensaje = document.getElementById('mensaje');
-      mensaje.style.display = 'none';
+      const msg = document.getElementById('mensaje');
+      msg.style.display = 'none';
 
-      let ciudadFinal = document.getElementById('ciudad').value;
-      if (ciudadFinal === 'otra') {
-        ciudadFinal = document.getElementById('otra_ciudad').value.trim();
-        if (!ciudadFinal) {
-          mensaje.className = 'mensaje error';
-          mensaje.textContent = '⚠️ Escribí tu ciudad por favor';
-          mensaje.style.display = 'block';
+      let ciudad = document.getElementById('ciudad').value;
+      if (ciudad === 'otra') {
+        ciudad = document.getElementById('otra_ciudad').value.trim();
+        if (!ciudad) {
+          msg.className = 'mensaje error';
+          msg.textContent = '⚠️ Escribí tu ciudad';
+          msg.style.display = 'block';
           return;
         }
+      }
+
+      if (!document.getElementById('tipo_vehiculo').value || !document.getElementById('marca').value.trim() || !document.getElementById('modelo').value.trim()) {
+        msg.className = 'mensaje error';
+        msg.textContent = '⚠️ Completá Tipo, Marca y Modelo';
+        msg.style.display = 'block';
+        return;
       }
 
       const datos = {
@@ -627,7 +621,7 @@
         transmision: document.getElementById('transmision').value,
         kilometraje: parseInt(document.getElementById('kilometraje').value) || null,
         precio: document.getElementById('precio').value.trim(),
-        ciudad: ciudadFinal,
+        ciudad: ciudad,
         dueno: document.getElementById('dueno').value.trim(),
         direccion: document.getElementById('direccion').value.trim(),
         telefono: document.getElementById('telefono').value.trim(),
@@ -646,33 +640,24 @@
         foto8: fotosBase64.foto8
       };
 
-      if (!datos.tipo_vehiculo || !datos.marca || !datos.modelo) {
-        mensaje.className = 'mensaje error';
-        mensaje.textContent = '⚠️ Completá Tipo, Marca y Modelo son obligatorios';
-        mensaje.style.display = 'block';
-        return;
-      }
-
       const sb = getSupabase();
       const { error } = await sb.from('autos').insert(datos);
 
       if (error) {
-        mensaje.className = 'mensaje error';
-        mensaje.textContent = '❌ Error: ' + error.message;
-        mensaje.style.display = 'block';
+        msg.className = 'mensaje error';
+        msg.textContent = '❌ Error: ' + error.message;
+        msg.style.display = 'block';
       } else {
-        mensaje.className = 'mensaje exito';
-        mensaje.textContent = '✅ ¡Vehículo publicado correctamente! 🎉';
-        mensaje.style.display = 'block';
+        msg.className = 'mensaje exito';
+        msg.textContent = '✅ ¡Vehículo publicado correctamente! 🎉';
+        msg.style.display = 'block';
         this.reset();
         fotosBase64 = {foto1:null,foto2:null,foto3:null,foto4:null,foto5:null,foto6:null,foto7:null,foto8:null};
-        for(let i=1; i<=8; i++){
-          document.getElementById(`vista_foto${i}`).innerHTML = 'Sin foto';
-        }
+        for(let i=1; i<=8; i++) document.getElementById(`vista_foto${i}`).innerHTML = 'Sin foto';
       }
-    });
+    };
 
-    // Inicializar todo
+    // Iniciar todo
     for(let i=1; i<=8; i++) configurarFoto(i);
     verificarSesion();
   </script>
