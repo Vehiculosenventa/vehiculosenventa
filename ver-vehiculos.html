@@ -3,251 +3,676 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ver Vehículos — Vehículos en Venta</title>
+  <title>Ingresar Vehículo — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Roboto, sans-serif;
-    }
+    * {box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', Roboto, sans-serif;}
     body {
-      background: linear-gradient(135deg, #5fa8d3 0%, #3b82b8 100%);
-      min-height: 100vh;
+      background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
       padding: 20px;
-    }
-    .contenedor {
-      max-width: 550px;
+      max-width: 850px;
       margin: 0 auto;
+      min-height: 100vh;
     }
     h1 {
       text-align: center;
-      color: #ffffff;
-      margin-bottom: 5px;
+      color: #2c5282;
+      margin-bottom: 20px;
       font-size: 24px;
       font-weight: 800;
     }
-    .subtitulo {
-      text-align: center;
-      color: #e0edf7;
-      margin-bottom: 25px;
-      font-size: 15px;
+    .form-container {
+      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
+      padding: 25px;
+      border-radius: 18px;
+      box-shadow: 0 6px 16px rgba(44,82,130,0.12);
+      border: 1px solid #bfa980;
     }
-    .tarjeta-vehiculo {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 30px 25px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-      margin-bottom: 25px;
-      border: 3px solid #3b82b8;
-    }
-    .campo {
-      padding: 12px 0;
-      border-bottom: 1px solid #e5eef7;
+    .fila { display: flex; gap: 15px; margin-bottom: 18px; flex-wrap: wrap; }
+    .campo { flex: 1 1 45%; min-width: 160px; }
+    .campo-completo { flex: 1 1 100%; margin-bottom: 18px; }
+    .etiqueta-linea {
       display: flex;
-      justify-content: space-between;
-      font-size: 16px;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 7px;
     }
-    .campo:last-child {
-      border-bottom: none;
-    }
-    .etiqueta {
+    .etiqueta-linea label {
       font-weight: 600;
-      color: #2c5282;
+      color: #5a4f3f;
+      font-size: 14px;
     }
-    .valor {
-      color: #1a365d;
-      font-weight: 500;
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid #c5d6e8;
+      border-radius: 10px;
+      font-size: 15px;
+      background: #fff;
+      color: #4a5568;
     }
-    .navegacion {
+    input:disabled, select:disabled, textarea:disabled {
+      background: #e9ecef;
+      color: #888;
+      cursor: not-allowed;
+      border-color: #ddd;
+    }
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: #3182ce;
+    }
+    .fila-chk { display: flex; gap: 30px; margin-bottom: 18px; flex-wrap: wrap; }
+    .campo-chk { display: flex; align-items: center; gap: 8px; }
+    .campo-chk input { width: auto; margin: 0; }
+    .boton {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, #3182ce, #2b6cb0);
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .boton:disabled { background: #a0aec0; cursor: not-allowed; }
+    
+    .barra-superior {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 25px;
+      margin-bottom: 15px;
+      padding: 10px 0;
     }
-    .boton-nav {
-      padding: 10px 20px;
-      background: #ffffff;
-      color: #3b82b8;
-      border: 2px solid #3b82b8;
-      border-radius: 10px;
+    .texto-conectado {
+      color: #22543d;
+      font-weight: 600;
       font-size: 15px;
+    }
+    .enlace-cerrar-sesion {
+      color: #3182ce;
+      background: transparent;
+      border: none;
+      font-size: 14px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s ease;
+      text-decoration: underline;
+      white-space: nowrap;
     }
-    .boton-nav:hover:not(:disabled) {
-      background: #3b82b8;
-      color: #ffffff;
-      transform: translateY(-1px);
-    }
-    .boton-nav:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      transform: none;
-      background: #f0f7fc;
-      color: #94b8d4;
-      border-color: #94b8d4;
-    }
-    .contador {
-      color: #ffffff;
+    .enlace-cerrar-sesion:hover { color: #2b6cb0; }
+    
+    .mensaje {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      display: none;
       font-weight: 600;
-      font-size: 15px;
     }
+    .exito { background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7; }
+    .error { background: #ffebee; color: #c62828; border: 2px solid #ef9a9a; }
     .volver {
       display: inline-block;
-      margin-top: 10px;
-      color: #ffffff;
+      margin-top: 22px;
+      color: #1e40af;
       text-decoration: none;
       font-weight: 600;
-      padding: 10px 24px;
-      background: rgba(255,255,255,0.2);
+      padding: 10px 18px;
+      background: rgba(255,255,255,0.6);
       border-radius: 10px;
-      transition: background 0.2s ease;
     }
-    .volver:hover {
-      background: rgba(255,255,255,0.35);
+    .volver:hover { background: #d7e6f2; }
+    .botones-sesion {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      justify-content: center;
+      flex-wrap: nowrap;
     }
-    .sin-resultados {
-      background: #ffffff;
-      border-radius: 20px;
-      padding: 40px 25px;
+    .boton-sesion {
+      flex: 1;
+      max-width: 200px;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      background: linear-gradient(135deg, #3182ce, #2b6cb0);
+      color: #fff;
       text-align: center;
+      font-size: 15px;
+    }
+    .oculto { display: none !important; }
+    .campo-otra-ciudad { margin-top: 10px; }
+    
+    /* === FOTOS === */
+    .seccion-fotos {
+      margin-top: 20px;
+      padding-top: 15px;
+      border-top: 2px solid #d4c29c;
+    }
+    .titulo-fotos {
+      font-weight: 700;
       color: #2c5282;
       font-size: 17px;
-      font-weight: 500;
-      border: 3px solid #3b82b8;
+      margin-bottom: 15px;
     }
-    .cargando {
-      text-align: center;
-      color: #ffffff;
-      font-size: 17px;
-      padding: 40px;
+    .foto-linea {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
     }
+    .foto-boton {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #3182ce, #2b6cb0);
+      color: white;
+      border-radius: 50%;
+      font-size: 22px;
+      cursor: pointer;
+      border: none;
+      transition: transform 0.2s;
+    }
+    .foto-boton:hover { transform: scale(1.08); }
+    .foto-nombre {
+      flex: 0 0 90px;
+      font-weight: 600;
+      color: #5a4f3f;
+      font-size: 14px;
+    }
+    .foto-cuadro {
+      flex: 1;
+      min-height: 70px;
+      border: 2px dashed #bfa980;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.5);
+      overflow: hidden;
+      padding: 8px;
+    }
+    .foto-cuadro img {
+      max-width: 100%;
+      max-height: 120px;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+    .foto-input { display: none; }
   </style>
 </head>
 <body>
 
-  <div class="contenedor">
-    <h1 id="titulo-tipo">Vehículos</h1>
-    <p class="subtitulo" id="subtitulo-tipo">Cargando...</p>
+  <h1>🚗 Ingresar Vehículo</h1>
 
-    <div id="cargando" class="cargando">🔍 Buscando vehículos...</div>
-
-    <div id="contenido" style="display:none;">
-      <div class="navegacion">
-        <button id="btn-anterior" class="boton-nav">⬅️ Anterior</button>
-        <span id="contador" class="contador">1 de 1</span>
-        <button id="btn-siguiente" class="boton-nav">Siguiente ➡️</button>
-      </div>
-      <div id="tarjeta-vehiculo" class="tarjeta-vehiculo"></div>
-      <a href="catalogo.html" class="volver">← Volver al Catálogo</a>
+  <div class="form-container">
+    
+    <div id="cargando" style="text-align:center; color:#3182ce; font-weight:600; padding:20px;">
+      🔍 Verificando sesión...
     </div>
 
-    <div id="sin-resultados" style="display:none;">
-      <div class="sin-resultados">
-        😔 No hay vehículos de este tipo cargados todavía.
+    <div id="bloqueNoConectado" class="oculto">
+      <div style="text-align:center; padding:12px; background:#fff3cd; color:#744210; border-radius:10px; border:1px solid #fde68a; font-weight:600; margin-bottom:15px;">
+        🔒 Iniciá sesión para publicar tu vehículo
       </div>
-      <a href="catalogo.html" class="volver">← Volver al Catálogo</a>
+      <div class="botones-sesion">
+        <a href="iniciar-sesion.html" class="boton-sesion">🔑 Iniciar Sesión</a>
+        <a href="registrarse.html" class="boton-sesion">📝 Registrarse</a>
+      </div>
     </div>
+
+    <div id="bloqueConectado" class="oculto">
+      <div class="barra-superior">
+        <span class="texto-conectado">✅ Conectado</span>
+        <button id="btn-cerrar-sesion" class="enlace-cerrar-sesion">Cerrar sesión</button>
+      </div>
+      
+      <div style="text-align:center; margin:15px 0; color:#718096;">— Completá los datos del vehículo —</div>
+    </div>
+
+    <form id="formAuto">
+      
+      <div class="fila">
+        <div class="campo-completo">
+          <div class="etiqueta-linea">
+            <span>🚙</span>
+            <label>Tipo de Vehículo *</label>
+          </div>
+          <select id="tipo_vehiculo" required disabled>
+            <option value="">Seleccionar...</option>
+            <option value="4x4">4x4</option>
+            <option value="Auto">Auto</option>
+            <option value="Camioneta">Camioneta</option>
+            <option value="Cuatriciclo">Cuatriciclo</option>
+            <option value="Furgon">Furgon</option>
+            <option value="Moto">Moto</option>
+            <option value="SUV">SUV</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>🏷️</span>
+            <label>Marca</label>
+          </div>
+          <input type="text" id="marca" placeholder="Ej: Toyota, Ford" required disabled>
+        </div>
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>📋</span>
+            <label>Modelo</label>
+          </div>
+          <input type="text" id="modelo" placeholder="Ej: Corolla, Fiesta" required disabled>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>⚙️</span>
+            <label>Versión</label>
+          </div>
+          <input type="text" id="version" placeholder="Ej: XEi, 1.6 LT" disabled>
+        </div>
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>⛽</span>
+            <label>Combustible</label>
+          </div>
+          <select id="combustible" disabled>
+            <option value="">Seleccionar...</option>
+            <option>Nafta</option>
+            <option>Diésel</option>
+            <option>Eléctrico</option>
+            <option>Híbrido</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>📅</span>
+            <label>Año</label>
+          </div>
+          <input type="number" id="anio" placeholder="Ej: 2015" disabled oninput="this.value=this.value.slice(0,4)">
+        </div>
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>🔄</span>
+            <label>Transmisión</label>
+          </div>
+          <select id="transmision" disabled>
+            <option value="">Seleccionar...</option>
+            <option>Manual</option>
+            <option>Automática</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>📏</span>
+            <label>Kilometraje</label>
+          </div>
+          <input type="number" id="kilometraje" placeholder="Solo números" disabled>
+        </div>
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>💰</span>
+            <label>Precio</label>
+          </div>
+          <input type="text" id="precio" placeholder="Ej: 1500000" disabled>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo-completo">
+          <div class="etiqueta-linea">
+            <span>🏘️</span>
+            <label>Ciudad</label>
+          </div>
+          <select id="ciudad" disabled>
+            <option value="">Seleccionar...</option>
+            <option value="Arroyo Seco">Arroyo Seco</option>
+            <option value="Capitán Bermúdez">Capitán Bermúdez</option>
+            <option value="Casilda">Casilda</option>
+            <option value="Cañada de Gómez">Cañada de Gómez</option>
+            <option value="Coronda">Coronda</option>
+            <option value="Esperanza">Esperanza</option>
+            <option value="Fighiera">Fighiera</option>
+            <option value="Fray Luis Beltrán">Fray Luis Beltrán</option>
+            <option value="Funes">Funes</option>
+            <option value="Granadero Baigorria">Granadero Baigorria</option>
+            <option value="Nelson">Nelson</option>
+            <option value="Oliveros">Oliveros</option>
+            <option value="Pavón">Pavón</option>
+            <option value="Pérez">Pérez</option>
+            <option value="Pueblo Esther">Pueblo Esther</option>
+            <option value="Puerto General San Martín">Puerto General San Martín</option>
+            <option value="Rafaela">Rafaela</option>
+            <option value="Recreo">Recreo</option>
+            <option value="Roldán">Roldán</option>
+            <option value="Rosario">Rosario</option>
+            <option value="San Carlos Centro">San Carlos Centro</option>
+            <option value="San Carlos Norte">San Carlos Norte</option>
+            <option value="San Carlos Sud">San Carlos Sud</option>
+            <option value="San Lorenzo">San Lorenzo</option>
+            <option value="Santa Fe">Santa Fe</option>
+            <option value="Santo Tomé">Santo Tomé</option>
+            <option value="Timbúes">Timbúes</option>
+            <option value="Venado Tuerto">Venado Tuerto</option>
+            <option value="Villa Constitución">Villa Constitución</option>
+            <option value="Zavalla">Zavalla</option>
+            <option value="otra">Otra ciudad...</option>
+          </select>
+        </div>
+      </div>
+      
+      <div id="campoOtraCiudad" class="campo-completo oculto campo-otra-ciudad">
+        <div class="etiqueta-linea">
+          <span>✏️</span>
+          <label>Escribí tu ciudad</label>
+        </div>
+        <input type="text" id="otra_ciudad" placeholder="Nombre de tu ciudad" disabled>
+      </div>
+
+      <div class="fila">
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>👤</span>
+            <label>Dueño / Nombre</label>
+          </div>
+          <input type="text" id="dueno" placeholder="Tu nombre completo" disabled>
+        </div>
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>📍</span>
+            <label>Dirección</label>
+          </div>
+          <input type="text" id="direccion" placeholder="Calle y número" disabled>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo-completo">
+          <div class="etiqueta-linea">
+            <span>📞</span>
+            <label>Teléfono / WhatsApp</label>
+          </div>
+          <input type="tel" id="telefono" placeholder="Tu número con código de área" disabled>
+        </div>
+      </div>
+
+      <div class="fila-chk">
+        <div class="campo-chk">
+          <input type="checkbox" id="permuta" disabled>
+          <label for="permuta">✅ Acepta permuta</label>
+        </div>
+        <div class="campo-chk">
+          <input type="checkbox" id="contado" disabled>
+          <label for="contado">💵 Solo contado</label>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo-completo">
+          <div class="etiqueta-linea">
+            <span>📝</span>
+            <label>Deuda / Estado</label>
+          </div>
+          <input type="text" id="deuda" placeholder="Ej: Sin deudas / Con deuda de..." disabled>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo-completo">
+          <div class="etiqueta-linea">
+            <span>ℹ️</span>
+            <label>Descripción</label>
+          </div>
+          <textarea id="descripcion" rows="4" placeholder="Detalles, estado, equipamiento..." disabled></textarea>
+        </div>
+      </div>
+
+      <!-- === 8 FOTOS === -->
+      <div class="seccion-fotos">
+        <div class="titulo-fotos">📸 Fotos del vehículo</div>
+        
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto1">📷</button>
+          <span class="foto-nombre">Foto 1</span>
+          <div class="foto-cuadro" id="vista_foto1">Sin foto</div>
+          <input type="file" class="foto-input" id="foto1" accept="image/*">
+        </div>
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto2">📷</button>
+          <span class="foto-nombre">Foto 2</span>
+          <div class="foto-cuadro" id="vista_foto2">Sin foto</div>
+          <input type="file" class="foto-input" id="foto2" accept="image/*">
+        </div>
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto3">📷</button>
+          <span class="foto-nombre">Foto 3</span>
+          <div class="foto-cuadro" id="vista_foto3">Sin foto</div>
+          <input type="file" class="foto-input" id="foto3" accept="image/*">
+        </div>
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto4">📷</button>
+          <span class="foto-nombre">Foto 4</span>
+          <div class="foto-cuadro" id="vista_foto4">Sin foto</div>
+          <input type="file" class="foto-input" id="foto4" accept="image/*">
+        </div>
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto5">📷</button>
+          <span class="foto-nombre">Foto 5</span>
+          <div class="foto-cuadro" id="vista_foto5">Sin foto</div>
+          <input type="file" class="foto-input" id="foto5" accept="image/*">
+        </div>
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto6">📷</button>
+          <span class="foto-nombre">Foto 6</span>
+          <div class="foto-cuadro" id="vista_foto6">Sin foto</div>
+          <input type="file" class="foto-input" id="foto6" accept="image/*">
+        </div>
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto7">📷</button>
+          <span class="foto-nombre">Foto 7</span>
+          <div class="foto-cuadro" id="vista_foto7">Sin foto</div>
+          <input type="file" class="foto-input" id="foto7" accept="image/*">
+        </div>
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto8">📷</button>
+          <span class="foto-nombre">Foto 8</span>
+          <div class="foto-cuadro" id="vista_foto8">Sin foto</div>
+          <input type="file" class="foto-input" id="foto8" accept="image/*">
+        </div>
+      </div>
+
+      <button type="submit" class="boton" id="btnEnviar" disabled>✅ Publicar Vehículo</button>
+    </form>
+
+    <div id="mensaje" class="mensaje"></div>
+    <a href="index.html" class="volver">← Volver a la página principal</a>
   </div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    // ✅ UNA SOLA VEZ — sin repetir
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let supabaseClient = null;
+    let usuarioIdActivo = null;
+    let fotosBase64 = {foto1:null,foto2:null,foto3:null,foto4:null,foto5:null,foto6:null,foto7:null,foto8:null};
 
-    let listaVehiculos = [];
-    let indiceActual = 0;
-    let tipoSeleccionado = "";
-
-    function obtenerTipo() {
-      const params = new URLSearchParams(window.location.search);
-      return params.get("tipo") || "";
+    function getSupabase() {
+      if (!supabaseClient) {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
+      return supabaseClient;
     }
 
-    async function cargarVehiculos() {
-      tipoSeleccionado = obtenerTipo();
-      
-      document.getElementById("titulo-tipo").textContent = tipoSeleccionado || "Vehículos";
-      document.getElementById("subtitulo-tipo").textContent = tipoSeleccionado 
-        ? `Filtrando: ${tipoSeleccionado}` 
-        : "Todos los vehículos";
+    // === FOTOS ===
+    function configurarFoto(n) {
+      const btn = document.getElementById(`btn_foto${n}`);
+      const input = document.getElementById(`foto${n}`);
+      const vista = document.getElementById(`vista_foto${n}`);
+      btn.onclick = () => input.click();
+      input.onchange = (e) => {
+        const arch = e.target.files[0];
+        if (!arch) return;
+        const lector = new FileReader();
+        lector.onload = (ev) => {
+          fotosBase64[`foto${n}`] = ev.target.result;
+          vista.innerHTML = `<img src="${ev.target.result}">`;
+        };
+        lector.readAsDataURL(arch);
+      };
+    }
 
-      let consulta = supabaseClient.from("autos").select("*");
+    // === VERIFICAR SESIÓN — CORREGIDO ===
+    async function verificarSesion() {
+      // Probamos TODAS las claves posibles que puede haber guardado
+      const correo = localStorage.getItem('correo_usuario') || localStorage.getItem('correo') || localStorage.getItem('email');
+      const nombre = localStorage.getItem('nombre_usuario') || localStorage.getItem('nombre');
+      const idGuardado = localStorage.getItem('usuario_id') || localStorage.getItem('id');
       
-      if (tipoSeleccionado) {
-        consulta = consulta.eq("tipo_vehiculo", tipoSeleccionado);
+      const cargando = document.getElementById('cargando');
+      const noConectado = document.getElementById('bloqueNoConectado');
+      const conectado = document.getElementById('bloqueConectado');
+      const form = document.getElementById('formAuto');
+      const campos = form.querySelectorAll('input, select, textarea, button');
+
+      // Si hay cualquiera de las claves = SÍ ESTÁ CONECTADO
+      const haySesion = correo || idGuardado;
+
+      if (haySesion) {
+        // ✅ CONECTADO
+        cargando.classList.add('oculto');
+        noConectado.classList.add('oculto');
+        conectado.classList.remove('oculto');
+        campos.forEach(c => c.disabled = false);
+        
+        // Tomamos el ID guardado o lo buscamos
+        if (idGuardado) {
+          usuarioIdActivo = idGuardado;
+        } else if (correo) {
+          const sb = getSupabase();
+          const { data } = await sb.from('usuarios').select('id').eq('correo', correo).maybeSingle();
+          usuarioIdActivo = data?.id;
+          if (usuarioIdActivo) {
+            localStorage.setItem('usuario_id', usuarioIdActivo);
+          }
+        }
+      } else {
+        // ❌ NO CONECTADO
+        cargando.classList.add('oculto');
+        noConectado.classList.remove('oculto');
+        conectado.classList.add('oculto');
+        form.style.opacity = '0.4';
+      }
+    }
+
+    // Cambiar ciudad
+    document.getElementById('ciudad').onchange = function() {
+      const otra = document.getElementById('campoOtraCiudad');
+      const inputOtra = document.getElementById('otra_ciudad');
+      if (this.value === 'otra') {
+        otra.classList.remove('oculto');
+        inputOtra.disabled = false;
+      } else {
+        otra.classList.add('oculto');
+        inputOtra.disabled = true;
+        inputOtra.value = '';
+      }
+    };
+
+    // Cerrar sesión
+    document.getElementById('btn-cerrar-sesion').onclick = () => {
+      localStorage.clear();
+      window.location.href = 'index.html';
+    };
+
+    // Enviar formulario
+    document.getElementById('formAuto').onsubmit = async function(e) {
+      e.preventDefault();
+      const msg = document.getElementById('mensaje');
+      msg.style.display = 'none';
+
+      let ciudad = document.getElementById('ciudad').value;
+      if (ciudad === 'otra') {
+        ciudad = document.getElementById('otra_ciudad').value.trim();
+        if (!ciudad) {
+          msg.className = 'mensaje error';
+          msg.textContent = '⚠️ Escribí tu ciudad';
+          msg.style.display = 'block';
+          return;
+        }
       }
 
-      const { data, error } = await consulta.order("id", { ascending: false });
+      if (!document.getElementById('tipo_vehiculo').value || !document.getElementById('marca').value.trim() || !document.getElementById('modelo').value.trim()) {
+        msg.className = 'mensaje error';
+        msg.textContent = '⚠️ Completá Tipo, Marca y Modelo';
+        msg.style.display = 'block';
+        return;
+      }
 
-      document.getElementById("cargando").style.display = "none";
+      const datos = {
+        tipo_vehiculo: document.getElementById('tipo_vehiculo').value,
+        marca: document.getElementById('marca').value.trim(),
+        modelo: document.getElementById('modelo').value.trim(),
+        version: document.getElementById('version').value.trim(),
+        combustible: document.getElementById('combustible').value,
+        anio: parseInt(document.getElementById('anio').value) || null,
+        transmision: document.getElementById('transmision').value,
+        kilometraje: parseInt(document.getElementById('kilometraje').value) || null,
+        precio: document.getElementById('precio').value.trim(),
+        ciudad: ciudad,
+        dueno: document.getElementById('dueno').value.trim(),
+        direccion: document.getElementById('direccion').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        permuta: document.getElementById('permuta').checked,
+        contado: document.getElementById('contado').checked,
+        deuda: document.getElementById('deuda').value.trim(),
+        descripcion: document.getElementById('descripcion').value.trim(),
+        usuario_id: usuarioIdActivo,
+        foto1: fotosBase64.foto1,
+        foto2: fotosBase64.foto2,
+        foto3: fotosBase64.foto3,
+        foto4: fotosBase64.foto4,
+        foto5: fotosBase64.foto5,
+        foto6: fotosBase64.foto6,
+        foto7: fotosBase64.foto7,
+        foto8: fotosBase64.foto8
+      };
+
+      const sb = getSupabase();
+      const { error } = await sb.from('autos').insert(datos);
 
       if (error) {
-        console.error("Error:", error);
-        alert("Error al buscar: " + error.message);
-        return;
+        msg.className = 'mensaje error';
+        msg.textContent = '❌ Error: ' + error.message;
+        msg.style.display = 'block';
+      } else {
+        msg.className = 'mensaje exito';
+        msg.textContent = '✅ ¡Vehículo publicado correctamente! 🎉';
+        msg.style.display = 'block';
+        this.reset();
+        fotosBase64 = {foto1:null,foto2:null,foto3:null,foto4:null,foto5:null,foto6:null,foto7:null,foto8:null};
+        for(let i=1; i<=8; i++) document.getElementById(`vista_foto${i}`).innerHTML = 'Sin foto';
       }
+    };
 
-      if (!data || data.length === 0) {
-        document.getElementById("sin-resultados").style.display = "block";
-        return;
-      }
-
-      listaVehiculos = data;
-      indiceActual = 0;
-
-      document.getElementById("contenido").style.display = "block";
-      mostrarVehiculoActual();
-    }
-
-    function mostrarVehiculoActual() {
-      const veh = listaVehiculos[indiceActual];
-      const tarjeta = document.getElementById("tarjeta-vehiculo");
-
-      tarjeta.innerHTML = `
-        <div class="campo">
-          <span class="etiqueta">Tipo:</span>
-          <span class="valor">${veh.tipo_vehiculo || tipoSeleccionado}</span>
-        </div>
-        <div class="campo">
-          <span class="etiqueta">Año:</span>
-          <span class="valor">${veh.año || "-"}</span>
-        </div>
-        <div class="campo">
-          <span class="etiqueta">Kilometraje:</span>
-          <span class="valor">${veh.kilometraje ? veh.kilometraje + " km" : "-"}</span>
-        </div>
-        <div class="campo">
-          <span class="etiqueta">Precio:</span>
-          <span class="valor">$ ${veh.precio ? Number(veh.precio).toLocaleString("es-AR") : "-"}</span>
-        </div>
-      `;
-
-      document.getElementById("contador").textContent = `${indiceActual + 1} de ${listaVehiculos.length}`;
-      document.getElementById("btn-anterior").disabled = indiceActual === 0;
-      document.getElementById("btn-siguiente").disabled = indiceActual === listaVehiculos.length - 1;
-    }
-
-    document.getElementById("btn-anterior").addEventListener("click", () => {
-      if (indiceActual > 0) {
-        indiceActual--;
-        mostrarVehiculoActual();
-      }
-    });
-
-    document.getElementById("btn-siguiente").addEventListener("click", () => {
-      if (indiceActual < listaVehiculos.length - 1) {
-        indiceActual++;
-        mostrarVehiculoActual();
-      }
-    });
-
-    cargarVehiculos();
+    // Iniciar todo
+    for(let i=1; i<=8; i++) configurarFoto(i);
+    verificarSesion();
   </script>
 
 </body>
