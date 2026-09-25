@@ -83,25 +83,31 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 15px;
+      padding: 10px 0;
     }
-    .aviso-sesion {
-      padding: 12px; border-radius: 10px; font-weight: 600;
-      flex: 1; text-align: center;
+    .texto-conectado {
+      color: #22c55e;
+      font-weight: 700;
+      font-size: 15px;
     }
-    .conectado { background: #c6f6d5; color: #1c4532; border: 1px solid #9ae6b4; }
-    .no-conectado { background: #fef5e7; color: #744210; border: 1px solid #fdeaa8; }
     .enlace-cerrar-sesion {
       color: #2b6cb0;
       background: transparent;
       border: none;
-      font-size: 14px;
-      font-weight: 600;
+      font-size: 15px;
+      font-weight: 700;
       cursor: pointer;
       text-decoration: underline;
-      padding: 10px 0 10px 15px;
+      padding: 0;
       white-space: nowrap;
     }
     .enlace-cerrar-sesion:hover { color: #2c5282; }
+    
+    .aviso-sesion {
+      padding: 12px; border-radius: 10px; font-weight: 600;
+      flex: 1; text-align: center;
+    }
+    .no-conectado { background: #fef5e7; color: #744210; border: 1px solid #fdeaa8; }
     
     .mensaje {
       margin-top: 20px;
@@ -205,7 +211,7 @@
 
     <div id="bloqueConectado" class="oculto">
       <div class="barra-superior">
-        <div class="aviso-sesion conectado">✅ Conectado</div>
+        <span class="texto-conectado">Conectado</span>
         <button id="btn-cerrar-sesion" class="enlace-cerrar-sesion">Cerrar sesión</button>
       </div>
       
@@ -528,7 +534,7 @@
 
   <script>            
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     const selectCiudad = document.getElementById('ciudad');
@@ -648,9 +654,6 @@
         }
 
         let tipoVehiculoValor = document.getElementById('tipo_vehiculo').value || null;
-        if (tipoVehiculoValor) {
-          tipoVehiculoValor = tipoVehiculoValor.replace(/^[^\s]+\s*/, '');
-        }
         
         let ciudadValor;
         if (selectCiudad.value === 'otra') {
