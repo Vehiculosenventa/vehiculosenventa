@@ -3,605 +3,148 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Ingresar Vehículo — Vehículos en Venta</title>
+  <title>Prueba — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
-    * {box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', Roboto, sans-serif;}
+    * {box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', sans-serif;}
     body {
       background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
-      padding: 20px;
-      max-width: 850px;
-      margin: 0 auto;
       min-height: 100vh;
+      display: flex; justify-content: center; align-items: center;
+      padding: 20px;
     }
-    h1 {
-      text-align: center;
-      color: #2c5282;
-      margin-bottom: 20px;
-      font-size: 24px;
-      font-weight: 800;
-    }
-    .form-container {
+    .caja {
       background: #faf8f0;
-      padding: 25px;
-      border-radius: 18px;
-      box-shadow: 0 6px 16px rgba(44,82,130,0.12);
-      border: 1px solid #f0e9d6;
-    }
-    .fila { display: flex; gap: 15px; margin-bottom: 18px; flex-wrap: wrap; }
-    .campo { flex: 1 1 45%; min-width: 160px; }
-    .campo-completo { flex: 1 1 100%; margin-bottom: 18px; }
-    label {
-      display: block;
-      margin-bottom: 7px;
-      font-weight: 600;
-      color: #2c5282;
-      font-size: 14px;
-    }
-    input, select, textarea {
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       width: 100%;
-      padding: 12px 15px;
-      border: 2px solid #c5d6e8;
-      border-radius: 10px;
-      font-size: 15px;
-      background: #fff;
-      color: #4a5568;
+      max-width: 450px;
     }
-    input:disabled, select:disabled, textarea:disabled {
-      background: #e9ecef;
-      color: #888;
-      cursor: not-allowed;
-      border-color: #ddd;
+    h1 {text-align:center; color:#1565C0; margin-bottom:25px; font-size:22px;}
+    label {display:block; margin-bottom:8px; font-weight:600; color:#333;}
+    select {
+      width:100%; padding:12px; border:2px solid #c5d6e8;
+      border-radius:10px; font-size:16px; margin-bottom:20px;
+      background:white;
     }
-    input:focus, select:focus, textarea:focus {
-      outline: none;
-      border-color: #3182ce;
+    button {
+      width:100%; padding:14px; background:#1565C0; color:white;
+      border:none; border-radius:10px; font-size:17px; font-weight:700; cursor:pointer;
     }
-    .fila-chk { display: flex; gap: 30px; margin-bottom: 18px; flex-wrap: wrap; }
-    .campo-chk { display: flex; align-items: center; gap: 8px; }
-    .campo-chk input { width: auto; margin: 0; }
-    .boton {
-      width: 100%;
-      padding: 15px;
-      background: linear-gradient(135deg, #3182ce, #2b6cb0);
-      color: #fff;
-      border: none;
-      border-radius: 12px;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 10px;
-    }
-    .boton:disabled { background: #a0aec0; cursor: not-allowed; }
-    .boton-cerrar {
-      background: linear-gradient(135deg, #e53e3e, #c53030);
-      margin-bottom: 20px;
-      padding: 12px 20px;
-      font-size: 15px;
-    }
-    .aviso-sesion {
-      padding: 12px; border-radius: 10px; margin-bottom: 20px; text-align: center; font-weight: 600;
-    }
-    .conectado { background: #e6f2e6; color: #22543d; border: 1px solid #9ae6b4; }
-    .no-conectado { background: #fff3cd; color: #744210; border: 1px solid #fde68a; }
-    .mensaje {
-      margin-top: 20px;
-      padding: 15px;
-      border-radius: 12px;
-      display: none;
-      font-weight: 600;
-    }
-    .exito { background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7; }
-    .error { background: #ffebee; color: #c62828; border: 2px solid #ef9a9a; }
-    .volver {
-      display: inline-block;
-      margin-top: 22px;
-      color: #3182ce;
-      text-decoration: none;
-      font-weight: 600;
-      padding: 10px 18px;
-      background: rgba(255,255,255,0.6);
-      border-radius: 10px;
-    }
-    .foto-seccion { margin: 28px 0 15px; }
-    .foto-titulo-seccion {
-      font-size: 19px;
-      font-weight: 700;
-      color: #2c5282;
-      margin-bottom: 20px;
-    }
-    .foto-tarjeta {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 15px 18px;
-      margin-bottom: 12px;
-      background: #fff;
-      border-radius: 14px;
-      border: 2px solid #c5d6e8;
-      cursor: pointer;
-    }
-    .foto-tarjeta.disabled { opacity: 0.6; pointer-events: none; }
-    .foto-nombre {
-      font-weight: 700;
-      font-size: 15px;
-      color: #2c5282;
-      flex: 1;
-    }
-    .foto-mini {
-      width: 80px; height: 60px;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #f7fafc;
-      border: 2px dashed #cbd5e0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .foto-mini-img { width: 100%; height: 100%; object-fit: cover; display: none; }
-    .foto-sin { font-size: 11px; color: #a0aec0; }
-    .foto-input-oculto { display: none; }
-    .botones-sesion {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 20px;
-      justify-content: center;
-      flex-wrap: nowrap;
-    }
-    .boton-sesion {
-      flex: 1;
-      max-width: 200px;
-      padding: 12px 16px;
-      border-radius: 12px;
-      font-weight: 700;
-      text-decoration: none;
-      background: linear-gradient(135deg, #3182ce, #2b6cb0);
-      color: #fff;
-      text-align: center;
-      font-size: 15px;
-    }
-    .oculto { display: none !important; }
+    button:disabled {background:#999; cursor:not-allowed;}
+    .mensaje {margin-top:20px; padding:15px; border-radius:10px; text-align:center; font-weight:600;}
+    .exito {background:#e6f9e6; color:#2e7d32;}
+    .error {background:#ffebee; color:#c62828;}
+    .oculto {display:none !important;}
+    .sesion {text-align:center; margin-bottom:20px;}
   </style>
 </head>
 <body>
 
-  <h1>🚗 Ingresar Vehículo</h1>
+<div class="caja">
+  <h1>🚗 Prueba de Guardado</h1>
 
-  <div class="form-container">
-    
-    <div id="cargando" style="text-align:center; color:#3182ce; font-weight:600; padding:20px;">
-      🔍 Verificando sesión...
-    </div>
+  <div id="cargando">Verificando sesión...</div>
 
-    <div id="bloqueNoConectado" class="oculto">
-      <div class="aviso-sesion no-conectado">🔒 Iniciá sesión para publicar tu vehículo</div>
-      <div class="botones-sesion">
-        <a href="iniciar-sesion.html" class="boton-sesion">🔑 Iniciar Sesión</a>
-        <a href="registrarse.html" class="boton-sesion">📝 Registrarse</a>
-      </div>
-    </div>
-
-    <div id="bloqueConectado" class="oculto">
-      <div class="aviso-sesion conectado">✅ Conectado como: <span id="correoActivo"></span></div>
-      <button id="btn-cerrar-sesion" class="boton boton-cerrar">🚪 Cerrar Sesión</button>
-      <div style="text-align:center; margin:15px 0; color:#718096;">— Completá los datos del vehículo —</div>
-    </div>
-
-    <form id="formAuto">
-      
-      <div class="fila">
-        <div class="campo-completo">
-          <label>Tipo de Vehículo *</label>
-          <select id="tipo_vehiculo" required disabled>
-            <option value="">Seleccionar...</option>
-            <option value="Auto">Auto</option>
-            <option value="Camioneta">Camioneta / Pick-up</option>
-            <option value="4x4">4x4 / Todoterreno</option>
-            <option value="SUV">SUV / Crossover</option>
-            <option value="Furgon">Furgón / Utilitario</option>
-            <option value="Cuatriciclo">Cuatriciclo</option>
-            <option value="Moto">Moto</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo">
-          <label>Marca</label>
-          <input type="text" id="marca" placeholder="Ej: Toyota, Ford" required disabled>
-        </div>
-        <div class="campo">
-          <label>Modelo</label>
-          <input type="text" id="modelo" placeholder="Ej: Corolla, Fiesta" required disabled>
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo">
-          <label>Versión</label>
-          <input type="text" id="version" placeholder="Ej: XEi, 1.6 LT" disabled>
-        </div>
-        <div class="campo">
-          <label>Combustible</label>
-          <select id="combustible" disabled>
-            <option value="">Seleccionar...</option>
-            <option>Nafta</option>
-            <option>Diésel</option>
-            <option>Eléctrico</option>
-            <option>Híbrido</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo">
-          <label>Año</label>
-          <input type="number" id="anio" placeholder="Ej: 2015" disabled>
-        </div>
-        <div class="campo">
-          <label>Transmisión</label>
-          <select id="transmision" disabled>
-            <option value="">Seleccionar...</option>
-            <option>Manual</option>
-            <option>Automática</option>
-          </select>
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo">
-          <label>Kilometraje</label>
-          <input type="number" id="kilometraje" placeholder="Ej: 85000" disabled>
-        </div>
-        <div class="campo">
-          <label>Precio $</label>
-          <input type="number" id="precio" placeholder="Ej: 9500000" required disabled>
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo">
-          <label>Dueño / Agencia</label>
-          <input type="text" id="dueno" placeholder="Tu nombre o nombre del local" required disabled>
-        </div>
-        <div class="campo">
-          <label>Teléfono / WhatsApp</label>
-          <input type="tel" id="telefono" placeholder="Ej: +54 9 341 123-4567" required disabled>
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo-completo">
-          <label>Dirección</label>
-          <input type="text" id="direccion" placeholder="Ej: Av. San Martín 1234, Rosario" required disabled>
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo-completo">
-          <label>Ciudad</label>
-          <input type="text" id="ciudad" placeholder="Ej: Rosario, Santa Fe" disabled>
-        </div>
-      </div>
-
-      <div class="fila-chk">
-        <div class="campo-chk">
-          <input type="checkbox" id="permuta" disabled>
-          <label for="permuta">Acepta permuta</label>
-        </div>
-        <div class="campo-chk">
-          <input type="checkbox" id="contado" disabled>
-          <label for="contado">Solo venta al contado</label>
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo-completo">
-          <label>Deudas / Patentes / Multas</label>
-          <textarea id="deuda" rows="2" placeholder="Escribí si tiene alguna deuda o dejá vacío si no tiene..." disabled></textarea>
-        </div>
-      </div>
-
-      <div class="fila">
-        <div class="campo-completo">
-          <label>Descripción del vehículo</label>
-          <textarea id="descripcion" rows="4" placeholder="Color, estado, extras, equipamiento... todo lo que quieras contar" disabled></textarea>
-        </div>
-      </div>
-
-      <div class="foto-seccion">
-        <div class="foto-titulo-seccion">📸 Fotos del vehículo</div>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_1">
-          <div class="foto-nombre">Foto 1
-            <input type="file" class="foto-input-oculto" id="foto1" accept="image/*" disabled>
-          </div>
-          <div class="foto-mini">
-            <img id="img1" class="foto-mini-img">
-            <span id="sin1" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_2">
-          <div class="foto-nombre">Foto 2
-            <input type="file" class="foto-input-oculto" id="foto2" accept="image/*" disabled>
-          </div>
-          <div class="foto-mini">
-            <img id="img2" class="foto-mini-img">
-            <span id="sin2" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_3">
-          <div class="foto-nombre">Foto 3
-            <input type="file" class="foto-input-oculto" id="foto3" accept="image/*" disabled>
-          </div>
-          <div class="foto-mini">
-            <img id="img3" class="foto-mini-img">
-            <span id="sin3" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_4">
-          <div class="foto-nombre">Foto 4
-            <input type="file" class="foto-input-oculto" id="foto4" accept="image/*" disabled>
-          </div>
-          <div class="foto-mini">
-            <img id="img4" class="foto-mini-img">
-            <span id="sin4" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_5">
-          <div class="foto-nombre">Foto 5
-            <input type="file" class="foto-input-oculto" id="foto5" accept="image/*" disabled>
-          </div>
-          <div class="foto-mini">
-            <img id="img5" class="foto-mini-img">
-            <span id="sin5" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_6">
-          <div class="foto-nombre">Foto 6
-            <input type="file" class="foto-input-oculto" id="foto6" accept="image/*" disabled>
-          </div>
-          <div class="foto-mini">
-            <img id="img6" class="foto-mini-img">
-            <span id="sin6" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_7">
-          <div class="foto-nombre">Foto 7
-            <input type="file" class="foto-input-oculto" id="foto7" accept="image/*" disabled>
-          </div>
-          <div class="foto-mini">
-            <img id="img7" class="foto-mini-img">
-            <span id="sin7" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_8">
-          <div class="foto-nombre">Foto 8
-            <input type="file" class="foto-input-oculto" id="foto8" accept="image/*" disabled>
-          </div>
-          <div class="foto-mini">
-            <img id="img8" class="foto-mini-img">
-            <span id="sin8" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_9">
-          <div class="foto-nombre">Foto 9
-            <input type="file" class="foto-input-oculto" id="foto9" accept="image/*" disabled>
-          </div>
-          <div class="foto-mini">
-            <img id="img9" class="foto-mini-img">
-            <span id="sin9" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_10">
-          <div class="foto-nombre">Foto 10
-            <input type="file" class="foto-input-oculto" id="foto10" accept="image/*" disabled>
-          </div>
-          <div class="foto-mini">
-            <img id="img10" class="foto-mini-img">
-            <span id="sin10" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_11">
-          <div class="foto-nombre">Foto 11
-            <input type="file" class="foto-input-oculto" id="foto11" accept="image/*" disabled>
-          </div>
-          <div class="foto-mini">
-            <img id="img11" class="foto-mini-img">
-            <span id="sin11" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_12">
-          <div class="foto-nombre">Foto 12
-            <input type="file" class="foto-input-oculto" id="foto12" accept="image/*" disabled>
-          </div>
-          <div class="foto-mini">
-            <img id="img12" class="foto-mini-img">
-            <span id="sin12" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-      </div>
-
-      <button type="submit" class="boton" id="btnGuardar" disabled>💾 Guardar Vehículo</button>
-      <div id="mensaje" class="mensaje"></div>
-    </form>
-
-    <a href="index.html" class="volver">← Volver al inicio</a>
+  <div id="noConectado" class="oculto">
+    <p style="text-align:center; margin-bottom:15px;">🔒 Iniciá sesión primero</p>
+    <a href="iniciar-sesion.html" style="display:block; text-align:center; color:#1565C0; font-weight:600;">Ir a Iniciar Sesión</a>
   </div>
 
-  <script>
-    // === CONFIGURACIÓN ===
-    const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpzndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+  <div id="conectado" class="oculto">
+    <div class="sesion">✅ Conectado: <span id="correo"></span></div>
 
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    <form id="formPrueba">
+      <label>Tipo de Vehículo</label>
+      <select id="tipo_vehiculo" required>
+        <option value="">Seleccionar...</option>
+        <option value="Auto">Auto</option>
+        <option value="Camioneta">Camioneta</option>
+        <option value="SUV">SUV</option>
+        <option value="Moto">Moto</option>
+      </select>
 
-    // === HABILITAR / DESHABILITAR ===
-    function setFormDisabled(desactivar) {
-      const campos = document.querySelectorAll('input, select, textarea, button[type="submit"]');
-      campos.forEach(campo => campo.disabled = desactivar);
-      
-      for (let i = 1; i <= 12; i++) {
-        const tarjeta = document.getElementById(`foto_tarjeta_${i}`);
-        if (tarjeta) {
-          desactivar ? tarjeta.classList.add('disabled') : tarjeta.classList.remove('disabled');
-        }
-      }
+      <button type="submit" id="btnGuardar">💾 Guardar Prueba</button>
+    </form>
+
+    <div id="mensaje" class="mensaje oculto"></div>
+  </div>
+</div>
+
+<script>
+// === ACÁ VAN TUS DATOS REALES ===
+const SUPABASE_URL = "https://TU-PROYECTO.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...TU-CLAVE-COMPLETA-ACA";
+
+const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function verificarSesion() {
+  try {
+    const { data: { session } } = await supabaseClient.auth.getSession();
+
+    if (!session) {
+      document.getElementById('cargando').classList.add('oculto');
+      document.getElementById('noConectado').classList.remove('oculto');
+      return;
     }
 
-    // === MOSTRAR PREVISUALIZACIÓN DE FOTO ===
-    function verFoto(numero, input) {
-      const img = document.getElementById(`img${numero}`);
-      const sin = document.getElementById(`sin${numero}`);
-      if (input.files && input.files[0]) {
-        const lector = new FileReader();
-        lector.onload = e => {
-          img.src = e.target.result;
-          img.style.display = 'block';
-          sin.style.display = 'none';
-        };
-        lector.readAsDataURL(input.files[0]);
-      }
-    }
+    document.getElementById('cargando').classList.add('oculto');
+    document.getElementById('conectado').classList.remove('oculto');
+    document.getElementById('correo').textContent = session.user.email;
 
-    // === CONVERTIR A BASE64 ===
-    function archivoABase64(archivo) {
-      return new Promise(resolver => {
-        const lector = new FileReader();
-        lector.onload = e => resolver(e.target.result);
-        lector.readAsDataURL(archivo);
-      });
-    }
+  } catch (error) {
+    console.error("Error:", error);
+    document.getElementById('cargando').classList.add('oculto');
+    document.getElementById('noConectado').classList.remove('oculto');
+  }
+}
 
-    // === VERIFICAR SESIÓN ===
-    async function verificarSesion() {
-      try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
+async function guardar(e) {
+  e.preventDefault();
+  
+  const { data: { session } } = await supabaseClient.auth.getSession();
+  if (!session) return;
 
-        if (!session) {
-          document.getElementById('cargando').classList.add('oculto');
-          document.getElementById('bloqueNoConectado').classList.remove('oculto');
-          return;
-        }
+  const btn = document.getElementById('btnGuardar');
+  const msg = document.getElementById('mensaje');
+  
+  btn.disabled = true;
+  btn.textContent = "Guardando...";
+  msg.classList.add('oculto');
 
-        document.getElementById('cargando').classList.add('oculto');
-        document.getElementById('bloqueConectado').classList.remove('oculto');
-        document.getElementById('correoActivo').textContent = session.user.email;
-        setFormDisabled(false);
+  try {
+    const datos = {
+      tipo_vehiculo: document.getElementById('tipo_vehiculo').value || null,
+      usuario_id: session.user.id,
+      correo_usuario: session.user.email,
+      nombre_usuario: session.user.user_metadata?.name || null,
+      contador: 0
+    };
 
-        // Previsualización de fotos
-        for (let i = 1; i <= 12; i++) {
-          const input = document.getElementById(`foto${i}`);
-          if (input) input.addEventListener('change', e => verFoto(i, e.target));
-        }
-        
-      } catch (error) {
-        console.error("Error:", error);
-        document.getElementById('cargando').classList.add('oculto');
-        document.getElementById('bloqueNoConectado').classList.remove('oculto');
-      }
-    }
-
-    // === CERRAR SESIÓN ===
-    async function cerrarSesion() {
-      await supabaseClient.auth.signOut();
-      window.location.reload();
-    }
-
-    // === GUARDAR VEHÍCULO ===
-    async function guardarVehiculo(e) {
-      e.preventDefault();
-      
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      if (!session) return;
-
-      const boton = document.getElementById('btnGuardar');
-      const cajaMensaje = document.getElementById('mensaje');
-      
-      boton.disabled = true;
-      boton.textContent = "Guardando...";
-      cajaMensaje.style.display = "none";
-
-      try {
-        // Recopilar fotos
-        const fotos = {};
-        for (let i = 1; i <= 12; i++) {
-          const input = document.getElementById(`foto${i}`);
-          fotos[`foto${i}`] = input.files[0] ? await archivoABase64(input.files[0]) : null;
-        }
-
-        const datos = {
-          tipo_vehiculo: document.getElementById('tipo_vehiculo').value || null,
-          marca: document.getElementById('marca').value || null,
-          modelo: document.getElementById('modelo').value || null,
-          version: document.getElementById('version').value || null,
-          combustible: document.getElementById('combustible').value || null,
-          anio: parseInt(document.getElementById('anio').value) || null,
-          transmision: document.getElementById('transmision').value || null,
-          kilometraje: parseInt(document.getElementById('kilometraje').value) || null,
-          precio: parseInt(document.getElementById('precio').value) || null,
-          dueno: document.getElementById('dueno').value || null,
-          direccion: document.getElementById('direccion').value || null,
-          ciudad: document.getElementById('ciudad').value || null,
-          telefono: document.getElementById('telefono').value || null,
-          permuta: document.getElementById('permuta').checked,
-          contado: document.getElementById('contado').checked,
-          deuda: document.getElementById('deuda').value || null,
-          descripcion: document.getElementById('descripcion').value || null,
-          usuario_id: session.user.id,
-          correo_usuario: session.user.email,
-          nombre_usuario: session.user.user_metadata?.name || null,
-          contador: 0,
-          ...fotos
-        };
-
-        const { error } = await supabaseClient.from('autos').insert([datos]);
-        
-        if (error) throw error;
-
-        // ÉXITO
-        cajaMensaje.textContent = "✅ Vehículo guardado correctamente";
-        cajaMensaje.className = "mensaje exito";
-        cajaMensaje.style.display = "block";
-        document.getElementById('formAuto').reset();
-        
-        // Limpiar previsualización de fotos
-        for (let i = 1; i <= 12; i++) {
-          const img = document.getElementById(`img${i}`);
-          const sin = document.getElementById(`sin${i}`);
-          if (img) img.style.display = 'none';
-          if (sin) sin.style.display = 'block';
-        }
-        
-      } catch (error) {
-        console.error("Error:", error);
-        cajaMensaje.textContent = "❌ Error: " + error.message;
-        cajaMensaje.className = "mensaje error";
-        cajaMensaje.style.display = "block";
-      } finally {
-        boton.disabled = false;
-        boton.textContent = "💾 Guardar Vehículo";
-      }
-    }
-
-    // === INICIO ===
-    document.getElementById('btn-cerrar-sesion').addEventListener('click', cerrarSesion);
-    document.getElementById('formAuto').addEventListener('submit', guardarVehiculo);
+    const { error } = await supabaseClient.from('autos').insert([datos]);
     
-    verificarSesion();
-  </script>
+    if (error) throw error;
+
+    msg.textContent = "✅ ¡Guardado bien!";
+    msg.className = "mensaje exito";
+    msg.classList.remove('oculto');
+    document.getElementById('formPrueba').reset();
+
+  } catch (error) {
+    console.error("Error completo:", error);
+    msg.textContent = "❌ Error: " + error.message;
+    msg.className = "mensaje error";
+    msg.classList.remove('oculto');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "💾 Guardar Prueba";
+  }
+}
+
+document.getElementById('formPrueba').addEventListener('submit', guardar);
+verificarSesion();
+</script>
 
 </body>
 </html>
