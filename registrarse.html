@@ -186,6 +186,16 @@
 
     const supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
+    // 🔒 CONTROL DE LÍMITE DE CARACTERES — no deja pasar de 8
+    function limitarLongitud(input, maxCaracteres) {
+      input.addEventListener('input', () => {
+        if (input.value.length > maxCaracteres) {
+          input.value = input.value.substring(0, maxCaracteres);
+        }
+      });
+    }
+
+    // Ojitos ver/ocultar contraseña
     function configurarBotonVer(inputId, botonId) {
       const input = document.getElementById(inputId);
       const boton = document.getElementById(botonId);
@@ -195,6 +205,13 @@
         boton.title = input.type === 'password' ? 'Ver contraseña' : 'Ocultar contraseña';
       });
     }
+
+    // Aplicar todo
+    const contra = document.getElementById('contraseña');
+    const confirmar = document.getElementById('confirmarContraseña');
+    
+    limitarLongitud(contra, 8);
+    limitarLongitud(confirmar, 8);
     configurarBotonVer('contraseña', 'btnVerContra');
     configurarBotonVer('confirmarContraseña', 'btnVerConfirmar');
 
@@ -214,8 +231,13 @@
       
       const nombre = document.getElementById('nombre').value.trim();
       const correo = document.getElementById('correo').value.trim();
-      const contraseña = document.getElementById('contraseña').value;
-      const confirmarContraseña = document.getElementById('confirmarContraseña').value;
+      const contraseña = contra.value;
+      const confirmarContraseña = confirmar.value;
+
+      if (contraseña.length < 6) {
+        mostrarMensaje('❌ La contraseña debe tener al menos 6 caracteres.', 'error');
+        return;
+      }
 
       if (contraseña !== confirmarContraseña) {
         mostrarMensaje('❌ Las contraseñas no coinciden.', 'error');
