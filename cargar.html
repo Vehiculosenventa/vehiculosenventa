@@ -197,7 +197,6 @@
     <div id="bloqueConectado" class="oculto">
       <div class="aviso-sesion conectado">✅ Conectado como: <span id="correoActivo"></span></div>
       
-      <!-- CERRAR SESIÓN: AZUL CHIQUITO, COMO PEDISTE -->
       <button id="btn-cerrar-sesion" class="enlace-cerrar-sesion">Cerrar sesión</button>
       
       <div style="text-align:center; margin:15px 0; color:#718096;">— Completá los datos del vehículo —</div>
@@ -500,27 +499,44 @@
       });
     }
 
-    // === VERIFICAR SESIÓN ===
+    // === VERIFICAR SESIÓN — SE QUEDA ACÁ, NO SE VA A INDEX ===
     async function verificarSesion() {
       try {
         const { data: { session } } = await supabaseClient.auth.getSession();
 
-        if (!session) {
+        if (session) {
+          // ✅ YA ESTÁ CONECTADO — MOSTRAMOS EL FORMULARIO DIRECTO
+          document.getElementById('cargando').classList.add('oculto');
+          document.getElementById('bloqueNoConectado').classList.add('oculto');
+          document.getElementById('bloqueConectado').classList.remove('oculto');
+          document.getElementById('correoActivo').textContent = session.user.email;
+          setFormDisabled(false);
+
+          // Previsualización de fotos
+          for (let i = 1; i <= 12; i++) {
+            const input = document.getElementById(`foto${i}`);
+            if (input) input.addEventListener('change', e => verFoto(i, e.target));
+          }
+        } else {
+          // ❌ NO ESTÁ CONECTADO — QUEDA EN ESTA MISMA PÁGINA PARA INICIAR SESIÓN
           document.getElementById('cargando').classList.add('oculto');
           document.getElementById('bloqueNoConectado').classList.remove('oculto');
-          return;
         }
 
-        document.getElementById('cargando').classList.add('oculto');
-        document.getElementById('bloqueConectado').classList.remove('oculto');
-        document.getElementById('correoActivo').textContent = session.user.email;
-        setFormDisabled(false);
+        // Escuchamos si inicia sesión DESDE ESTA MISMA PÁGINA
+        supabaseClient.auth.onAuthStateChange(async (_, nuevaSesion) => {
+          if (nuevaSesion) {
+            document.getElementById('bloqueNoConectado').classList.add('oculto');
+            document.getElementById('bloqueConectado').classList.remove('oculto');
+            document.getElementById('correoActivo').textContent = nuevaSesion.user.email;
+            setFormDisabled(false);
 
-        // Previsualización de fotos
-        for (let i = 1; i <= 12; i++) {
-          const input = document.getElementById(`foto${i}`);
-          if (input) input.addEventListener('change', e => verFoto(i, e.target));
-        }
+            for (let i = 1; i <= 12; i++) {
+              const input = document.getElementById(`foto${i}`);
+              if (input) input.addEventListener('change', e => verFoto(i, e.target));
+            }
+          }
+        });
         
       } catch (error) {
         console.error("Error:", error);
