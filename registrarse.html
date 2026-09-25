@@ -129,13 +129,13 @@
       const contraseña = document.getElementById('contraseña').value;
       const repetirContraseña = document.getElementById('repetir_contraseña').value;
 
-      // Validación: contraseñas coincidan
+      // 1️⃣ Contraseñas coincidan
       if (contraseña !== repetirContraseña) {
         mostrarMensaje('⚠️ Las contraseñas no coinciden. Escribilas igual.', 'error');
         return;
       }
 
-      // Validación: mínimo 8 caracteres
+      // 2️⃣ Mínimo 8 caracteres
       if (contraseña.length < 8) {
         mostrarMensaje('⚠️ La contraseña debe tener al menos 8 caracteres.', 'error');
         return;
@@ -145,29 +145,26 @@
       boton.textContent = 'Verificando...';
 
       try {
-        // 🔍 Primero: revisamos si el correo ya existe
-        const { data: usuarioExistente } = await supabaseClient
-          .from('usuarios')
-          .select('id, correo')
-          .eq('correo', correo)
-          .maybeSingle();
-
-        if (usuarioExistente) {
-          mostrarMensaje('⚠️ Este correo ya está registrado. Iniciá sesión o usá otro correo.', 'aviso-existe');
-          boton.disabled = false;
-          boton.textContent = 'Crear Cuenta ✅';
-          return;
-        }
-
-        // ✅ No existe → creamos la cuenta
+        // 🔐 Supabase lo detecta DIRECTAMENTE — es la protección más segura
         const { data: authData, error: errorAuth } = await supabaseClient.auth.signUp({
           email: correo,
           password: contraseña
         });
 
-        if (errorAuth) throw errorAuth;
+        // ✅ Si Supabase dice que ya está registrado → NO deja crear
+        if (errorAuth) {
+          if (errorAuth.message.includes('User already registered') || 
+              errorAuth.message.includes('already registered') ||
+              errorAuth.status === 400) {
+            mostrarMensaje('⚠️ Este correo ya está registrado. Iniciá sesión o usá otro correo.', 'aviso-existe');
+            boton.disabled = false;
+            boton.textContent = 'Crear Cuenta ✅';
+            return;
+          }
+          throw errorAuth;
+        }
 
-        // Guardamos el nombre en la tabla usuarios
+        // ✅ Si llegamos acá → NO existía, se crea bien
         if (authData.user) {
           await supabaseClient.from('usuarios').insert({
             id: authData.user.id,
@@ -180,11 +177,8 @@
         setTimeout(() => { window.location.href = 'index.html'; }, 1800);
 
       } catch (err) {
-        if (err.message.includes('User already registered')) {
-          mostrarMensaje('⚠️ Este correo ya tiene una cuenta. Iniciá sesión desde la página principal.', 'aviso-existe');
-        } else {
-          mostrarMensaje('❌ Error: ' + err.message, 'error');
-        }
+        mostrarMensaje('❌ Error: ' + err.message, 'error');
+      } finally {
         boton.disabled = false;
         boton.textContent = 'Crear Cuenta ✅';
       }
