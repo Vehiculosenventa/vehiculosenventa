@@ -74,7 +74,6 @@
     }
     .boton:disabled { background: #a0aec0; cursor: not-allowed; }
     
-    /* === CERRAR SESIÓN — AZUL CHIQUITO === */
     .enlace-cerrar-sesion {
       display: inline-block;
       margin: 0 0 20px 0;
@@ -139,6 +138,9 @@
       font-size: 15px;
       color: #2c5282;
       flex: 1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .foto-mini {
       width: 80px; height: 60px;
@@ -325,11 +327,11 @@
       </div>
 
       <div class="foto-seccion">
-        <div class="foto-titulo-seccion">📸 Fotos del vehículo</div>
+        <div class="foto-titulo-seccion">📸 Fotos del vehículo — Tocar para sacar foto</div>
 
         <label class="foto-tarjeta" id="foto_tarjeta_1">
-          <div class="foto-nombre">Foto 1
-            <input type="file" class="foto-input-oculto" id="foto1" accept="image/*" disabled>
+          <div class="foto-nombre">📷 Foto 1
+            <input type="file" class="foto-input-oculto" id="foto1" accept="image/*" capture="environment" disabled>
           </div>
           <div class="foto-mini">
             <img id="img1" class="foto-mini-img">
@@ -338,8 +340,8 @@
         </label>
 
         <label class="foto-tarjeta" id="foto_tarjeta_2">
-          <div class="foto-nombre">Foto 2
-            <input type="file" class="foto-input-oculto" id="foto2" accept="image/*" disabled>
+          <div class="foto-nombre">📷 Foto 2
+            <input type="file" class="foto-input-oculto" id="foto2" accept="image/*" capture="environment" disabled>
           </div>
           <div class="foto-mini">
             <img id="img2" class="foto-mini-img">
@@ -348,8 +350,8 @@
         </label>
 
         <label class="foto-tarjeta" id="foto_tarjeta_3">
-          <div class="foto-nombre">Foto 3
-            <input type="file" class="foto-input-oculto" id="foto3" accept="image/*" disabled>
+          <div class="foto-nombre">📷 Foto 3
+            <input type="file" class="foto-input-oculto" id="foto3" accept="image/*" capture="environment" disabled>
           </div>
           <div class="foto-mini">
             <img id="img3" class="foto-mini-img">
@@ -358,8 +360,8 @@
         </label>
 
         <label class="foto-tarjeta" id="foto_tarjeta_4">
-          <div class="foto-nombre">Foto 4
-            <input type="file" class="foto-input-oculto" id="foto4" accept="image/*" disabled>
+          <div class="foto-nombre">📷 Foto 4
+            <input type="file" class="foto-input-oculto" id="foto4" accept="image/*" capture="environment" disabled>
           </div>
           <div class="foto-mini">
             <img id="img4" class="foto-mini-img">
@@ -368,8 +370,8 @@
         </label>
 
         <label class="foto-tarjeta" id="foto_tarjeta_5">
-          <div class="foto-nombre">Foto 5
-            <input type="file" class="foto-input-oculto" id="foto5" accept="image/*" disabled>
+          <div class="foto-nombre">📷 Foto 5
+            <input type="file" class="foto-input-oculto" id="foto5" accept="image/*" capture="environment" disabled>
           </div>
           <div class="foto-mini">
             <img id="img5" class="foto-mini-img">
@@ -378,8 +380,8 @@
         </label>
 
         <label class="foto-tarjeta" id="foto_tarjeta_6">
-          <div class="foto-nombre">Foto 6
-            <input type="file" class="foto-input-oculto" id="foto6" accept="image/*" disabled>
+          <div class="foto-nombre">📷 Foto 6
+            <input type="file" class="foto-input-oculto" id="foto6" accept="image/*" capture="environment" disabled>
           </div>
           <div class="foto-mini">
             <img id="img6" class="foto-mini-img">
@@ -388,8 +390,8 @@
         </label>
 
         <label class="foto-tarjeta" id="foto_tarjeta_7">
-          <div class="foto-nombre">Foto 7
-            <input type="file" class="foto-input-oculto" id="foto7" accept="image/*" disabled>
+          <div class="foto-nombre">📷 Foto 7
+            <input type="file" class="foto-input-oculto" id="foto7" accept="image/*" capture="environment" disabled>
           </div>
           <div class="foto-mini">
             <img id="img7" class="foto-mini-img">
@@ -398,8 +400,8 @@
         </label>
 
         <label class="foto-tarjeta" id="foto_tarjeta_8">
-          <div class="foto-nombre">Foto 8
-            <input type="file" class="foto-input-oculto" id="foto8" accept="image/*" disabled>
+          <div class="foto-nombre">📷 Foto 8
+            <input type="file" class="foto-input-oculto" id="foto8" accept="image/*" capture="environment" disabled>
           </div>
           <div class="foto-mini">
             <img id="img8" class="foto-mini-img">
@@ -408,8 +410,8 @@
         </label>
 
         <label class="foto-tarjeta" id="foto_tarjeta_9">
-          <div class="foto-nombre">Foto 9
-            <input type="file" class="foto-input-oculto" id="foto9" accept="image/*" disabled>
+          <div class="foto-nombre">📷 Foto 9
+            <input type="file" class="foto-input-oculto" id="foto9" accept="image/*" capture="environment" disabled>
           </div>
           <div class="foto-mini">
             <img id="img9" class="foto-mini-img">
@@ -418,8 +420,8 @@
         </label>
 
         <label class="foto-tarjeta" id="foto_tarjeta_10">
-          <div class="foto-nombre">Foto 10
-            <input type="file" class="foto-input-oculto" id="foto10" accept="image/*" disabled>
+          <div class="foto-nombre">📷 Foto 10
+            <input type="file" class="foto-input-oculto" id="foto10" accept="image/*" capture="environment" disabled>
           </div>
           <div class="foto-mini">
             <img id="img10" class="foto-mini-img">
@@ -428,8 +430,8 @@
         </label>
 
         <label class="foto-tarjeta" id="foto_tarjeta_11">
-          <div class="foto-nombre">Foto 11
-            <input type="file" class="foto-input-oculto" id="foto11" accept="image/*" disabled>
+          <div class="foto-nombre">📷 Foto 11
+            <input type="file" class="foto-input-oculto" id="foto11" accept="image/*" capture="environment" disabled>
           </div>
           <div class="foto-mini">
             <img id="img11" class="foto-mini-img">
@@ -438,8 +440,8 @@
         </label>
 
         <label class="foto-tarjeta" id="foto_tarjeta_12">
-          <div class="foto-nombre">Foto 12
-            <input type="file" class="foto-input-oculto" id="foto12" accept="image/*" disabled>
+          <div class="foto-nombre">📷 Foto 12
+            <input type="file" class="foto-input-oculto" id="foto12" accept="image/*" capture="environment" disabled>
           </div>
           <div class="foto-mini">
             <img id="img12" class="foto-mini-img">
@@ -456,13 +458,11 @@
   </div>
 
   <script>
-    // === CONFIGURACIÓN ===
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpzndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // === HABILITAR / DESHABILITAR ===
     function setFormDisabled(desactivar) {
       const campos = document.querySelectorAll('input, select, textarea, button[type="submit"]');
       campos.forEach(campo => campo.disabled = desactivar);
@@ -475,7 +475,6 @@
       }
     }
 
-    // === MOSTRAR PREVISUALIZACIÓN DE FOTO ===
     function verFoto(numero, input) {
       const img = document.getElementById(`img${numero}`);
       const sin = document.getElementById(`sin${numero}`);
@@ -490,7 +489,6 @@
       }
     }
 
-    // === CONVERTIR A BASE64 ===
     function archivoABase64(archivo) {
       return new Promise(resolver => {
         const lector = new FileReader();
@@ -499,31 +497,26 @@
       });
     }
 
-    // === VERIFICAR SESIÓN — SE QUEDA ACÁ, NO SE VA A INDEX ===
     async function verificarSesion() {
       try {
         const { data: { session } } = await supabaseClient.auth.getSession();
 
         if (session) {
-          // ✅ YA ESTÁ CONECTADO — MOSTRAMOS EL FORMULARIO DIRECTO
           document.getElementById('cargando').classList.add('oculto');
           document.getElementById('bloqueNoConectado').classList.add('oculto');
           document.getElementById('bloqueConectado').classList.remove('oculto');
           document.getElementById('correoActivo').textContent = session.user.email;
           setFormDisabled(false);
 
-          // Previsualización de fotos
           for (let i = 1; i <= 12; i++) {
             const input = document.getElementById(`foto${i}`);
             if (input) input.addEventListener('change', e => verFoto(i, e.target));
           }
         } else {
-          // ❌ NO ESTÁ CONECTADO — QUEDA EN ESTA MISMA PÁGINA PARA INICIAR SESIÓN
           document.getElementById('cargando').classList.add('oculto');
           document.getElementById('bloqueNoConectado').classList.remove('oculto');
         }
 
-        // Escuchamos si inicia sesión DESDE ESTA MISMA PÁGINA
         supabaseClient.auth.onAuthStateChange(async (_, nuevaSesion) => {
           if (nuevaSesion) {
             document.getElementById('bloqueNoConectado').classList.add('oculto');
@@ -545,13 +538,11 @@
       }
     }
 
-    // === CERRAR SESIÓN ===
     async function cerrarSesion() {
       await supabaseClient.auth.signOut();
       window.location.reload();
     }
 
-    // === GUARDAR VEHÍCULO ===
     async function guardarVehiculo(e) {
       e.preventDefault();
       
@@ -566,7 +557,6 @@
       cajaMensaje.style.display = "none";
 
       try {
-        // Recopilar fotos
         const fotos = {};
         for (let i = 1; i <= 12; i++) {
           const input = document.getElementById(`foto${i}`);
@@ -602,13 +592,11 @@
         
         if (error) throw error;
 
-        // ÉXITO
         cajaMensaje.textContent = "✅ Vehículo guardado correctamente";
         cajaMensaje.className = "mensaje exito";
         cajaMensaje.style.display = "block";
         document.getElementById('formAuto').reset();
         
-        // Limpiar previsualización de fotos
         for (let i = 1; i <= 12; i++) {
           const img = document.getElementById(`img${i}`);
           const sin = document.getElementById(`sin${i}`);
@@ -627,7 +615,6 @@
       }
     }
 
-    // === INICIO ===
     document.getElementById('btn-cerrar-sesion').addEventListener('click', cerrarSesion);
     document.getElementById('formAuto').addEventListener('submit', guardarVehiculo);
     
