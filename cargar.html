@@ -3,489 +3,512 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🔍 Buscar Vehículo</title>
+  <title>Ingresar Vehículo — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;}
+    * {box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', Roboto, sans-serif;}
     body {
       background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
       padding: 20px;
+      max-width: 850px;
+      margin: 0 auto;
       min-height: 100vh;
     }
-    .contenedor {max-width: 620px; margin: 0 auto;}
-
-    .barra-superior {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 20px;
-      padding-bottom: 12px;
-      border-bottom: 2px solid rgba(44, 82, 130, 0.15);
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .titulo-pagina {
-      font-size: 18px;
-      font-weight: 800;
-      color: #2c5282;
-    }
-    .zona-usuario {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .btn-sesion {
-      padding: 8px 14px;
-      border-radius: 10px;
-      font-weight: 700;
-      text-decoration: none;
-      font-size: 14px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-salir {
-      background: #fef2f2;
-      color: #c53030;
-      border: 2px solid #feb2b2;
-    }
-    .btn-salir:hover { background: #fee2e2; }
-    .nombre-usuario {
-      font-weight: 600;
-      color: #276749;
-      font-size: 14px;
-    }
-    .olvido {
-      width: 100%;
-      text-align: center;
-      margin-top: 10px;
-      margin-bottom: 15px;
-    }
-    .olvido a {
-      color: #4a5568;
-      text-decoration: none;
-      font-size: 14px;
-    }
-    .olvido a:hover {
-      color: #1565C0;
-      text-decoration: underline;
-    }
-
     h1 {
       text-align: center;
       color: #2c5282;
       margin-bottom: 20px;
-      font-size: 23px;
+      font-size: 24px;
+      font-weight: 800;
     }
-    .buscador {
+    .form-container {
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
-      padding: 28px;
+      padding: 25px;
       border-radius: 18px;
-      box-shadow: 0 4px 14px rgba(44, 82, 130, 0.08);
-      margin-bottom: 22px;
+      box-shadow: 0 6px 16px rgba(44,82,130,0.12);
       border: 1px solid #bfa980;
     }
-    .leyenda {
-      text-align: center;
+    .fila { display: flex; gap: 15px; margin-bottom: 18px; flex-wrap: wrap; }
+    .campo { flex: 1 1 45%; min-width: 160px; }
+    .campo-completo { flex: 1 1 100%; margin-bottom: 18px; }
+    .etiqueta-linea {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 7px;
+    }
+    .etiqueta-linea label {
+      font-weight: 600;
       color: #5a4f3f;
       font-size: 14px;
-      margin-bottom: 22px;
     }
-    .campo {margin-bottom: 16px;}
-    label {
-      display: block;
-      margin-bottom: 7px;
-      font-weight: 600;
-      color: #4a5568;
-    }
-    input, select {
+    input, select, textarea {
       width: 100%;
-      padding: 12px 16px;
+      padding: 12px 15px;
       border: 2px solid #c5d6e8;
       border-radius: 10px;
       font-size: 15px;
-      background: white;
-      transition: all 0.2s;
+      background: #fff;
       color: #4a5568;
     }
-    input:focus, select:focus {
+    input:disabled, select:disabled, textarea:disabled {
+      background: #e9ecef;
+      color: #888;
+      cursor: not-allowed;
+      border-color: #ddd;
+    }
+    input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: #3182ce;
-      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.12);
     }
-    .boton-buscar {
+    .fila-chk { display: flex; gap: 30px; margin-bottom: 18px; flex-wrap: wrap; }
+    .campo-chk { display: flex; align-items: center; gap: 8px; }
+    .campo-chk input { width: auto; margin: 0; }
+    .boton {
       width: 100%;
-      padding: 14px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
+      padding: 15px;
+      background: linear-gradient(135deg, #3182ce, #2b6cb0);
+      color: #fff;
       border: none;
-      border-radius: 10px;
+      border-radius: 12px;
       font-size: 17px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
-      transition: all 0.2s;
-      margin-top: 8px;
-      box-shadow: 0 4px 12px rgba(49, 130, 206, 0.15);
+      margin-top: 10px;
     }
-    .boton-buscar:hover {
-      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
-      transform: translateY(-1px);
-    }
-
-    .navegacion {
+    .boton:disabled { background: #a0aec0; cursor: not-allowed; }
+    
+    .barra-superior {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin: 18px 0;
-      padding: 14px 18px;
-      background: rgba(255, 255, 255, 0.6);
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(44, 82, 130, 0.08);
-      opacity: 0.4;
-      transition: opacity 0.3s;
-    }
-    .navegacion.activa {opacity: 1;}
-    .navegacion button {
-      padding: 11px 22px;
-      font-size: 15px;
-      cursor: pointer;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-    .navegacion button:hover {
-      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
-      transform: translateY(-1px);
-    }
-    .navegacion button:disabled {
-      background: #c5d6e8;
-      cursor: not-allowed;
-      transform: none;
-      opacity: 0.7;
-    }
-    .contador {
-      font-size: 16px;
-      font-weight: bold;
-      color: #2c5282;
-    }
-
-    .boton-favorito {
-      display: block;
-      width: 100%;
-      padding: 16px 20px;
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-      margin: 0 0 18px 0;
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
-      transition: all 0.2s;
-    }
-    .boton-favorito:hover {transform: translateY(-2px);}
-
-    .caja-codigo {
-      background: #f0f7ff;
-      padding: 20px;
-      border-radius: 12px;
-      margin: 15px 0;
-      border: 2px solid #bfdbfe;
-      display: none;
-    }
-    .caja-codigo.mostrar {display: block;}
-    .caja-codigo h3 {
-      color: #1e40af;
-      margin-bottom: 12px;
-      font-size: 16px;
-    }
-    .input-codigo {
-      width: 100%;
-      padding: 14px;
-      font-size: 18px;
-      text-align: center;
-      letter-spacing: 4px;
-      border: 2px solid #93c5fd;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      font-weight: bold;
-    }
-    .boton-guardar {
-      background: #16a34a;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-    }
-    .boton-cancelar {
-      background: #e5e7eb;
-      color: #4b5563;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 14px;
-      margin-top: 10px;
-      cursor: pointer;
-      width: 100%;
-    }
-
-    .tarjeta {
-      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
-      padding: 25px;
-      border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(44, 82, 130, 0.08);
-      animation: aparecer 0.3s ease;
-      margin-bottom: 20px;
-      border: 1px solid #bfa980;
-    }
-    @keyframes aparecer {
-      from {opacity: 0; transform: translateX(8px);}
-      to {opacity: 1; transform: translateX(0);}
-    }
-    .etiqueta-tipo {
-      display: inline-block;
-      background: #ebf4fb;
-      color: #2c5282;
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-weight: 700;
       margin-bottom: 15px;
+      padding: 10px 0;
+    }
+    .texto-conectado {
+      color: #22543d;
+      font-weight: 600;
       font-size: 15px;
     }
-    .titulo-vehiculo {
-      font-size: 20px;
-      font-weight: 700;
-      color: #2c5282;
-      margin-bottom: 16px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #d4c29c;
+    .enlace-cerrar-sesion {
+      color: #3182ce;
+      background: transparent;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      white-space: nowrap;
     }
-    .fila {
-      margin-bottom: 10px;
-      color: #5a4f3f;
-      line-height: 1.6;
-    }
-    .fila strong {
-      color: #1e40af;
-      min-width: 130px;
-      display: inline-block;
-    }
-    .etiqueta {
-      display: inline-block;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      margin: 6px 10px 6px 0;
+    .enlace-cerrar-sesion:hover { color: #2b6cb0; }
+    
+    .mensaje {
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 12px;
+      display: none;
       font-weight: 600;
     }
-    .permuta {background: #e8d9bc; color: #78350f;}
-    .contado {background: #b8d8b5; color: #166534;}
-
-    .cargando {
-      text-align: center;
-      padding: 50px 20px;
-      color: #5a6872;
-      font-size: 17px;
-    }
-    .sin-resultado {
-      text-align: center;
-      padding: 50px 20px;
-      color: #5a4f3f;
-      font-size: 17px;
-      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
-      border-radius: 16px;
-      border: 1px solid #bfa980;
-    }
+    .exito { background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7; }
+    .error { background: #ffebee; color: #c62828; border: 2px solid #ef9a9a; }
     .volver {
-      display: block;
-      text-align: center;
-      margin-top: 28px;
+      display: inline-block;
+      margin-top: 22px;
       color: #1e40af;
       text-decoration: none;
       font-weight: 600;
-      padding: 12px;
-      background: rgba(255, 255, 255, 0.6);
+      padding: 10px 18px;
+      background: rgba(255,255,255,0.6);
       border-radius: 10px;
-      transition: all 0.2s;
     }
-    .volver:hover {
-      background: #d7e6f2;
-      text-decoration: none;
+    .volver:hover { background: #d7e6f2; }
+    .botones-sesion {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      justify-content: center;
+      flex-wrap: nowrap;
     }
-
-    .fotos-titulo {
-      margin-top: 22px;
+    .boton-sesion {
+      flex: 1;
+      max-width: 200px;
+      padding: 12px 16px;
+      border-radius: 12px;
       font-weight: 700;
-      color: #2c5282;
-      font-size: 17px;
+      text-decoration: none;
+      background: linear-gradient(135deg, #3182ce, #2b6cb0);
+      color: #fff;
+      text-align: center;
+      font-size: 15px;
+    }
+    .oculto { display: none !important; }
+    .campo-otra-ciudad { margin-top: 10px; }
+    
+    /* === ESTILOS DE LAS FOTOS === */
+    .seccion-fotos {
+      margin-top: 20px;
       padding-top: 15px;
       border-top: 2px solid #d4c29c;
     }
-    .fotos-cuadricula {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 12px;
-      margin-top: 15px;
+    .titulo-fotos {
+      font-weight: 700;
+      color: #2c5282;
+      font-size: 17px;
+      margin-bottom: 15px;
     }
-    .foto-caja {text-align: center;}
-    .foto-ver {
-      width: 100%;
-      aspect-ratio: 4/3;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #ebf4fb;
-      border: 2px solid #dceaf5;
+    .foto-linea {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .foto-boton {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, #3182ce, #2b6cb0);
+      color: white;
+      border-radius: 50%;
+      font-size: 22px;
+      cursor: pointer;
+      border: none;
       transition: transform 0.2s;
     }
-    .foto-ver:hover {transform: scale(1.03);}
-    .foto-ver img {width: 100%; height: 100%; object-fit: cover;}
+    .foto-boton:hover { transform: scale(1.08); }
     .foto-nombre {
-      font-size: 11px;
-      color: #5a4f3f;
-      padding: 5px 0;
+      flex: 0 0 90px;
       font-weight: 600;
+      color: #5a4f3f;
+      font-size: 14px;
     }
+    .foto-cuadro {
+      flex: 1;
+      min-height: 70px;
+      border: 2px dashed #bfa980;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(255,255,255,0.5);
+      overflow: hidden;
+      padding: 8px;
+    }
+    .foto-cuadro img {
+      max-width: 100%;
+      max-height: 120px;
+      border-radius: 6px;
+      object-fit: cover;
+    }
+    .foto-input { display: none; }
   </style>
 </head>
 <body>
 
-  <div class="contenedor">
-    <div class="barra-superior">
-      <div class="titulo-pagina">🔍 Buscar Vehículo</div>
-      <div id="zonaUsuario" class="zona-usuario"></div>
-    </div>
-    <div id="zonaOlvido" class="olvido"></div>
+  <h1>🚗 Ingresar Vehículo</h1>
 
-    <h1>Buscar Vehículo</h1>
-
-    <div class="buscador">
-      <p class="leyenda">Dejá vacío lo que no querés filtrar ✨</p>
-
-      <div class="campo">
-        <label>🚙 Tipo de Vehículo</label>
-        <select id="buscar_tipo">
-          <option value="">Todos los tipos</option>
-          <option value="4x4">4x4</option>
-          <option value="Auto">Auto</option>
-          <option value="Camioneta">Camioneta</option>
-          <option value="Cuatriciclo">Cuatriciclo</option>
-          <option value="Furgon">Furgon</option>
-          <option value="Moto">Moto</option>
-          <option value="SUV">SUV</option>
-        </select>
-      </div>
-
-      <div class="campo">
-        <label>🏷️ Marca</label>
-        <input type="text" id="buscar_marca" placeholder="Ej: Toyota, Ford...">
-      </div>
-      <div class="campo">
-        <label>📋 Modelo</label>
-        <input type="text" id="buscar_modelo" placeholder="Ej: Corolla, Fiesta...">
-      </div>
-      <div class="campo">
-        <label>📅 Año</label>
-        <input type="number" id="buscar_anio" placeholder="Ej: 2024 — Solo 4 dígitos" min="1900" max="2100" oninput="this.value=this.value.slice(0,4)">
-      </div>
-      
-      <div class="campo">
-        <label>🏘️ Ciudad</label>
-        <select id="buscar_ciudad">
-          <option value="">Todas las ciudades</option>
-          <option value="Arroyo Seco">Arroyo Seco</option>
-          <option value="Capitán Bermúdez">Capitán Bermúdez</option>
-          <option value="Casilda">Casilda</option>
-          <option value="Cañada de Gómez">Cañada de Gómez</option>
-          <option value="Coronda">Coronda</option>
-          <option value="Esperanza">Esperanza</option>
-          <option value="Fighiera">Fighiera</option>
-          <option value="Fray Luis Beltrán">Fray Luis Beltrán</option>
-          <option value="Funes">Funes</option>
-          <option value="Granadero Baigorria">Granadero Baigorria</option>
-          <option value="Nelson">Nelson</option>
-          <option value="Oliveros">Oliveros</option>
-          <option value="Pavón">Pavón</option>
-          <option value="Pérez">Pérez</option>
-          <option value="Pueblo Esther">Pueblo Esther</option>
-          <option value="Puerto General San Martín">Puerto General San Martín</option>
-          <option value="Rafaela">Rafaela</option>
-          <option value="Recreo">Recreo</option>
-          <option value="Roldán">Roldán</option>
-          <option value="Rosario">Rosario</option>
-          <option value="San Carlos Centro">San Carlos Centro</option>
-          <option value="San Carlos Norte">San Carlos Norte</option>
-          <option value="San Carlos Sud">San Carlos Sud</option>
-          <option value="San Lorenzo">San Lorenzo</option>
-          <option value="Santa Fe">Santa Fe</option>
-          <option value="Santo Tomé">Santo Tomé</option>
-          <option value="Timbúes">Timbúes</option>
-          <option value="Venado Tuerto">Venado Tuerto</option>
-          <option value="Villa Constitución">Villa Constitución</option>
-          <option value="Zavalla">Zavalla</option>
-          <option value="otra">Otra ciudad...</option>
-        </select>
-      </div>
-
-      <div class="campo">
-        <label>⛽ Combustible</label>
-        <select id="buscar_combustible">
-          <option value="">Todos</option>
-          <option value="Nafta">Nafta</option>
-          <option value="Diésel">Diésel</option>
-          <option value="Eléctrico">Eléctrico</option>
-          <option value="Híbrido">Híbrido</option>
-        </select>
-      </div>
-      <div class="campo">
-        <label>⚙️ Transmisión</label>
-        <select id="buscar_transmision">
-          <option value="">Todas</option>
-          <option value="Manual">Manual</option>
-          <option value="Automática">Automática</option>
-        </select>
-      </div>
-      
-      <div class="fila" style="display: flex; gap: 15px; flex-wrap: wrap;">
-        <div class="campo" style="flex: 1; min-width: 200px;">
-          <label>📏 Kilometraje Mínimo</label>
-          <input type="number" id="buscar_km_min" placeholder="Ej: 0 — Dejalo vacío sin límite">
-        </div>
-        <div class="campo" style="flex: 1; min-width: 200px;">
-          <label>📏 Kilometraje Máximo</label>
-          <input type="number" id="buscar_km_max" placeholder="Ej: 100000 — Dejalo vacío sin límite">
-        </div>
-      </div>
-      
-      <div class="fila" style="display: flex; gap: 15px; flex-wrap: wrap;">
-        <div class="campo" style="flex: 1; min-width: 200px;">
-          <label>💰 Precio Mínimo ($)</label>
-          <input type="number" id="buscar_precio_min" placeholder="Ej: 0 — Dejalo vacío sin límite">
-        </div>
-        <div class="campo" style="flex: 1; min-width: 200px;">
-          <label>💰 Precio Máximo ($)</label>
-          <input type="number" id="buscar_precio_max" placeholder="Ej: 1500000 — Dejalo vacío sin límite">
-        </div>
-      </div>
-
-      <button class="boton-buscar" onclick="realizarBusqueda()">🔍 Buscar Vehículos</button>
+  <div class="form-container">
+    
+    <div id="cargando" style="text-align:center; color:#3182ce; font-weight:600; padding:20px;">
+      🔍 Verificando sesión...
     </div>
 
-    <div class="navegacion" id="caja_navegacion">
-      <button id="btnAnterior" disabled>◀ Anterior</button>
-      <span id="contador" class="contador">—</span>
-      <button id="btnSiguiente" disabled>Siguiente ▶</button>
+    <div id="bloqueNoConectado" class="oculto">
+      <div style="text-align:center; padding:12px; background:#fff3cd; color:#744210; border-radius:10px; border:1px solid #fde68a; font-weight:600; margin-bottom:15px;">
+        🔒 Iniciá sesión para publicar tu vehículo
+      </div>
+      <div class="botones-sesion">
+        <a href="iniciar-sesion.html" class="boton-sesion">🔑 Iniciar Sesión</a>
+        <a href="registrarse.html" class="boton-sesion">📝 Registrarse</a>
+      </div>
     </div>
 
-    <div id="caja_resultado"></div>
+    <div id="bloqueConectado" class="oculto">
+      <div class="barra-superior">
+        <span class="texto-conectado">✅ Conectado</span>
+        <button id="btn-cerrar-sesion" class="enlace-cerrar-sesion">Cerrar sesión</button>
+      </div>
+      
+      <div style="text-align:center; margin:15px 0; color:#718096;">— Completá los datos del vehículo —</div>
+    </div>
+
+    <form id="formAuto">
+      
+      <div class="fila">
+        <div class="campo-completo">
+          <div class="etiqueta-linea">
+            <span>🚙</span>
+            <label>Tipo de Vehículo *</label>
+          </div>
+          <select id="tipo_vehiculo" required disabled>
+            <option value="">Seleccionar...</option>
+            <option value="4x4">4x4</option>
+            <option value="Auto">Auto</option>
+            <option value="Camioneta">Camioneta</option>
+            <option value="Cuatriciclo">Cuatriciclo</option>
+            <option value="Furgon">Furgon</option>
+            <option value="Moto">Moto</option>
+            <option value="SUV">SUV</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>🏷️</span>
+            <label>Marca</label>
+          </div>
+          <input type="text" id="marca" placeholder="Ej: Toyota, Ford" required disabled>
+        </div>
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>📋</span>
+            <label>Modelo</label>
+          </div>
+          <input type="text" id="modelo" placeholder="Ej: Corolla, Fiesta" required disabled>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>⚙️</span>
+            <label>Versión</label>
+          </div>
+          <input type="text" id="version" placeholder="Ej: XEi, 1.6 LT" disabled>
+        </div>
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>⛽</span>
+            <label>Combustible</label>
+          </div>
+          <select id="combustible" disabled>
+            <option value="">Seleccionar...</option>
+            <option>Nafta</option>
+            <option>Diésel</option>
+            <option>Eléctrico</option>
+            <option>Híbrido</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>📅</span>
+            <label>Año</label>
+          </div>
+          <input type="number" id="anio" placeholder="Ej: 2015" disabled oninput="this.value=this.value.slice(0,4)">
+        </div>
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>🔄</span>
+            <label>Transmisión</label>
+          </div>
+          <select id="transmision" disabled>
+            <option value="">Seleccionar...</option>
+            <option>Manual</option>
+            <option>Automática</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>📏</span>
+            <label>Kilometraje</label>
+          </div>
+          <input type="number" id="kilometraje" placeholder="Solo números" disabled>
+        </div>
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>💰</span>
+            <label>Precio</label>
+          </div>
+          <input type="text" id="precio" placeholder="Ej: 1500000" disabled>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo-completo">
+          <div class="etiqueta-linea">
+            <span>🏘️</span>
+            <label>Ciudad</label>
+          </div>
+          <select id="ciudad" disabled>
+            <option value="">Seleccionar...</option>
+            <option value="Arroyo Seco">Arroyo Seco</option>
+            <option value="Capitán Bermúdez">Capitán Bermúdez</option>
+            <option value="Casilda">Casilda</option>
+            <option value="Cañada de Gómez">Cañada de Gómez</option>
+            <option value="Coronda">Coronda</option>
+            <option value="Esperanza">Esperanza</option>
+            <option value="Fighiera">Fighiera</option>
+            <option value="Fray Luis Beltrán">Fray Luis Beltrán</option>
+            <option value="Funes">Funes</option>
+            <option value="Granadero Baigorria">Granadero Baigorria</option>
+            <option value="Nelson">Nelson</option>
+            <option value="Oliveros">Oliveros</option>
+            <option value="Pavón">Pavón</option>
+            <option value="Pérez">Pérez</option>
+            <option value="Pueblo Esther">Pueblo Esther</option>
+            <option value="Puerto General San Martín">Puerto General San Martín</option>
+            <option value="Rafaela">Rafaela</option>
+            <option value="Recreo">Recreo</option>
+            <option value="Roldán">Roldán</option>
+            <option value="Rosario">Rosario</option>
+            <option value="San Carlos Centro">San Carlos Centro</option>
+            <option value="San Carlos Norte">San Carlos Norte</option>
+            <option value="San Carlos Sud">San Carlos Sud</option>
+            <option value="San Lorenzo">San Lorenzo</option>
+            <option value="Santa Fe">Santa Fe</option>
+            <option value="Santo Tomé">Santo Tomé</option>
+            <option value="Timbúes">Timbúes</option>
+            <option value="Venado Tuerto">Venado Tuerto</option>
+            <option value="Villa Constitución">Villa Constitución</option>
+            <option value="Zavalla">Zavalla</option>
+            <option value="otra">Otra ciudad...</option>
+          </select>
+        </div>
+      </div>
+      
+      <div id="campoOtraCiudad" class="campo-completo oculto campo-otra-ciudad">
+        <div class="etiqueta-linea">
+          <span>✏️</span>
+          <label>Escribí tu ciudad</label>
+        </div>
+        <input type="text" id="otra_ciudad" placeholder="Nombre de tu ciudad" disabled>
+      </div>
+
+      <div class="fila">
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>👤</span>
+            <label>Dueño / Nombre</label>
+          </div>
+          <input type="text" id="dueno" placeholder="Tu nombre completo" disabled>
+        </div>
+        <div class="campo">
+          <div class="etiqueta-linea">
+            <span>📍</span>
+            <label>Dirección</label>
+          </div>
+          <input type="text" id="direccion" placeholder="Calle y número" disabled>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo-completo">
+          <div class="etiqueta-linea">
+            <span>📞</span>
+            <label>Teléfono / WhatsApp</label>
+          </div>
+          <input type="tel" id="telefono" placeholder="Tu número con código de área" disabled>
+        </div>
+      </div>
+
+      <div class="fila-chk">
+        <div class="campo-chk">
+          <input type="checkbox" id="permuta" disabled>
+          <label for="permuta">✅ Acepta permuta</label>
+        </div>
+        <div class="campo-chk">
+          <input type="checkbox" id="contado" disabled>
+          <label for="contado">💵 Solo contado</label>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo-completo">
+          <div class="etiqueta-linea">
+            <span>📝</span>
+            <label>Deuda / Estado</label>
+          </div>
+          <input type="text" id="deuda" placeholder="Ej: Sin deudas / Con deuda de..." disabled>
+        </div>
+      </div>
+
+      <div class="fila">
+        <div class="campo-completo">
+          <div class="etiqueta-linea">
+            <span>ℹ️</span>
+            <label>Descripción</label>
+          </div>
+          <textarea id="descripcion" rows="4" placeholder="Detalles, estado, equipamiento..." disabled></textarea>
+        </div>
+      </div>
+
+      <!-- === 8 CAMPOS DE FOTOS === -->
+      <div class="seccion-fotos">
+        <div class="titulo-fotos">📸 Fotos del vehículo</div>
+        
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto1">📷</button>
+          <span class="foto-nombre">Foto 1</span>
+          <div class="foto-cuadro" id="vista_foto1">Sin foto</div>
+          <input type="file" class="foto-input" id="foto1" accept="image/*">
+        </div>
+        
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto2">📷</button>
+          <span class="foto-nombre">Foto 2</span>
+          <div class="foto-cuadro" id="vista_foto2">Sin foto</div>
+          <input type="file" class="foto-input" id="foto2" accept="image/*">
+        </div>
+        
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto3">📷</button>
+          <span class="foto-nombre">Foto 3</span>
+          <div class="foto-cuadro" id="vista_foto3">Sin foto</div>
+          <input type="file" class="foto-input" id="foto3" accept="image/*">
+        </div>
+        
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto4">📷</button>
+          <span class="foto-nombre">Foto 4</span>
+          <div class="foto-cuadro" id="vista_foto4">Sin foto</div>
+          <input type="file" class="foto-input" id="foto4" accept="image/*">
+        </div>
+        
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto5">📷</button>
+          <span class="foto-nombre">Foto 5</span>
+          <div class="foto-cuadro" id="vista_foto5">Sin foto</div>
+          <input type="file" class="foto-input" id="foto5" accept="image/*">
+        </div>
+        
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto6">📷</button>
+          <span class="foto-nombre">Foto 6</span>
+          <div class="foto-cuadro" id="vista_foto6">Sin foto</div>
+          <input type="file" class="foto-input" id="foto6" accept="image/*">
+        </div>
+        
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto7">📷</button>
+          <span class="foto-nombre">Foto 7</span>
+          <div class="foto-cuadro" id="vista_foto7">Sin foto</div>
+          <input type="file" class="foto-input" id="foto7" accept="image/*">
+        </div>
+        
+        <div class="foto-linea">
+          <button type="button" class="foto-boton" id="btn_foto8">📷</button>
+          <span class="foto-nombre">Foto 8</span>
+          <div class="foto-cuadro" id="vista_foto8">Sin foto</div>
+          <input type="file" class="foto-input" id="foto8" accept="image/*">
+        </div>
+      </div>
+      <!-- === FIN DE LAS FOTOS === -->
+
+      <button type="submit" class="boton" id="btnEnviar" disabled>✅ Publicar Vehículo</button>
+    </form>
+
+    <div id="mensaje" class="mensaje"></div>
 
     <a href="index.html" class="volver">← Volver a la página principal</a>
   </div>
@@ -494,340 +517,164 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    const nombresFotos = [
-      'Motor', 'Frente', 'Lateral izquierdo', 'Lateral derecho', 'Parte trasera',
-      'Interior 1', 'Interior 2', 'Interior 3', 'Interior 4',
-      'Ruedas', 'Detalle Extra 1', 'Detalle Extra 2'
-    ];
+    let supabaseClient = null;
+    let usuarioIdActivo = null;
+    let fotosBase64 = {
+      foto1: null, foto2: null, foto3: null, foto4: null,
+      foto5: null, foto6: null, foto7: null, foto8: null
+    };
 
-    let sbClient = null;
-    let idsFiltrados = [];
-    let indiceActual = 0;
-    let idVehiculoActual = null;
-
-    async function getSupabase() {
-      if (!sbClient) {
-        sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    function getSupabase() {
+      if (!supabaseClient) {
+        supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       }
-      return sbClient;
+      return supabaseClient;
     }
 
-    function verificarSesion() {
+    // === PREVISUALIZACIÓN DE FOTOS ===
+    function configurarFoto(numero) {
+      const btn = document.getElementById(`btn_foto${numero}`);
+      const input = document.getElementById(`foto${numero}`);
+      const vista = document.getElementById(`vista_foto${numero}`);
+
+      btn.addEventListener('click', () => input.click());
+
+      input.addEventListener('change', (e) => {
+        const archivo = e.target.files[0];
+        if (!archivo) return;
+
+        const lector = new FileReader();
+        lector.onload = function(event) {
+          fotosBase64[`foto${numero}`] = event.target.result;
+          vista.innerHTML = `<img src="${event.target.result}" alt="Foto ${numero}">`;
+        };
+        lector.readAsDataURL(archivo);
+      });
+    }
+
+    async function verificarSesion() {
       const correo = localStorage.getItem('correo_usuario');
       const nombre = localStorage.getItem('nombre_usuario');
-      const zonaUsuario = document.getElementById('zonaUsuario');
-      const zonaOlvido = document.getElementById('zonaOlvido');
+      const bloqueCargando = document.getElementById('cargando');
+      const bloqueNoConectado = document.getElementById('bloqueNoConectado');
+      const bloqueConectado = document.getElementById('bloqueConectado');
+      const formulario = document.getElementById('formAuto');
+      const campos = formulario.querySelectorAll('input, select, textarea, button');
 
       if (correo && nombre) {
-        zonaUsuario.innerHTML = `
-          <span class="nombre-usuario">👤 ${nombre}</span>
-          <button onclick="cerrarSesion()" class="btn-sesion btn-salir">Cerrar sesión</button>`;
-        zonaOlvido.style.display = 'none';
+        // Conectado
+        const sb = getSupabase();
+        const { data: usuario } = await sb.from('usuarios').select('id').eq('correo', correo).single();
+        usuarioIdActivo = usuario?.id;
+
+        bloqueCargando.classList.add('oculto');
+        bloqueNoConectado.classList.add('oculto');
+        bloqueConectado.classList.remove('oculto');
+        campos.forEach(c => c.disabled = false);
       } else {
-        zonaUsuario.innerHTML = '';
-        zonaOlvido.innerHTML = `<a href="index.html">Volvé al inicio para entrar o crear tu cuenta</a>`;
-        zonaOlvido.style.display = 'block';
+        // No conectado
+        bloqueCargando.classList.add('oculto');
+        bloqueNoConectado.classList.remove('oculto');
+        bloqueConectado.classList.add('oculto');
+        formulario.style.opacity = '0.4';
       }
     }
 
-    function cerrarSesion() {
+    document.getElementById('ciudad').addEventListener('change', function() {
+      const campoOtra = document.getElementById('campoOtraCiudad');
+      const inputOtra = document.getElementById('otra_ciudad');
+      if (this.value === 'otra') {
+        campoOtra.classList.remove('oculto');
+        inputOtra.disabled = false;
+      } else {
+        campoOtra.classList.add('oculto');
+        inputOtra.disabled = true;
+        inputOtra.value = '';
+      }
+    });
+
+    document.getElementById('btn-cerrar-sesion').addEventListener('click', () => {
       localStorage.removeItem('correo_usuario');
       localStorage.removeItem('nombre_usuario');
       localStorage.removeItem('usuario_id');
       window.location.href = 'index.html';
-    }
+    });
 
-    async function obtenerUsuarioId(correo) {
-      if (!correo) return null;
-      const sb = await getSupabase();
-      const { data, error } = await sb
-        .from('usuarios')
-        .select('id')
-        .eq('correo', correo)
-        .single();
-      return error ? null : data?.id;
-    }
-
-    function limpiarPrecio(precioTexto) {
-      if (!precioTexto) return null;
-      const soloNumeros = String(precioTexto).replace(/[^0-9.,]/g, '').replace(',', '.');
-      const valor = parseFloat(soloNumeros);
-      return isNaN(valor) ? null : valor;
-    }
-
-    function mostrarCajaCodigo() {
-      const correo = localStorage.getItem('correo_usuario');
-      if (!correo) {
-        alert('🔐 Primero debes entrar desde la página principal');
-        window.location.href = 'index.html';
-        return;
-      }
-      document.getElementById('cajaCodigo').classList.add('mostrar');
-      document.getElementById('codigoIngresado').value = '';
-      document.getElementById('codigoIngresado').focus();
-    }
-
-    function ocultarCajaCodigo() {
-      document.getElementById('cajaCodigo').classList.remove('mostrar');
-    }
-
-    async function guardarConCodigo() {
-      const codigo = document.getElementById('codigoIngresado').value.trim();
+    document.getElementById('formAuto').addEventListener('submit', async function(e) {
+      e.preventDefault();
       
-      if (!codigo || codigo.length < 6) {
-        alert('⚠️ El código debe tener 6 caracteres');
-        return;
-      }
-      if (!idVehiculoActual) {
-        alert('⚠️ No hay vehículo seleccionado');
-        return;
-      }
+      const mensaje = document.getElementById('mensaje');
+      mensaje.style.display = 'none';
 
-      const correo = localStorage.getItem('correo_usuario');
-      const usuario_id = await obtenerUsuarioId(correo);
-      if (!usuario_id) {
-        alert('❌ No se encontró tu cuenta');
-        return;
+      let ciudadFinal = document.getElementById('ciudad').value;
+      if (ciudadFinal === 'otra') {
+        ciudadFinal = document.getElementById('otra_ciudad').value.trim();
+        if (!ciudadFinal) {
+          mensaje.className = 'mensaje error';
+          mensaje.textContent = '⚠️ Escribí tu ciudad por favor';
+          mensaje.style.display = 'block';
+          return;
+        }
       }
 
-      const sb = await getSupabase();
+      const datos = {
+        tipo_vehiculo: document.getElementById('tipo_vehiculo').value,
+        marca: document.getElementById('marca').value.trim(),
+        modelo: document.getElementById('modelo').value.trim(),
+        version: document.getElementById('version').value.trim(),
+        combustible: document.getElementById('combustible').value,
+        anio: parseInt(document.getElementById('anio').value) || null,
+        transmision: document.getElementById('transmision').value,
+        kilometraje: parseInt(document.getElementById('kilometraje').value) || null,
+        precio: document.getElementById('precio').value.trim(),
+        ciudad: ciudadFinal,
+        dueno: document.getElementById('dueno').value.trim(),
+        direccion: document.getElementById('direccion').value.trim(),
+        telefono: document.getElementById('telefono').value.trim(),
+        permuta: document.getElementById('permuta').checked,
+        contado: document.getElementById('contado').checked,
+        deuda: document.getElementById('deuda').value.trim(),
+        descripcion: document.getElementById('descripcion').value.trim(),
+        usuario_id: usuarioIdActivo,
+        foto1: fotosBase64.foto1,
+        foto2: fotosBase64.foto2,
+        foto3: fotosBase64.foto3,
+        foto4: fotosBase64.foto4,
+        foto5: fotosBase64.foto5,
+        foto6: fotosBase64.foto6,
+        foto7: fotosBase64.foto7,
+        foto8: fotosBase64.foto8
+      };
 
-      const { data: existe } = await sb
-        .from('mis_vehiculos')
-        .select('id')
-        .eq('usuario_id', usuario_id)
-        .eq('vehiculo_id', idVehiculoActual)
-        .maybeSingle();
-
-      if (existe) {
-        alert('ℹ️ Este vehículo ya está en "Mis Vehículos"');
-        ocultarCajaCodigo();
+      if (!datos.tipo_vehiculo || !datos.marca || !datos.modelo) {
+        mensaje.className = 'mensaje error';
+        mensaje.textContent = '⚠️ Completá Tipo, Marca y Modelo son obligatorios';
+        mensaje.style.display = 'block';
         return;
       }
 
-      const { error } = await sb.from('mis_vehiculos').insert({
-        usuario_id: usuario_id,
-        vehiculo_id: idVehiculoActual
-      });
+      const sb = getSupabase();
+      const { error } = await sb.from('autos').insert(datos);
 
       if (error) {
-        alert('❌ Error: ' + error.message);
-        return;
-      }
-
-      alert('✅ ¡Agregado a "Mis Vehículos" correctamente! 🎉');
-      ocultarCajaCodigo();
-    }
-
-    async function realizarBusqueda() {
-      const tipo = document.getElementById('buscar_tipo').value;
-      const marca = document.getElementById('buscar_marca').value.trim();
-      const modelo = document.getElementById('buscar_modelo').value.trim();
-      const anio = document.getElementById('buscar_anio').value.trim();
-      const ciudad = document.getElementById('buscar_ciudad').value;
-      const combustible = document.getElementById('buscar_combustible').value;
-      const transmision = document.getElementById('buscar_transmision').value;
-      const kmMin = document.getElementById('buscar_km_min').value.trim();
-      const kmMax = document.getElementById('buscar_km_max').value.trim();
-      const precioMin = document.getElementById('buscar_precio_min').value.trim();
-      const precioMax = document.getElementById('buscar_precio_max').value.trim();
-
-      const caja = document.getElementById('caja_resultado');
-      const cajaNav = document.getElementById('caja_navegacion');
-      const btnAnt = document.getElementById('btnAnterior');
-      const btnSig = document.getElementById('btnSiguiente');
-      
-      caja.innerHTML = `<div class="cargando">🔄 Buscando vehículos...</div>`;
-      idsFiltrados = [];
-      indiceActual = 0;
-      idVehiculoActual = null;
-      btnAnt.disabled = true;
-      btnSig.disabled = true;
-      cajaNav.classList.remove('activa');
-
-      const sb = await getSupabase();
-      let consulta = sb.from('autos').select('*');
-
-      if (tipo) consulta = consulta.eq('tipo_vehiculo', tipo);
-      if (marca) consulta = consulta.ilike('marca', `%${marca}%`);
-      if (modelo) consulta = consulta.ilike('modelo', `%${modelo}%`);
-      if (anio && anio.length === 4) {
-        const numAnio = parseInt(anio);
-        if (!isNaN(numAnio)) consulta = consulta.eq('anio', numAnio);
-      }
-      if (ciudad && ciudad !== 'otra') {
-        consulta = consulta.eq('ciudad', ciudad);
-      }
-      if (combustible) consulta = consulta.eq('combustible', combustible);
-      if (transmision) consulta = consulta.eq('transmision', transmision);
-
-      consulta = consulta.order('id', { ascending: false });
-      const { data, error } = await consulta;
-
-      if (error) {
-        caja.innerHTML = `<div class="sin-resultado">❌ Error: ${error.message}</div>`;
-        return;
-      }
-      if (!data || data.length === 0) {
-        caja.innerHTML = `<div class="sin-resultado">📭 No se encontraron vehículos con esos datos</div>`;
-        return;
-      }
-
-      let resultados = data;
-      
-      if (kmMin) {
-        const numKmMin = parseInt(kmMin);
-        if (!isNaN(numKmMin)) {
-          resultados = resultados.filter(auto => 
-            auto.kilometraje !== null && auto.kilometraje >= numKmMin
-          );
-        }
-      }
-      if (kmMax) {
-        const numKmMax = parseInt(kmMax);
-        if (!isNaN(numKmMax)) {
-          resultados = resultados.filter(auto => 
-            auto.kilometraje === null || auto.kilometraje <= numKmMax
-          );
-        }
-      }
-      
-      if (precioMin) {
-        const numPrecioMin = parseFloat(precioMin);
-        if (!isNaN(numPrecioMin)) {
-          resultados = resultados.filter(auto => {
-            const valor = limpiarPrecio(auto.precio);
-            return valor === null || valor >= numPrecioMin;
-          });
-        }
-      }
-      if (precioMax) {
-        const numPrecioMax = parseFloat(precioMax);
-        if (!isNaN(numPrecioMax)) {
-          resultados = resultados.filter(auto => {
-            const valor = limpiarPrecio(auto.precio);
-            return valor === null || valor <= numPrecioMax;
-          });
-        }
-      }
-
-      if (resultados.length === 0) {
-        caja.innerHTML = `<div class="sin-resultado">📭 Ningún vehículo cumple con los filtros elegidos</div>`;
-        return;
-      }
-
-      idsFiltrados = resultados.map(item => item.id);
-      cajaNav.classList.add('activa');
-      btnAnt.disabled = false;
-      btnSig.disabled = false;
-      await cargarUno(0);
-    }
-
-    async function cargarUno(posicion) {
-      if (posicion < 0 || posicion >= idsFiltrados.length) return;
-
-      const caja = document.getElementById('caja_resultado');
-      caja.innerHTML = `<div class="cargando">🔄 Cargando vehículo ${posicion+1} de ${idsFiltrados.length}...</div>`;
-
-      const sb = await getSupabase();
-      const { data: vehiculo, error } = await sb
-        .from('autos')
-        .select('*')
-        .eq('id', idsFiltrados[posicion])
-        .single();
-
-      if (error || !vehiculo) {
-        caja.innerHTML = `<div class="sin-resultado">❌ Error al cargar el vehículo</div>`;
-        return;
-      }
-
-      idVehiculoActual = vehiculo.id;
-
-      let fotosHtml = '';
-      for (let i = 1; i <= 12; i++) {
-        const foto = vehiculo[`foto${i}`];
-        if (foto) {
-          fotosHtml += `
-            <div class="foto-caja">
-              <div class="foto-ver"><img src="${foto}" alt="${nombresFotos[i-1]}"></div>
-              <div class="foto-nombre">${nombresFotos[i-1]}</div>
-            </div>
-          `;
-        }
-      }
-      const hayFotos = fotosHtml !== '';
-
-      caja.innerHTML = `
-        <button class="boton-favorito" onclick="mostrarCajaCodigo()">
-          💙 AGREGAR A MIS VEHÍCULOS
-        </button>
-
-        <div id="cajaCodigo" class="caja-codigo">
-          <h3>🔐 Escribí tu código de seguridad</h3>
-          <input type="text" id="codigoIngresado" class="input-codigo" placeholder="Tu código..." maxlength="6">
-          <button class="boton-guardar" onclick="guardarConCodigo()">✅ Guardar en Mis Vehículos</button>
-          <button class="boton-cancelar" onclick="ocultarCajaCodigo()">❌ Cancelar</button>
-        </div>
-        
-        <div class="tarjeta">
-          ${vehiculo.tipo_vehiculo ? `<span class="etiqueta-tipo">${vehiculo.tipo_vehiculo}</span>` : ''}
-          
-          <div class="titulo-vehiculo">${vehiculo.marca || ''} ${vehiculo.modelo || ''} — ${vehiculo.anio || ''}</div>
-          <div class="fila"><strong>Versión:</strong> ${vehiculo.version || '-'}</div>
-          <div class="fila"><strong>Ciudad:</strong> ${vehiculo.ciudad || '-'}</div>
-          <div class="fila"><strong>Kilometraje:</strong> ${vehiculo.kilometraje ? vehiculo.kilometraje.toLocaleString('es-AR') + ' km' : 'No indicado'}</div>
-          <div class="fila"><strong>Combustible:</strong> ${vehiculo.combustible || '-'}</div>
-          <div class="fila"><strong>Transmisión:</strong> ${vehiculo.transmision || '-'}</div>
-          <div class="fila"><strong>Precio:</strong> ${vehiculo.precio || '-'}</div>
-          <div class="fila"><strong>Dueño:</strong> ${vehiculo.dueno || '-'}</div>
-          <div class="fila"><strong>Dirección:</strong> ${vehiculo.direccion || '-'}</div>
-          <div class="fila"><strong>Teléfono:</strong> ${vehiculo.telefono || '-'}</div>
-          <div>
-            ${vehiculo.permuta ? '<span class="etiqueta permuta">✅ Acepta permuta</span>' : ''}
-            ${vehiculo.contado ? '<span class="etiqueta contado">💵 Solo contado</span>' : ''}
-          </div>
-          <div class="fila" style="margin-top: 10px;"><strong>Deuda:</strong> ${vehiculo.deuda || 'Sin deudas'}</div>
-          <div class="fila"><strong>Descripción:</strong> ${vehiculo.descripcion || '-'}</div>
-          
-          ${hayFotos ? `
-          <div class="fotos-titulo">📸 Fotos del vehículo</div>
-          <div class="fotos-cuadricula">${fotosHtml}</div>
-          ` : ''}
-        </div>
-      `;
-      document.getElementById('contador').textContent = 
-        `${posicion + 1} de ${idsFiltrados.length}`;
-    }
-
-    async function vehiculoAnterior() {
-      if (idsFiltrados.length === 0) return;
-      if (indiceActual === 0) {
-        indiceActual = idsFiltrados.length - 1;
+        mensaje.className = 'mensaje error';
+        mensaje.textContent = '❌ Error: ' + error.message;
+        mensaje.style.display = 'block';
       } else {
-        indiceActual--;
+        mensaje.className = 'mensaje exito';
+        mensaje.textContent = '✅ ¡Vehículo publicado correctamente! 🎉';
+        mensaje.style.display = 'block';
+        this.reset();
+        fotosBase64 = {foto1:null,foto2:null,foto3:null,foto4:null,foto5:null,foto6:null,foto7:null,foto8:null};
+        for(let i=1; i<=8; i++){
+          document.getElementById(`vista_foto${i}`).innerHTML = 'Sin foto';
+        }
       }
-      await cargarUno(indiceActual);
-    }
+    });
 
-    async function vehiculoSiguiente() {
-      if (idsFiltrados.length === 0) return;
-      if (indiceActual === idsFiltrados.length - 1) {
-        indiceActual = 0;
-      } else {
-        indiceActual++;
-      }
-      await cargarUno(indiceActual);
-    }
-
-    document.getElementById('btnAnterior').addEventListener('click', vehiculoAnterior);
-    document.getElementById('btnSiguiente').addEventListener('click', vehiculoSiguiente);
-
-    async function iniciar() {
-      verificarSesion();
-      await getSupabase();
-    }
-
-    iniciar();
+    // Inicializar todo
+    for(let i=1; i<=8; i++) configurarFoto(i);
+    verificarSesion();
   </script>
 
 </body>
