@@ -8,7 +8,8 @@
   <style>
     * {box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', Roboto, sans-serif;}
     body {
-      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      /* 🔵 Celeste más oscurito */
+      background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
       padding: 20px;
       max-width: 850px;
       margin: 0 auto;
@@ -22,11 +23,12 @@
       font-weight: 800;
     }
     .form-container {
-      background: #faf8f0;
+      /* 🟡 Cremita más oscurito */
+      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 25px;
       border-radius: 18px;
       box-shadow: 0 6px 16px rgba(44,82,130,0.12);
-      border: 1px solid #f0e9d6;
+      border: 1px solid #bfa980;
     }
     .fila { display: flex; gap: 15px; margin-bottom: 18px; flex-wrap: wrap; }
     .campo { flex: 1 1 45%; min-width: 160px; }
@@ -39,7 +41,7 @@
     }
     .etiqueta-linea label {
       font-weight: 600;
-      color: #2c5282;
+      color: #5a4f3f;
       font-size: 14px;
     }
     input, select, textarea {
@@ -115,18 +117,19 @@
     .volver {
       display: inline-block;
       margin-top: 22px;
-      color: #3182ce;
+      color: #1e40af;
       text-decoration: none;
       font-weight: 600;
       padding: 10px 18px;
       background: rgba(255,255,255,0.6);
       border-radius: 10px;
     }
+    .volver:hover { background: #d7e6f2; }
     .foto-seccion { margin: 28px 0 15px; }
     .foto-titulo-seccion {
       font-size: 19px;
       font-weight: 700;
-      color: #2c5282;
+      color: #5a4f3f;
       margin-bottom: 20px;
     }
     .foto-tarjeta {
@@ -144,7 +147,7 @@
     .foto-nombre {
       font-weight: 700;
       font-size: 15px;
-      color: #2c5282;
+      color: #5a4f3f;
       flex: 1;
     }
     .icono-camara { font-size: 20px; flex-shrink: 0; }
@@ -223,12 +226,12 @@
           <select id="tipo_vehiculo" required disabled>
             <option value="">Seleccionar...</option>
             <option value="Auto">🚗 Auto</option>
+            <option value="Moto">🏍️ Moto</option>
             <option value="Camioneta">🚙 Camioneta / Pick-up</option>
-            <option value="4x4">🚐 4x4 / Todoterreno</option>
-            <option value="SUV">🚘 SUV / Crossover</option>
-            <option value="Furgon">🚚 Furgón / Utilitario</option>
+            <option value="4x4">⛰️ 4x4 / Todoterreno</option>
+            <option value="SUV">🏔️ SUV / Crossover</option>
+            <option value="Furgón">📦 Furgón / Utilitario</option>
             <option value="Cuatriciclo">🏍️ Cuatriciclo</option>
-            <option value="Moto">🛵 Moto</option>
           </select>
         </div>
       </div>
