@@ -8,47 +8,49 @@
   <style>
     * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif;}
     body {
-      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      /* 🔵 Celeste más oscurito — igual que todas las páginas */
+      background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
       min-height: 100vh;
       display: flex; justify-content: center; align-items: center;
       padding: 20px;
     }
     .caja {
-      background: #faf8f0;
+      /* 🟡 Cremita oscurito — igual que las otras */
+      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 40px 30px;
       border-radius: 24px;
       max-width: 420px; width: 100%;
       box-shadow: 0 8px 25px rgba(44, 82, 130, 0.12);
-      border: 1px solid #f0e9d6;
+      border: 1px solid #bfa980;
     }
     h1 {color: #2c5282; text-align: center; margin-bottom: 10px; font-size: 22px; font-weight: 800;}
-    .subtitulo {color: #5a6872; text-align: center; margin-bottom: 25px; font-size: 15px; line-height: 1.5;}
-    label {display: block; margin-bottom: 8px; margin-top: 10px; font-weight: 600; color: #2c5282;}
+    .subtitulo {color: #5a4f3f; text-align: center; margin-bottom: 25px; font-size: 15px; line-height: 1.5;}
+    label {display: block; margin-bottom: 8px; margin-top: 10px; font-weight: 600; color: #5a4f3f;}
     .grupo-input {position: relative;}
     input {
-      width: 100%; padding: 14px 45px 14px 16px; border: 2px solid #ddd; border-radius: 12px;
-      font-size: 15px; background: #fff;
+      width: 100%; padding: 14px 45px 14px 16px; border: 2px solid #c5d6e8; border-radius: 12px;
+      font-size: 15px; background: #fff; color: #4a5568;
     }
-    input:focus {outline: none; border-color: #3182ce;}
+    input:focus {outline: none; border-color: #3182ce; box-shadow: 0 0 0 3px rgba(49,130,206,0.12);}
     .ojito {
       position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
       background: none; border: none; font-size: 20px; cursor: pointer; padding: 0;
-      line-height: 1;
+      line-height: 1; color: #718096;
     }
     .boton-azul {
       width: 100%; padding: 14px; background: linear-gradient(135deg, #3182ce, #2b6cb0); color: #fff;
       border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 20px;
       transition: transform 0.2s;
     }
-    .boton-azul:hover {transform: translateY(-2px);}
+    .boton-azul:hover {transform: translateY(-2px); background: linear-gradient(135deg, #4a90d9, #3182ce);}
     .mensaje {margin-top: 20px; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; display: none;}
     .exito {background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7;}
     .error {background: #ffebee; color: #c62828; border: 2px solid #ef9a9a;}
     .enlace-volver {
       display: block; text-align: center; margin-top: 25px;
-      color: #3182ce; font-weight: 600; text-decoration: none;
+      color: #1e40af; font-weight: 600; text-decoration: none;
     }
-    .enlace-volver:hover {text-decoration: underline;}
+    .enlace-volver:hover {color: #3182ce; text-decoration: underline;}
   </style>
 </head>
 <body>
@@ -56,15 +58,15 @@
   <h1>🔑 Contraseña Nueva</h1>
   <p class="subtitulo">Escribí tu contraseña nueva dos veces para confirmarla</p>
 
-  <label for="claveNueva">Contraseña nueva (máximo 8 caracteres)</label>
+  <label for="claveNueva">Contraseña nueva (mínimo 8 caracteres)</label>
   <div class="grupo-input">
-    <input type="password" id="claveNueva" placeholder="Escribí tu contraseña nueva" maxlength="8">
+    <input type="password" id="claveNueva" placeholder="Escribí tu contraseña nueva">
     <button type="button" class="ojito" id="ojo1">👁️</button>
   </div>
 
   <label for="claveRepetir">Repetir contraseña</label>
   <div class="grupo-input">
-    <input type="password" id="claveRepetir" placeholder="Repetí la contraseña" maxlength="8">
+    <input type="password" id="claveRepetir" placeholder="Repetí la contraseña">
     <button type="button" class="ojito" id="ojo2">👁️</button>
   </div>
 
@@ -79,7 +81,6 @@
 const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
 const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-// ✅ UNA SOLA VEZ — sin duplicados
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 function mostrarMensaje(texto, tipo) {
@@ -89,21 +90,18 @@ function mostrarMensaje(texto, tipo) {
   m.textContent = texto;
 }
 
-// ✅ OJITO 1 — Ver/Ocultar primera contraseña
 document.getElementById('ojo1').addEventListener('click', () => {
   const campo = document.getElementById('claveNueva');
   campo.type = campo.type === 'password' ? 'text' : 'password';
   document.getElementById('ojo1').textContent = campo.type === 'password' ? '👁️' : '🙈';
 });
 
-// ✅ OJITO 2 — Ver/Ocultar repetir contraseña
 document.getElementById('ojo2').addEventListener('click', () => {
   const campo = document.getElementById('claveRepetir');
   campo.type = campo.type === 'password' ? 'text' : 'password';
   document.getElementById('ojo2').textContent = campo.type === 'password' ? '👁️' : '🙈';
 });
 
-// ✅ Guardar contraseña nueva
 document.getElementById('btnGuardar').addEventListener('click', async () => {
   const c1 = document.getElementById('claveNueva').value;
   const c2 = document.getElementById('claveRepetir').value;
@@ -116,8 +114,8 @@ document.getElementById('btnGuardar').addEventListener('click', async () => {
     mostrarMensaje('⚠️ Las contraseñas no coinciden', 'error');
     return;
   }
-  if (c1.length < 6) {
-    mostrarMensaje('⚠️ Mínimo 6 caracteres', 'error');
+  if (c1.length < 8) {
+    mostrarMensaje('⚠️ Mínimo 8 caracteres', 'error');
     return;
   }
 
