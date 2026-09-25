@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Iniciar sesión — Vehículos en Venta</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif;}
+    body {
+      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .tarjeta {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 24px;
+      box-shadow: 0 10px 30px rgba(44,82,130,0.08);
+      width: 100%;
+      max-width: 440px;
+      animation: entradaSuave 0.6s ease-out;
+    }
+    @keyframes entradaSuave {
+      from {opacity:0; transform:translateY(20px);}
+      to {opacity:1; transform:translateY(0);}
+    }
+    h1 {text-align:center; color:#2c5282; font-size:1.8rem; margin-bottom:0.5rem;}
+    .subtitulo {text-align:center; color:#5a6872; margin-bottom:2rem;}
+    label {display:block; margin-top:1.2rem; margin-bottom:0.4rem; font-weight:600; color:#2d3748;}
+    .input-contenedor {position:relative;}
+    input {
+      width:100%; padding:1rem 3rem 1rem 1rem;
+      border:2px solid #e2e8f0; border-radius:12px; font-size:1rem;
+      transition: border-color 0.2s;
+    }
+    input:focus {outline:none; border-color:#3182ce; box-shadow:0 0 0 4px rgba(49,130,206,0.15);}
+    .btn-ver {
+      position:absolute; right:1rem; top:50%; transform:translateY(-50%);
+      background:transparent; border:none; font-size:1.3rem; cursor:pointer; color:#718096;
+      padding:0; line-height:1;
+    }
+    .boton-ingresar {
+      width:100%; padding:1rem; margin-top:1.8rem;
+      background:linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color:white; border:none; border-radius:12px;
+      font-size:1.1rem; font-weight:700; cursor:pointer;
+      transition: transform 0.2s;
+    }
+    .boton-ingresar:hover {transform:translateY(-2px); box-shadow:0 6px 16px rgba(49,130,206,0.25);}
+    .boton-ingresar:disabled {opacity:0.7; cursor:not-allowed; transform:none;}
+    .mensaje {margin-top:1.2rem; padding:1rem; border-radius:10px; display:none; text-align:center; font-weight:600;}
+    .error {background:#fed7d7; color:#9b2c2c; display:block;}
+    .exito {background:#c6f6d5; color:#22543d; display:block;}
+    .volver {display:block; text-align:center; margin-top:1.5rem; color:#4a5568; text-decoration:none; font-weight:500;}
+    .volver:hover {color:#3182ce; text-decoration:underline;}
+  </style>
+</head>
+<body>
+  <div class="tarjeta">
+    <h1>🔐 Iniciar sesión</h1>
+    <p class="subtitulo">Ingresá tus datos para entrar</p>
+
+    <form id="formIngreso">
+      <label for="correo">Correo electrónico</label>
+      <input type="email" id="correo" required placeholder="tu@correo.com">
+
+      <label for="contraseña">Contraseña</label>
+      <div class="input-contenedor">
+        <input type="password" id="contraseña" required placeholder="Tu contraseña">
+        <button type="button" id="btnVer" class="btn-ver">👁️</button>
+      </div>
+
+      <button type="submit" id="botonIngresar" class="boton-ingresar">Ingresar ✅</button>
+      <div id="mensaje" class="mensaje"></div>
+    </form>
+
+    <a href="index.html" class="volver">← Volver al inicio</a>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+
+    // ✅ UNA SOLA VEZ — sin repetir NADA
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const inputContra = document.getElementById('contraseña');
+    const btnVer = document.getElementById('btnVer');
+    const form = document.getElementById('formIngreso');
+    const mensaje = document.getElementById('mensaje');
+    const boton = document.getElementById('botonIngresar');
+
+    btnVer.addEventListener('click', function() {
+      inputContra.type = inputContra.type === 'password' ? 'text' : 'password';
+      btnVer.textContent = inputContra.type === 'password' ? '👁️' : '🙈';
+    });
+
+    function mostrarMensaje(texto, tipo) {
+      mensaje.textContent = texto;
+      mensaje.className = 'mensaje ' + tipo;
+    }
+
+    form.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      mensaje.className = 'mensaje';
+
+      const correo = document.getElementById('correo').value.trim();
+      const contraseña = document.getElementById('contraseña').value;
+
+      boton.disabled = true;
+      boton.textContent = 'Ingresando...';
+
+      try {
+        const { data, error } = await supabaseClient.auth.signInWithPassword({
+          email: correo,
+          password: contraseña
+        });
+
+        if (error) throw error;
+
+        mostrarMensaje('✅ ¡Bienvenido! Redirigiendo...', 'exito');
+        setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+
+      } catch (err) {
+        let texto = '';
+        if (err.message.includes('Invalid login credentials')) {
+          texto = 'Correo o contraseña incorrectos.';
+        } else if (err.message.includes('Email not confirmed')) {
+          texto = 'Primero confirmá tu correo.';
+        } else {
+          texto = err.message;
+        }
+        mostrarMensaje('❌ ' + texto, 'error');
+      } finally {
+        boton.disabled = false;
+        boton.textContent = 'Ingresar ✅';
+      }
+    });
+  </script>
+</body>
+</html>
