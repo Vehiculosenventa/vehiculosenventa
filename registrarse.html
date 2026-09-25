@@ -159,15 +159,15 @@
       <label for="correo">Correo electrónico</label>
       <input type="email" id="correo" required placeholder="tu@correo.com">
 
-      <label for="contraseña">Contraseña</label>
+      <label for="contraseña">Contraseña (máximo 8 caracteres)</label>
       <div class="input-con-boton">
-        <input type="password" id="contraseña" required minlength="6" placeholder="Mínimo 6 caracteres">
+        <input type="password" id="contraseña" required maxlength="8" placeholder="Hasta 8 caracteres">
         <button type="button" class="btn-ver" id="btnVerContra" title="Ver contraseña">👁️</button>
       </div>
 
       <label for="confirmarContraseña">Confirmar contraseña</label>
       <div class="input-con-boton">
-        <input type="password" id="confirmarContraseña" required minlength="6" placeholder="Repetí la contraseña">
+        <input type="password" id="confirmarContraseña" required maxlength="8" placeholder="Repetí la contraseña">
         <button type="button" class="btn-ver" id="btnVerConfirmar" title="Ver contraseña">👁️</button>
       </div>
 
@@ -182,12 +182,10 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpem5ra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    // ✅ Una sola instancia de Supabase
     const supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Botones ver/ocultar contraseña
     function configurarBotonVer(inputId, botonId) {
       const input = document.getElementById(inputId);
       const boton = document.getElementById(botonId);
@@ -218,6 +216,11 @@
       const correo = document.getElementById('correo').value.trim();
       const contraseña = document.getElementById('contraseña').value;
       const confirmarContraseña = document.getElementById('confirmarContraseña').value;
+
+      if (contraseña.length < 6) {
+        mostrarMensaje('❌ La contraseña debe tener al menos 6 caracteres.', 'error');
+        return;
+      }
 
       if (contraseña !== confirmarContraseña) {
         mostrarMensaje('❌ Las contraseñas no coinciden.', 'error');
