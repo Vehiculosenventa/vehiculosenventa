@@ -219,13 +219,13 @@
           <label>Tipo de Vehículo *</label>
           <select id="tipo_vehiculo" required disabled>
             <option value="">Seleccionar...</option>
-            <option value="Auto">Auto</option>
-            <option value="Camioneta">Camioneta / Pick-up</option>
-            <option value="4x4">4x4 / Todoterreno</option>
-            <option value="SUV">SUV / Crossover</option>
-            <option value="Furgon">Furgón / Utilitario</option>
-            <option value="Cuatriciclo">Cuatriciclo</option>
-            <option value="Moto">Moto</option>
+            <option value="Auto">🚗 Auto</option>
+            <option value="Camioneta">🚙 Camioneta / Pick-up</option>
+            <option value="4x4">🚐 4x4 / Todoterreno</option>
+            <option value="SUV">🚘 SUV / Crossover</option>
+            <option value="Furgon">🚚 Furgón / Utilitario</option>
+            <option value="Cuatriciclo">🏍️ Cuatriciclo</option>
+            <option value="Moto">🛵 Moto</option>
           </select>
         </div>
       </div>
@@ -304,23 +304,23 @@
 
       <div class="fila">
         <div class="campo-completo">
-          <label>Ciudad / Localidad</label>
+          <label>📍 Ciudad / Localidad</label>
           <select id="ciudad" disabled>
             <option value="">Seleccionar...</option>
-            <option>Arroyo Seco</option>
-            <option>Capitán Bermúdez</option>
-            <option>Coronda</option>
-            <option>El Trébol</option>
-            <option>Funes</option>
-            <option>Granadero Baigorria</option>
-            <option>Las Parejas</option>
-            <option>Los Ángeles</option>
-            <option>Pérez</option>
-            <option>Roldán</option>
-            <option>Rosario</option>
-            <option>San Lorenzo</option>
-            <option>Villa Constitución</option>
-            <option>Villa Gobernador Gálvez</option>
+            <option>📍 Arroyo Seco</option>
+            <option>📍 Capitán Bermúdez</option>
+            <option>📍 Coronda</option>
+            <option>📍 El Trébol</option>
+            <option>📍 Funes</option>
+            <option>📍 Granadero Baigorria</option>
+            <option>📍 Las Parejas</option>
+            <option>📍 Pérez</option>
+            <option>📍 Roldán</option>
+            <option>📍 Rosario</option>
+            <option>📍 San José de la Esquina</option>
+            <option>📍 San Lorenzo</option>
+            <option>📍 Villa Constitución</option>
+            <option>📍 Villa Gobernador Gálvez</option>
           </select>
         </div>
       </div>
@@ -553,8 +553,18 @@
           fotos[`foto${i}`] = input.files[0] ? await archivoABase64(input.files[0]) : null;
         }
 
+        let tipoVehiculoValor = document.getElementById('tipo_vehiculo').value || null;
+        if (tipoVehiculoValor) {
+          tipoVehiculoValor = tipoVehiculoValor.replace(/^[^\s]+\s*/, '');
+        }
+        
+        let ciudadValor = document.getElementById('ciudad').value || null;
+        if (ciudadValor) {
+          ciudadValor = ciudadValor.replace(/^📍\s*/, '');
+        }
+
         const datos = {
-          tipo_vehiculo: document.getElementById('tipo_vehiculo').value || null,
+          tipo_vehiculo: tipoVehiculoValor,
           marca: document.getElementById('marca').value || null,
           modelo: document.getElementById('modelo').value || null,
           version: document.getElementById('version').value || null,
@@ -565,7 +575,7 @@
           precio: parseInt(document.getElementById('precio').value) || null,
           dueno: document.getElementById('dueno').value || null,
           direccion: document.getElementById('direccion').value || null,
-          ciudad: document.getElementById('ciudad').value || null,
+          ciudad: ciudadValor,
           telefono: document.getElementById('telefono').value || null,
           permuta: document.getElementById('permuta').checked,
           contado: document.getElementById('contado').checked,
