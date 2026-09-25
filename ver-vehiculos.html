@@ -12,18 +12,15 @@
       padding: 0;
       font-family: 'Segoe UI', Roboto, sans-serif;
     }
-
     body {
       background: linear-gradient(135deg, #5fa8d3 0%, #3b82b8 100%);
       min-height: 100vh;
       padding: 20px;
     }
-
     .contenedor {
       max-width: 550px;
       margin: 0 auto;
     }
-
     h1 {
       text-align: center;
       color: #ffffff;
@@ -31,14 +28,12 @@
       font-size: 24px;
       font-weight: 800;
     }
-
     .subtitulo {
       text-align: center;
       color: #e0edf7;
       margin-bottom: 25px;
       font-size: 15px;
     }
-
     .tarjeta-vehiculo {
       background: #ffffff;
       border-radius: 20px;
@@ -47,7 +42,6 @@
       margin-bottom: 25px;
       border: 3px solid #3b82b8;
     }
-
     .campo {
       padding: 12px 0;
       border-bottom: 1px solid #e5eef7;
@@ -55,28 +49,23 @@
       justify-content: space-between;
       font-size: 16px;
     }
-
     .campo:last-child {
       border-bottom: none;
     }
-
     .etiqueta {
       font-weight: 600;
       color: #2c5282;
     }
-
     .valor {
       color: #1a365d;
       font-weight: 500;
     }
-
     .navegacion {
       display: flex;
       justify-content: space-between;
       align-items: center;
       margin-bottom: 25px;
     }
-
     .boton-nav {
       padding: 10px 20px;
       background: #ffffff;
@@ -88,13 +77,11 @@
       cursor: pointer;
       transition: all 0.2s ease;
     }
-
     .boton-nav:hover:not(:disabled) {
       background: #3b82b8;
       color: #ffffff;
       transform: translateY(-1px);
     }
-
     .boton-nav:disabled {
       opacity: 0.4;
       cursor: not-allowed;
@@ -103,13 +90,11 @@
       color: #94b8d4;
       border-color: #94b8d4;
     }
-
     .contador {
       color: #ffffff;
       font-weight: 600;
       font-size: 15px;
     }
-
     .volver {
       display: inline-block;
       margin-top: 10px;
@@ -121,11 +106,9 @@
       border-radius: 10px;
       transition: background 0.2s ease;
     }
-
     .volver:hover {
       background: rgba(255,255,255,0.35);
     }
-
     .sin-resultados {
       background: #ffffff;
       border-radius: 20px;
@@ -136,7 +119,6 @@
       font-weight: 500;
       border: 3px solid #3b82b8;
     }
-
     .cargando {
       text-align: center;
       color: #ffffff;
@@ -159,9 +141,7 @@
         <span id="contador" class="contador">1 de 1</span>
         <button id="btn-siguiente" class="boton-nav">Siguiente ➡️</button>
       </div>
-
       <div id="tarjeta-vehiculo" class="tarjeta-vehiculo"></div>
-
       <a href="catalogo.html" class="volver">← Volver al Catálogo</a>
     </div>
 
@@ -177,6 +157,7 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
+    // UNA SOLA declaración ✅
     const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let listaVehiculos = [];
@@ -208,7 +189,7 @@
 
       if (error) {
         console.error("Error:", error);
-        alert("Error al buscar vehículos");
+        alert("Error al buscar vehículos: " + error.message);
         return;
       }
 
@@ -248,7 +229,6 @@
       `;
 
       document.getElementById("contador").textContent = `${indiceActual + 1} de ${listaVehiculos.length}`;
-
       document.getElementById("btn-anterior").disabled = indiceActual === 0;
       document.getElementById("btn-siguiente").disabled = indiceActual === listaVehiculos.length - 1;
     }
