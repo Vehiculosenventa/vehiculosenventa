@@ -8,45 +8,51 @@
   <style>
     * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif;}
     body {
-      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      /* 🔵 Celeste oscurito — IGUAL a TODAS las páginas */
+      background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
       min-height: 100vh;
       display: flex; justify-content: center; align-items: center;
       padding: 20px;
     }
     .caja {
-      background: #faf8f0; /* Cremita clarito de siempre ✨ */
+      /* 🟡 Cremita oscurito — IGUAL a las otras */
+      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 40px 30px;
       border-radius: 24px;
       max-width: 420px; width: 100%;
       box-shadow: 0 8px 25px rgba(44, 82, 130, 0.12);
-      border: 1px solid #f0e9d6;
+      border: 1px solid #bfa980;
     }
-    h1 {color: #d32f2f; text-align: center; margin-bottom: 20px; font-size: 22px; font-weight: 800;}
-    .cargando {text-align: center; color: #3182ce; font-weight: 600; padding: 20px;}
+    h1 {color: #c53030; text-align: center; margin-bottom: 20px; font-size: 22px; font-weight: 800;}
+    .cargando {text-align: center; color: #2c5282; font-weight: 600; padding: 20px;}
     .aviso-sesion {
       padding: 12px; border-radius: 10px; margin-bottom: 20px; text-align: center; font-weight: 600;
     }
     .conectado {background: #e6f2e6; color: #22543d; border: 1px solid #9ae6b4;}
     .no-conectado {background: #fff3cd; color: #744210; border: 1px solid #fde68a;}
-    label {display: block; margin-bottom: 6px; margin-top: 18px; font-weight: 600; color: #2c5282;}
+    label {display: block; margin-bottom: 6px; margin-top: 18px; font-weight: 600; color: #5a4f3f;}
     input {
-      width: 100%; padding: 12px 15px; border: 2px solid #ddd; border-radius: 10px;
-      font-size: 15px; background: #fff;
+      width: 100%; padding: 12px 15px; border: 2px solid #c5d6e8; border-radius: 10px;
+      font-size: 15px; background: #fff; color: #4a5568;
     }
-    input:focus {outline: none; border-color: #d32f2f;}
+    input:focus {outline: none; border-color: #c53030; box-shadow: 0 0 0 3px rgba(197,48,48,0.12);}
     .boton-rojo {
       width: 100%; padding: 14px; background: linear-gradient(135deg, #e53e3e, #c53030); color: #fff;
       border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 25px;
       transition: transform 0.2s;
     }
-    .boton-rojo:hover {transform: translateY(-2px);}
+    .boton-rojo:hover {transform: translateY(-2px); background: linear-gradient(135deg, #eb5757, #e53e3e);}
     .boton-azul {
       display: block; width: 100%; padding: 12px;
       background: linear-gradient(135deg, #3182ce, #2b6cb0); color: #fff;
       border: none; border-radius: 12px; font-size: 16px; font-weight: 600;
       text-align: center; text-decoration: none; margin-top: 10px; transition: transform 0.2s;
     }
-    .boton-azul:hover {transform: translateY(-2px);}
+    .boton-azul:hover {transform: translateY(-2px); background: linear-gradient(135deg, #4a90d9, #3182ce);}
+    .boton-gris {
+      background: linear-gradient(135deg, #718096, #4a5568);
+    }
+    .boton-gris:hover {background: linear-gradient(135deg, #8a9ab0, #718096);}
     .mensaje {margin-top: 20px; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; display: none;}
     .exito {background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7;}
     .error {background: #ffebee; color: #c62828; border: 2px solid #ef9a9a;}
@@ -63,7 +69,7 @@
   <div id="bloqueNoConectado" class="oculto">
     <div class="aviso-sesion no-conectado">🔒 Debés iniciar sesión primero</div>
     <a href="iniciar-sesion.html" class="boton-azul">Ir a Iniciar Sesión</a>
-    <a href="index.html" class="boton-azul" style="background:linear-gradient(135deg,#718096,#4a5568)">Volver al Inicio</a>
+    <a href="index.html" class="boton-azul boton-gris">Volver al Inicio</a>
   </div>
 
   <!-- ✅ Conectado -->
@@ -88,7 +94,6 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 // ✅ UNA SOLA VEZ — sin duplicados
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-// Detectar sesión REAL
 async function revisarSesion() {
   try {
     const { data: { session } } = await supabaseClient.auth.getSession();
@@ -115,34 +120,30 @@ function mostrarMensaje(texto, tipo) {
   m.textContent = texto;
 }
 
-// Borrar usuario
-document.addEventListener('click', async function(e) {
-  if (e.target && e.target.id === 'btnBorrar') {
-    const correo = document.getElementById('correoBorrar').value.trim();
+document.getElementById('btnBorrar').addEventListener('click', async function() {
+  const correo = document.getElementById('correoBorrar').value.trim();
 
-    if (!correo) {
-      mostrarMensaje('⚠️ Escribí el correo a borrar', 'error');
-      return;
-    }
+  if (!correo) {
+    mostrarMensaje('⚠️ Escribí el correo a borrar', 'error');
+    return;
+  }
 
-    try {
-      const { error } = await supabaseClient
-        .from('usuario')
-        .delete()
-        .eq('correo', correo);
+  try {
+    const { error } = await supabaseClient
+      .from('usuario')
+      .delete()
+      .eq('correo', correo);
 
-      if (error) throw error;
+    if (error) throw error;
 
-      mostrarMensaje('✅ Usuario borrado correctamente', 'exito');
-      document.getElementById('correoBorrar').value = '';
+    mostrarMensaje('✅ Usuario borrado correctamente', 'exito');
+    document.getElementById('correoBorrar').value = '';
 
-    } catch (err) {
-      mostrarMensaje('❌ Error: ' + err.message, 'error');
-    }
+  } catch (err) {
+    mostrarMensaje('❌ Error: ' + err.message, 'error');
   }
 });
 
-// Ejecutar
 revisarSesion();
 </script>
 </body>
