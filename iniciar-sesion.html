@@ -8,7 +8,8 @@
   <style>
     * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif;}
     body {
-      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      /* 🔵 Celeste más oscurito — igual que todas las páginas */
+      background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -16,10 +17,12 @@
       padding: 20px;
     }
     .tarjeta {
-      background: white;
+      /* 🟡 Cremita oscurito — igual que las otras */
+      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 2.5rem;
       border-radius: 24px;
-      box-shadow: 0 10px 30px rgba(44,82,130,0.08);
+      box-shadow: 0 10px 30px rgba(44,82,130,0.12);
+      border: 1px solid #bfa980;
       width: 100%;
       max-width: 440px;
       animation: entradaSuave 0.6s ease-out;
@@ -29,13 +32,15 @@
       to {opacity:1; transform:translateY(0);}
     }
     h1 {text-align:center; color:#2c5282; font-size:1.8rem; margin-bottom:0.5rem;}
-    .subtitulo {text-align:center; color:#5a6872; margin-bottom:2rem;}
-    label {display:block; margin-top:1.2rem; margin-bottom:0.4rem; font-weight:600; color:#2d3748;}
+    .subtitulo {text-align:center; color:#5a4f3f; margin-bottom:2rem;}
+    label {display:block; margin-top:1.2rem; margin-bottom:0.4rem; font-weight:600; color:#5a4f3f;}
     .input-contenedor {position:relative;}
     input {
       width:100%; padding:1rem 3rem 1rem 1rem;
-      border:2px solid #e2e8f0; border-radius:12px; font-size:1rem;
+      border:2px solid #c5d6e8; border-radius:12px; font-size:1rem;
       transition: border-color 0.2s;
+      background: #fff;
+      color: #4a5568;
     }
     input:focus {outline:none; border-color:#3182ce; box-shadow:0 0 0 4px rgba(49,130,206,0.15);}
     .btn-ver {
@@ -53,9 +58,9 @@
     .boton-ingresar:hover {transform:translateY(-2px); box-shadow:0 6px 16px rgba(49,130,206,0.25);}
     .boton-ingresar:disabled {opacity:0.7; cursor:not-allowed; transform:none;}
     .mensaje {margin-top:1.2rem; padding:1rem; border-radius:10px; display:none; text-align:center; font-weight:600;}
-    .error {background:#fed7d7; color:#9b2c2c; display:block;}
-    .exito {background:#c6f6d5; color:#22543d; display:block;}
-    .volver {display:block; text-align:center; margin-top:1.5rem; color:#4a5568; text-decoration:none; font-weight:500;}
+    .error {background:#ffebee; color:#c62828; border: 2px solid #ef9a9a; display:block;}
+    .exito {background:#e8f5e9; color:#2e7d32; border: 2px solid #a5d6a7; display:block;}
+    .volver {display:block; text-align:center; margin-top:1.5rem; color:#1e40af; text-decoration:none; font-weight:600;}
     .volver:hover {color:#3182ce; text-decoration:underline;}
   </style>
 </head>
@@ -85,7 +90,6 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    // ✅ UNA SOLA VEZ — sin repetir NADA
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const inputContra = document.getElementById('contraseña');
