@@ -143,6 +143,13 @@
       color: #3182ce;
       font-weight: 600;
     }
+    .contador-caracteres {
+      text-align: right;
+      font-size: 13px;
+      color: #5a6872;
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
   </style>
 </head>
 <body>
@@ -155,50 +162,68 @@
     <form id="formRegistro">
       <label for="nombre">Nombre completo</label>
       <input type="text" id="nombre" required placeholder="Tu nombre y apellido">
-
+      
       <label for="correo">Correo electrónico</label>
       <input type="email" id="correo" required placeholder="tu@correo.com">
-
-      <label for="contraseña">Contraseña (máximo 8 caracteres)</label>
+      
+      <label for="contraseña">Contraseña (entre 6 y 8 caracteres)</label>
       <div class="input-con-boton">
-        <input type="password" id="contraseña" required minlength="6" maxlength="8" placeholder="Entre 6 y 8 caracteres">
+        <!-- maxlength="8" → EL NAVEGADOR NO DEJA ESCRIBIR MÁS -->
+        <input type="password" id="contraseña" required minlength="6" maxlength="8" placeholder="Máximo 8 caracteres">
         <button type="button" class="btn-ver" id="btnVerContra" title="Ver contraseña">👁️</button>
       </div>
-
+      <div class="contador-caracteres" id="contraContador">0 / 8 caracteres</div>
+      
       <label for="confirmarContraseña">Confirmar contraseña</label>
       <div class="input-con-boton">
+        <!-- maxlength="8" → IGUAL PARA LA CONFIRMACIÓN -->
         <input type="password" id="confirmarContraseña" required minlength="6" maxlength="8" placeholder="Repetí la contraseña">
         <button type="button" class="btn-ver" id="btnVerConfirmar" title="Ver contraseña">👁️</button>
       </div>
-
+      <div class="contador-caracteres" id="confirmarContador">0 / 8 caracteres</div>
+      
       <button type="submit" id="btnRegistrar">Crear cuenta ✅</button>
       
       <div id="mensaje" class="mensaje"></div>
     </form>
   </div>
-
+  
   <a href="iniciar-sesion.html" class="volver">← Ya tengo cuenta — Iniciar sesión</a>
   <a href="index.html" class="volver volver-inicio">← Volver a la página principal</a>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpem5ra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-
     const supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // 🔒 CONTROL DE LÍMITE DE CARACTERES — no deja pasar de 8
-    function limitarLongitud(input, maxCaracteres) {
-      input.addEventListener('input', () => {
+    // 🔒 RESTRICCIÓN ESTRICTA: No deja pasar de 8 caracteres ni pegando texto
+    function limitarLongitud(input, maxCaracteres, contadorId = null) {
+      const contador = contadorId ? document.getElementById(contadorId) : null;
+      
+      function actualizar() {
+        // Corta automáticamente si se pasa
         if (input.value.length > maxCaracteres) {
           input.value = input.value.substring(0, maxCaracteres);
         }
-      });
+        // Actualiza el contador visible
+        if (contador) {
+          contador.textContent = `${input.value.length} / ${maxCaracteres} caracteres`;
+          // Cambia de color si llega al límite
+          contador.style.color = input.value.length >= maxCaracteres ? '#b91c1c' : '#5a6872';
+        }
+      }
+      
+      // Detecta escritura, pegado, cambio de valor
+      input.addEventListener('input', actualizar);
+      input.addEventListener('paste', () => setTimeout(actualizar, 0));
+      actualizar();
     }
 
-    // Ojitos ver/ocultar contraseña
+    // Botón ver/ocultar contraseña
     function configurarBotonVer(inputId, botonId) {
       const input = document.getElementById(inputId);
       const boton = document.getElementById(botonId);
+      
       boton.addEventListener('click', () => {
         input.type = input.type === 'password' ? 'text' : 'password';
         boton.textContent = input.type === 'password' ? '👁️' : '🙈';
@@ -206,12 +231,14 @@
       });
     }
 
-    // Aplicar todo
+    // Inicializar TODO con la restricción de 8 caracteres
     const contra = document.getElementById('contraseña');
     const confirmar = document.getElementById('confirmarContraseña');
     
-    limitarLongitud(contra, 8);
-    limitarLongitud(confirmar, 8);
+    // Aplicar límite + contador visible
+    limitarLongitud(contra, 8, 'contraContador');
+    limitarLongitud(confirmar, 8, 'confirmarContador');
+    
     configurarBotonVer('contraseña', 'btnVerContra');
     configurarBotonVer('confirmarContraseña', 'btnVerConfirmar');
 
@@ -234,11 +261,15 @@
       const contraseña = contra.value;
       const confirmarContraseña = confirmar.value;
 
+      // Validaciones finales
       if (contraseña.length < 6) {
         mostrarMensaje('❌ La contraseña debe tener al menos 6 caracteres.', 'error');
         return;
       }
-
+      if (contraseña.length > 8) {
+        mostrarMensaje('❌ La contraseña no puede tener más de 8 caracteres.', 'error');
+        return;
+      }
       if (contraseña !== confirmarContraseña) {
         mostrarMensaje('❌ Las contraseñas no coinciden.', 'error');
         return;
@@ -260,16 +291,18 @@
         if (error) throw error;
 
         mostrarMensaje(
-          '✅ Cuenta creada. Revisá tu correo y confirmá tu cuenta para ingresar.',
+          '✅ Cuenta creada con éxito. Revisá tu correo y confirmá tu cuenta para ingresar.',
           'exito'
         );
         form.reset();
 
       } catch (err) {
-        let texto = err.message || 'Error al crear cuenta.';
+        let texto = err.message || 'Error al crear la cuenta.';
+        
         if (texto.includes('User already registered')) {
-          texto = 'Este correo ya tiene una cuenta. Iniciá sesión.';
+          texto = '⚠️ Este correo ya tiene una cuenta. Iniciá sesión.';
         }
+        
         mostrarMensaje('❌ ' + texto, 'error');
       } finally {
         btn.disabled = false;
