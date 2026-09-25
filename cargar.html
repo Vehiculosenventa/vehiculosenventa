@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Cargar Vehículo — Vehículos en Venta</title>
+  <title>Ingresar Vehículo — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {
@@ -90,19 +90,10 @@
       opacity: 0.7;
     }
     .boton-cerrar {
-      background: transparent;
-      color: #c53030;
-      text-decoration: underline;
-      border: none;
-      padding: 8px 0;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
+      background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
       margin-bottom: 20px;
-      display: inline-block;
-    }
-    .boton-cerrar:hover {
-      color: #9b2c2c;
+      padding: 12px 20px;
+      font-size: 15px;
     }
     .mensaje {
       margin-top: 20px;
@@ -197,6 +188,7 @@
       background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
     }
     .btn-olvide {
+      background: transparent;
       color: #3182ce;
       text-decoration: underline;
       padding: 10px 14px;
@@ -204,9 +196,6 @@
       text-align: center;
       margin-top: 15px;
       font-weight: 600;
-      background: transparent;
-      border: none;
-      cursor: pointer;
     }
     .separador {
       text-align: center;
@@ -220,7 +209,7 @@
 </head>
 <body>
 
-  <h1>🚗 Cargar Vehículo</h1>
+  <h1>🚗 Ingresar Vehículo</h1>
 
   <div class="form-container">
     
@@ -240,8 +229,8 @@
     </div>
 
     <div id="caja-con-sesion" class="oculto">
-      <button id="btn-cerrar-sesion" class="boton-cerrar">
-        Cerrar Sesión
+      <button id="btn-cerrar-sesion" class="boton boton-cerrar">
+        🚪 Cerrar Sesión
       </button>
       <div class="separador">— Completá los datos del vehículo —</div>
     </div>
@@ -521,11 +510,11 @@
   </div>
 
   <script>
-    // ✅ DATOS DE SUPABASE
+    // ✅ DATOS DE SUPABASE — UNA SOLA VEZ
     const SUPABASE_URL = "https://ikancehiaanhnuuykkio.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrYW5jZGlhaWFuaG51dXlra2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // ✅ CREAMOS SUPABASE UNA SOLA VEZ
+    // ✅ CREAMOS SUPABASE UNA SOLA VEZ — SIN DUPLICADOS
     const { createClient } = supabase;
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -554,12 +543,14 @@
       const haySesion = !!session;
       
       if (haySesion) {
+        // ✅ CUANDO INGRESÓ: desaparecen los botones, aparece Cerrar Sesión
         cajaSinSesion.classList.add('oculto');
         cajaConSesion.classList.remove('oculto');
         formAuto.classList.remove('formulario-deshabilitado');
         btnGuardar.disabled = false;
         btnGuardar.textContent = "💾 Guardar Vehículo";
       } else {
+        // ✅ SIN SESIÓN: aparecen los botones de ingresar
         cajaSinSesion.classList.remove('oculto');
         cajaConSesion.classList.add('oculto');
         formAuto.classList.add('formulario-deshabilitado');
