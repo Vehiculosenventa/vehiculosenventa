@@ -181,10 +181,10 @@
   <a href="index.html" class="volver volver-inicio">← Volver a la página principal</a>
 
   <script>
+    // ⚠️ PONÉ ACÁ TUS CLAVES CORRECTAS copiadas de API Keys → anon public
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "PEGÁ_ACÁ_LA_CLAVE_ANON_PUBLIC_COMPLETA";
 
-    // ✅ Una sola instancia de Supabase
     const supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     // Botones ver/ocultar contraseña
@@ -219,15 +219,37 @@
       const contraseña = document.getElementById('contraseña').value;
       const confirmarContraseña = document.getElementById('confirmarContraseña').value;
 
+      // Validar que las contraseñas coincidan
       if (contraseña !== confirmarContraseña) {
         mostrarMensaje('❌ Las contraseñas no coinciden.', 'error');
         return;
       }
 
       btn.disabled = true;
-      btn.textContent = 'Creando cuenta...';
+      btn.textContent = 'Verificando...';
 
       try {
+        // ✅ PRIMERO: Revisar si el correo ya existe en la tabla usuarios
+        const { data: usuarioExistente, error: errorBusqueda } = await supabaseCliente
+          .from('usuarios')
+          .select('correo')
+          .eq('correo', correo)
+          .maybeSingle();
+
+        if (usuarioExistente) {
+          mostrarMensaje(
+            '⚠️ Este correo ya tiene una cuenta. Andá a "Iniciar sesión" o "Olvidé mi contraseña".',
+            'error'
+          );
+          setTimeout(() => {
+            window.location.href = 'iniciar-sesion.html';
+          }, 2500);
+          return;
+        }
+
+        // ✅ Si no existe → crear cuenta
+        btn.textContent = 'Creando cuenta...';
+        
         const { data, error } = await supabaseCliente.auth.signUp({
           email: correo,
           password: contraseña,
@@ -237,8 +259,23 @@
           }
         });
 
-        if (error) throw error;
+        if (error) {
+          // También capturamos el mensaje nativo de Supabase
+          if (error.message.includes('already registered') || 
+              error.message.includes('User already registered')) {
+            mostrarMensaje(
+              '⚠️ Este correo ya está registrado. Andá a "Iniciar sesión".',
+              'error'
+            );
+            setTimeout(() => {
+              window.location.href = 'iniciar-sesion.html';
+            }, 2500);
+            return;
+          }
+          throw error;
+        }
 
+        // ✅ Éxito
         mostrarMensaje(
           '✅ Cuenta creada. Revisá tu correo y confirmá tu cuenta para ingresar.',
           'exito'
@@ -246,11 +283,7 @@
         form.reset();
 
       } catch (err) {
-        let texto = err.message || 'Error al crear cuenta.';
-        if (texto.includes('User already registered')) {
-          texto = 'Este correo ya tiene una cuenta. Iniciá sesión.';
-        }
-        mostrarMensaje('❌ ' + texto, 'error');
+        mostrarMensaje('❌ ' + (err.message || 'Error al crear cuenta.'), 'error');
       } finally {
         btn.disabled = false;
         btn.textContent = 'Crear cuenta ✅';
