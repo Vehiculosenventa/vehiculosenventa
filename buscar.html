@@ -14,7 +14,6 @@
     }
     .contenedor {max-width: 620px; margin: 0 auto;}
 
-    /* ✅ BARRA DE SESIÓN */
     .barra-superior {
       display: flex;
       justify-content: space-between;
@@ -375,7 +374,6 @@
 <body>
 
   <div class="contenedor">
-    <!-- ✅ BARRA DE SESIÓN -->
     <div class="barra-superior">
       <div class="titulo-pagina">🔍 Buscar Vehículo</div>
       <div id="zonaSesion" class="botones-sesion"></div>
@@ -392,6 +390,7 @@
         <select id="buscar_tipo">
           <option value="">Todos los tipos</option>
           <option value="Auto">🚗 Auto</option>
+          <option value="Moto">🏍️ Moto</option>
           <option value="Camioneta">🚙 Camioneta / Pick-up</option>
           <option value="4x4">⛰️ 4x4 / Todoterreno</option>
           <option value="SUV">🏔️ SUV / Crossover</option>
@@ -496,8 +495,9 @@
   </div>
 
   <script>
-    const SUPABASE_URL = "https://https://uhdypavizwkkbygrvuex.supabase.co://uhdypavizwkkbygrvuex.supabase.co
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    // ⚠️ PONÉ ACÁ TUS CLAVES CORRECTAS
+    const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpzndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
     const nombresFotos = [
       'Motor', 'Frente', 'Lateral izquierdo', 'Lateral derecho', 'Parte trasera',
@@ -517,7 +517,6 @@
       return sbClient;
     }
 
-    // ✅ GESTIONAR BOTONES DE SESIÓN
     function verificarSesion() {
       const correo = localStorage.getItem('correo_usuario');
       const nombre = localStorage.getItem('nombre_usuario');
@@ -534,7 +533,7 @@
       } else {
         zonaSesion.innerHTML = `
           <a href="iniciar-sesion.html" class="btn-sesion btn-iniciar">Iniciar sesión</a>
-          <a href="registrarse.html" class="btn-sesion btn-registrarse">Crear usuario</a>`;
+          <a href="registrarse.html" class="btn-sesion btn-registrar">Crear cuenta</a>`;
         zonaOlvido.innerHTML = `<a href="recuperar-contraseña.html">Olvidé mi contraseña</a>`;
         zonaOlvido.style.display = 'block';
       }
@@ -595,7 +594,6 @@
 
       const sb = await getSupabase();
 
-      // Verificar si ya está guardado
       const { data: existe } = await sb
         .from('mis_vehiculos')
         .select('id')
@@ -609,7 +607,6 @@
         return;
       }
 
-      // Guardar en mis_vehiculos
       const { error } = await sb.from('mis_vehiculos').insert({
         usuario_id: usuario_id,
         vehiculo_id: idVehiculoActual
