@@ -8,39 +8,42 @@
   <style>
     * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif;}
     body {
-      background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
+      /* 🔵 Celeste más oscurito — igual que todas */
+      background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
       min-height: 100vh;
       display: flex; justify-content: center; align-items: center;
       padding: 20px;
     }
     .caja {
-      background: #faf8f0;
+      /* 🟡 Cremita oscurito — igual que las otras */
+      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 40px 30px;
       border-radius: 24px;
       max-width: 420px; width: 100%;
       box-shadow: 0 8px 25px rgba(44, 82, 130, 0.12);
-      border: 1px solid #f0e9d6;
+      border: 1px solid #bfa980;
     }
     h1 {color: #2c5282; text-align: center; margin-bottom: 10px; font-size: 22px; font-weight: 800;}
-    .subtitulo {color: #5a6872; text-align: center; margin-bottom: 25px; font-size: 15px; line-height: 1.5;}
-    label {display: block; margin-bottom: 8px; margin-top: 10px; font-weight: 600; color: #2c5282;}
+    .subtitulo {color: #5a4f3f; text-align: center; margin-bottom: 25px; font-size: 15px; line-height: 1.5;}
+    label {display: block; margin-bottom: 8px; margin-top: 10px; font-weight: 600; color: #5a4f3f;}
     input {
-      width: 100%; padding: 14px 16px; border: 2px solid #ddd; border-radius: 12px;
+      width: 100%; padding: 14px 16px; border: 2px solid #c5d6e8; border-radius: 12px;
       font-size: 15px; background: #fff;
+      color: #4a5568;
     }
-    input:focus {outline: none; border-color: #3182ce;}
+    input:focus {outline: none; border-color: #3182ce; box-shadow: 0 0 0 3px rgba(49,130,206,0.12);}
     .boton-azul {
       width: 100%; padding: 14px; background: linear-gradient(135deg, #3182ce, #2b6cb0); color: #fff;
       border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; margin-top: 20px;
       transition: transform 0.2s;
     }
-    .boton-azul:hover {transform: translateY(-2px);}
+    .boton-azul:hover {transform: translateY(-2px); background: linear-gradient(135deg, #4a90d9, #3182ce);}
     .mensaje {margin-top: 20px; padding: 15px; border-radius: 10px; text-align: center; font-weight: 600; display: none;}
     .exito {background: #e8f5e9; color: #2e7d32; border: 2px solid #a5d6a7;}
     .error {background: #ffebee; color: #c62828; border: 2px solid #ef9a9a;}
     .enlace-volver {
       display: block; text-align: center; margin-top: 25px;
-      color: #3182ce; font-weight: 600; text-decoration: none;
+      color: #1e40af; font-weight: 600; text-decoration: none;
     }
     .enlace-volver:hover {text-decoration: underline;}
   </style>
