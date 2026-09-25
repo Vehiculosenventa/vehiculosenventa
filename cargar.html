@@ -82,10 +82,10 @@
     }
     .aviso-sesion {
       padding: 12px; border-radius: 10px; font-weight: 600;
-      flex: 1;
+      flex: 1; text-align: center;
     }
-    .conectado { background: #e6f2e6; color: #22543d; border: 1px solid #9ae6b4; text-align: center; }
-    .no-conectado { background: #fff3cd; color: #744210; border: 1px solid #fde68a; text-align: center; }
+    .conectado { background: #e6f2e6; color: #22543d; border: 1px solid #9ae6b4; }
+    .no-conectado { background: #fff3cd; color: #744210; border: 1px solid #fde68a; }
     .enlace-cerrar-sesion {
       color: #3182ce;
       background: transparent;
@@ -298,14 +298,30 @@
       <div class="fila">
         <div class="campo-completo">
           <label>Dirección</label>
-          <input type="text" id="direccion" placeholder="Ej: Av. San Martín 1234, Rosario" required disabled>
+          <input type="text" id="direccion" placeholder="Ej: Av. San Martín 1234" required disabled>
         </div>
       </div>
 
       <div class="fila">
         <div class="campo-completo">
-          <label>Ciudad</label>
-          <input type="text" id="ciudad" placeholder="Ej: Rosario, Santa Fe" disabled>
+          <label>Ciudad / Localidad</label>
+          <select id="ciudad" disabled>
+            <option value="">Seleccionar...</option>
+            <option>Arroyo Seco</option>
+            <option>Capitán Bermúdez</option>
+            <option>Coronda</option>
+            <option>El Trébol</option>
+            <option>Funes</option>
+            <option>Granadero Baigorria</option>
+            <option>Las Parejas</option>
+            <option>Los Ángeles</option>
+            <option>Pérez</option>
+            <option>Roldán</option>
+            <option>Rosario</option>
+            <option>San Lorenzo</option>
+            <option>Villa Constitución</option>
+            <option>Villa Gobernador Gálvez</option>
+          </select>
         </div>
       </div>
 
