@@ -305,31 +305,126 @@
 
       <div class="fila">
         <div class="campo-completo">
-          <label>📍 Ciudad / Localidad</label>
+          <label>Ciudad / Localidad</label>
           <select id="ciudad" disabled>
             <option value="">Seleccionar...</option>
-            <option>📍 Arroyo Seco</option>
-            <option>📍 Capitán Bermúdez</option>
-            <option>📍 Coronda</option>
-            <option>📍 El Trébol</option>
-            <option>📍 Funes</option>
-            <option>📍 Granadero Baigorria</option>
-            <option>📍 Las Parejas</option>
-            <option>📍 Pérez</option>
-            <option>📍 Roldán</option>
-            <option>📍 Rosario</option>
-            <option>📍 San José de la Esquina</option>
-            <option>📍 San Lorenzo</option>
-            <option>📍 Villa Constitución</option>
-            <option>📍 Villa Gobernador Gálvez</option>
-            <option value="otra">📍 Otra ciudad...</option>
+            <option>Aarón Castellanos</option>
+            <option>Alcorta</option>
+            <option>Alejandra</option>
+            <option>Ángeles</option>
+            <option>Angélica</option>
+            <option>Arroyo Seco</option>
+            <option>Arrufó</option>
+            <option>Avellaneda</option>
+            <option>Baigorria</option>
+            <option>Barrio Alegre</option>
+            <option>Barrancas</option>
+            <option>Beccar</option>
+            <option>Berabevú</option>
+            <option>Bernardo de Irigoyen</option>
+            <option>Berreta</option>
+            <option>Bombal</option>
+            <option>Bigand</option>
+            <option>Bustos</option>
+            <option>Cabañas</option>
+            <option>Cañada de Gómez</option>
+            <option>Capitán Bermúdez</option>
+            <option>Carlos Pellegrini</option>
+            <option>Carmen</option>
+            <option>Casilda</option>
+            <option>Castellanos</option>
+            <option>Cañada Rosquín</option>
+            <option>Centeno</option>
+            <option>Chabás</option>
+            <option>Chañar Ladeado</option>
+            <option>Ceres</option>
+            <option>Coronda</option>
+            <option>Coronel Arnold</option>
+            <option>Coronel Dorrego</option>
+            <option>Coronel Suárez</option>
+            <option>Cruz Alta</option>
+            <option>Despeñaderos</option>
+            <option>Diamante</option>
+            <option>Diego de Alvear</option>
+            <option>El Trébol</option>
+            <option>Empalme San Carlos</option>
+            <option>Esperanza</option>
+            <option>Estación Clucellas</option>
+            <option>Felicia</option>
+            <option>Funes</option>
+            <option>Frontera</option>
+            <option>Galvez</option>
+            <option>Granadero Baigorria</option>
+            <option>Gregorio de Laferrère</option>
+            <option>Hersilia</option>
+            <option>Humberto Primo</option>
+            <option>Ituzaingó</option>
+            <option>Jacinto L. Aráuz</option>
+            <option>Joaquín Gorina</option>
+            <option>Lehmann</option>
+            <option>Leones</option>
+            <option>Lucas González</option>
+            <option>Maciel</option>
+            <option>Maggiolo</option>
+            <option>Maquinista Savio</option>
+            <option>María Juana</option>
+            <option>Matilde</option>
+            <option>Melincué</option>
+            <option>Moises Ville</option>
+            <option>Monte Vera</option>
+            <option>Murphy</option>
+            <option>Nacional</option>
+            <option>Nelson</option>
+            <option>Nueva Roma</option>
+            <option>Oliveros</option>
+            <option>Palacios</option>
+            <option>Pavón</option>
+            <option>Pérez</option>
+            <option>Piñero</option>
+            <option>Progreso</option>
+            <option>Pueblo Andino</option>
+            <option>Pueblo Esther</option>
+            <option>Rafaela</option>
+            <option>Recreo</option>
+            <option>Reconquista</option>
+            <option>Romang</option>
+            <option>Roldán</option>
+            <option>Rosario</option>
+            <option>San Carlos Centro</option>
+            <option>San Carlos Norte</option>
+            <option>San Carlos Sud</option>
+            <option>San Cristóbal</option>
+            <option>San Francisco</option>
+            <option>San José de la Esquina</option>
+            <option>San Justo</option>
+            <option>San Lorenzo</option>
+            <option>San Vicente</option>
+            <option>Santa Fe</option>
+            <option>Santa Teresa</option>
+            <option>Santo Tomé</option>
+            <option>Saralegui</option>
+            <option>Sastre</option>
+            <option>Suardi</option>
+            <option>Tacuarendó</option>
+            <option>Timbúes</option>
+            <option>Tostado</option>
+            <option>Venado Tuerto</option>
+            <option>Vera</option>
+            <option>Villa Amelia</option>
+            <option>Villa Constitución</option>
+            <option>Villa Gobernador Gálvez</option>
+            <option>Villa María</option>
+            <option>Villa Mugueta</option>
+            <option>Villa Trinidad</option>
+            <option>Zavalla</option>
+            <option value="otra">Otra ciudad...</option>
           </select>
         </div>
       </div>
 
       <div class="fila campo-otra-ciudad oculto" id="bloqueOtraCiudad">
         <div class="campo-completo">
-          <label>✏️ Escribí tu ciudad</label>
+          <label>Escribí tu ciudad</label>
           <input type="text" id="ciudad_otra" placeholder="Ej: Casilda, Venado Tuerto...">
         </div>
       </div>
@@ -463,13 +558,14 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpzndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const selectCiudad = document.getElementById('ciudad');
+    const bloqueOtraCiudad = document.getElementById('bloqueOtraCiudad');
 
     function setFormDisabled(desactivar) {
       const campos = document.querySelectorAll('input, select, textarea, button[type="submit"]');
       campos.forEach(campo => campo.disabled = desactivar);
       
-      // El campo de "otra ciudad" se activa solo cuando corresponde
-      if (!desactivar && document.getElementById('ciudad').value === 'otra') {
+      if (!desactivar && selectCiudad.value === 'otra') {
         document.getElementById('ciudad_otra').disabled = false;
       }
       
@@ -503,10 +599,6 @@
       });
     }
 
-    // Mostrar/ocultar campo para escribir ciudad propia
-    const selectCiudad = document.getElementById('ciudad');
-    const bloqueOtraCiudad = document.getElementById('bloqueOtraCiudad');
-    
     selectCiudad.addEventListener('change', () => {
       if (selectCiudad.value === 'otra') {
         bloqueOtraCiudad.classList.remove('oculto');
@@ -587,7 +679,6 @@
           tipoVehiculoValor = tipoVehiculoValor.replace(/^[^\s]+\s*/, '');
         }
         
-        // Ciudad: si eligió "otra", usamos lo que escribió
         let ciudadValor;
         if (selectCiudad.value === 'otra') {
           ciudadValor = document.getElementById('ciudad_otra').value.trim();
@@ -596,9 +687,6 @@
           }
         } else {
           ciudadValor = selectCiudad.value || null;
-          if (ciudadValor) {
-            ciudadValor = ciudadValor.replace(/^📍\s*/, '');
-          }
         }
 
         const datos = {
