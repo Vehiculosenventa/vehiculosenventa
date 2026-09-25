@@ -78,6 +78,12 @@
         <button type="button" id="btnVer" class="btn-ver">👁️</button>
       </div>
 
+      <label for="repetir_contraseña">Repetir contraseña</label>
+      <div class="input-contenedor">
+        <input type="password" id="repetir_contraseña" required placeholder="Escribí la contraseña otra vez">
+        <button type="button" id="btnVer2" class="btn-ver">👁️</button>
+      </div>
+
       <button type="submit" id="botonCrear" class="boton-crear">Crear Cuenta ✅</button>
       <div id="mensaje" class="mensaje"></div>
     </form>
@@ -92,7 +98,9 @@
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const inputContra = document.getElementById('contraseña');
+    const inputContra2 = document.getElementById('repetir_contraseña');
     const btnVer = document.getElementById('btnVer');
+    const btnVer2 = document.getElementById('btnVer2');
     const form = document.getElementById('formRegistro');
     const mensaje = document.getElementById('mensaje');
     const boton = document.getElementById('botonCrear');
@@ -100,6 +108,11 @@
     btnVer.addEventListener('click', function() {
       inputContra.type = inputContra.type === 'password' ? 'text' : 'password';
       btnVer.textContent = inputContra.type === 'password' ? '👁️' : '🙈';
+    });
+
+    btnVer2.addEventListener('click', function() {
+      inputContra2.type = inputContra2.type === 'password' ? 'text' : 'password';
+      btnVer2.textContent = inputContra2.type === 'password' ? '👁️' : '🙈';
     });
 
     function mostrarMensaje(texto, tipo) {
@@ -114,8 +127,15 @@
       const nombre = document.getElementById('nombre').value.trim();
       const correo = document.getElementById('correo').value.trim();
       const contraseña = document.getElementById('contraseña').value;
+      const repetirContraseña = document.getElementById('repetir_contraseña').value;
 
-      // Validación de contraseña
+      // Validación: contraseñas coincidan
+      if (contraseña !== repetirContraseña) {
+        mostrarMensaje('⚠️ Las contraseñas no coinciden. Escribilas igual.', 'error');
+        return;
+      }
+
+      // Validación: mínimo 8 caracteres
       if (contraseña.length < 8) {
         mostrarMensaje('⚠️ La contraseña debe tener al menos 8 caracteres.', 'error');
         return;
@@ -125,14 +145,13 @@
       boton.textContent = 'Verificando...';
 
       try {
-        // 🔍 PRIMERO: revisamos si el correo ya existe en la tabla usuarios
-        const { data: usuarioExistente, error: errorBusqueda } = await supabaseClient
+        // 🔍 Primero: revisamos si el correo ya existe
+        const { data: usuarioExistente } = await supabaseClient
           .from('usuarios')
           .select('id, correo')
           .eq('correo', correo)
           .maybeSingle();
 
-        // ✅ Si ya existe → NO dejamos crear y avisamos
         if (usuarioExistente) {
           mostrarMensaje('⚠️ Este correo ya está registrado. Iniciá sesión o usá otro correo.', 'aviso-existe');
           boton.disabled = false;
@@ -140,7 +159,7 @@
           return;
         }
 
-        // ✅ Si no existe → creamos la cuenta
+        // ✅ No existe → creamos la cuenta
         const { data: authData, error: errorAuth } = await supabaseClient.auth.signUp({
           email: correo,
           password: contraseña
@@ -161,18 +180,11 @@
         setTimeout(() => { window.location.href = 'index.html'; }, 1800);
 
       } catch (err) {
-        let texto = '';
         if (err.message.includes('User already registered')) {
-          texto = 'Este correo ya tiene una cuenta. Iniciá sesión desde la página principal.';
-          mostrarMensaje('⚠️ ' + texto, 'aviso-existe');
-        } else if (err.message.includes('email')) {
-          texto = 'El correo no es válido.';
-          mostrarMensaje('❌ ' + texto, 'error');
+          mostrarMensaje('⚠️ Este correo ya tiene una cuenta. Iniciá sesión desde la página principal.', 'aviso-existe');
         } else {
-          texto = err.message;
-          mostrarMensaje('❌ Error: ' + texto, 'error');
+          mostrarMensaje('❌ Error: ' + err.message, 'error');
         }
-      } finally {
         boton.disabled = false;
         boton.textContent = 'Crear Cuenta ✅';
       }
