@@ -157,8 +157,8 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    // UNA SOLA declaración ✅
-    const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    // ✅ UNA SOLA VEZ — sin repetir
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let listaVehiculos = [];
     let indiceActual = 0;
@@ -177,7 +177,7 @@
         ? `Filtrando: ${tipoSeleccionado}` 
         : "Todos los vehículos";
 
-      let consulta = supabase.from("autos").select("*");
+      let consulta = supabaseClient.from("autos").select("*");
       
       if (tipoSeleccionado) {
         consulta = consulta.eq("tipo_vehiculo", tipoSeleccionado);
@@ -189,7 +189,7 @@
 
       if (error) {
         console.error("Error:", error);
-        alert("Error al buscar vehículos: " + error.message);
+        alert("Error al buscar: " + error.message);
         return;
       }
 
