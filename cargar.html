@@ -6,7 +6,7 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <title>Ingresar Vehículo — Vehículos en Venta</title>
+  <title>Cargar Vehículo — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     * {
@@ -90,10 +90,19 @@
       opacity: 0.7;
     }
     .boton-cerrar {
-      background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
-      margin-bottom: 20px;
-      padding: 12px 20px;
+      background: transparent;
+      color: #c53030;
+      text-decoration: underline;
+      border: none;
+      padding: 8px 0;
       font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 20px;
+      display: inline-block;
+    }
+    .boton-cerrar:hover {
+      color: #9b2c2c;
     }
     .mensaje {
       margin-top: 20px;
@@ -188,7 +197,6 @@
       background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
     }
     .btn-olvide {
-      background: transparent;
       color: #3182ce;
       text-decoration: underline;
       padding: 10px 14px;
@@ -196,6 +204,9 @@
       text-align: center;
       margin-top: 15px;
       font-weight: 600;
+      background: transparent;
+      border: none;
+      cursor: pointer;
     }
     .separador {
       text-align: center;
@@ -209,7 +220,7 @@
 </head>
 <body>
 
-  <h1>🚗 Ingresar Vehículo</h1>
+  <h1>🚗 Cargar Vehículo</h1>
 
   <div class="form-container">
     
@@ -229,8 +240,8 @@
     </div>
 
     <div id="caja-con-sesion" class="oculto">
-      <button id="btn-cerrar-sesion" class="boton boton-cerrar">
-        🚪 Cerrar Sesión
+      <button id="btn-cerrar-sesion" class="boton-cerrar">
+        Cerrar Sesión
       </button>
       <div class="separador">— Completá los datos del vehículo —</div>
     </div>
@@ -514,11 +525,11 @@
     const SUPABASE_URL = "https://ikancehiaanhnuuykkio.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlrYW5jZGlhaWFuaG51dXlra2lvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // ✅ CREAMOS SUPABASE LO PRIMERO
+    // ✅ CREAMOS SUPABASE UNA SOLA VEZ
     const { createClient } = supabase;
     const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // ✅ FUNCIÓN DE SOLO NÚMEROS
+    // ✅ SOLO NÚMEROS
     function soloNumeros(campo) {
       campo.value = campo.value.replace(/[^0-9]/g, '');
     }
@@ -532,12 +543,12 @@
     const btnGuardar = document.getElementById('btnGuardar');
     const mensaje = document.getElementById('mensaje');
 
-    // ✅ ASIGNAMOS A LOS CAMPOS
+    // ✅ CAMPOS SOLO NÚMEROS
     document.getElementById('anio').addEventListener('input', function() { soloNumeros(this); });
     document.getElementById('kilometraje').addEventListener('input', function() { soloNumeros(this); });
     document.getElementById('precio').addEventListener('input', function() { soloNumeros(this); });
 
-    // ✅ DETECTA SESIÓN INMEDIATAMENTE
+    // ✅ DETECTA SESIÓN Y CAMBIA LA PANTALLA
     async function actualizarInterfaz() {
       const { data: { session } } = await supabase.auth.getSession();
       const haySesion = !!session;
@@ -557,24 +568,26 @@
       }
     }
 
-    // ✅ Cerrar sesión
+    // ✅ CERRAR SESIÓN
     async function cerrarSesion() {
       await supabase.auth.signOut();
       actualizarInterfaz();
     }
     document.getElementById('btn-cerrar-sesion').addEventListener('click', cerrarSesion);
 
-    // ✅ ESCUCHA CAMBIOS DE SESIÓN EN TIEMPO REAL
+    // ✅ ESCUCHA CAMBIOS EN TIEMPO REAL
     supabase.auth.onAuthStateChange((event) => {
       if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
         actualizarInterfaz();
       }
     });
 
+    // ✅ CIUDAD LIBRE
     selectCiudad.addEventListener('change', () => {
       campoLibre.style.display = selectCiudad.value === 'Otra ciudad' ? 'block' : 'none';
     });
 
+    // ✅ PREVISUALIZAR FOTOS
     function verFoto(numero, input) {
       const img = document.getElementById(`img${numero}`);
       const sin = document.getElementById(`sin${numero}`);
@@ -589,7 +602,6 @@
       }
     }
 
-    // Conectar fotos
     for (let i = 1; i <= 12; i++) {
       const input = document.getElementById(`foto${i}`);
       if (input) {
@@ -599,6 +611,7 @@
       }
     }
 
+    // ✅ REDUCIR FOTO
     function reducirFoto(archivo, maxAncho = 900, calidad = 0.75) {
       return new Promise(resolver => {
         const lector = new FileReader();
@@ -624,6 +637,7 @@
       return await reducirFoto(archivo);
     }
 
+    // ✅ GUARDAR VEHÍCULO
     formAuto.addEventListener('submit', async e => {
       e.preventDefault();
       
@@ -699,7 +713,7 @@
       }
     });
 
-    // ✅ SE FIJA EN LA SESIÓN EN CUANTO CARGA LA PÁGINA
+    // ✅ AL CARGAR LA PÁGINA, VERIFICA SI HAY SESIÓN
     actualizarInterfaz();
   </script>
 
