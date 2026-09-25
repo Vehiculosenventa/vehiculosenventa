@@ -29,10 +29,11 @@
       font-weight: 800;
       color: #2c5282;
     }
-    .botones-sesion {
+    .zona-usuario {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
+      align-items: center;
     }
     .btn-sesion {
       padding: 8px 14px;
@@ -44,28 +45,12 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .btn-iniciar {
-      background: #fff;
-      color: #1565C0;
-      border: 2px solid #1565C0;
-    }
-    .btn-iniciar:hover { background: #e3f2fd; }
-    .btn-registrar {
-      background: linear-gradient(135deg, #1976D2 0%, #1565C0 100%);
-      color: #fff;
-    }
-    .btn-registrar:hover { transform: translateY(-1px); }
     .btn-salir {
       background: #fef2f2;
       color: #c53030;
       border: 2px solid #feb2b2;
     }
-    .usuario-conectado {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+    .btn-salir:hover { background: #fee2e2; }
     .nombre-usuario {
       font-weight: 600;
       color: #276749;
@@ -376,7 +361,7 @@
   <div class="contenedor">
     <div class="barra-superior">
       <div class="titulo-pagina">🔍 Buscar Vehículo</div>
-      <div id="zonaSesion" class="botones-sesion"></div>
+      <div id="zonaUsuario" class="zona-usuario"></div>
     </div>
     <div id="zonaOlvido" class="olvido"></div>
 
@@ -413,7 +398,7 @@
       </div>
       
       <div class="campo">
-        <label>📍 Ciudad</label>
+        <label>📍 Ciudad (Santa Fe)</label>
         <select id="buscar_ciudad">
           <option value="">Todas las ciudades</option>
           <option value="Acebal">🏘️ Acebal</option>
@@ -530,21 +515,17 @@
     function verificarSesion() {
       const correo = localStorage.getItem('correo_usuario');
       const nombre = localStorage.getItem('nombre_usuario');
-      const zonaSesion = document.getElementById('zonaSesion');
+      const zonaUsuario = document.getElementById('zonaUsuario');
       const zonaOlvido = document.getElementById('zonaOlvido');
 
       if (correo && nombre) {
-        zonaSesion.innerHTML = `
-          <div class="usuario-conectado">
-            <span class="nombre-usuario">👤 ${nombre}</span>
-            <button onclick="cerrarSesion()" class="btn-sesion btn-salir">Cerrar sesión</button>
-          </div>`;
+        zonaUsuario.innerHTML = `
+          <span class="nombre-usuario">👤 ${nombre}</span>
+          <button onclick="cerrarSesion()" class="btn-sesion btn-salir">Cerrar sesión</button>`;
         zonaOlvido.style.display = 'none';
       } else {
-        zonaSesion.innerHTML = `
-          <a href="iniciar-sesion.html" class="btn-sesion btn-iniciar">Iniciar sesión</a>
-          <a href="registrarse.html" class="btn-sesion btn-registrar">Crear cuenta</a>`;
-        zonaOlvido.innerHTML = `<a href="recuperar-contraseña.html">Olvidé mi contraseña</a>`;
+        zonaUsuario.innerHTML = '';
+        zonaOlvido.innerHTML = `<a href="index.html">Volvé al inicio para entrar o crear tu cuenta</a>`;
         zonaOlvido.style.display = 'block';
       }
     }
@@ -553,7 +534,7 @@
       localStorage.removeItem('correo_usuario');
       localStorage.removeItem('nombre_usuario');
       localStorage.removeItem('usuario_id');
-      window.location.reload();
+      window.location.href = 'index.html';
     }
 
     async function obtenerUsuarioId(correo) {
@@ -570,8 +551,8 @@
     function mostrarCajaCodigo() {
       const correo = localStorage.getItem('correo_usuario');
       if (!correo) {
-        alert('🔐 Primero debes iniciar sesión');
-        window.location.href = 'iniciar-sesion.html';
+        alert('🔐 Primero debes entrar desde la página principal');
+        window.location.href = 'index.html';
         return;
       }
       document.getElementById('cajaCodigo').classList.add('mostrar');
