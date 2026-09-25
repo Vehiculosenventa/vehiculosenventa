@@ -506,7 +506,7 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
     let supabaseClient = null;
     let usuarioIdActivo = null;
@@ -537,29 +537,42 @@
       };
     }
 
-    // === VERIFICAR SESIÓN — ARREGLADO ===
+    // === VERIFICAR SESIÓN — CORREGIDO ===
     async function verificarSesion() {
-      const correo = localStorage.getItem('correo_usuario');
-      const nombre = localStorage.getItem('nombre_usuario');
+      // Probamos TODAS las claves posibles que puede haber guardado
+      const correo = localStorage.getItem('correo_usuario') || localStorage.getItem('correo') || localStorage.getItem('email');
+      const nombre = localStorage.getItem('nombre_usuario') || localStorage.getItem('nombre');
+      const idGuardado = localStorage.getItem('usuario_id') || localStorage.getItem('id');
+      
       const cargando = document.getElementById('cargando');
       const noConectado = document.getElementById('bloqueNoConectado');
       const conectado = document.getElementById('bloqueConectado');
       const form = document.getElementById('formAuto');
       const campos = form.querySelectorAll('input, select, textarea, button');
 
-      if (correo && nombre) {
-        // ✅ SÍ ESTÁ CONECTADO
+      // Si hay cualquiera de las claves = SÍ ESTÁ CONECTADO
+      const haySesion = correo || idGuardado;
+
+      if (haySesion) {
+        // ✅ CONECTADO
         cargando.classList.add('oculto');
         noConectado.classList.add('oculto');
         conectado.classList.remove('oculto');
         campos.forEach(c => c.disabled = false);
         
-        // Obtener id del usuario
-        const sb = getSupabase();
-        const { data } = await sb.from('usuarios').select('id').eq('correo', correo).maybeSingle();
-        usuarioIdActivo = data?.id;
+        // Tomamos el ID guardado o lo buscamos
+        if (idGuardado) {
+          usuarioIdActivo = idGuardado;
+        } else if (correo) {
+          const sb = getSupabase();
+          const { data } = await sb.from('usuarios').select('id').eq('correo', correo).maybeSingle();
+          usuarioIdActivo = data?.id;
+          if (usuarioIdActivo) {
+            localStorage.setItem('usuario_id', usuarioIdActivo);
+          }
+        }
       } else {
-        // ❌ NO ESTÁ CONECTADO
+        // ❌ NO CONECTADO
         cargando.classList.add('oculto');
         noConectado.classList.remove('oculto');
         conectado.classList.add('oculto');
