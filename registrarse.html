@@ -129,13 +129,13 @@
       const contraseña = document.getElementById('contraseña').value;
       const repetirContraseña = document.getElementById('repetir_contraseña').value;
 
-      // 1️⃣ Contraseñas coincidan
+      // 1️⃣ Verificar que las contraseñas coincidan
       if (contraseña !== repetirContraseña) {
         mostrarMensaje('⚠️ Las contraseñas no coinciden. Escribilas igual.', 'error');
         return;
       }
 
-      // 2️⃣ Mínimo 8 caracteres
+      // 2️⃣ Verificar longitud mínima
       if (contraseña.length < 8) {
         mostrarMensaje('⚠️ La contraseña debe tener al menos 8 caracteres.', 'error');
         return;
@@ -145,36 +145,53 @@
       boton.textContent = 'Verificando...';
 
       try {
-        // 🔐 INTENTAMOS CREAR — Supabase nos dice ya existe
-        const { data: authData, error: errorAuth } = await supabaseClient.auth.signUp({
-          email: correo,
-          password: contraseña
-        });
-
-        // ❌ Si el correo ya existe → NO dejamos crear
-        if (errorAuth) {
-          console.log('Error recibido:', errorAuth); // Para ver en consola
-          
-          const mensajeError = errorAuth.message || '';
-          
-          if (mensajeError.includes('User already registered') || 
-              mensajeError.includes('already registered') ||
-              mensajeError.includes('User already exists') ||
-              mensajeError.includes('already exists') ||
-              errorAuth.status === 409 ||
-              errorAuth.status === 400) {
+        // 🔐 PRIMERO: buscamos en la tabla auth de Supabase si existe
+        const { data: usuarios, error: listError } = await supabaseClient.auth.admin.listUsers();
+        
+        if (!listError && usuarios) {
+          const existe = usuarios.users.some(u => u.email === correo);
+          if (existe) {
             mostrarMensaje('⚠️ Este correo ya está registrado. Iniciá sesión o usá otro correo.', 'aviso-existe');
             boton.disabled = false;
             boton.textContent = 'Crear Cuenta ✅';
             return;
           }
+        }
+
+        // 🔐 Si no está en la lista → intentamos crear
+        const { data: authData, error: errorAuth } = await supabaseClient.auth.signUp({
+          email: correo,
+          password: contraseña
+        });
+
+        // ❌ Si Supabase dice que ya existe → NO seguimos
+        if (errorAuth) {
+          console.log('Error completo:', errorAuth);
+          const msg = (errorAuth.message || '').toLowerCase();
           
+          if (msg.includes('already registered') || 
+              msg.includes('already exists') ||
+              msg.includes('user already') ||
+              errorAuth.status === 400 || 
+              errorAuth.status === 409) {
+            mostrarMensaje('⚠️ Este correo ya está registrado. Iniciá sesión o usá otro correo.', 'aviso-existe');
+            boton.disabled = false;
+            boton.textContent = 'Crear Cuenta ✅';
+            return;
+          }
           throw errorAuth;
         }
 
-        // ✅ Si llegamos acá → cuenta nueva
-        if (authData.user) {
-          // Guardamos en la tabla usuarios
+        // ⚠️ CASO ESPECIAL: si devuelve usuario pero ya estaba confirmado → ya existía
+        if (authData && authData.user && authData.user.confirmed_at) {
+          mostrarMensaje('⚠️ Este correo ya está registrado. Iniciá sesión o usá otro correo.', 'aviso-existe');
+          boton.disabled = false;
+          boton.textContent = 'Crear Cuenta ✅';
+          return;
+        }
+
+        // ✅ Cuenta NUEVA → todo bien
+        if (authData && authData.user) {
           await supabaseClient.from('usuarios').upsert({
             id: authData.user.id,
             correo: correo,
@@ -186,7 +203,8 @@
         setTimeout(() => { window.location.href = 'index.html'; }, 1800);
 
       } catch (err) {
-        mostrarMensaje('❌ Error: ' + err.message, 'error');
+        console.log('Error final:', err);
+        mostrarMensaje('❌ Error: ' + (err.message || 'Desconocido'), 'error');
       } finally {
         boton.disabled = false;
         boton.textContent = 'Crear Cuenta ✅';
