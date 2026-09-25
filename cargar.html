@@ -74,9 +74,19 @@
     }
     .boton:disabled { background: #a0aec0; cursor: not-allowed; }
     
+    .barra-superior {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .aviso-sesion {
+      padding: 12px; border-radius: 10px; font-weight: 600;
+      flex: 1;
+    }
+    .conectado { background: #e6f2e6; color: #22543d; border: 1px solid #9ae6b4; text-align: center; }
+    .no-conectado { background: #fff3cd; color: #744210; border: 1px solid #fde68a; text-align: center; }
     .enlace-cerrar-sesion {
-      display: inline-block;
-      margin: 0 0 20px 0;
       color: #3182ce;
       background: transparent;
       border: none;
@@ -84,17 +94,13 @@
       font-weight: 600;
       cursor: pointer;
       text-decoration: underline;
-      padding: 0;
+      padding: 10px 0 10px 15px;
+      white-space: nowrap;
     }
     .enlace-cerrar-sesion:hover {
       color: #2b6cb0;
     }
     
-    .aviso-sesion {
-      padding: 12px; border-radius: 10px; margin-bottom: 12px; text-align: center; font-weight: 600;
-    }
-    .conectado { background: #e6f2e6; color: #22543d; border: 1px solid #9ae6b4; }
-    .no-conectado { background: #fff3cd; color: #744210; border: 1px solid #fde68a; }
     .mensaje {
       margin-top: 20px;
       padding: 15px;
@@ -198,9 +204,10 @@
     </div>
 
     <div id="bloqueConectado" class="oculto">
-      <div class="aviso-sesion conectado">✅ Conectado como: <span id="correoActivo"></span></div>
-      
-      <button id="btn-cerrar-sesion" class="enlace-cerrar-sesion">Cerrar sesión</button>
+      <div class="barra-superior">
+        <div class="aviso-sesion conectado">✅ Conectado</div>
+        <button id="btn-cerrar-sesion" class="enlace-cerrar-sesion">Cerrar sesión</button>
+      </div>
       
       <div style="text-align:center; margin:15px 0; color:#718096;">— Completá los datos del vehículo —</div>
     </div>
@@ -417,50 +424,6 @@
             <span id="sin8" class="foto-sin">Sin foto</span>
           </div>
         </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_9">
-          <div class="foto-nombre">Foto 9
-            <input type="file" class="foto-input-oculto" id="foto9" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini">
-            <img id="img9" class="foto-mini-img">
-            <span id="sin9" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_10">
-          <div class="foto-nombre">Foto 10
-            <input type="file" class="foto-input-oculto" id="foto10" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini">
-            <img id="img10" class="foto-mini-img">
-            <span id="sin10" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_11">
-          <div class="foto-nombre">Foto 11
-            <input type="file" class="foto-input-oculto" id="foto11" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini">
-            <img id="img11" class="foto-mini-img">
-            <span id="sin11" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_12">
-          <div class="foto-nombre">Foto 12
-            <input type="file" class="foto-input-oculto" id="foto12" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini">
-            <img id="img12" class="foto-mini-img">
-            <span id="sin12" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
       </div>
 
       <button type="submit" class="boton" id="btnGuardar" disabled>💾 Guardar Vehículo</button>
@@ -480,7 +443,7 @@
       const campos = document.querySelectorAll('input, select, textarea, button[type="submit"]');
       campos.forEach(campo => campo.disabled = desactivar);
       
-      for (let i = 1; i <= 12; i++) {
+      for (let i = 1; i <= 8; i++) {
         const tarjeta = document.getElementById(`foto_tarjeta_${i}`);
         if (tarjeta) {
           desactivar ? tarjeta.classList.add('disabled') : tarjeta.classList.remove('disabled');
@@ -518,10 +481,9 @@
           document.getElementById('cargando').classList.add('oculto');
           document.getElementById('bloqueNoConectado').classList.add('oculto');
           document.getElementById('bloqueConectado').classList.remove('oculto');
-          document.getElementById('correoActivo').textContent = session.user.email;
           setFormDisabled(false);
 
-          for (let i = 1; i <= 12; i++) {
+          for (let i = 1; i <= 8; i++) {
             const input = document.getElementById(`foto${i}`);
             if (input) input.addEventListener('change', e => verFoto(i, e.target));
           }
@@ -534,10 +496,9 @@
           if (nuevaSesion) {
             document.getElementById('bloqueNoConectado').classList.add('oculto');
             document.getElementById('bloqueConectado').classList.remove('oculto');
-            document.getElementById('correoActivo').textContent = nuevaSesion.user.email;
             setFormDisabled(false);
 
-            for (let i = 1; i <= 12; i++) {
+            for (let i = 1; i <= 8; i++) {
               const input = document.getElementById(`foto${i}`);
               if (input) input.addEventListener('change', e => verFoto(i, e.target));
             }
@@ -571,7 +532,7 @@
 
       try {
         const fotos = {};
-        for (let i = 1; i <= 12; i++) {
+        for (let i = 1; i <= 8; i++) {
           const input = document.getElementById(`foto${i}`);
           fotos[`foto${i}`] = input.files[0] ? await archivoABase64(input.files[0]) : null;
         }
@@ -610,7 +571,7 @@
         cajaMensaje.style.display = "block";
         document.getElementById('formAuto').reset();
         
-        for (let i = 1; i <= 12; i++) {
+        for (let i = 1; i <= 8; i++) {
           const img = document.getElementById(`img${i}`);
           const sin = document.getElementById(`sin${i}`);
           if (img) img.style.display = 'none';
