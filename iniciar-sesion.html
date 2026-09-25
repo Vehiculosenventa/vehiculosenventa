@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Iniciar sesión — Vehículos en Venta</title>
+  <title>Crear Cuenta — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif;}
@@ -43,38 +43,42 @@
       background:transparent; border:none; font-size:1.3rem; cursor:pointer; color:#718096;
       padding:0; line-height:1;
     }
-    .boton-ingresar {
+    .boton-crear {
       width:100%; padding:1rem; margin-top:1.8rem;
       background:linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
       color:white; border:none; border-radius:12px;
       font-size:1.1rem; font-weight:700; cursor:pointer;
       transition: transform 0.2s;
     }
-    .boton-ingresar:hover {transform:translateY(-2px); box-shadow:0 6px 16px rgba(49,130,206,0.25);}
-    .boton-ingresar:disabled {opacity:0.7; cursor:not-allowed; transform:none;}
+    .boton-crear:hover {transform:translateY(-2px); box-shadow:0 6px 16px rgba(49,130,206,0.25);}
+    .boton-crear:disabled {opacity:0.7; cursor:not-allowed; transform:none;}
     .mensaje {margin-top:1.2rem; padding:1rem; border-radius:10px; display:none; text-align:center; font-weight:600;}
     .error {background:#fed7d7; color:#9b2c2c; display:block;}
     .exito {background:#c6f6d5; color:#22543d; display:block;}
+    .aviso-existe {background:#fef3c7; color:#92400e; display:block; border-left:4px solid #f59e0b;}
     .volver {display:block; text-align:center; margin-top:1.5rem; color:#4a5568; text-decoration:none; font-weight:500;}
     .volver:hover {color:#3182ce; text-decoration:underline;}
   </style>
 </head>
 <body>
   <div class="tarjeta">
-    <h1>🔐 Iniciar sesión</h1>
-    <p class="subtitulo">Ingresá tus datos para entrar</p>
+    <h1>📝 Crear Cuenta</h1>
+    <p class="subtitulo">Completá tus datos para registrarte</p>
 
-    <form id="formIngreso">
+    <form id="formRegistro">
+      <label for="nombre">Tu nombre</label>
+      <input type="text" id="nombre" required placeholder="Tu nombre completo">
+
       <label for="correo">Correo electrónico</label>
       <input type="email" id="correo" required placeholder="tu@correo.com">
 
-      <label for="contraseña">Contraseña</label>
+      <label for="contraseña">Contraseña (mínimo 8 caracteres)</label>
       <div class="input-contenedor">
-        <input type="password" id="contraseña" required placeholder="Tu contraseña">
+        <input type="password" id="contraseña" required placeholder="Elegí una contraseña">
         <button type="button" id="btnVer" class="btn-ver">👁️</button>
       </div>
 
-      <button type="submit" id="botonIngresar" class="boton-ingresar">Ingresar ✅</button>
+      <button type="submit" id="botonCrear" class="boton-crear">Crear Cuenta ✅</button>
       <div id="mensaje" class="mensaje"></div>
     </form>
 
@@ -85,14 +89,13 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    // ✅ UNA SOLA VEZ — sin repetir NADA
     const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const inputContra = document.getElementById('contraseña');
     const btnVer = document.getElementById('btnVer');
-    const form = document.getElementById('formIngreso');
+    const form = document.getElementById('formRegistro');
     const mensaje = document.getElementById('mensaje');
-    const boton = document.getElementById('botonIngresar');
+    const boton = document.getElementById('botonCrear');
 
     btnVer.addEventListener('click', function() {
       inputContra.type = inputContra.type === 'password' ? 'text' : 'password';
@@ -108,36 +111,70 @@
       e.preventDefault();
       mensaje.className = 'mensaje';
 
+      const nombre = document.getElementById('nombre').value.trim();
       const correo = document.getElementById('correo').value.trim();
       const contraseña = document.getElementById('contraseña').value;
 
+      // Validación de contraseña
+      if (contraseña.length < 8) {
+        mostrarMensaje('⚠️ La contraseña debe tener al menos 8 caracteres.', 'error');
+        return;
+      }
+
       boton.disabled = true;
-      boton.textContent = 'Ingresando...';
+      boton.textContent = 'Verificando...';
 
       try {
-        const { data, error } = await supabaseClient.auth.signInWithPassword({
+        // 🔍 PRIMERO: revisamos si el correo ya existe en la tabla usuarios
+        const { data: usuarioExistente, error: errorBusqueda } = await supabaseClient
+          .from('usuarios')
+          .select('id, correo')
+          .eq('correo', correo)
+          .maybeSingle();
+
+        // ✅ Si ya existe → NO dejamos crear y avisamos
+        if (usuarioExistente) {
+          mostrarMensaje('⚠️ Este correo ya está registrado. Iniciá sesión o usá otro correo.', 'aviso-existe');
+          boton.disabled = false;
+          boton.textContent = 'Crear Cuenta ✅';
+          return;
+        }
+
+        // ✅ Si no existe → creamos la cuenta
+        const { data: authData, error: errorAuth } = await supabaseClient.auth.signUp({
           email: correo,
           password: contraseña
         });
 
-        if (error) throw error;
+        if (errorAuth) throw errorAuth;
 
-        mostrarMensaje('✅ ¡Bienvenido! Redirigiendo...', 'exito');
-        setTimeout(() => { window.location.href = 'index.html'; }, 1200);
+        // Guardamos el nombre en la tabla usuarios
+        if (authData.user) {
+          await supabaseClient.from('usuarios').insert({
+            id: authData.user.id,
+            correo: correo,
+            nombre: nombre
+          });
+        }
+
+        mostrarMensaje('✅ ¡Cuenta creada! Te redirigimos...', 'exito');
+        setTimeout(() => { window.location.href = 'index.html'; }, 1800);
 
       } catch (err) {
         let texto = '';
-        if (err.message.includes('Invalid login credentials')) {
-          texto = 'Correo o contraseña incorrectos.';
-        } else if (err.message.includes('Email not confirmed')) {
-          texto = 'Primero confirmá tu correo.';
+        if (err.message.includes('User already registered')) {
+          texto = 'Este correo ya tiene una cuenta. Iniciá sesión desde la página principal.';
+          mostrarMensaje('⚠️ ' + texto, 'aviso-existe');
+        } else if (err.message.includes('email')) {
+          texto = 'El correo no es válido.';
+          mostrarMensaje('❌ ' + texto, 'error');
         } else {
           texto = err.message;
+          mostrarMensaje('❌ Error: ' + texto, 'error');
         }
-        mostrarMensaje('❌ ' + texto, 'error');
       } finally {
         boton.disabled = false;
-        boton.textContent = 'Ingresar ✅';
+        boton.textContent = 'Crear Cuenta ✅';
       }
     });
   </script>
