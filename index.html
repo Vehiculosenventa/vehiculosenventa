@@ -26,31 +26,6 @@
       text-align: right;
       margin-bottom: 20px;
     }
-    .estado-conectado {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-    }
-    .texto-conectado {
-      color: #2c5282;
-      font-weight: 600;
-      font-size: 15px;
-    }
-    .boton-verde-chico {
-      padding: 6px 14px;
-      background: linear-gradient(135deg, #48bb78, #38a169);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    .boton-verde-chico:hover {
-      transform: translateY(-1px);
-      background: linear-gradient(135deg, #5cc488, #48bb78);
-    }
     .boton-sesion {
       display: inline-block;
       padding: 10px 20px;
@@ -78,6 +53,21 @@
     .boton-entrar:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(49,130,206,0.2);
+    }
+    .enlace-cerrar {
+      display: inline-block;
+      margin-left: 10px;
+      color: #1e40af;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+    }
+    .enlace-cerrar:hover {
+      color: #3182ce;
+      text-decoration: underline;
     }
     .caja-principal {
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
@@ -155,16 +145,15 @@
 </head>
 <body>
   <div class="barra-superior">
-    <!-- Sin sesión: dos botones azules -->
+    <!-- Sin sesión -->
     <span id="botonesSinSesion">
       <a id="btn-registrar" href="registrarse.html" class="boton-sesion boton-registrar">✨ Registrarse</a>
       <a id="btn-iniciar" href="iniciar-sesion.html" class="boton-sesion boton-entrar">🔐 Iniciar sesión</a>
     </span>
     
-    <!-- Con sesión: "Conectado" + botón verde chiquito -->
-    <span id="botonesConSesion" class="oculto estado-conectado">
-      <span class="texto-conectado">Conectado</span>
-      <button id="btn-cerrar" class="boton-verde-chico">🚪 Cerrar sesión</button>
+    <!-- Con sesión → LIMPIO: solo Cerrar sesión -->
+    <span id="botonesConSesion" class="oculto">
+      <button id="btn-cerrar" class="enlace-cerrar">Cerrar sesión</button>
     </span>
   </div>
 
@@ -198,12 +187,12 @@
       const { data: { session } } = await supabaseClient.auth.getSession();
       
       if (session) {
-        // ✅ Con sesión → muestra "Conectado" + botón verde chiquito
+        // ✅ Conectado → solo "Cerrar sesión" limpio
         botonesSinSesion.classList.add('oculto');
         botonesConSesion.classList.remove('oculto');
         enlaceOlvidada.style.display = 'none';
       } else {
-        // ❌ Sin sesión → muestra los dos botones
+        // ❌ Sin conectar → Registrarse + Iniciar sesión
         botonesSinSesion.classList.remove('oculto');
         botonesConSesion.classList.add('oculto');
         enlaceOlvidada.style.display = 'inline-block';
