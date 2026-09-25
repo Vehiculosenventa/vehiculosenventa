@@ -35,11 +35,12 @@
       font-weight: 600;
       text-decoration: none;
       transition: all 0.3s ease;
+      border: none;
+      cursor: pointer;
     }
     .boton-registrar {
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
       color: #fff;
-      border: none;
     }
     .boton-registrar:hover {
       transform: translateY(-1px);
@@ -48,18 +49,23 @@
     .boton-entrar {
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
       color: #fff;
-      border: none;
     }
     .boton-entrar:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(49,130,206,0.2);
     }
-    .enlace-cerrar {
+    .texto-conectado {
       display: inline-block;
-      margin-left: 10px;
-      color: #1e40af;
+      margin-right: 15px;
       font-size: 15px;
       font-weight: 600;
+      color: #2f855a; /* verde */
+    }
+    .enlace-cerrar {
+      display: inline-block;
+      font-size: 15px;
+      font-weight: 600;
+      color: #1e40af; /* azul */
       text-decoration: none;
       cursor: pointer;
       border: none;
@@ -147,12 +153,13 @@
   <div class="barra-superior">
     <!-- Sin sesión -->
     <span id="botonesSinSesion">
-      <a id="btn-registrar" href="registrarse.html" class="boton-sesion boton-registrar">✨ Registrarse</a>
-      <a id="btn-iniciar" href="iniciar-sesion.html" class="boton-sesion boton-entrar">🔐 Iniciar sesión</a>
+      <a href="registrarse.html" class="boton-sesion boton-registrar">✨ Registrarse</a>
+      <a href="iniciar-sesion.html" class="boton-sesion boton-entrar">🔐 Iniciar sesión</a>
     </span>
     
-    <!-- Con sesión → LIMPIO: solo Cerrar sesión -->
+    <!-- Con sesión → SIN botones, solo texto -->
     <span id="botonesConSesion" class="oculto">
+      <span class="texto-conectado">Conectado</span>
       <button id="btn-cerrar" class="enlace-cerrar">Cerrar sesión</button>
     </span>
   </div>
@@ -187,12 +194,10 @@
       const { data: { session } } = await supabaseClient.auth.getSession();
       
       if (session) {
-        // ✅ Conectado → solo "Cerrar sesión" limpio
         botonesSinSesion.classList.add('oculto');
         botonesConSesion.classList.remove('oculto');
         enlaceOlvidada.style.display = 'none';
       } else {
-        // ❌ Sin conectar → Registrarse + Iniciar sesión
         botonesSinSesion.classList.remove('oculto');
         botonesConSesion.classList.add('oculto');
         enlaceOlvidada.style.display = 'inline-block';
