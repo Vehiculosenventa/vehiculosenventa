@@ -8,7 +8,7 @@
   <style>
     * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;}
     body {
-      background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%); /* 🔵 Celeste bien */
+      background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
       padding: 20px;
       min-height: 100vh;
     }
@@ -79,7 +79,7 @@
       font-size: 23px;
     }
     .buscador {
-      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%); /* 🟡 Crema bien */
+      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 28px;
       border-radius: 18px;
       box-shadow: 0 4px 14px rgba(44, 82, 130, 0.08);
@@ -239,7 +239,7 @@
     }
 
     .tarjeta {
-      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%); /* 🟡 Crema bien, error corregido */
+      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 25px;
       border-radius: 16px;
       box-shadow: 0 4px 12px rgba(44, 82, 130, 0.08);
@@ -374,13 +374,13 @@
         <label>🚙 Tipo de Vehículo</label>
         <select id="buscar_tipo">
           <option value="">Todos los tipos</option>
-          <option value="Auto">🚗 Auto</option>
-          <option value="Moto">🏍️ Moto</option>
-          <option value="Camioneta">🚙 Camioneta / Pick-up</option>
-          <option value="4x4">⛰️ 4x4 / Todoterreno</option>
-          <option value="SUV">🏔️ SUV / Crossover</option>
-          <option value="Furgón">📦 Furgón / Utilitario</option>
-          <option value="Cuatriciclo">🏍️ Cuatriciclo</option>
+          <option value="4x4">4x4</option>
+          <option value="Auto">Auto</option>
+          <option value="Camioneta">Camioneta</option>
+          <option value="Cuatriciclo">Cuatriciclo</option>
+          <option value="Furgon">Furgon</option>
+          <option value="Moto">Moto</option>
+          <option value="SUV">SUV</option>
         </select>
       </div>
 
@@ -398,15 +398,40 @@
       </div>
       
       <div class="campo">
-        <label>🏘️ Ciudad (Santa Fe)</label>
+        <label>🏘️ Ciudad</label>
         <select id="buscar_ciudad">
           <option value="">Todas las ciudades</option>
-          <option value="Rosario">🏙️ Rosario</option>
-          <option value="Santa Fe">🏙️ Santa Fe</option>
-          <option value="Venado Tuerto">🏙️ Venado Tuerto</option>
-          <option value="Rafaela">🏙️ Rafaela</option>
-          <option value="Reconquista">🏙️ Reconquista</option>
-          <option value="Otra ciudad">🌍 Otra ciudad</option>
+          <option value="Arroyo Seco">Arroyo Seco</option>
+          <option value="Capitán Bermúdez">Capitán Bermúdez</option>
+          <option value="Casilda">Casilda</option>
+          <option value="Cañada de Gómez">Cañada de Gómez</option>
+          <option value="Coronda">Coronda</option>
+          <option value="Esperanza">Esperanza</option>
+          <option value="Fighiera">Fighiera</option>
+          <option value="Fray Luis Beltrán">Fray Luis Beltrán</option>
+          <option value="Funes">Funes</option>
+          <option value="Granadero Baigorria">Granadero Baigorria</option>
+          <option value="Nelson">Nelson</option>
+          <option value="Oliveros">Oliveros</option>
+          <option value="Pavón">Pavón</option>
+          <option value="Pérez">Pérez</option>
+          <option value="Pueblo Esther">Pueblo Esther</option>
+          <option value="Puerto General San Martín">Puerto General San Martín</option>
+          <option value="Rafaela">Rafaela</option>
+          <option value="Recreo">Recreo</option>
+          <option value="Roldán">Roldán</option>
+          <option value="Rosario">Rosario</option>
+          <option value="San Carlos Centro">San Carlos Centro</option>
+          <option value="San Carlos Norte">San Carlos Norte</option>
+          <option value="San Carlos Sud">San Carlos Sud</option>
+          <option value="San Lorenzo">San Lorenzo</option>
+          <option value="Santa Fe">Santa Fe</option>
+          <option value="Santo Tomé">Santo Tomé</option>
+          <option value="Timbúes">Timbúes</option>
+          <option value="Venado Tuerto">Venado Tuerto</option>
+          <option value="Villa Constitución">Villa Constitución</option>
+          <option value="Zavalla">Zavalla</option>
+          <option value="otra">Otra ciudad...</option>
         </select>
       </div>
 
@@ -414,18 +439,18 @@
         <label>⛽ Combustible</label>
         <select id="buscar_combustible">
           <option value="">Todos</option>
-          <option value="Nafta">⛽ Nafta</option>
-          <option value="Diésel">🛢️ Diésel</option>
-          <option value="Eléctrico">⚡ Eléctrico</option>
-          <option value="Híbrido">🔋 Híbrido</option>
+          <option value="Nafta">Nafta</option>
+          <option value="Diésel">Diésel</option>
+          <option value="Eléctrico">Eléctrico</option>
+          <option value="Híbrido">Híbrido</option>
         </select>
       </div>
       <div class="campo">
         <label>⚙️ Transmisión</label>
         <select id="buscar_transmision">
           <option value="">Todas</option>
-          <option value="Manual">⚙️ Manual</option>
-          <option value="Automática">🔄 Automática</option>
+          <option value="Manual">Manual</option>
+          <option value="Automática">Automática</option>
         </select>
       </div>
       
@@ -630,7 +655,7 @@
         const numAnio = parseInt(anio);
         if (!isNaN(numAnio)) consulta = consulta.eq('anio', numAnio);
       }
-      if (ciudad && ciudad !== 'Otra ciudad') {
+      if (ciudad && ciudad !== 'otra') {
         consulta = consulta.eq('ciudad', ciudad);
       }
       if (combustible) consulta = consulta.eq('combustible', combustible);
