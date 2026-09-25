@@ -32,7 +32,6 @@
       width:100%; padding:14px; background:#1565C0; color:white;
       border:none; border-radius:10px; font-size:17px; font-weight:700; cursor:pointer;
     }
-    button:disabled {background:#999; cursor:not-allowed;}
     .mensaje {margin-top:20px; padding:15px; border-radius:10px; text-align:center; font-weight:600;}
     .exito {background:#e6f9e6; color:#2e7d32;}
     .error {background:#ffebee; color:#c62828;}
@@ -45,7 +44,7 @@
 <div class="caja">
   <h1>🚗 Prueba de Guardado</h1>
 
-  <div id="cargando">Verificando sesión...</div>
+  <div id="cargando">🔍 Buscando sesión...</div>
 
   <div id="noConectado" class="oculto">
     <p style="text-align:center; margin-bottom:15px;">🔒 Iniciá sesión primero</p>
@@ -53,7 +52,7 @@
   </div>
 
   <div id="conectado" class="oculto">
-    <div class="sesion">✅ Conectado: <span id="correo"></span></div>
+    <div class="sesion">✅ Conectado como: <span id="correo"></span></div>
 
     <form id="formPrueba">
       <label>Tipo de Vehículo</label>
@@ -73,38 +72,46 @@
 </div>
 
 <script>
-// === ACÁ VAN TUS DATOS REALES ===
-const SUPABASE_URL = "https://TU-PROYECTO.supabase.co";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...TU-CLAVE-COMPLETA-ACA";
+// === PONÉ TUS DATOS ACÁ ===
+const SUPABASE_URL = "ACA_TU_URL_COMPLETA";
+const SUPABASE_KEY = "ACA_TU_CLAVE_PUBLICA_COMPLETA";
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function verificarSesion() {
-  try {
-    const { data: { session } } = await supabaseClient.auth.getSession();
+  // Primero revisamos si ya hay sesión
+  const { data: { session } } = await supabaseClient.auth.getSession();
 
-    if (!session) {
-      document.getElementById('cargando').classList.add('oculto');
-      document.getElementById('noConectado').classList.remove('oculto');
-      return;
-    }
-
+  if (session) {
+    // ✅ Ya está conectado — mostramos todo directo
     document.getElementById('cargando').classList.add('oculto');
     document.getElementById('conectado').classList.remove('oculto');
     document.getElementById('correo').textContent = session.user.email;
-
-  } catch (error) {
-    console.error("Error:", error);
+  } else {
+    // ❌ No hay sesión — pedimos iniciar
     document.getElementById('cargando').classList.add('oculto');
     document.getElementById('noConectado').classList.remove('oculto');
   }
+
+  // Escuchamos si entra después
+  supabaseClient.auth.onAuthStateChange(async (_, nuevaSesion) => {
+    if (nuevaSesion) {
+      document.getElementById('cargando').classList.add('oculto');
+      document.getElementById('noConectado').classList.add('oculto');
+      document.getElementById('conectado').classList.remove('oculto');
+      document.getElementById('correo').textContent = nuevaSesion.user.email;
+    }
+  });
 }
 
 async function guardar(e) {
   e.preventDefault();
   
   const { data: { session } } = await supabaseClient.auth.getSession();
-  if (!session) return;
+  if (!session) {
+    alert("Iniciá sesión primero");
+    return;
+  }
 
   const btn = document.getElementById('btnGuardar');
   const msg = document.getElementById('mensaje');
@@ -132,7 +139,7 @@ async function guardar(e) {
     document.getElementById('formPrueba').reset();
 
   } catch (error) {
-    console.error("Error completo:", error);
+    console.error("Error:", error);
     msg.textContent = "❌ Error: " + error.message;
     msg.className = "mensaje error";
     msg.classList.remove('oculto');
