@@ -8,7 +8,6 @@
   <style>
     * {box-sizing:border-box; margin:0; padding:0; font-family:'Segoe UI', Roboto, sans-serif;}
     body {
-      /* 🔵 Celeste más oscurito */
       background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
       padding: 20px;
       max-width: 850px;
@@ -23,7 +22,6 @@
       font-weight: 800;
     }
     .form-container {
-      /* 🟡 Cremita más oscurito */
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 25px;
       border-radius: 18px;
@@ -85,13 +83,13 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 15px;
+      padding: 10px 0;
     }
-    .aviso-sesion {
-      padding: 12px; border-radius: 10px; font-weight: 600;
-      flex: 1; text-align: center;
+    .texto-conectado {
+      color: #22543d;
+      font-weight: 600;
+      font-size: 15px;
     }
-    .conectado { background: #e6f2e6; color: #22543d; border: 1px solid #9ae6b4; }
-    .no-conectado { background: #fff3cd; color: #744210; border: 1px solid #fde68a; }
     .enlace-cerrar-sesion {
       color: #3182ce;
       background: transparent;
@@ -100,7 +98,6 @@
       font-weight: 600;
       cursor: pointer;
       text-decoration: underline;
-      padding: 10px 0 10px 15px;
       white-space: nowrap;
     }
     .enlace-cerrar-sesion:hover { color: #2b6cb0; }
@@ -125,46 +122,6 @@
       border-radius: 10px;
     }
     .volver:hover { background: #d7e6f2; }
-    .foto-seccion { margin: 28px 0 15px; }
-    .foto-titulo-seccion {
-      font-size: 19px;
-      font-weight: 700;
-      color: #5a4f3f;
-      margin-bottom: 20px;
-    }
-    .foto-tarjeta {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 15px 18px;
-      margin-bottom: 12px;
-      background: #fff;
-      border-radius: 14px;
-      border: 2px solid #c5d6e8;
-      cursor: pointer;
-    }
-    .foto-tarjeta.disabled { opacity: 0.6; pointer-events: none; }
-    .foto-nombre {
-      font-weight: 700;
-      font-size: 15px;
-      color: #5a4f3f;
-      flex: 1;
-    }
-    .icono-camara { font-size: 20px; flex-shrink: 0; }
-    .foto-mini {
-      width: 80px; height: 60px;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #f7fafc;
-      border: 2px dashed #cbd5e0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-    .foto-mini-img { width: 100%; height: 100%; object-fit: cover; display: none; }
-    .foto-sin { font-size: 11px; color: #a0aec0; }
-    .foto-input-oculto { display: none; }
     .botones-sesion {
       display: flex;
       gap: 12px;
@@ -199,7 +156,9 @@
     </div>
 
     <div id="bloqueNoConectado" class="oculto">
-      <div class="aviso-sesion no-conectado">🔒 Iniciá sesión para publicar tu vehículo</div>
+      <div style="text-align:center; padding:12px; background:#fff3cd; color:#744210; border-radius:10px; border:1px solid #fde68a; font-weight:600; margin-bottom:15px;">
+        🔒 Iniciá sesión para publicar tu vehículo
+      </div>
       <div class="botones-sesion">
         <a href="iniciar-sesion.html" class="boton-sesion">🔑 Iniciar Sesión</a>
         <a href="registrarse.html" class="boton-sesion">📝 Registrarse</a>
@@ -208,7 +167,7 @@
 
     <div id="bloqueConectado" class="oculto">
       <div class="barra-superior">
-        <div class="aviso-sesion conectado">✅ Conectado</div>
+        <span class="texto-conectado">✅ Conectado</span>
         <button id="btn-cerrar-sesion" class="enlace-cerrar-sesion">Cerrar sesión</button>
       </div>
       
@@ -225,13 +184,13 @@
           </div>
           <select id="tipo_vehiculo" required disabled>
             <option value="">Seleccionar...</option>
-            <option value="Auto">🚗 Auto</option>
-            <option value="Moto">🏍️ Moto</option>
-            <option value="Camioneta">🚙 Camioneta / Pick-up</option>
-            <option value="4x4">⛰️ 4x4 / Todoterreno</option>
-            <option value="SUV">🏔️ SUV / Crossover</option>
-            <option value="Furgón">📦 Furgón / Utilitario</option>
-            <option value="Cuatriciclo">🏍️ Cuatriciclo</option>
+            <option value="4x4">4x4</option>
+            <option value="Auto">Auto</option>
+            <option value="Camioneta">Camioneta</option>
+            <option value="Cuatriciclo">Cuatriciclo</option>
+            <option value="Furgon">Furgon</option>
+            <option value="Moto">Moto</option>
+            <option value="SUV">SUV</option>
           </select>
         </div>
       </div>
@@ -349,123 +308,35 @@
           </div>
           <select id="ciudad" disabled>
             <option value="">Seleccionar...</option>
-            <option>Aarón Castellanos</option>
-            <option>Acebal</option>
-            <option>Alcorta</option>
-            <option>Alejandra</option>
-            <option>Álvarez</option>
-            <option>Ángeles</option>
-            <option>Angélica</option>
             <option>Arroyo Seco</option>
-            <option>Arrufó</option>
-            <option>Avellaneda</option>
-            <option>Baigorria</option>
-            <option>Barrio Alegre</option>
-            <option>Barrancas</option>
-            <option>Beccar</option>
-            <option>Berabevú</option>
-            <option>Bernardo de Irigoyen</option>
-            <option>Berreta</option>
-            <option>Bigand</option>
-            <option>Bombal</option>
-            <option>Bustos</option>
-            <option>Cabañas</option>
-            <option>Cañada de Gómez</option>
             <option>Capitán Bermúdez</option>
-            <option>Carlos Pellegrini</option>
-            <option>Carmen</option>
             <option>Casilda</option>
-            <option>Caseros</option>
-            <option>Castellanos</option>
-            <option>Cayastá</option>
-            <option>Cañada Rosquín</option>
-            <option>Centeno</option>
-            <option>Chabás</option>
-            <option>Chañar Ladeado</option>
-            <option>Ceres</option>
+            <option>Cañada de Gómez</option>
             <option>Coronda</option>
-            <option>Coronel Arnold</option>
-            <option>Coronel Dorrego</option>
-            <option>Coronel Suárez</option>
-            <option>Cruz Alta</option>
-            <option>Despeñaderos</option>
-            <option>Diamante</option>
-            <option>Diego de Alvear</option>
-            <option>El Trébol</option>
-            <option>Empalme San Carlos</option>
             <option>Esperanza</option>
-            <option>Estación Clucellas</option>
-            <option>Felicia</option>
             <option>Fighiera</option>
             <option>Fray Luis Beltrán</option>
-            <option>Frontera</option>
             <option>Funes</option>
-            <option>Gálvez</option>
             <option>Granadero Baigorria</option>
-            <option>Gregorio de Laferrère</option>
-            <option>Hersilia</option>
-            <option>Humberto Primo</option>
-            <option>Ibarlucea</option>
-            <option>Ituzaingó</option>
-            <option>Jacinto L. Aráuz</option>
-            <option>Joaquín Gorina</option>
-            <option>Lehmann</option>
-            <option>Leones</option>
-            <option>Lucas González</option>
-            <option>Maciel</option>
-            <option>Maggiolo</option>
-            <option>Maquinista Savio</option>
-            <option>María Juana</option>
-            <option>Matilde</option>
-            <option>Melincué</option>
-            <option>Moises Ville</option>
-            <option>Monte Vera</option>
-            <option>Murphy</option>
-            <option>Nacional</option>
             <option>Nelson</option>
-            <option>Nueva Roma</option>
             <option>Oliveros</option>
-            <option>Palacios</option>
             <option>Pavón</option>
             <option>Pérez</option>
-            <option>Piñero</option>
-            <option>Progreso</option>
-            <option>Pueblo Andino</option>
             <option>Pueblo Esther</option>
+            <option>Puerto General San Martín</option>
             <option>Rafaela</option>
-            <option>Reconquista</option>
             <option>Recreo</option>
-            <option>Romang</option>
             <option>Roldán</option>
             <option>Rosario</option>
             <option>San Carlos Centro</option>
             <option>San Carlos Norte</option>
             <option>San Carlos Sud</option>
-            <option>San Cristóbal</option>
-            <option>San Francisco</option>
-            <option>San José de la Esquina</option>
-            <option>San Justo</option>
             <option>San Lorenzo</option>
-            <option>San Vicente</option>
             <option>Santa Fe</option>
-            <option>Santa Teresa</option>
             <option>Santo Tomé</option>
-            <option>Saralegui</option>
-            <option>Sastre</option>
-            <option>Soldini</option>
-            <option>Suardi</option>
-            <option>Sunchales</option>
-            <option>Tacuarendó</option>
             <option>Timbúes</option>
-            <option>Tostado</option>
             <option>Venado Tuerto</option>
-            <option>Vera</option>
-            <option>Villa Amelia</option>
             <option>Villa Constitución</option>
-            <option>Villa Gobernador Gálvez</option>
-            <option>Villa María</option>
-            <option>Villa Mugueta</option>
-            <option>Villa Trinidad</option>
             <option>Zavalla</option>
             <option value="otra">Otra ciudad...</option>
           </select>
@@ -478,7 +349,7 @@
             <span>✏️</span>
             <label>Escribí tu ciudad</label>
           </div>
-          <input type="text" id="ciudad_otra" placeholder="Ej: Casilda, Venado Tuerto...">
+          <input type="text" id="ciudad_otra" placeholder="Nombre de tu ciudad..." disabled>
         </div>
       </div>
 
@@ -511,108 +382,8 @@
             <span>📄</span>
             <label>Descripción del vehículo</label>
           </div>
-          <textarea id="descripcion" rows="4" placeholder="Color, estado, extras, equipamiento... todo lo que quieras contar" disabled></textarea>
+          <textarea id="descripcion" rows="4" placeholder="Color, estado, extras, equipamiento..." disabled></textarea>
         </div>
-      </div>
-
-      <div class="foto-seccion">
-        <div class="foto-titulo-seccion">📸 Fotos del vehículo — Tocar para sacar foto</div>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_1">
-          <span>1️⃣</span>
-          <div class="foto-nombre">Foto 1
-            <input type="file" class="foto-input-oculto" id="foto1" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini">
-            <img id="img1" class="foto-mini-img" alt="Foto del vehículo">
-            <span id="sin1" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_2">
-          <span>2️⃣</span>
-          <div class="foto-nombre">Foto 2
-            <input type="file" class="foto-input-oculto" id="foto2" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini">
-            <img id="img2" class="foto-mini-img" alt="Foto del vehículo">
-            <span id="sin2" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_3">
-          <span>3️⃣</span>
-          <div class="foto-nombre">Foto 3
-            <input type="file" class="foto-input-oculto" id="foto3" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini">
-            <img id="img3" class="foto-mini-img" alt="Foto del vehículo">
-            <span id="sin3" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_4">
-          <span>4️⃣</span>
-          <div class="foto-nombre">Foto 4
-            <input type="file" class="foto-input-oculto" id="foto4" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini">
-            <img id="img4" class="foto-mini-img" alt="Foto del vehículo">
-            <span id="sin4" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_5">
-          <span>5️⃣</span>
-          <div class="foto-nombre">Foto 5
-            <input type="file" class="foto-input-oculto" id="foto5" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini">
-            <img id="img5" class="foto-mini-img" alt="Foto del vehículo">
-            <span id="sin5" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_6">
-          <span>6️⃣</span>
-          <div class="foto-nombre">Foto 6
-            <input type="file" class="foto-input-oculto" id="foto6" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini">
-            <img id="img6" class="foto-mini-img" alt="Foto del vehículo">
-            <span id="sin6" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_7">
-          <span>7️⃣</span>
-          <div class="foto-nombre">Foto 7
-            <input type="file" class="foto-input-oculto" id="foto7" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini">
-            <img id="img7" class="foto-mini-img" alt="Foto del vehículo">
-            <span id="sin7" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_8">
-          <span>8️⃣</span>
-          <div class="foto-nombre">Foto 8
-            <input type="file" class="foto-input-oculto" id="foto8" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini">
-            <img id="img8" class="foto-mini-img" alt="Foto del vehículo">
-            <span id="sin8" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
       </div>
 
       <button type="submit" class="boton" id="btnGuardar" disabled>💾 Guardar Vehículo</button>
@@ -637,35 +408,6 @@
       if (!desactivar && selectCiudad.value === 'otra') {
         document.getElementById('ciudad_otra').disabled = false;
       }
-      
-      for (let i = 1; i <= 8; i++) {
-        const tarjeta = document.getElementById(`foto_tarjeta_${i}`);
-        if (tarjeta) {
-          desactivar ? tarjeta.classList.add('disabled') : tarjeta.classList.remove('disabled');
-        }
-      }
-    }
-
-    function verFoto(numero, input) {
-      const img = document.getElementById(`img${numero}`);
-      const sin = document.getElementById(`sin${numero}`);
-      if (input.files && input.files[0]) {
-        const lector = new FileReader();
-        lector.onload = e => {
-          img.src = e.target.result;
-          img.style.display = 'block';
-          sin.style.display = 'none';
-        };
-        lector.readAsDataURL(input.files[0]);
-      }
-    }
-
-    function archivoABase64(archivo) {
-      return new Promise(resolver => {
-        const lector = new FileReader();
-        lector.onload = e => resolver(e.target.result);
-        lector.readAsDataURL(archivo);
-      });
     }
 
     selectCiudad.addEventListener('change', () => {
@@ -688,11 +430,6 @@
           document.getElementById('bloqueNoConectado').classList.add('oculto');
           document.getElementById('bloqueConectado').classList.remove('oculto');
           setFormDisabled(false);
-
-          for (let i = 1; i <= 8; i++) {
-            const input = document.getElementById(`foto${i}`);
-            if (input) input.addEventListener('change', e => verFoto(i, e.target));
-          }
         } else {
           document.getElementById('cargando').classList.add('oculto');
           document.getElementById('bloqueNoConectado').classList.remove('oculto');
@@ -703,11 +440,6 @@
             document.getElementById('bloqueNoConectado').classList.add('oculto');
             document.getElementById('bloqueConectado').classList.remove('oculto');
             setFormDisabled(false);
-
-            for (let i = 1; i <= 8; i++) {
-              const input = document.getElementById(`foto${i}`);
-              if (input) input.addEventListener('change', e => verFoto(i, e.target));
-            }
           }
         });
         
@@ -737,16 +469,7 @@
       cajaMensaje.style.display = "none";
 
       try {
-        const fotos = {};
-        for (let i = 1; i <= 8; i++) {
-          const input = document.getElementById(`foto${i}`);
-          fotos[`foto${i}`] = input.files[0] ? await archivoABase64(input.files[0]) : null;
-        }
-
-        let tipoVehiculoValor = document.getElementById('tipo_vehiculo').value || null;
-        if (tipoVehiculoValor) {
-          tipoVehiculoValor = tipoVehiculoValor.replace(/^[^\s]+\s*/, '');
-        }
+        const tipoVehiculoValor = document.getElementById('tipo_vehiculo').value || null;
         
         let ciudadValor;
         if (selectCiudad.value === 'otra') {
@@ -777,10 +500,7 @@
           deuda: document.getElementById('deuda').value || null,
           descripcion: document.getElementById('descripcion').value || null,
           usuario_id: session.user.id,
-          correo_usuario: session.user.email,
-          nombre_usuario: session.user.user_metadata?.name || null,
-          contador: 0,
-          ...fotos
+          correo_usuario: session.user.email
         };
 
         const { error } = await supabaseClient.from('autos').insert([datos]);
@@ -792,13 +512,6 @@
         cajaMensaje.style.display = "block";
         document.getElementById('formAuto').reset();
         bloqueOtraCiudad.classList.add('oculto');
-        
-        for (let i = 1; i <= 8; i++) {
-          const img = document.getElementById(`img${i}`);
-          const sin = document.getElementById(`sin${i}`);
-          if (img) img.style.display = 'none';
-          if (sin) sin.style.display = 'block';
-        }
         
       } catch (error) {
         console.error("Error:", error);
