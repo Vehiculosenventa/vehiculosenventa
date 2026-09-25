@@ -647,9 +647,8 @@
           fotos[`foto${i}`] = input.files[0] ? await archivoABase64(input.files[0]) : null;
         }
 
+        // ✅ CORREGIDO: Tomamos el valor directamente, SIN modificarlo
         let tipoVehiculoValor = document.getElementById('tipo_vehiculo').value || null;
-        // ✅ Quité la línea que borraba el texto y dejaba vacío
-        // Ahora guarda el valor completo tal cual está
         
         let ciudadValor;
         if (selectCiudad.value === 'otra') {
