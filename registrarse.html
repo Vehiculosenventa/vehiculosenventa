@@ -3,290 +3,178 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Registrarse — Vehículos en Venta</title>
+  <title>Crear Cuenta — Vehículos en Venta</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Roboto, sans-serif;
-    }
+    * {margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI', Roboto, sans-serif;}
     body {
       background: linear-gradient(135deg, #dceaf5 0%, #cfe0ee 100%);
       min-height: 100vh;
-      padding: 40px 20px;
-    }
-    h1 {
-      color: #2c5282;
-      text-align: center;
-      font-size: 24px;
-      margin-bottom: 25px;
-      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
     }
     .tarjeta {
-      background: linear-gradient(135deg, #f7f3eb 0%, #eee9dd 100%);
-      padding: 35px 25px;
+      background: white;
+      padding: 2.5rem;
       border-radius: 24px;
-      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.12);
-      border: 1px solid #e2d9c8;
+      box-shadow: 0 10px 30px rgba(44,82,130,0.08);
+      width: 100%;
       max-width: 440px;
-      margin: 0 auto;
+      animation: entradaSuave 0.6s ease-out;
     }
-    h2 {
-      color: #2c5282;
-      text-align: center;
-      font-size: 20px;
-      margin-bottom: 10px;
+    @keyframes entradaSuave {
+      from {opacity:0; transform:translateY(20px);}
+      to {opacity:1; transform:translateY(0);}
     }
-    .subtitulo {
-      text-align: center;
-      color: #5a6872;
-      margin-bottom: 25px;
-      font-size: 15px;
-    }
-    label {
-      display: block;
-      margin-top: 18px;
-      margin-bottom: 6px;
-      font-weight: 600;
-      color: #2d3748;
-    }
-    .input-con-boton {
-      position: relative;
-    }
+    h1 {text-align:center; color:#2c5282; font-size:1.8rem; margin-bottom:0.5rem;}
+    .subtitulo {text-align:center; color:#5a6872; margin-bottom:2rem;}
+    label {display:block; margin-top:1.2rem; margin-bottom:0.4rem; font-weight:600; color:#2d3748;}
+    .input-contenedor {position:relative;}
     input {
-      width: 100%;
-      padding: 1rem 3rem 1rem 1rem;
-      border: 2px solid #e2e8f0;
-      border-radius: 12px;
-      font-size: 1rem;
-      transition: border-color 0.2s, box-shadow 0.2s;
+      width:100%; padding:1rem 3rem 1rem 1rem;
+      border:2px solid #e2e8f0; border-radius:12px; font-size:1rem;
+      transition: border-color 0.2s;
     }
-    input:focus {
-      outline: none;
-      border-color: #3182ce;
-      box-shadow: 0 0 0 4px rgba(49, 130, 206, 0.15);
-    }
+    input:focus {outline:none; border-color:#3182ce; box-shadow:0 0 0 4px rgba(49,130,206,0.15);}
     .btn-ver {
-      position: absolute;
-      right: 1rem;
-      top: 50%;
-      transform: translateY(-50%);
-      background: transparent;
-      border: none;
-      font-size: 1.3rem;
-      cursor: pointer;
-      padding: 0;
-      color: #718096;
-      transition: color 0.2s;
+      position:absolute; right:1rem; top:50%; transform:translateY(-50%);
+      background:transparent; border:none; font-size:1.3rem; cursor:pointer; color:#718096;
+      padding:0; line-height:1;
     }
-    .btn-ver:hover {
-      color: #2c5282;
+    .boton-crear {
+      width:100%; padding:1rem; margin-top:1.8rem;
+      background:linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color:white; border:none; border-radius:12px;
+      font-size:1.1rem; font-weight:700; cursor:pointer;
+      transition: transform 0.2s;
     }
-    button[type="submit"] {
-      width: 100%;
-      padding: 1rem;
-      margin-top: 25px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-    button[type="submit"]:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(49, 130, 206, 0.25);
-    }
-    button[type="submit"]:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-      transform: none;
-    }
-    .mensaje {
-      margin-top: 1.2rem;
-      padding: 1rem;
-      border-radius: 10px;
-      display: none;
-      text-align: center;
-      font-weight: 600;
-      line-height: 1.5;
-    }
-    .exito {
-      background: #c6f6d5;
-      color: #22543d;
-      display: block;
-    }
-    .error {
-      background: #fed7d7;
-      color: #9b2c2c;
-      display: block;
-    }
-    .volver {
-      display: block;
-      text-align: center;
-      margin-top: 25px;
-      color: #4a5568;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.2s;
-    }
-    .volver:hover {
-      color: #3182ce;
-      text-decoration: underline;
-    }
-    .volver-inicio {
-      margin-top: 20px;
-      color: #3182ce;
-      font-weight: 600;
-    }
+    .boton-crear:hover {transform:translateY(-2px); box-shadow:0 6px 16px rgba(49,130,206,0.25);}
+    .boton-crear:disabled {opacity:0.7; cursor:not-allowed; transform:none;}
+    .mensaje {margin-top:1.2rem; padding:1rem; border-radius:10px; display:none; text-align:center; font-weight:600;}
+    .error {background:#fed7d7; color:#9b2c2c; display:block;}
+    .exito {background:#c6f6d5; color:#22543d; display:block;}
+    .aviso-existe {background:#fef3c7; color:#92400e; display:block; border-left:4px solid #f59e0b;}
+    .volver {display:block; text-align:center; margin-top:1.5rem; color:#4a5568; text-decoration:none; font-weight:500;}
+    .volver:hover {color:#3182ce; text-decoration:underline;}
   </style>
 </head>
 <body>
-  <h1>🚗 Vehículos en Venta</h1>
-  
   <div class="tarjeta">
-    <h2>Crear tu cuenta</h2>
-    <p class="subtitulo">Completá tus datos para empezar a publicar y buscar vehículos.</p>
-    
+    <h1>📝 Crear Cuenta</h1>
+    <p class="subtitulo">Completá tus datos para registrarte</p>
+
     <form id="formRegistro">
-      <label for="nombre">Nombre completo</label>
-      <input type="text" id="nombre" required placeholder="Tu nombre y apellido">
+      <label for="nombre">Tu nombre</label>
+      <input type="text" id="nombre" required placeholder="Tu nombre completo">
 
       <label for="correo">Correo electrónico</label>
       <input type="email" id="correo" required placeholder="tu@correo.com">
 
-      <label for="contraseña">Contraseña</label>
-      <div class="input-con-boton">
-        <input type="password" id="contraseña" required minlength="6" placeholder="Mínimo 6 caracteres">
-        <button type="button" class="btn-ver" id="btnVerContra" title="Ver contraseña">👁️</button>
+      <label for="contraseña">Contraseña (mínimo 8 caracteres)</label>
+      <div class="input-contenedor">
+        <input type="password" id="contraseña" required placeholder="Elegí una contraseña">
+        <button type="button" id="btnVer" class="btn-ver">👁️</button>
       </div>
 
-      <label for="confirmarContraseña">Confirmar contraseña</label>
-      <div class="input-con-boton">
-        <input type="password" id="confirmarContraseña" required minlength="6" placeholder="Repetí la contraseña">
-        <button type="button" class="btn-ver" id="btnVerConfirmar" title="Ver contraseña">👁️</button>
-      </div>
-
-      <button type="submit" id="btnRegistrar">Crear cuenta ✅</button>
-      
+      <button type="submit" id="botonCrear" class="boton-crear">Crear Cuenta ✅</button>
       <div id="mensaje" class="mensaje"></div>
     </form>
+
+    <a href="index.html" class="volver">← Volver al inicio</a>
   </div>
 
-  <a href="iniciar-sesion.html" class="volver">← Ya tengo cuenta — Iniciar sesión</a>
-  <a href="index.html" class="volver volver-inicio">← Volver a la página principal</a>
-
   <script>
-    // ⚠️ PONÉ ACÁ TUS CLAVES CORRECTAS copiadas de API Keys → anon public
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    const supabaseCliente = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Botones ver/ocultar contraseña
-    function configurarBotonVer(inputId, botonId) {
-      const input = document.getElementById(inputId);
-      const boton = document.getElementById(botonId);
-      boton.addEventListener('click', () => {
-        input.type = input.type === 'password' ? 'text' : 'password';
-        boton.textContent = input.type === 'password' ? '👁️' : '🙈';
-        boton.title = input.type === 'password' ? 'Ver contraseña' : 'Ocultar contraseña';
-      });
-    }
-    configurarBotonVer('contraseña', 'btnVerContra');
-    configurarBotonVer('confirmarContraseña', 'btnVerConfirmar');
-
+    const inputContra = document.getElementById('contraseña');
+    const btnVer = document.getElementById('btnVer');
     const form = document.getElementById('formRegistro');
     const mensaje = document.getElementById('mensaje');
-    const btn = document.getElementById('btnRegistrar');
+    const boton = document.getElementById('botonCrear');
+
+    btnVer.addEventListener('click', function() {
+      inputContra.type = inputContra.type === 'password' ? 'text' : 'password';
+      btnVer.textContent = inputContra.type === 'password' ? '👁️' : '🙈';
+    });
 
     function mostrarMensaje(texto, tipo) {
       mensaje.textContent = texto;
       mensaje.className = 'mensaje ' + tipo;
-      mensaje.style.display = 'block';
     }
 
-    form.addEventListener('submit', async (e) => {
+    form.addEventListener('submit', async function(e) {
       e.preventDefault();
-      mensaje.style.display = 'none';
-      
+      mensaje.className = 'mensaje';
+
       const nombre = document.getElementById('nombre').value.trim();
       const correo = document.getElementById('correo').value.trim();
       const contraseña = document.getElementById('contraseña').value;
-      const confirmarContraseña = document.getElementById('confirmarContraseña').value;
 
-      // Validar que las contraseñas coincidan
-      if (contraseña !== confirmarContraseña) {
-        mostrarMensaje('❌ Las contraseñas no coinciden.', 'error');
+      // Validación de contraseña
+      if (contraseña.length < 8) {
+        mostrarMensaje('⚠️ La contraseña debe tener al menos 8 caracteres.', 'error');
         return;
       }
 
-      btn.disabled = true;
-      btn.textContent = 'Verificando...';
+      boton.disabled = true;
+      boton.textContent = 'Verificando...';
 
       try {
-        // ✅ PRIMERO: Revisar si el correo ya existe en la tabla usuarios
-        const { data: usuarioExistente, error: errorBusqueda } = await supabaseCliente
+        // 🔍 PRIMERO: revisamos si el correo ya existe en la tabla usuarios
+        const { data: usuarioExistente, error: errorBusqueda } = await supabaseClient
           .from('usuarios')
-          .select('correo')
+          .select('id, correo')
           .eq('correo', correo)
           .maybeSingle();
 
+        // ✅ Si ya existe → NO dejamos crear y avisamos
         if (usuarioExistente) {
-          mostrarMensaje(
-            '⚠️ Este correo ya tiene una cuenta. Andá a "Iniciar sesión" o "Olvidé mi contraseña".',
-            'error'
-          );
-          setTimeout(() => {
-            window.location.href = 'iniciar-sesion.html';
-          }, 2500);
+          mostrarMensaje('⚠️ Este correo ya está registrado. Iniciá sesión o usá otro correo.', 'aviso-existe');
+          boton.disabled = false;
+          boton.textContent = 'Crear Cuenta ✅';
           return;
         }
 
-        // ✅ Si no existe → crear cuenta
-        btn.textContent = 'Creando cuenta...';
-        
-        const { data, error } = await supabaseCliente.auth.signUp({
+        // ✅ Si no existe → creamos la cuenta
+        const { data: authData, error: errorAuth } = await supabaseClient.auth.signUp({
           email: correo,
-          password: contraseña,
-          options: {
-            data: { nombre: nombre },
-            emailRedirectTo: window.location.origin + '/confirmar.html'
-          }
+          password: contraseña
         });
 
-        if (error) {
-          // También capturamos el mensaje nativo de Supabase
-          if (error.message.includes('already registered') || 
-              error.message.includes('User already registered')) {
-            mostrarMensaje(
-              '⚠️ Este correo ya está registrado. Andá a "Iniciar sesión".',
-              'error'
-            );
-            setTimeout(() => {
-              window.location.href = 'iniciar-sesion.html';
-            }, 2500);
-            return;
-          }
-          throw error;
+        if (errorAuth) throw errorAuth;
+
+        // Guardamos el nombre en la tabla usuarios
+        if (authData.user) {
+          await supabaseClient.from('usuarios').insert({
+            id: authData.user.id,
+            correo: correo,
+            nombre: nombre
+          });
         }
 
-        // ✅ Éxito
-        mostrarMensaje(
-          '✅ Cuenta creada. Revisá tu correo y confirmá tu cuenta para ingresar.',
-          'exito'
-        );
-        form.reset();
+        mostrarMensaje('✅ ¡Cuenta creada! Te redirigimos...', 'exito');
+        setTimeout(() => { window.location.href = 'index.html'; }, 1800);
 
       } catch (err) {
-        mostrarMensaje('❌ ' + (err.message || 'Error al crear cuenta.'), 'error');
+        let texto = '';
+        if (err.message.includes('User already registered')) {
+          texto = 'Este correo ya tiene una cuenta. Iniciá sesión desde la página principal.';
+          mostrarMensaje('⚠️ ' + texto, 'aviso-existe');
+        } else if (err.message.includes('email')) {
+          texto = 'El correo no es válido.';
+          mostrarMensaje('❌ ' + texto, 'error');
+        } else {
+          texto = err.message;
+          mostrarMensaje('❌ Error: ' + texto, 'error');
+        }
       } finally {
-        btn.disabled = false;
-        btn.textContent = 'Crear cuenta ✅';
+        boton.disabled = false;
+        boton.textContent = 'Crear Cuenta ✅';
       }
     });
   </script>
