@@ -586,30 +586,6 @@
             <span id="sin6" class="foto-sin">Sin foto</span>
           </div>
         </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_7">
-          <span>7️⃣</span>
-          <div class="foto-nombre">Foto 7
-            <input type="file" class="foto-input-oculto" id="foto7" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini" id="mini7">
-            <img id="img7" class="foto-mini-img" alt="Foto del vehículo">
-            <span id="sin7" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
-
-        <label class="foto-tarjeta" id="foto_tarjeta_8">
-          <span>8️⃣</span>
-          <div class="foto-nombre">Foto 8
-            <input type="file" class="foto-input-oculto" id="foto8" accept="image/*" capture="environment" disabled>
-          </div>
-          <span class="icono-camara">📷</span>
-          <div class="foto-mini" id="mini8">
-            <img id="img8" class="foto-mini-img" alt="Foto del vehículo">
-            <span id="sin8" class="foto-sin">Sin foto</span>
-          </div>
-        </label>
       </div>
 
       <button type="submit" class="boton" id="btnGuardar" disabled>💾 Guardar Vehículo</button>
@@ -680,7 +656,7 @@
         document.getElementById('ciudad_otra').disabled = false;
       }
       
-      for (let i = 1; i <= 8; i++) {
+      for (let i = 1; i <= 6; i++) {
         const tarjeta = document.getElementById(`foto_tarjeta_${i}`);
         if (tarjeta) {
           desactivar ? tarjeta.classList.add('disabled') : tarjeta.classList.remove('disabled');
@@ -766,7 +742,7 @@
             setFormDisabled(false);
           }
 
-          for (let i = 1; i <= 8; i++) {
+          for (let i = 1; i <= 6; i++) {
             const input = document.getElementById(`foto${i}`);
             const mini = document.getElementById(`mini${i}`);
             if (input) input.addEventListener('change', e => verFoto(i, e.target));
@@ -792,7 +768,7 @@
               setFormDisabled(false);
             }
 
-            for (let i = 1; i <= 8; i++) {
+            for (let i = 1; i <= 6; i++) {
               const input = document.getElementById(`foto${i}`);
               const mini = document.getElementById(`mini${i}`);
               if (input) input.addEventListener('change', e => verFoto(i, e.target));
@@ -834,7 +810,7 @@
         }
 
         const fotos = {};
-        for (let i = 1; i <= 8; i++) {
+        for (let i = 1; i <= 6; i++) {
           const input = document.getElementById(`foto${i}`);
           if (input.files[0]) {
             fotos[`foto${i}`] = await comprimirFoto(input.files[0]);
@@ -895,7 +871,7 @@
         document.getElementById('formAuto').reset();
         bloqueOtraCiudad.classList.add('oculto');
         
-        for (let i = 1; i <= 8; i++) {
+        for (let i = 1; i <= 6; i++) {
           const img = document.getElementById(`img${i}`);
           const sin = document.getElementById(`sin${i}`);
           if (img) img.style.display = 'none';
