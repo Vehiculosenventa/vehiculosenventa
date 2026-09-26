@@ -13,7 +13,6 @@
       font-family: 'Segoe UI', Roboto, sans-serif;
     }
 
-    /* 🟦 FONDO DE LA PÁGINA — CELESTE SIEMPRE */
     body {
       background: linear-gradient(135deg, #94b8d9 0%, #7aa7c9 100%);
       min-height: 100vh;
@@ -65,7 +64,7 @@
       padding: 0 5px;
     }
 
-    /* 🟤 TARJETA — TODO CREMA OSCURO, SIN BLANCO */
+    /* 🟤 TARJETA — TODO CREMA, NADA DE BLANCO */
     .tarjeta-vehiculo {
       background: #f5efe0;
       border-radius: 20px;
@@ -82,10 +81,9 @@
       transform: scale(0.98);
     }
 
-    /* Foto principal */
     .foto-principal {
       width: 100%;
-      height: 220px;
+      height: 200px;
       background: #d9ccb4;
       display: flex;
       align-items: center;
@@ -104,7 +102,7 @@
       font-size: 16px;
     }
 
-    /* 🟤 CAMPOS — TODO CREMA OSCURO */
+    /* 🟤 CAMPOS — TODO CREMA */
     .campos-resumen {
       padding: 20px 25px;
       background: #f5efe0;
@@ -116,6 +114,7 @@
       display: flex;
       justify-content: space-between;
       font-size: 16px;
+      background: #f5efe0;
     }
 
     .campo:last-child {
@@ -147,7 +146,6 @@
       margin: 0;
     }
 
-    /* PUNTITOS DE NAVEGACIÓN — SIN BOTONES */
     .puntos {
       display: flex;
       justify-content: center;
@@ -169,7 +167,6 @@
       box-shadow: 0 0 6px rgba(255,255,255,0.6);
     }
 
-    /* BOTÓN VOLVER — AZUL COMO TENÍAS */
     .volver {
       display: block;
       text-align: center;
@@ -178,23 +175,23 @@
       text-decoration: none;
       font-weight: 600;
       padding: 12px 24px;
-      background: #1565C0;
+      background: #7aa7c9;
       border-radius: 10px;
       transition: background 0.2s ease;
     }
 
     .volver:hover {
-      background: #0d47a1;
+      background: #5fa8d3;
     }
 
-    /* 🟦 VENTANA DE DETALLE — FONDO CELESTE OSCURO TRANSPARENTE */
+    /* 🟦 FONDO DE DETALLE — CELESTE */
     .fondo-detalle {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(30, 60, 90, 0.85);
+      background: rgba(122, 167, 201, 0.92);
       z-index: 9999;
       display: none;
       opacity: 0;
@@ -208,7 +205,7 @@
       opacity: 1;
     }
 
-    /* 🟤 CAJA DE DETALLE — CREMA OSCURO SIN BLANCO */
+    /* 🟤 CAJA DE DETALLE — TODO CREMA, NADA DE BLANCO */
     .caja-detalle {
       max-width: 550px;
       margin: 0 auto;
@@ -223,21 +220,22 @@
       top: 12px;
       right: 12px;
       z-index: 10;
-      background: #ffffff;
-      border: none;
+      background: #f5efe0;
+      border: 2px solid #7aa7c9;
       width: 36px;
       height: 36px;
       border-radius: 50%;
       font-size: 18px;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+      color: #5d4e37;
     }
 
-    /* Galería de fotos */
     .galeria-detalle {
       position: relative;
       overflow: hidden;
-      height: 300px;
+      height: 200px;
+      background: #d9ccb4;
     }
 
     .fila-fotos {
@@ -285,7 +283,7 @@
       background: white;
     }
 
-    /* 🟤 CAMPOS DEL DETALLE — TODO CREMA OSCURO */
+    /* 🟤 CAMPOS DETALLE — TODO CREMA */
     .contenido-detalle {
       padding: 25px;
       background: #f5efe0;
@@ -302,10 +300,12 @@
       flex-wrap: wrap;
       gap: 15px;
       margin-bottom: 12px;
+      background: #f5efe0;
     }
 
     .campo-detalle {
       flex: 1 1 45%;
+      background: #f5efe0;
     }
 
     .campo-detalle label {
@@ -400,6 +400,7 @@
     let inicioX = 0;
     let ultimoDesplazamiento = 0;
     let indiceFotoDetalle = 0;
+    let fotosActuales = [];
 
     function obtenerTipo() {
       const params = new URLSearchParams(window.location.search);
@@ -452,7 +453,7 @@
       puntos.innerHTML = "";
 
       listaVehiculos.forEach((veh, i) => {
-        const fotoPrincipal = veh.foto1 || veh.foto_1 || veh.foto || "";
+        const fotoPrincipal = veh.foto1 || "";
 
         const tarjeta = document.createElement("div");
         tarjeta.className = "tarjeta-pantalla";
@@ -477,7 +478,7 @@
               </div>
               <div class="campo">
                 <span class="etiqueta">Año:</span>
-                <span class="valor">${veh.año || "-"}</span>
+                <span class="valor">${veh.anio || "-"}</span>
               </div>
               <div class="campo">
                 <span class="etiqueta">Precio:</span>
@@ -543,7 +544,6 @@
       }, { passive: true });
     }
 
-    /* ✅ ABRIR DETALLE — TODOS LOS CAMPOS Y FOTOS */
     function abrirDetalle(indice) {
       const veh = listaVehiculos[indice];
       
@@ -553,18 +553,19 @@
       filaFotos.innerHTML = "";
       puntosGaleria.innerHTML = "";
       indiceFotoDetalle = 0;
+      fotosActuales = [];
       
-      // Recolectar TODAS las fotos
-      const fotos = [];
       for (let i = 1; i <= 8; i++) {
-        const campoFoto = veh[`foto${i}`] || veh[`foto_${i}`];
-        if (campoFoto) fotos.push(campoFoto);
+        const campo = `foto${i}`;
+        if (veh[campo] && veh[campo] !== null && veh[campo] !== "") {
+          fotosActuales.push(veh[campo]);
+        }
       }
       
-      if (fotos.length === 0) {
+      if (fotosActuales.length === 0) {
         filaFotos.innerHTML = `<div class="foto-galeria"><span class="sin-foto-galeria">📷 Sin fotos</span></div>`;
       } else {
-        fotos.forEach((foto, i) => {
+        fotosActuales.forEach((foto, i) => {
           const div = document.createElement("div");
           div.className = "foto-galeria";
           div.innerHTML = `<img src="${foto}" alt="Foto ${i+1}">`;
@@ -576,7 +577,6 @@
         });
       }
       
-      // MOSTRAR TODOS LOS CAMPOS
       const contenido = document.getElementById("contenido-detalle");
       contenido.innerHTML = `
         <h2>${veh.marca || ""} ${veh.modelo || ""}</h2>
@@ -585,26 +585,29 @@
           <div class="campo-detalle"><label>Tipo de vehículo</label><span>${veh.tipo_vehiculo || tipoSeleccionado || "-"}</span></div>
           <div class="campo-detalle"><label>Marca</label><span>${veh.marca || "-"}</span></div>
           <div class="campo-detalle"><label>Modelo</label><span>${veh.modelo || "-"}</span></div>
-          <div class="campo-detalle"><label>Año</label><span>${veh.año || "-"}</span></div>
+          <div class="campo-detalle"><label>Versión</label><span>${veh.version || "-"}</span></div>
+          <div class="campo-detalle"><label>Año</label><span>${veh.anio || "-"}</span></div>
           <div class="campo-detalle"><label>Kilometraje</label><span>${veh.kilometraje ? veh.kilometraje + " km" : "-"}</span></div>
           <div class="campo-detalle"><label>Ciudad</label><span>${veh.ciudad || "-"}</span></div>
-          <div class="campo-detalle"><label>Color</label><span>${veh.color || "-"}</span></div>
           <div class="campo-detalle"><label>Combustible</label><span>${veh.combustible || "-"}</span></div>
           <div class="campo-detalle"><label>Transmisión</label><span>${veh.transmision || "-"}</span></div>
-          <div class="campo-detalle"><label>Motor</label><span>${veh.motor || "-"}</span></div>
-          <div class="campo-detalle"><label>Estado</label><span>${veh.estado || "-"}</span></div>
-          <div class="campo-detalle"><label>Dueño</label><span>${veh.dueño || veh.nombre || "-"}</span></div>
+          <div class="campo-detalle"><label>Dueño</label><span>${veh.dueno || "-"}</span></div>
+          <div class="campo-detalle"><label>Dirección</label><span>${veh.direccion || "-"}</span></div>
+          <div class="campo-detalle"><label>Permuta</label><span>${veh.permuta ? "Sí" : "No"}</span></div>
+          <div class="campo-detalle"><label>Contado</label><span>${veh.contado ? "Sí" : "No"}</span></div>
         </div>
+        
+        ${veh.descripcion ? `<div style="margin:12px 0;"><label style="font-size:13px;color:#8a7d65;">Descripción</label><p style="color:#3a2f1f;white-space:pre-wrap;">${veh.descripcion}</p></div>` : ""}
+        
+        ${veh.deuda ? `<div style="margin:12px 0;"><label style="font-size:13px;color:#8a7d65;">Deuda</label><span style="color:#3a2f1f;">${veh.deuda}</span></div>` : ""}
         
         <div class="precio-detalle">Precio: $ ${veh.precio ? Number(veh.precio).toLocaleString("es-AR") : "-"}</div>
         
         ${veh.telefono ? `<a href="https://wa.me/549${veh.telefono}" target="_blank" style="display:block;text-align:center;background:#25D366;color:white;padding:14px;border-radius:10px;text-decoration:none;font-weight:bold;margin-top:20px;">💬 Escribir por WhatsApp</a>` : ""}
       `;
       
-      // Mostrar ventana
       document.getElementById("fondo-detalle").classList.add("visible");
       
-      // Deslizar fotos en detalle
       let inicioFoto = 0, desplazFoto = 0;
       const galeria = document.querySelector(".galeria-detalle");
       
@@ -615,7 +618,7 @@
       galeria._ts = (e) => { inicioFoto = e.touches[0].clientX; };
       galeria._tm = (e) => { desplazFoto = e.touches[0].clientX - inicioFoto; };
       galeria._te = () => {
-        if (desplazFoto < -50 && indiceFotoDetalle < fotos.length - 1) indiceFotoDetalle++;
+        if (desplazFoto < -50 && indiceFotoDetalle < fotosActuales.length - 1) indiceFotoDetalle++;
         if (desplazFoto > 50 && indiceFotoDetalle > 0) indiceFotoDetalle--;
         filaFotos.style.transform = `translateX(-${indiceFotoDetalle * 100}%)`;
         document.querySelectorAll(".punto-galeria").forEach((p, i) => p.classList.toggle("activo", i === indiceFotoDetalle));
