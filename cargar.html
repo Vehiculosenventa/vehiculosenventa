@@ -13,13 +13,17 @@
       max-width: 850px;
       margin: 0 auto;
       min-height: 100vh;
+      position: relative;
     }
+
     h1 {
       text-align: center;
       color: #1a365d;
       margin-bottom: 20px;
       font-size: 24px;
       font-weight: 800;
+      position: relative;
+      z-index: 2;
     }
     .form-container {
       background: #dcc9ad;
@@ -27,6 +31,8 @@
       border-radius: 18px;
       box-shadow: 0 6px 16px rgba(26, 54, 93, 0.15);
       border: 2px solid #c49a6c;
+      position: relative;
+      z-index: 2;
     }
     .fila { display: flex; gap: 15px; margin-bottom: 18px; flex-wrap: wrap; }
     .campo { flex: 1 1 45%; min-width: 160px; }
@@ -50,6 +56,8 @@
       font-size: 15px;
       background: #fff;
       color: #2d3748;
+      position: relative;
+      z-index: 2;
     }
     input:disabled, select:disabled, textarea:disabled {
       background: #d9d9d9;
@@ -75,6 +83,8 @@
       font-weight: 700;
       cursor: pointer;
       margin-top: 10px;
+      position: relative;
+      z-index: 2;
     }
     .boton:disabled { background: #8898aa; cursor: not-allowed; }
     
@@ -86,6 +96,8 @@
       padding: 0;
       background: transparent;
       border-radius: 0;
+      position: relative;
+      z-index: 2;
     }
     .texto-conectado {
       color: #16a34a;
@@ -108,6 +120,8 @@
     .aviso-sesion {
       padding: 12px; border-radius: 10px; font-weight: 600;
       flex: 1; text-align: center;
+      position: relative;
+      z-index: 2;
     }
     .no-conectado { background: #fef5e7; color: #744210; border: 1px solid #fdeaa8; }
     
@@ -120,6 +134,8 @@
       text-align: center;
       color: #92400e;
       font-weight: 600;
+      position: relative;
+      z-index: 2;
     }
     
     .mensaje {
@@ -128,6 +144,8 @@
       border-radius: 12px;
       display: none;
       font-weight: 600;
+      position: relative;
+      z-index: 2;
     }
     .exito { background: #e6ffea; color: #22543d; border: 2px solid #9ae6b4; }
     .error { background: #fff5f5; color: #c53030; border: 2px solid #feb2b2; }
@@ -140,8 +158,10 @@
       padding: 10px 18px;
       background: rgba(255,255,255,0.7);
       border-radius: 10px;
+      position: relative;
+      z-index: 2;
     }
-    .foto-seccion { margin: 28px 0 15px; }
+    .foto-seccion { margin: 28px 0 15px; position: relative; z-index: 2; }
     .foto-titulo-seccion {
       font-size: 19px;
       font-weight: 700;
@@ -158,6 +178,8 @@
       border-radius: 14px;
       border: 2px solid #94b8d9;
       cursor: pointer;
+      position: relative;
+      z-index: 2;
     }
     .foto-tarjeta.disabled { opacity: 0.6; pointer-events: none; }
     .foto-nombre {
@@ -187,6 +209,8 @@
       margin-bottom: 20px;
       justify-content: center;
       flex-wrap: nowrap;
+      position: relative;
+      z-index: 2;
     }
     .boton-sesion {
       flex: 1;
@@ -201,7 +225,53 @@
       font-size: 15px;
     }
     .oculto { display: none !important; }
-    .campo-otra-ciudad { margin-top: 10px; }
+    .campo-otra-ciudad { margin-top: 10px; position: relative; z-index: 2; }
+
+    /* 🔍 VENTANA AMPLIAR FOTO */
+    .ventana-foto {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+    .ventana-foto.mostrar { display: flex; }
+    .contenedor-foto-grande {
+      position: relative;
+      max-width: 95%;
+      max-height: 90vh;
+    }
+    .foto-grande {
+      max-width: 100%;
+      max-height: 85vh;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    }
+    /* 💧 LOGO EN ESQUINA SUPERIOR DERECHA DE LA FOTO */
+    .logo-agua-foto {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 100px;
+      height: 100px;
+      opacity: 0.12; /* Bien suavecito */
+      pointer-events: none;
+      background: url('imágenes/logo.png') center/contain no-repeat;
+    }
+    .cerrar-foto {
+      position: absolute;
+      top: -40px;
+      right: 0;
+      color: #fff;
+      font-size: 30px;
+      cursor: pointer;
+      font-weight: bold;
+      line-height: 1;
+    }
   </style>
 </head>
 <body>
@@ -210,7 +280,7 @@
 
   <div class="form-container">
     
-    <div id="cargando" style="text-align:center; color:#2b6cb0; font-weight:600; padding:20px;">
+    <div id="cargando" style="text-align:center; color:#2b6cb0; font-weight:600; padding:20px; position:relative; z-index:2;">
       🔍 Verificando sesión...
     </div>
 
@@ -232,7 +302,7 @@
         ⚠️ Ya publicaste 5 vehículos. El límite es 5. Eliminá uno para poder publicar otro.
       </div>
       
-      <div style="text-align:center; margin:15px 0; color:#4a5568;">— Completá los datos del vehículo —</div>
+      <div style="text-align:center; margin:15px 0; color:#4a5568; position:relative; z-index:2;">— Completá los datos del vehículo —</div>
     </div>
 
     <form id="formAuto">
@@ -443,7 +513,7 @@
       </div>
 
       <div class="foto-seccion">
-        <div class="foto-titulo-seccion">📸 Fotos del vehículo — Tocar para sacar foto</div>
+        <div class="foto-titulo-seccion">📸 Fotos del vehículo — Tocar para ver grande</div>
 
         <label class="foto-tarjeta" id="foto_tarjeta_1">
           <span>1️⃣</span>
@@ -451,7 +521,7 @@
             <input type="file" class="foto-input-oculto" id="foto1" accept="image/*" capture="environment" disabled>
           </div>
           <span class="icono-camara">📷</span>
-          <div class="foto-mini">
+          <div class="foto-mini" id="mini1">
             <img id="img1" class="foto-mini-img" alt="Foto del vehículo">
             <span id="sin1" class="foto-sin">Sin foto</span>
           </div>
@@ -463,7 +533,7 @@
             <input type="file" class="foto-input-oculto" id="foto2" accept="image/*" capture="environment" disabled>
           </div>
           <span class="icono-camara">📷</span>
-          <div class="foto-mini">
+          <div class="foto-mini" id="mini2">
             <img id="img2" class="foto-mini-img" alt="Foto del vehículo">
             <span id="sin2" class="foto-sin">Sin foto</span>
           </div>
@@ -475,7 +545,7 @@
             <input type="file" class="foto-input-oculto" id="foto3" accept="image/*" capture="environment" disabled>
           </div>
           <span class="icono-camara">📷</span>
-          <div class="foto-mini">
+          <div class="foto-mini" id="mini3">
             <img id="img3" class="foto-mini-img" alt="Foto del vehículo">
             <span id="sin3" class="foto-sin">Sin foto</span>
           </div>
@@ -487,7 +557,7 @@
             <input type="file" class="foto-input-oculto" id="foto4" accept="image/*" capture="environment" disabled>
           </div>
           <span class="icono-camara">📷</span>
-          <div class="foto-mini">
+          <div class="foto-mini" id="mini4">
             <img id="img4" class="foto-mini-img" alt="Foto del vehículo">
             <span id="sin4" class="foto-sin">Sin foto</span>
           </div>
@@ -499,7 +569,7 @@
             <input type="file" class="foto-input-oculto" id="foto5" accept="image/*" capture="environment" disabled>
           </div>
           <span class="icono-camara">📷</span>
-          <div class="foto-mini">
+          <div class="foto-mini" id="mini5">
             <img id="img5" class="foto-mini-img" alt="Foto del vehículo">
             <span id="sin5" class="foto-sin">Sin foto</span>
           </div>
@@ -511,7 +581,7 @@
             <input type="file" class="foto-input-oculto" id="foto6" accept="image/*" capture="environment" disabled>
           </div>
           <span class="icono-camara">📷</span>
-          <div class="foto-mini">
+          <div class="foto-mini" id="mini6">
             <img id="img6" class="foto-mini-img" alt="Foto del vehículo">
             <span id="sin6" class="foto-sin">Sin foto</span>
           </div>
@@ -523,7 +593,7 @@
             <input type="file" class="foto-input-oculto" id="foto7" accept="image/*" capture="environment" disabled>
           </div>
           <span class="icono-camara">📷</span>
-          <div class="foto-mini">
+          <div class="foto-mini" id="mini7">
             <img id="img7" class="foto-mini-img" alt="Foto del vehículo">
             <span id="sin7" class="foto-sin">Sin foto</span>
           </div>
@@ -535,7 +605,7 @@
             <input type="file" class="foto-input-oculto" id="foto8" accept="image/*" capture="environment" disabled>
           </div>
           <span class="icono-camara">📷</span>
-          <div class="foto-mini">
+          <div class="foto-mini" id="mini8">
             <img id="img8" class="foto-mini-img" alt="Foto del vehículo">
             <span id="sin8" class="foto-sin">Sin foto</span>
           </div>
@@ -549,6 +619,15 @@
     <a href="index.html" class="volver">← Volver al inicio</a>
   </div>
 
+  <!-- 🔍 VENTANA PARA VER FOTO GRANDE -->
+  <div class="ventana-foto" id="ventanaFoto">
+    <div class="contenedor-foto-grande">
+      <span class="cerrar-foto" id="cerrarFoto">&times;</span>
+      <img src="" alt="Foto ampliada" class="foto-grande" id="fotoGrande">
+      <div class="logo-agua-foto"></div>
+    </div>
+  </div>
+
   <script>            
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
@@ -559,9 +638,12 @@
     const selectCiudad = document.getElementById('ciudad');
     const bloqueOtraCiudad = document.getElementById('bloqueOtraCiudad');
     const avisoLimite = document.getElementById('avisoLimite');
+    const ventanaFoto = document.getElementById('ventanaFoto');
+    const fotoGrande = document.getElementById('fotoGrande');
+    const cerrarFoto = document.getElementById('cerrarFoto');
 
-    // ✅ COMPRIMIR FOTO ANTES DE SUBIR → más rápido, sin perder calidad visible
-    function comprimirFoto(archivo, calidad = 0.75, maxAncho = 1200) {
+    // ✅ COMPRIMIR FOTO ANTES DE SUBIR → más rápido, calidad un poquito menor
+    function comprimirFoto(archivo, calidad = 0.65, maxAncho = 1000) {
       return new Promise((resolver) => {
         const lector = new FileReader();
         lector.onload = function(e) {
@@ -621,6 +703,25 @@
       }
     }
 
+    // 🔍 Ampliar foto al tocar
+    function ampliarFoto(numero) {
+      const img = document.getElementById(`img${numero}`);
+      if (img && img.style.display === 'block' && img.src) {
+        fotoGrande.src = img.src;
+        ventanaFoto.classList.add('mostrar');
+      }
+    }
+
+    // Cerrar foto ampliada
+    cerrarFoto.addEventListener('click', () => {
+      ventanaFoto.classList.remove('mostrar');
+    });
+    ventanaFoto.addEventListener('click', (e) => {
+      if (e.target === ventanaFoto) {
+        ventanaFoto.classList.remove('mostrar');
+      }
+    });
+
     selectCiudad.addEventListener('change', () => {
       if (selectCiudad.value === 'otra') {
         bloqueOtraCiudad.classList.remove('oculto');
@@ -668,9 +769,12 @@
             setFormDisabled(false);
           }
 
+          // Conectar eventos de fotos
           for (let i = 1; i <= 8; i++) {
             const input = document.getElementById(`foto${i}`);
+            const mini = document.getElementById(`mini${i}`);
             if (input) input.addEventListener('change', e => verFoto(i, e.target));
+            if (mini) mini.addEventListener('click', () => ampliarFoto(i));
           }
         } else {
           document.getElementById('cargando').classList.add('oculto');
@@ -694,7 +798,9 @@
 
             for (let i = 1; i <= 8; i++) {
               const input = document.getElementById(`foto${i}`);
+              const mini = document.getElementById(`mini${i}`);
               if (input) input.addEventListener('change', e => verFoto(i, e.target));
+              if (mini) mini.addEventListener('click', () => ampliarFoto(i));
             }
           }
         });
