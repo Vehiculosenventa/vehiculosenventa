@@ -13,7 +13,7 @@
       font-family: 'Segoe UI', Roboto, sans-serif;
     }
     body {
-      background: linear-gradient(135deg, #5fa8d3 0%, #3b82b8 100%);
+      background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
       min-height: 100vh;
       padding: 20px;
     }
@@ -35,16 +35,16 @@
       font-size: 15px;
     }
     .tarjeta-vehiculo {
-      background: #ffffff;
+      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       border-radius: 20px;
       padding: 30px 25px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
       margin-bottom: 25px;
-      border: 3px solid #3b82b8;
+      border: 2px solid #bfa980;
     }
     .campo {
       padding: 12px 0;
-      border-bottom: 1px solid #e5eef7;
+      border-bottom: 1px solid #d4c29c;
       display: flex;
       justify-content: space-between;
       font-size: 16px;
@@ -53,11 +53,11 @@
       border-bottom: none;
     }
     .etiqueta {
-      font-weight: 600;
-      color: #2c5282;
+      font-weight: 700;
+      color: #1a365d;
     }
     .valor {
-      color: #1a365d;
+      color: #2d3748;
       font-weight: 500;
     }
     .navegacion {
@@ -65,59 +65,63 @@
       justify-content: space-between;
       align-items: center;
       margin-bottom: 25px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 12px;
     }
     .boton-nav {
-      padding: 10px 20px;
-      background: #ffffff;
-      color: #3b82b8;
-      border: 2px solid #3b82b8;
+      padding: 11px 22px;
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: #ffffff;
+      border: none;
       border-radius: 10px;
       font-size: 15px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
+      box-shadow: 0 3px 10px rgba(49,130,206,0.25);
     }
     .boton-nav:hover:not(:disabled) {
-      background: #3b82b8;
-      color: #ffffff;
+      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
       transform: translateY(-1px);
     }
     .boton-nav:disabled {
       opacity: 0.4;
       cursor: not-allowed;
       transform: none;
-      background: #f0f7fc;
-      color: #94b8d4;
-      border-color: #94b8d4;
+      background: #94b8d4;
+      box-shadow: none;
     }
     .contador {
       color: #ffffff;
-      font-weight: 600;
-      font-size: 15px;
+      font-weight: 700;
+      font-size: 16px;
     }
     .volver {
-      display: inline-block;
+      display: block;
+      text-align: center;
       margin-top: 10px;
       color: #ffffff;
       text-decoration: none;
-      font-weight: 600;
-      padding: 10px 24px;
-      background: rgba(255,255,255,0.2);
+      font-weight: 700;
+      padding: 12px 24px;
+      background: rgba(255,255,255,0.25);
       border-radius: 10px;
-      transition: background 0.2s ease;
+      transition: all 0.2s ease;
     }
     .volver:hover {
-      background: rgba(255,255,255,0.35);
+      background: rgba(255,255,255,0.4);
+      transform: translateY(-1px);
     }
     .sin-resultados {
-      background: #ffffff;
+      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       border-radius: 20px;
       padding: 40px 25px;
       text-align: center;
       color: #2c5282;
       font-size: 17px;
-      font-weight: 500;
-      border: 3px solid #3b82b8;
+      font-weight: 600;
+      border: 2px solid #bfa980;
     }
     .cargando {
       text-align: center;
@@ -125,6 +129,46 @@
       font-size: 17px;
       padding: 40px;
     }
+    .fotos-titulo {
+      margin-top: 22px;
+      font-weight: 700;
+      color: #1a365d;
+      font-size: 17px;
+      padding-top: 15px;
+      border-top: 2px solid #d4c29c;
+    }
+    .fotos-cuadricula {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 12px;
+      margin-top: 15px;
+    }
+    .foto-caja {text-align: center;}
+    .foto-ver {
+      width: 100%;
+      aspect-ratio: 4/3;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #ebf4fb;
+      border: 2px solid #dceaf5;
+    }
+    .foto-ver img {width: 100%; height: 100%; object-fit: cover;}
+    .foto-nombre {
+      font-size: 11px;
+      color: #5a4f3f;
+      padding: 5px 0;
+      font-weight: 600;
+    }
+    .etiqueta {
+      display: inline-block;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      margin: 6px 8px 6px 0;
+      font-weight: 600;
+    }
+    .permuta {background: #e8d9bc; color: #78350f;}
+    .contado {background: #b8d8b5; color: #166534;}
   </style>
 </head>
 <body>
@@ -157,8 +201,12 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    // ✅ UNA SOLA VEZ — sin repetir
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const nombresFotos = [
+      'Foto 1', 'Foto 2', 'Foto 3', 'Foto 4', 'Foto 5',
+      'Foto 6', 'Foto 7', 'Foto 8'
+    ];
 
     let listaVehiculos = [];
     let indiceActual = 0;
@@ -172,10 +220,10 @@
     async function cargarVehiculos() {
       tipoSeleccionado = obtenerTipo();
       
-      document.getElementById("titulo-tipo").textContent = tipoSeleccionado || "Vehículos";
+      document.getElementById("titulo-tipo").textContent = tipoSeleccionado || "Todos los Vehículos";
       document.getElementById("subtitulo-tipo").textContent = tipoSeleccionado 
         ? `Filtrando: ${tipoSeleccionado}` 
-        : "Todos los vehículos";
+        : "Se muestran todos los vehículos disponibles";
 
       let consulta = supabaseClient.from("autos").select("*");
       
@@ -209,23 +257,89 @@
       const veh = listaVehiculos[indiceActual];
       const tarjeta = document.getElementById("tarjeta-vehiculo");
 
+      let fotosHtml = '';
+      for (let i = 1; i <= 8; i++) {
+        const foto = veh[`foto${i}`];
+        if (foto) {
+          fotosHtml += `
+            <div class="foto-caja">
+              <div class="foto-ver"><img src="${foto}" alt="${nombresFotos[i-1]}"></div>
+              <div class="foto-nombre">${nombresFotos[i-1]}</div>
+            </div>
+          `;
+        }
+      }
+      const hayFotos = fotosHtml !== '';
+
       tarjeta.innerHTML = `
         <div class="campo">
           <span class="etiqueta">Tipo:</span>
           <span class="valor">${veh.tipo_vehiculo || tipoSeleccionado}</span>
         </div>
         <div class="campo">
+          <span class="etiqueta">Marca:</span>
+          <span class="valor">${veh.marca || "-"}</span>
+        </div>
+        <div class="campo">
+          <span class="etiqueta">Modelo:</span>
+          <span class="valor">${veh.modelo || "-"}</span>
+        </div>
+        <div class="campo">
+          <span class="etiqueta">Versión:</span>
+          <span class="valor">${veh.version || "-"}</span>
+        </div>
+        <div class="campo">
           <span class="etiqueta">Año:</span>
-          <span class="valor">${veh.año || "-"}</span>
+          <span class="valor">${veh.anio || "-"}</span>
         </div>
         <div class="campo">
           <span class="etiqueta">Kilometraje:</span>
-          <span class="valor">${veh.kilometraje ? veh.kilometraje + " km" : "-"}</span>
+          <span class="valor">${veh.kilometraje ? veh.kilometraje.toLocaleString("es-AR") + " km" : "-"}</span>
+        </div>
+        <div class="campo">
+          <span class="etiqueta">Combustible:</span>
+          <span class="valor">${veh.combustible || "-"}</span>
+        </div>
+        <div class="campo">
+          <span class="etiqueta">Transmisión:</span>
+          <span class="valor">${veh.transmision || "-"}</span>
         </div>
         <div class="campo">
           <span class="etiqueta">Precio:</span>
           <span class="valor">$ ${veh.precio ? Number(veh.precio).toLocaleString("es-AR") : "-"}</span>
         </div>
+        <div class="campo">
+          <span class="etiqueta">Ciudad:</span>
+          <span class="valor">${veh.ciudad || "-"}</span>
+        </div>
+        <div class="campo">
+          <span class="etiqueta">Dueño:</span>
+          <span class="valor">${veh.dueno || "-"}</span>
+        </div>
+        <div class="campo">
+          <span class="etiqueta">Teléfono:</span>
+          <span class="valor">${veh.telefono || "-"}</span>
+        </div>
+        <div class="campo">
+          <span class="etiqueta">Dirección:</span>
+          <span class="valor">${veh.direccion || "-"}</span>
+        </div>
+        <div class="campo">
+          <span class="etiqueta">Deudas:</span>
+          <span class="valor">${veh.deuda || "Sin deudas"}</span>
+        </div>
+        <div class="campo">
+          <span class="etiqueta">Descripción:</span>
+          <span class="valor">${veh.descripcion || "-"}</span>
+        </div>
+        <div style="padding: 10px 0; border-bottom: 1px solid #d4c29c;">
+          ${veh.permuta ? '<span class="etiqueta permuta">✅ Acepta permuta</span>' : ''}
+          ${veh.contado ? '<span class="etiqueta contado">💵 Solo contado</span>' : ''}
+        </div>
+        ${hayFotos ? `
+        <div class="fotos-titulo">📸 Fotos del vehículo</div>
+        <div class="fotos-cuadricula">${fotosHtml}</div>
+        ` : ''}
       `;
 
       document.getElementById("contador").textContent = `${indiceActual + 1} de ${listaVehiculos.length}`;
