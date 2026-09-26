@@ -22,7 +22,7 @@
       font-weight: 800;
     }
     .form-container {
-      background: #dcc9ad;  /* ✅ Crema más oscuro igual a la principal */
+      background: #dcc9ad;
       padding: 25px;
       border-radius: 18px;
       box-shadow: 0 6px 16px rgba(26, 54, 93, 0.15);
@@ -110,6 +110,17 @@
       flex: 1; text-align: center;
     }
     .no-conectado { background: #fef5e7; color: #744210; border: 1px solid #fdeaa8; }
+    
+    .aviso-limite {
+      background: #fffbeb;
+      border: 2px solid #fcd34d;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #92400e;
+      font-weight: 600;
+    }
     
     .mensaje {
       margin-top: 20px;
@@ -215,6 +226,10 @@
       <div class="barra-superior">
         <span class="texto-conectado">Conectado</span>
         <button id="btn-cerrar-sesion" class="enlace-cerrar-sesion">Cerrar sesión</button>
+      </div>
+      
+      <div id="avisoLimite" class="aviso-limite oculto">
+        ⚠️ Ya publicaste 5 vehículos. El límite es 5. Eliminá uno para poder publicar otro.
       </div>
       
       <div style="text-align:center; margin:15px 0; color:#4a5568;">— Completá los datos del vehículo —</div>
@@ -538,9 +553,12 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
+    const CORREO_SIN_LIMITE = "mis.vehiculos.en.venta@gmail.com";
+
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
     const selectCiudad = document.getElementById('ciudad');
     const bloqueOtraCiudad = document.getElementById('bloqueOtraCiudad');
+    const avisoLimite = document.getElementById('avisoLimite');
 
     function setFormDisabled(desactivar) {
       const campos = document.querySelectorAll('input, select, textarea, button[type="submit"]');
@@ -591,6 +609,23 @@
       }
     });
 
+    async function verificarLimitePublicaciones(usuarioId, correoUsuario) {
+      if (correoUsuario === CORREO_SIN_LIMITE) {
+        return 0; // ✅ Sin límite
+      }
+      
+      const { count, error } = await supabaseClient
+        .from('autos')
+        .select('*', { count: 'exact', head: true })
+        .eq('usuario_id', usuarioId);
+      
+      if (error) {
+        console.error("Error al contar:", error);
+        return 0;
+      }
+      return count || 0;
+    }
+
     async function verificarSesion() {
       try {
         const { data: { session } } = await supabaseClient.auth.getSession();
@@ -599,7 +634,16 @@
           document.getElementById('cargando').classList.add('oculto');
           document.getElementById('bloqueNoConectado').classList.add('oculto');
           document.getElementById('bloqueConectado').classList.remove('oculto');
-          setFormDisabled(false);
+          
+          const cantidad = await verificarLimitePublicaciones(session.user.id, session.user.email);
+          
+          if (cantidad >= 5 && session.user.email !== CORREO_SIN_LIMITE) {
+            avisoLimite.classList.remove('oculto');
+            setFormDisabled(true);
+          } else {
+            avisoLimite.classList.add('oculto');
+            setFormDisabled(false);
+          }
 
           for (let i = 1; i <= 8; i++) {
             const input = document.getElementById(`foto${i}`);
@@ -614,7 +658,16 @@
           if (nuevaSesion) {
             document.getElementById('bloqueNoConectado').classList.add('oculto');
             document.getElementById('bloqueConectado').classList.remove('oculto');
-            setFormDisabled(false);
+            
+            const cantidad = await verificarLimitePublicaciones(nuevaSesion.user.id, nuevaSesion.user.email);
+            
+            if (cantidad >= 5 && nuevaSesion.user.email !== CORREO_SIN_LIMITE) {
+              avisoLimite.classList.remove('oculto');
+              setFormDisabled(true);
+            } else {
+              avisoLimite.classList.add('oculto');
+              setFormDisabled(false);
+            }
 
             for (let i = 1; i <= 8; i++) {
               const input = document.getElementById(`foto${i}`);
@@ -649,6 +702,12 @@
       cajaMensaje.style.display = "none";
 
       try {
+        const cantidad = await verificarLimitePublicaciones(session.user.id, session.user.email);
+        
+        if (cantidad >= 5 && session.user.email !== CORREO_SIN_LIMITE) {
+          throw new Error("Ya publicaste 5 vehículos. El límite es 5. Eliminá uno para poder publicar otro.");
+        }
+
         const fotos = {};
         for (let i = 1; i <= 8; i++) {
           const input = document.getElementById(`foto${i}`);
@@ -707,6 +766,11 @@
           const sin = document.getElementById(`sin${i}`);
           if (img) img.style.display = 'none';
           if (sin) sin.style.display = 'block';
+        }
+        
+        if (cantidad + 1 >= 5 && session.user.email !== CORREO_SIN_LIMITE) {
+          avisoLimite.classList.remove('oculto');
+          setFormDisabled(true);
         }
         
       } catch (error) {
