@@ -58,9 +58,9 @@
       padding: 0 5px;
     }
 
-    /* === TARJETA VISTA RÁPIDA === */
+    /* === TARJETA VISTA RÁPIDA — CREMA OSCURO COMPLETO === */
     .tarjeta-vehiculo {
-      background: #f5efe0; /* 🟤 Crema oscuro */
+      background: #f5efe0; /* 🟤 Crema oscurito TODO el fondo */
       border-radius: 20px;
       padding: 0;
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
@@ -73,7 +73,7 @@
       transform: scale(0.98);
     }
 
-    /* Foto principal — la primera */
+    /* Foto principal */
     .foto-principal {
       width: 100%;
       height: 220px;
@@ -94,9 +94,10 @@
       font-size: 16px;
     }
 
-    /* Solo los 4 campos pedidos */
+    /* Campos — CREMA OSCURO */
     .campos-resumen {
       padding: 20px 25px;
+      background: #f5efe0; /* 🟤 Crema oscurito */
     }
     .campo {
       padding: 10px 0;
@@ -127,6 +128,8 @@
       font-size: 12px;
       color: #8a7d65;
       padding-bottom: 15px;
+      background: #f5efe0; /* 🟤 Todo crema */
+      margin: 0;
     }
 
     /* === PUNTITOS === */
@@ -166,7 +169,7 @@
       background: #0d47a1;
     }
 
-    /* === VENTANA DE DETALLE COMPLETO === */
+    /* === VENTANA DE DETALLE — TODO CREMA OSCURO === */
     .fondo-detalle {
       position: fixed;
       top: 0;
@@ -189,7 +192,7 @@
     .caja-detalle {
       max-width: 550px;
       margin: 0 auto;
-      background: #f5efe0;
+      background: #f5efe0; /* 🟤 Crema oscurito */
       border-radius: 20px;
       overflow: hidden;
       position: relative;
@@ -210,7 +213,7 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    /* Galería de fotos en detalle */
+    /* Galería de fotos */
     .galeria-detalle {
       position: relative;
       overflow: hidden;
@@ -256,9 +259,10 @@
       background: white;
     }
 
-    /* Todos los campos del detalle */
+    /* Campos del detalle — CREMA OSCURO */
     .contenido-detalle {
       padding: 25px;
+      background: #f5efe0; /* 🟤 Todo crema */
     }
     .contenido-detalle h2 {
       color: #5d4e37;
@@ -292,7 +296,7 @@
     }
 
     .sin-resultados {
-      background: #f5efe0;
+      background: #f5efe0; /* 🟤 Crema oscurito */
       border-radius: 20px;
       padding: 40px 25px;
       text-align: center;
@@ -322,7 +326,6 @@
 
       <div class="deslizador" id="deslizador">
         <div class="fila-tarjetas" id="fila-tarjetas">
-          <!-- Tarjetas generadas acá -->
         </div>
       </div>
 
@@ -339,21 +342,16 @@
     </div>
   </div>
 
-  <!-- === VENTANA DE DETALLE COMPLETO === -->
   <div class="fondo-detalle" id="fondo-detalle">
     <div class="caja-detalle">
       <button class="boton-cerrar" onclick="cerrarDetalle()">✕</button>
       
       <div class="galeria-detalle" id="galeria-detalle">
-        <div class="fila-fotos" id="fila-fotos-detalle">
-          <!-- Fotos del detalle -->
-        </div>
+        <div class="fila-fotos" id="fila-fotos-detalle"></div>
         <div class="puntos-galeria" id="puntos-galeria"></div>
       </div>
       
-      <div class="contenido-detalle" id="contenido-detalle">
-        <!-- Todos los campos completos -->
-      </div>
+      <div class="contenido-detalle" id="contenido-detalle"></div>
     </div>
   </div>
 
@@ -421,7 +419,6 @@
       puntos.innerHTML = "";
 
       listaVehiculos.forEach((veh, i) => {
-        // Obtener la primera foto
         const fotoPrincipal = veh.foto1 || veh.foto_1 || veh.foto || "";
 
         const tarjeta = document.createElement("div");
@@ -429,7 +426,6 @@
         tarjeta.onclick = () => abrirDetalle(i);
         tarjeta.innerHTML = `
           <div class="tarjeta-vehiculo">
-            <!-- Solo la PRIMERA foto -->
             <div class="foto-principal">
               ${fotoPrincipal 
                 ? `<img src="${fotoPrincipal}" alt="Foto principal">` 
@@ -437,7 +433,6 @@
               }
             </div>
             
-            <!-- Solo los 4 campos pedidos -->
             <div class="campos-resumen">
               <div class="campo">
                 <span class="etiqueta">Marca:</span>
@@ -515,11 +510,9 @@
       }, { passive: true });
     }
 
-    /* === ABRIR DETALLE COMPLETO === */
     function abrirDetalle(indice) {
       const veh = listaVehiculos[indice];
       
-      // Armar galería con TODAS las fotos
       const filaFotos = document.getElementById("fila-fotos-detalle");
       const puntosGaleria = document.getElementById("puntos-galeria");
       
@@ -527,7 +520,6 @@
       puntosGaleria.innerHTML = "";
       indiceFotoDetalle = 0;
       
-      // Recolectar todas las fotos
       const fotos = [];
       for (let i = 1; i <= 8; i++) {
         const campoFoto = veh[`foto${i}`] || veh[`foto_${i}`];
@@ -549,7 +541,6 @@
         });
       }
       
-      // Armar TODOS los campos completos
       const contenido = document.getElementById("contenido-detalle");
       contenido.innerHTML = `
         <h2>${veh.marca || ""} ${veh.modelo || ""}</h2>
@@ -574,10 +565,8 @@
         ${veh.telefono ? `<a href="https://wa.me/549${veh.telefono}" target="_blank" style="display:block;text-align:center;background:#25D366;color:white;padding:14px;border-radius:10px;text-decoration:none;font-weight:bold;margin-top:20px;">💬 Escribir por WhatsApp</a>` : ""}
       `;
       
-      // Mostrar ventana
       document.getElementById("fondo-detalle").classList.add("visible");
       
-      // Deslizar fotos en detalle
       let inicioFoto = 0, desplazFoto = 0;
       const galeria = document.querySelector(".galeria-detalle");
       
@@ -603,7 +592,6 @@
       document.getElementById("fondo-detalle").classList.remove("visible");
     }
 
-    // Cerrar si toca fuera del contenido
     document.getElementById("fondo-detalle").addEventListener("click", (e) => {
       if (e.target.id === "fondo-detalle") cerrarDetalle();
     });
