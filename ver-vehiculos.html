@@ -16,6 +16,7 @@
       background: linear-gradient(135deg, #5fa8d3 0%, #3b82b8 100%);
       min-height: 100vh;
       padding: 20px;
+      overflow-x: hidden;
     }
     .contenedor {
       max-width: 550px;
@@ -34,17 +35,72 @@
       margin-bottom: 25px;
       font-size: 15px;
     }
+
+    .contador {
+      text-align: center;
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 15px;
+      margin-bottom: 20px;
+    }
+
+    .deslizador {
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+    .fila-tarjetas {
+      display: flex;
+      transition: transform 0.3s ease-out;
+      will-change: transform;
+    }
+    .tarjeta-pantalla {
+      min-width: 100%;
+      padding: 0 5px;
+    }
+
+    /* === TARJETA VISTA RÁPIDA === */
     .tarjeta-vehiculo {
-      background: #ffffff;
+      background: #f5efe0; /* 🟤 Crema oscuro */
       border-radius: 20px;
-      padding: 30px 25px;
+      padding: 0;
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-      margin-bottom: 25px;
       border: 3px solid #3b82b8;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+      overflow: hidden;
+    }
+    .tarjeta-vehiculo:active {
+      transform: scale(0.98);
+    }
+
+    /* Foto principal — la primera */
+    .foto-principal {
+      width: 100%;
+      height: 220px;
+      background: #d9ccb4;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    .foto-principal img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .sin-foto {
+      color: #8a7d65;
+      font-size: 16px;
+    }
+
+    /* Solo los 4 campos pedidos */
+    .campos-resumen {
+      padding: 20px 25px;
     }
     .campo {
-      padding: 12px 0;
-      border-bottom: 1px solid #e5eef7;
+      padding: 10px 0;
+      border-bottom: 1px solid #d9ccb4;
       display: flex;
       justify-content: space-between;
       font-size: 16px;
@@ -54,67 +110,193 @@
     }
     .etiqueta {
       font-weight: 600;
-      color: #2c5282;
+      color: #5d4e37;
     }
     .valor {
-      color: #1a365d;
+      color: #3a2f1f;
       font-weight: 500;
     }
-    .navegacion {
+    .precio-destacado {
+      font-size: 20px;
+      color: #2e7d32;
+      font-weight: bold;
+    }
+
+    .indicacion-tocar {
+      text-align: center;
+      font-size: 12px;
+      color: #8a7d65;
+      padding-bottom: 15px;
+    }
+
+    /* === PUNTITOS === */
+    .puntos {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 25px;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
     }
-    .boton-nav {
-      padding: 10px 20px;
-      background: #ffffff;
-      color: #3b82b8;
-      border: 2px solid #3b82b8;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      cursor: pointer;
+    .punto {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
       transition: all 0.2s ease;
+      cursor: pointer;
     }
-    .boton-nav:hover:not(:disabled) {
-      background: #3b82b8;
-      color: #ffffff;
-      transform: translateY(-1px);
+    .punto.activo {
+      background: #ffffff;
+      box-shadow: 0 0 6px rgba(255,255,255,0.6);
     }
-    .boton-nav:disabled {
-      opacity: 0.4;
-      cursor: not-allowed;
-      transform: none;
-      background: #f0f7fc;
-      color: #94b8d4;
-      border-color: #94b8d4;
-    }
-    .contador {
-      color: #ffffff;
-      font-weight: 600;
-      font-size: 15px;
-    }
+
+    /* === BOTÓN VOLVER === */
     .volver {
-      display: inline-block;
+      display: block;
+      text-align: center;
       margin-top: 10px;
       color: #ffffff;
       text-decoration: none;
       font-weight: 600;
-      padding: 10px 24px;
-      background: rgba(255,255,255,0.2);
+      padding: 12px 24px;
+      background: #1565C0; /* 🔵 Azul más oscuro */
       border-radius: 10px;
       transition: background 0.2s ease;
     }
     .volver:hover {
-      background: rgba(255,255,255,0.35);
+      background: #0d47a1;
     }
-    .sin-resultados {
+
+    /* === VENTANA DE DETALLE COMPLETO === */
+    .fondo-detalle {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.75);
+      z-index: 9999;
+      display: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      overflow-y: auto;
+      padding: 20px;
+    }
+    .fondo-detalle.visible {
+      display: block;
+      opacity: 1;
+    }
+
+    .caja-detalle {
+      max-width: 550px;
+      margin: 0 auto;
+      background: #f5efe0;
+      border-radius: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .boton-cerrar {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 10;
       background: #ffffff;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      font-size: 18px;
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    /* Galería de fotos en detalle */
+    .galeria-detalle {
+      position: relative;
+      overflow: hidden;
+      height: 300px;
+    }
+    .fila-fotos {
+      display: flex;
+      height: 100%;
+      transition: transform 0.3s ease-out;
+    }
+    .foto-galeria {
+      min-width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #d9ccb4;
+    }
+    .foto-galeria img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .sin-foto-galeria {
+      color: #8a7d65;
+    }
+
+    .puntos-galeria {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+    }
+    .punto-galeria {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.5);
+    }
+    .punto-galeria.activo {
+      background: white;
+    }
+
+    /* Todos los campos del detalle */
+    .contenido-detalle {
+      padding: 25px;
+    }
+    .contenido-detalle h2 {
+      color: #5d4e37;
+      margin-bottom: 20px;
+      font-size: 20px;
+    }
+    .fila-detalle {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 12px;
+    }
+    .campo-detalle {
+      flex: 1 1 45%;
+    }
+    .campo-detalle label {
+      font-size: 13px;
+      color: #8a7d65;
+      display: block;
+    }
+    .campo-detalle span {
+      font-weight: 600;
+      color: #3a2f1f;
+      font-size: 15px;
+    }
+    .precio-detalle {
+      font-size: 24px;
+      color: #2e7d32;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+
+    .sin-resultados {
+      background: #f5efe0;
       border-radius: 20px;
       padding: 40px 25px;
       text-align: center;
-      color: #2c5282;
+      color: #5d4e37;
       font-size: 17px;
       font-weight: 500;
       border: 3px solid #3b82b8;
@@ -123,7 +305,7 @@
       text-align: center;
       color: #ffffff;
       font-size: 17px;
-      padding: 40px;
+      padding: 60px 40px;
     }
   </style>
 </head>
@@ -136,12 +318,16 @@
     <div id="cargando" class="cargando">🔍 Buscando vehículos...</div>
 
     <div id="contenido" style="display:none;">
-      <div class="navegacion">
-        <button id="btn-anterior" class="boton-nav">⬅️ Anterior</button>
-        <span id="contador" class="contador">1 de 1</span>
-        <button id="btn-siguiente" class="boton-nav">Siguiente ➡️</button>
+      <div class="contador" id="contador">1 de 1</div>
+
+      <div class="deslizador" id="deslizador">
+        <div class="fila-tarjetas" id="fila-tarjetas">
+          <!-- Tarjetas generadas acá -->
+        </div>
       </div>
-      <div id="tarjeta-vehiculo" class="tarjeta-vehiculo"></div>
+
+      <div class="puntos" id="puntos"></div>
+
       <a href="catalogo.html" class="volver">← Volver al Catálogo</a>
     </div>
 
@@ -153,16 +339,36 @@
     </div>
   </div>
 
+  <!-- === VENTANA DE DETALLE COMPLETO === -->
+  <div class="fondo-detalle" id="fondo-detalle">
+    <div class="caja-detalle">
+      <button class="boton-cerrar" onclick="cerrarDetalle()">✕</button>
+      
+      <div class="galeria-detalle" id="galeria-detalle">
+        <div class="fila-fotos" id="fila-fotos-detalle">
+          <!-- Fotos del detalle -->
+        </div>
+        <div class="puntos-galeria" id="puntos-galeria"></div>
+      </div>
+      
+      <div class="contenido-detalle" id="contenido-detalle">
+        <!-- Todos los campos completos -->
+      </div>
+    </div>
+  </div>
+
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    // ✅ UNA SOLA VEZ — sin repetir
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let listaVehiculos = [];
     let indiceActual = 0;
     let tipoSeleccionado = "";
+    let inicioX = 0;
+    let ultimoDesplazamiento = 0;
+    let indiceFotoDetalle = 0;
 
     function obtenerTipo() {
       const params = new URLSearchParams(window.location.search);
@@ -202,49 +408,204 @@
       indiceActual = 0;
 
       document.getElementById("contenido").style.display = "block";
+      armarTarjetas();
       mostrarVehiculoActual();
+      configurarDeslizamiento();
+    }
+
+    function armarTarjetas() {
+      const fila = document.getElementById("fila-tarjetas");
+      const puntos = document.getElementById("puntos");
+
+      fila.innerHTML = "";
+      puntos.innerHTML = "";
+
+      listaVehiculos.forEach((veh, i) => {
+        // Obtener la primera foto
+        const fotoPrincipal = veh.foto1 || veh.foto_1 || veh.foto || "";
+
+        const tarjeta = document.createElement("div");
+        tarjeta.className = "tarjeta-pantalla";
+        tarjeta.onclick = () => abrirDetalle(i);
+        tarjeta.innerHTML = `
+          <div class="tarjeta-vehiculo">
+            <!-- Solo la PRIMERA foto -->
+            <div class="foto-principal">
+              ${fotoPrincipal 
+                ? `<img src="${fotoPrincipal}" alt="Foto principal">` 
+                : `<span class="sin-foto">📷 Sin foto</span>`
+              }
+            </div>
+            
+            <!-- Solo los 4 campos pedidos -->
+            <div class="campos-resumen">
+              <div class="campo">
+                <span class="etiqueta">Marca:</span>
+                <span class="valor">${veh.marca || "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Modelo:</span>
+                <span class="valor">${veh.modelo || "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Año:</span>
+                <span class="valor">${veh.año || "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Precio:</span>
+                <span class="valor precio-destacado">$ ${veh.precio ? Number(veh.precio).toLocaleString("es-AR") : "-"}</span>
+              </div>
+            </div>
+            <p class="indicacion-tocar">👆 Tocar para ver todos los datos y fotos</p>
+          </div>
+        `;
+        fila.appendChild(tarjeta);
+
+        const punto = document.createElement("span");
+        punto.className = "punto" + (i === 0 ? " activo" : "");
+        punto.onclick = () => irA(i);
+        puntos.appendChild(punto);
+      });
     }
 
     function mostrarVehiculoActual() {
-      const veh = listaVehiculos[indiceActual];
-      const tarjeta = document.getElementById("tarjeta-vehiculo");
-
-      tarjeta.innerHTML = `
-        <div class="campo">
-          <span class="etiqueta">Tipo:</span>
-          <span class="valor">${veh.tipo_vehiculo || tipoSeleccionado}</span>
-        </div>
-        <div class="campo">
-          <span class="etiqueta">Año:</span>
-          <span class="valor">${veh.año || "-"}</span>
-        </div>
-        <div class="campo">
-          <span class="etiqueta">Kilometraje:</span>
-          <span class="valor">${veh.kilometraje ? veh.kilometraje + " km" : "-"}</span>
-        </div>
-        <div class="campo">
-          <span class="etiqueta">Precio:</span>
-          <span class="valor">$ ${veh.precio ? Number(veh.precio).toLocaleString("es-AR") : "-"}</span>
-        </div>
-      `;
-
       document.getElementById("contador").textContent = `${indiceActual + 1} de ${listaVehiculos.length}`;
-      document.getElementById("btn-anterior").disabled = indiceActual === 0;
-      document.getElementById("btn-siguiente").disabled = indiceActual === listaVehiculos.length - 1;
+      document.getElementById("fila-tarjetas").style.transform = `translateX(-${indiceActual * 100}%)`;
+      document.querySelectorAll(".punto").forEach((p, i) => {
+        p.classList.toggle("activo", i === indiceActual);
+      });
     }
 
-    document.getElementById("btn-anterior").addEventListener("click", () => {
-      if (indiceActual > 0) {
-        indiceActual--;
+    function irA(n) {
+      if (n >= 0 && n < listaVehiculos.length) {
+        indiceActual = n;
         mostrarVehiculoActual();
       }
-    });
+    }
 
-    document.getElementById("btn-siguiente").addEventListener("click", () => {
+    function siguiente() {
       if (indiceActual < listaVehiculos.length - 1) {
         indiceActual++;
         mostrarVehiculoActual();
       }
+    }
+
+    function anterior() {
+      if (indiceActual > 0) {
+        indiceActual--;
+        mostrarVehiculoActual();
+      }
+    }
+
+    function configurarDeslizamiento() {
+      const deslizador = document.getElementById("deslizador");
+
+      deslizador.addEventListener("touchstart", (e) => {
+        inicioX = e.touches[0].clientX;
+        ultimoDesplazamiento = 0;
+      }, { passive: true });
+
+      deslizador.addEventListener("touchmove", (e) => {
+        ultimoDesplazamiento = e.touches[0].clientX - inicioX;
+      }, { passive: true });
+
+      deslizador.addEventListener("touchend", () => {
+        if (ultimoDesplazamiento < -50) siguiente();
+        else if (ultimoDesplazamiento > 50) anterior();
+      }, { passive: true });
+    }
+
+    /* === ABRIR DETALLE COMPLETO === */
+    function abrirDetalle(indice) {
+      const veh = listaVehiculos[indice];
+      
+      // Armar galería con TODAS las fotos
+      const filaFotos = document.getElementById("fila-fotos-detalle");
+      const puntosGaleria = document.getElementById("puntos-galeria");
+      
+      filaFotos.innerHTML = "";
+      puntosGaleria.innerHTML = "";
+      indiceFotoDetalle = 0;
+      
+      // Recolectar todas las fotos
+      const fotos = [];
+      for (let i = 1; i <= 8; i++) {
+        const campoFoto = veh[`foto${i}`] || veh[`foto_${i}`];
+        if (campoFoto) fotos.push(campoFoto);
+      }
+      
+      if (fotos.length === 0) {
+        filaFotos.innerHTML = `<div class="foto-galeria"><span class="sin-foto-galeria">📷 Sin fotos</span></div>`;
+      } else {
+        fotos.forEach((foto, i) => {
+          const div = document.createElement("div");
+          div.className = "foto-galeria";
+          div.innerHTML = `<img src="${foto}" alt="Foto ${i+1}">`;
+          filaFotos.appendChild(div);
+          
+          const p = document.createElement("span");
+          p.className = "punto-galeria" + (i === 0 ? " activo" : "");
+          puntosGaleria.appendChild(p);
+        });
+      }
+      
+      // Armar TODOS los campos completos
+      const contenido = document.getElementById("contenido-detalle");
+      contenido.innerHTML = `
+        <h2>${veh.marca || ""} ${veh.modelo || ""}</h2>
+        
+        <div class="fila-detalle">
+          <div class="campo-detalle"><label>Tipo de vehículo</label><span>${veh.tipo_vehiculo || tipoSeleccionado || "-"}</span></div>
+          <div class="campo-detalle"><label>Marca</label><span>${veh.marca || "-"}</span></div>
+          <div class="campo-detalle"><label>Modelo</label><span>${veh.modelo || "-"}</span></div>
+          <div class="campo-detalle"><label>Año</label><span>${veh.año || "-"}</span></div>
+          <div class="campo-detalle"><label>Kilometraje</label><span>${veh.kilometraje ? veh.kilometraje + " km" : "-"}</span></div>
+          <div class="campo-detalle"><label>Ciudad</label><span>${veh.ciudad || "-"}</span></div>
+          <div class="campo-detalle"><label>Color</label><span>${veh.color || "-"}</span></div>
+          <div class="campo-detalle"><label>Combustible</label><span>${veh.combustible || "-"}</span></div>
+          <div class="campo-detalle"><label>Transmisión</label><span>${veh.transmision || "-"}</span></div>
+          <div class="campo-detalle"><label>Motor</label><span>${veh.motor || "-"}</span></div>
+          <div class="campo-detalle"><label>Estado</label><span>${veh.estado || "-"}</span></div>
+          <div class="campo-detalle"><label>Dueño</label><span>${veh.dueño || veh.nombre || "-"}</span></div>
+        </div>
+        
+        <div class="precio-detalle">Precio: $ ${veh.precio ? Number(veh.precio).toLocaleString("es-AR") : "-"}</div>
+        
+        ${veh.telefono ? `<a href="https://wa.me/549${veh.telefono}" target="_blank" style="display:block;text-align:center;background:#25D366;color:white;padding:14px;border-radius:10px;text-decoration:none;font-weight:bold;margin-top:20px;">💬 Escribir por WhatsApp</a>` : ""}
+      `;
+      
+      // Mostrar ventana
+      document.getElementById("fondo-detalle").classList.add("visible");
+      
+      // Deslizar fotos en detalle
+      let inicioFoto = 0, desplazFoto = 0;
+      const galeria = document.querySelector(".galeria-detalle");
+      
+      galeria.removeEventListener("touchstart", galeria._ts);
+      galeria.removeEventListener("touchmove", galeria._tm);
+      galeria.removeEventListener("touchend", galeria._te);
+      
+      galeria._ts = (e) => { inicioFoto = e.touches[0].clientX; };
+      galeria._tm = (e) => { desplazFoto = e.touches[0].clientX - inicioFoto; };
+      galeria._te = () => {
+        if (desplazFoto < -50 && indiceFotoDetalle < fotos.length - 1) indiceFotoDetalle++;
+        if (desplazFoto > 50 && indiceFotoDetalle > 0) indiceFotoDetalle--;
+        filaFotos.style.transform = `translateX(-${indiceFotoDetalle * 100}%)`;
+        document.querySelectorAll(".punto-galeria").forEach((p, i) => p.classList.toggle("activo", i === indiceFotoDetalle));
+      };
+      
+      galeria.addEventListener("touchstart", galeria._ts, { passive: true });
+      galeria.addEventListener("touchmove", galeria._tm, { passive: true });
+      galeria.addEventListener("touchend", galeria._te);
+    }
+
+    function cerrarDetalle() {
+      document.getElementById("fondo-detalle").classList.remove("visible");
+    }
+
+    // Cerrar si toca fuera del contenido
+    document.getElementById("fondo-detalle").addEventListener("click", (e) => {
+      if (e.target.id === "fondo-detalle") cerrarDetalle();
     });
 
     cargarVehiculos();
