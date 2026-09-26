@@ -66,7 +66,7 @@
 
     /* 🟤 TARJETA — TODO CREMA, NADA DE BLANCO */
     .tarjeta-vehiculo {
-      background: #f5efe0;
+      background: #f5efe0 !important;
       border-radius: 20px;
       padding: 0;
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
@@ -83,7 +83,7 @@
 
     .foto-principal {
       width: 100%;
-      height: 200px;
+      height: 180px; /* ✅ Más chiquita en la tarjeta */
       background: #d9ccb4;
       display: flex;
       align-items: center;
@@ -102,19 +102,19 @@
       font-size: 16px;
     }
 
-    /* 🟤 CAMPOS — TODO CREMA */
+    /* 🟤 CAMPOS — TODO CREMA SIN BLANCO */
     .campos-resumen {
       padding: 20px 25px;
-      background: #f5efe0;
+      background: #f5efe0 !important;
     }
 
     .campo {
-      padding: 10px 0;
+      padding: 8px 0;
       border-bottom: 1px solid #d9ccb4;
       display: flex;
       justify-content: space-between;
-      font-size: 16px;
-      background: #f5efe0;
+      font-size: 15px;
+      background: #f5efe0 !important;
     }
 
     .campo:last-child {
@@ -142,7 +142,7 @@
       font-size: 12px;
       color: #8a7d65;
       padding: 0 0 15px;
-      background: #f5efe0;
+      background: #f5efe0 !important;
       margin: 0;
     }
 
@@ -184,14 +184,14 @@
       background: #5fa8d3;
     }
 
-    /* 🟦 FONDO DE DETALLE — CELESTE */
+    /* 🟦 FONDO DE DETALLE — CELESTE NUESTRO */
     .fondo-detalle {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(122, 167, 201, 0.92);
+      background: rgba(122, 167, 201, 0.92) !important;
       z-index: 9999;
       display: none;
       opacity: 0;
@@ -205,11 +205,11 @@
       opacity: 1;
     }
 
-    /* 🟤 CAJA DE DETALLE — TODO CREMA, NADA DE BLANCO */
+    /* 🟤 CAJA DE DETALLE — TODO CREMA, CERO BLANCO */
     .caja-detalle {
       max-width: 550px;
       margin: 0 auto;
-      background: #f5efe0;
+      background: #f5efe0 !important;
       border-radius: 20px;
       overflow: hidden;
       position: relative;
@@ -220,7 +220,7 @@
       top: 12px;
       right: 12px;
       z-index: 10;
-      background: #f5efe0;
+      background: #f5efe0 !important;
       border: 2px solid #7aa7c9;
       width: 36px;
       height: 36px;
@@ -231,10 +231,11 @@
       color: #5d4e37;
     }
 
+    /* ✅ FOTO SE AGRANDA AL ABRIR */
     .galeria-detalle {
       position: relative;
       overflow: hidden;
-      height: 200px;
+      height: 320px; /* ✅ MÁS GRANDE al hacer clic */
       background: #d9ccb4;
     }
 
@@ -256,7 +257,7 @@
     .foto-galeria img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
     }
 
     .sin-foto-galeria {
@@ -286,7 +287,7 @@
     /* 🟤 CAMPOS DETALLE — TODO CREMA */
     .contenido-detalle {
       padding: 25px;
-      background: #f5efe0;
+      background: #f5efe0 !important;
     }
 
     .contenido-detalle h2 {
@@ -298,14 +299,15 @@
     .fila-detalle {
       display: flex;
       flex-wrap: wrap;
-      gap: 15px;
-      margin-bottom: 12px;
-      background: #f5efe0;
+      gap: 12px;
+      margin-bottom: 8px;
+      background: #f5efe0 !important;
     }
 
     .campo-detalle {
       flex: 1 1 45%;
-      background: #f5efe0;
+      background: #f5efe0 !important;
+      padding: 4px 0;
     }
 
     .campo-detalle label {
@@ -328,7 +330,7 @@
     }
 
     .sin-resultados {
-      background: #f5efe0;
+      background: #f5efe0 !important;
       border-radius: 20px;
       padding: 40px 25px;
       text-align: center;
@@ -555,6 +557,7 @@
       indiceFotoDetalle = 0;
       fotosActuales = [];
       
+      // ✅ TODAS LAS FOTOS DE 1 A 8
       for (let i = 1; i <= 8; i++) {
         const campo = `foto${i}`;
         if (veh[campo] && veh[campo] !== null && veh[campo] !== "") {
@@ -577,11 +580,13 @@
         });
       }
       
+      // ✅ TODOS LOS CAMPOS EXACTOS DE TU TABLA
       const contenido = document.getElementById("contenido-detalle");
       contenido.innerHTML = `
         <h2>${veh.marca || ""} ${veh.modelo || ""}</h2>
         
         <div class="fila-detalle">
+          <div class="campo-detalle"><label>ID</label><span>${veh.id || "-"}</span></div>
           <div class="campo-detalle"><label>Tipo de vehículo</label><span>${veh.tipo_vehiculo || tipoSeleccionado || "-"}</span></div>
           <div class="campo-detalle"><label>Marca</label><span>${veh.marca || "-"}</span></div>
           <div class="campo-detalle"><label>Modelo</label><span>${veh.modelo || "-"}</span></div>
@@ -593,15 +598,17 @@
           <div class="campo-detalle"><label>Transmisión</label><span>${veh.transmision || "-"}</span></div>
           <div class="campo-detalle"><label>Dueño</label><span>${veh.dueno || "-"}</span></div>
           <div class="campo-detalle"><label>Dirección</label><span>${veh.direccion || "-"}</span></div>
+          <div class="campo-detalle"><label>Teléfono</label><span>${veh.telefono || "-"}</span></div>
           <div class="campo-detalle"><label>Permuta</label><span>${veh.permuta ? "Sí" : "No"}</span></div>
           <div class="campo-detalle"><label>Contado</label><span>${veh.contado ? "Sí" : "No"}</span></div>
+          <div class="campo-detalle"><label>Deuda</label><span>${veh.deuda || "-"}</span></div>
         </div>
         
         ${veh.descripcion ? `<div style="margin:12px 0;"><label style="font-size:13px;color:#8a7d65;">Descripción</label><p style="color:#3a2f1f;white-space:pre-wrap;">${veh.descripcion}</p></div>` : ""}
         
-        ${veh.deuda ? `<div style="margin:12px 0;"><label style="font-size:13px;color:#8a7d65;">Deuda</label><span style="color:#3a2f1f;">${veh.deuda}</span></div>` : ""}
-        
         <div class="precio-detalle">Precio: $ ${veh.precio ? Number(veh.precio).toLocaleString("es-AR") : "-"}</div>
+        
+        ${veh.nombre_usuario ? `<div class="campo-detalle" style="margin:8px 0;"><label>Publicado por</label><span>${veh.nombre_usuario}</span></div>` : ""}
         
         ${veh.telefono ? `<a href="https://wa.me/549${veh.telefono}" target="_blank" style="display:block;text-align:center;background:#25D366;color:white;padding:14px;border-radius:10px;text-decoration:none;font-weight:bold;margin-top:20px;">💬 Escribir por WhatsApp</a>` : ""}
       `;
