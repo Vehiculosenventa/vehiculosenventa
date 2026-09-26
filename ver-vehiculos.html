@@ -31,8 +31,19 @@
     .subtitulo {
       text-align: center;
       color: #e0edf7;
-      margin-bottom: 25px;
+      margin-bottom: 15px;
       font-size: 15px;
+    }
+    .aviso-limite {
+      background: #fffbeb;
+      border: 2px solid #fcd34d;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 20px;
+      text-align: center;
+      color: #92400e;
+      font-weight: 600;
+      display: none;
     }
     .tarjeta-vehiculo {
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
@@ -169,6 +180,41 @@
     }
     .permuta {background: #e8d9bc; color: #78350f;}
     .contado {background: #b8d8b5; color: #166534;}
+    
+    /* Botón de Favoritos */
+    .boton-favorito {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 20px;
+      transition: all 0.2s;
+    }
+    .no-conectado {
+      background: #e2e8f0;
+      color: #64748b;
+      cursor: default;
+    }
+    .disponible {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    .disponible:hover {
+      background: #fde68a;
+    }
+    .ya-favorito {
+      background: #d1fae5;
+      color: #065f46;
+      cursor: default;
+    }
+    .limite-alcanzado {
+      background: #fee2e2;
+      color: #991b1b;
+      cursor: not-allowed;
+    }
   </style>
 </head>
 <body>
@@ -176,6 +222,10 @@
   <div class="contenedor">
     <h1 id="titulo-tipo">Vehículos</h1>
     <p class="subtitulo" id="subtitulo-tipo">Cargando...</p>
+
+    <div id="avisoLimite" class="aviso-limite">
+      ⭐ Llegaste a 5 favoritos. Eliminá uno para agregar otro.
+    </div>
 
     <div id="cargando" class="cargando">🔍 Buscando vehículos...</div>
 
@@ -201,6 +251,8 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
+    const CORREO_SIN_LIMITE = "misvehiculosenventa@gmail.com";
+
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const nombresFotos = [
@@ -211,10 +263,47 @@
     let listaVehiculos = [];
     let indiceActual = 0;
     let tipoSeleccionado = "";
+    let usuarioActual = null;
+    let correoUsuario = "";
+    let misFavoritos = [];
 
     function obtenerTipo() {
       const params = new URLSearchParams(window.location.search);
       return params.get("tipo") || "";
+    }
+
+    async function verificarSesion() {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      usuarioActual = session?.user || null;
+      correoUsuario = usuarioActual?.email || "";
+      if (usuarioActual) {
+        await cargarFavoritos();
+      }
+      actualizarAvisoLimite();
+    }
+
+    async function cargarFavoritos() {
+      const { data, error } = await supabaseClient
+        .from('favoritos')
+        .select('vehiculo_id')
+        .eq('usuario_id', usuarioActual.id);
+      
+      if (!error && data) {
+        misFavoritos = data.map(f => f.vehiculo_id);
+      }
+    }
+
+    function tieneLimite() {
+      return correoUsuario !== CORREO_SIN_LIMITE;
+    }
+
+    function actualizarAvisoLimite() {
+      const aviso = document.getElementById('avisoLimite');
+      if (!usuarioActual || !tieneLimite() || misFavoritos.length < 5) {
+        aviso.style.display = 'none';
+      } else {
+        aviso.style.display = 'block';
+      }
     }
 
     async function cargarVehiculos() {
@@ -225,7 +314,7 @@
         ? `Filtrando: ${tipoSeleccionado}` 
         : "Se muestran todos los vehículos disponibles";
 
-      let consulta = supabaseClient.from("autos").select("*");
+      let consulta = supabaseClient.from("mis_vehiculos").select("*");
       
       if (tipoSeleccionado) {
         consulta = consulta.eq("tipo_vehiculo", tipoSeleccionado);
@@ -270,6 +359,28 @@
         }
       }
       const hayFotos = fotosHtml !== '';
+
+      // Lógica del botón de favoritos
+      const esFavorito = misFavoritos.includes(veh.id);
+      const limiteAlcanzado = tieneLimite() && misFavoritos.length >= 5;
+      
+      let claseBoton = 'disponible';
+      let textoBoton = '⭐ Agregar a mis favoritos';
+      let desactivado = false;
+      
+      if (!usuarioActual) {
+        claseBoton = 'no-conectado';
+        textoBoton = '🔒 Iniciá sesión para guardar favoritos';
+        desactivado = true;
+      } else if (esFavorito) {
+        claseBoton = 'ya-favorito';
+        textoBoton = '✅ Ya está en favoritos';
+        desactivado = true;
+      } else if (limiteAlcanzado) {
+        claseBoton = 'limite-alcanzado';
+        textoBoton = '⚠️ Límite de 5 alcanzado';
+        desactivado = true;
+      }
 
       tarjeta.innerHTML = `
         <div class="campo">
@@ -340,11 +451,43 @@
         <div class="fotos-titulo">📸 Fotos del vehículo</div>
         <div class="fotos-cuadricula">${fotosHtml}</div>
         ` : ''}
+        <button class="boton-favorito ${claseBoton}" data-id="${veh.id}" ${desactivado ? 'disabled' : ''}>
+          ${textoBoton}
+        </button>
       `;
 
       document.getElementById("contador").textContent = `${indiceActual + 1} de ${listaVehiculos.length}`;
       document.getElementById("btn-anterior").disabled = indiceActual === 0;
       document.getElementById("btn-siguiente").disabled = indiceActual === listaVehiculos.length - 1;
+
+      // Agregar evento al botón
+      const btnFav = tarjeta.querySelector('.boton-favorito');
+      if (btnFav && !desactivado) {
+        btnFav.addEventListener('click', async () => {
+          if (!usuarioActual) return;
+          const idVehiculo = parseInt(btnFav.dataset.id);
+          
+          if (misFavoritos.includes(idVehiculo)) return;
+          if (tieneLimite() && misFavoritos.length >= 5) {
+            alert('⚠️ Ya tenés 5 favoritos. Eliminá uno para agregar otro.');
+            return;
+          }
+          
+          const { error } = await supabaseClient.from('favoritos').insert([{
+            usuario_id: usuarioActual.id,
+            vehiculo_id: idVehiculo
+          }]);
+          
+          if (error) {
+            alert('❌ Error: ' + error.message);
+            return;
+          }
+          
+          misFavoritos.push(idVehiculo);
+          actualizarAvisoLimite();
+          mostrarVehiculoActual();
+        });
+      }
     }
 
     document.getElementById("btn-anterior").addEventListener("click", () => {
@@ -361,7 +504,17 @@
       }
     });
 
-    cargarVehiculos();
+    // Detectar cambio de sesión
+    supabaseClient.auth.onAuthStateChange(async (_, sesion) => {
+      usuarioActual = sesion?.user || null;
+      correoUsuario = usuarioActual?.email || "";
+      misFavoritos = [];
+      if (usuarioActual) await cargarFavoritos();
+      actualizarAvisoLimite();
+      if (listaVehiculos.length > 0) mostrarVehiculoActual();
+    });
+
+    verificarSesion().then(cargarVehiculos);
   </script>
 
 </body>
