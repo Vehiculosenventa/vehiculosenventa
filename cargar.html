@@ -347,7 +347,7 @@
             <span>📞</span>
             <label>Teléfono / WhatsApp</label>
           </div>
-          <input type="tel" id="telefono" placeholder="Ej: +54 9 341 123-4567" required disabled>
+          <input type="tel" id="telefono" placeholder="Ej: 3411234567" required disabled>
         </div>
       </div>
 
@@ -560,6 +560,37 @@
     const bloqueOtraCiudad = document.getElementById('bloqueOtraCiudad');
     const avisoLimite = document.getElementById('avisoLimite');
 
+    // ✅ COMPRIMIR FOTO ANTES DE SUBIR → más rápido, sin perder calidad visible
+    function comprimirFoto(archivo, calidad = 0.75, maxAncho = 1200) {
+      return new Promise((resolver) => {
+        const lector = new FileReader();
+        lector.onload = function(e) {
+          const img = new Image();
+          img.onload = function() {
+            const canvas = document.createElement('canvas');
+            let ancho = img.width;
+            let alto = img.height;
+
+            if (ancho > maxAncho) {
+              const relacion = maxAncho / ancho;
+              ancho = maxAncho;
+              alto = alto * relacion;
+            }
+
+            canvas.width = ancho;
+            canvas.height = alto;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, ancho, alto);
+
+            resolver(canvas.toDataURL('image/jpeg', calidad));
+          };
+          img.src = e.target.result;
+        };
+        lector.readAsDataURL(archivo);
+      });
+    }
+
     function setFormDisabled(desactivar) {
       const campos = document.querySelectorAll('input, select, textarea, button[type="submit"]');
       campos.forEach(campo => campo.disabled = desactivar);
@@ -590,14 +621,6 @@
       }
     }
 
-    function archivoABase64(archivo) {
-      return new Promise(resolver => {
-        const lector = new FileReader();
-        lector.onload = e => resolver(e.target.result);
-        lector.readAsDataURL(archivo);
-      });
-    }
-
     selectCiudad.addEventListener('change', () => {
       if (selectCiudad.value === 'otra') {
         bloqueOtraCiudad.classList.remove('oculto');
@@ -611,7 +634,7 @@
 
     async function verificarLimitePublicaciones(usuarioId, correoUsuario) {
       if (correoUsuario === CORREO_SIN_LIMITE) {
-        return 0; // ✅ Sin límite
+        return 0;
       }
       
       const { count, error } = await supabaseClient
@@ -708,10 +731,15 @@
           throw new Error("Ya publicaste 5 vehículos. El límite es 5. Eliminá uno para poder publicar otro.");
         }
 
+        // ✅ COMPRIMIR CADA FOTO ANTES DE GUARDAR
         const fotos = {};
         for (let i = 1; i <= 8; i++) {
           const input = document.getElementById(`foto${i}`);
-          fotos[`foto${i}`] = input.files[0] ? await archivoABase64(input.files[0]) : null;
+          if (input.files[0]) {
+            fotos[`foto${i}`] = await comprimirFoto(input.files[0]);
+          } else {
+            fotos[`foto${i}`] = null;
+          }
         }
 
         let tipoVehiculoValor = document.getElementById('tipo_vehiculo').value || null;
@@ -724,6 +752,12 @@
           }
         } else {
           ciudadValor = selectCiudad.value || null;
+        }
+
+        // ✅ Validar teléfono: solo números
+        const telCrudo = document.getElementById('telefono').value.replace(/\D/g, '');
+        if (telCrudo.length < 8 || telCrudo.length > 15) {
+          throw new Error("El teléfono debe tener entre 8 y 15 dígitos");
         }
 
         const datos = {
@@ -739,7 +773,7 @@
           dueno: document.getElementById('dueno').value || null,
           direccion: document.getElementById('direccion').value || null,
           ciudad: ciudadValor,
-          telefono: document.getElementById('telefono').value || null,
+          telefono: telCrudo,
           permuta: document.getElementById('permuta').checked,
           contado: document.getElementById('contado').checked,
           deuda: document.getElementById('deuda').value || null,
