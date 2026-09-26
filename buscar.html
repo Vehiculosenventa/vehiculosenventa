@@ -345,6 +345,7 @@
       background: #ebf4fb;
       border: 2px solid #dceaf5;
       transition: transform 0.2s;
+      cursor: pointer;
     }
     .foto-ver:hover {transform: scale(1.03);}
     .foto-ver img {width: 100%; height: 100%; object-fit: cover;}
@@ -353,6 +354,52 @@
       color: #5a4f3f;
       padding: 5px 0;
       font-weight: 600;
+    }
+
+    /* 🔍 VENTANA AMPLIAR FOTO */
+    .ventana-foto {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+    .ventana-foto.mostrar { display: flex; }
+    .contenedor-foto-grande {
+      position: relative;
+      max-width: 95%;
+      max-height: 90vh;
+    }
+    .foto-grande {
+      max-width: 100%;
+      max-height: 85vh;
+      border-radius: 12px;
+      box-shadow: 0 0 30px rgba(0,0,0,0.5);
+    }
+    /* 💧 LOGO DE AGUA EN ESQUINA SUPERIOR DERECHA */
+    .logo-agua-foto {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 100px;
+      height: 100px;
+      opacity: 0.12;
+      pointer-events: none;
+      background: url('imágenes/logo.png') center/contain no-repeat;
+    }
+    .cerrar-foto {
+      position: absolute;
+      top: -40px;
+      right: 0;
+      color: #fff;
+      font-size: 30px;
+      cursor: pointer;
+      font-weight: bold;
+      line-height: 1;
     }
   </style>
 </head>
@@ -485,6 +532,15 @@
     <a href="index.html" class="volver">← Volver a la página principal</a>
   </div>
 
+  <!-- 🔍 VENTANA PARA VER FOTO GRANDE CON LOGO DE AGUA -->
+  <div class="ventana-foto" id="ventanaFoto">
+    <div class="contenedor-foto-grande">
+      <span class="cerrar-foto" id="cerrarFoto">&times;</span>
+      <img src="" alt="Foto ampliada" class="foto-grande" id="fotoGrande">
+      <div class="logo-agua-foto"></div>
+    </div>
+  </div>
+
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
@@ -499,6 +555,11 @@
     let idsFiltrados = [];
     let indiceActual = 0;
     let idVehiculoActual = null;
+
+    // Elementos de la ventana de fotos
+    const ventanaFoto = document.getElementById('ventanaFoto');
+    const fotoGrande = document.getElementById('fotoGrande');
+    const cerrarFoto = document.getElementById('cerrarFoto');
 
     async function getSupabase() {
       if (!sbClient) {
@@ -613,6 +674,22 @@
       alert('✅ ¡Agregado a "Mis Vehículos" correctamente! 🎉');
       ocultarCajaCodigo();
     }
+
+    // Ampliar foto al tocar
+    function ampliarFoto(src) {
+      fotoGrande.src = src;
+      ventanaFoto.classList.add('mostrar');
+    }
+
+    // Cerrar foto ampliada
+    cerrarFoto.addEventListener('click', () => {
+      ventanaFoto.classList.remove('mostrar');
+    });
+    ventanaFoto.addEventListener('click', (e) => {
+      if (e.target === ventanaFoto) {
+        ventanaFoto.classList.remove('mostrar');
+      }
+    });
 
     async function realizarBusqueda() {
       const tipo = document.getElementById('buscar_tipo').value;
@@ -744,7 +821,9 @@
         if (foto) {
           fotosHtml += `
             <div class="foto-caja">
-              <div class="foto-ver"><img src="${foto}" alt="${nombresFotos[i-1]}"></div>
+              <div class="foto-ver" onclick="ampliarFoto('${foto}')">
+                <img src="${foto}" alt="${nombresFotos[i-1]}">
+              </div>
               <div class="foto-nombre">${nombresFotos[i-1]}</div>
             </div>
           `;
@@ -785,7 +864,7 @@
           <div class="fila"><strong>Descripción:</strong> ${vehiculo.descripcion || '-'}</div>
           
           ${hayFotos ? `
-          <div class="fotos-titulo">📸 Fotos del vehículo</div>
+          <div class="fotos-titulo">📸 Fotos del vehículo — Tocar para agrandar</div>
           <div class="fotos-cuadricula">${fotosHtml}</div>
           ` : ''}
         </div>
