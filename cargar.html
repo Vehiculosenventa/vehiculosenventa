@@ -258,7 +258,7 @@
       right: 10px;
       width: 100px;
       height: 100px;
-      opacity: 0.12; /* Bien suavecito */
+      opacity: 0.12;
       pointer-events: none;
       background: url('imágenes/logo.png') center/contain no-repeat;
     }
@@ -619,7 +619,6 @@
     <a href="index.html" class="volver">← Volver al inicio</a>
   </div>
 
-  <!-- 🔍 VENTANA PARA VER FOTO GRANDE -->
   <div class="ventana-foto" id="ventanaFoto">
     <div class="contenedor-foto-grande">
       <span class="cerrar-foto" id="cerrarFoto">&times;</span>
@@ -630,7 +629,7 @@
 
   <script>            
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizendxa2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
     const CORREO_SIN_LIMITE = "misvehiculosenventa@gmail.com";
 
@@ -642,8 +641,8 @@
     const fotoGrande = document.getElementById('fotoGrande');
     const cerrarFoto = document.getElementById('cerrarFoto');
 
-    // ✅ COMPRIMIR FOTO ANTES DE SUBIR → más rápido, calidad un poquito menor
-    function comprimirFoto(archivo, calidad = 0.65, maxAncho = 1000) {
+    // ✅ Calidad un poquito nomás → carga rápido y se ve bien
+    function comprimirFoto(archivo, calidad = 0.75, maxAncho = 1000) {
       return new Promise((resolver) => {
         const lector = new FileReader();
         lector.onload = function(e) {
@@ -703,7 +702,6 @@
       }
     }
 
-    // 🔍 Ampliar foto al tocar
     function ampliarFoto(numero) {
       const img = document.getElementById(`img${numero}`);
       if (img && img.style.display === 'block' && img.src) {
@@ -712,7 +710,6 @@
       }
     }
 
-    // Cerrar foto ampliada
     cerrarFoto.addEventListener('click', () => {
       ventanaFoto.classList.remove('mostrar');
     });
@@ -769,7 +766,6 @@
             setFormDisabled(false);
           }
 
-          // Conectar eventos de fotos
           for (let i = 1; i <= 8; i++) {
             const input = document.getElementById(`foto${i}`);
             const mini = document.getElementById(`mini${i}`);
@@ -837,7 +833,6 @@
           throw new Error("Ya publicaste 5 vehículos. El límite es 5. Eliminá uno para poder publicar otro.");
         }
 
-        // ✅ COMPRIMIR CADA FOTO ANTES DE GUARDAR
         const fotos = {};
         for (let i = 1; i <= 8; i++) {
           const input = document.getElementById(`foto${i}`);
@@ -860,7 +855,6 @@
           ciudadValor = selectCiudad.value || null;
         }
 
-        // ✅ Validar teléfono: solo números
         const telCrudo = document.getElementById('telefono').value.replace(/\D/g, '');
         if (telCrudo.length < 8 || telCrudo.length > 15) {
           throw new Error("El teléfono debe tener entre 8 y 15 dígitos");
