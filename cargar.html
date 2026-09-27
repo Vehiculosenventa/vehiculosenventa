@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -416,9 +415,9 @@
         <div class="campo">
           <div class="etiqueta-linea">
             <span>📞</span>
-            <label>Teléfono / WhatsApp</label>
+            <label>Celular</label>
           </div>
-          <input type="tel" id="telefono" placeholder="Ej: 3411234567" required disabled>
+          <input type="tel" id="telefono" placeholder="Ej: 9123456789" required disabled>
         </div>
       </div>
 
@@ -810,6 +809,12 @@
           throw new Error("Ya publicaste 5 vehículos. El límite es 5. Eliminá uno para poder publicar otro.");
         }
 
+        // ✅ VALIDACIÓN DEL CELULAR
+        const telCrudo = document.getElementById('telefono').value.replace(/\D/g, '');
+        if (telCrudo.length !== 10 || telCrudo[0] !== '9') {
+          throw new Error("⚠️ El celular debe tener 10 dígitos y empezar con 9. Ej: 9123456789");
+        }
+
         const fotos = {};
         for (let i = 1; i <= 6; i++) {
           const input = document.getElementById(`foto${i}`);
@@ -830,11 +835,6 @@
           }
         } else {
           ciudadValor = selectCiudad.value || null;
-        }
-
-        const telCrudo = document.getElementById('telefono').value.replace(/\D/g, '');
-        if (telCrudo.length < 8 || telCrudo.length > 15) {
-          throw new Error("El teléfono debe tener entre 8 y 15 dígitos");
         }
 
         const datos = {
