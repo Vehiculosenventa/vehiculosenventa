@@ -11,6 +11,7 @@
       background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
       padding: 20px;
       min-height: 100vh;
+      overflow-x: hidden;
     }
     .contenedor {max-width: 620px; margin: 0 auto;}
 
@@ -133,44 +134,15 @@
       transform: translateY(-1px);
     }
 
-    .navegacion {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 18px 0;
-      padding: 14px 18px;
-      background: rgba(255, 255, 255, 0.6);
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(44, 82, 130, 0.08);
-      opacity: 0.4;
-      transition: opacity 0.3s;
-    }
-    .navegacion.activa {opacity: 1;}
-    .navegacion button {
-      padding: 11px 22px;
-      font-size: 15px;
-      cursor: pointer;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
-      font-weight: 600;
-      transition: all 0.2s;
-    }
-    .navegacion button:hover {
-      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
-      transform: translateY(-1px);
-    }
-    .navegacion button:disabled {
-      background: #c5d6e8;
-      cursor: not-allowed;
-      transform: none;
-      opacity: 0.7;
-    }
     .contador {
+      text-align: center;
       font-size: 16px;
       font-weight: bold;
       color: #2c5282;
+      margin: 10px 0;
+      padding: 8px;
+      background: rgba(255,255,255,0.5);
+      border-radius: 8px;
     }
 
     .boton-favorito {
@@ -246,6 +218,7 @@
       animation: aparecer 0.3s ease;
       margin-bottom: 20px;
       border: 1px solid #bfa980;
+      touch-action: pan-y;
     }
     @keyframes aparecer {
       from {opacity: 0; transform: translateX(8px);}
@@ -349,12 +322,6 @@
     }
     .foto-ver:hover {transform: scale(1.03);}
     .foto-ver img {width: 100%; height: 100%; object-fit: cover;}
-    .foto-nombre {
-      font-size: 11px;
-      color: #5a4f3f;
-      padding: 5px 0;
-      font-weight: 600;
-    }
 
     /* 🔍 VENTANA AMPLIAR FOTO */
     .ventana-foto {
@@ -521,11 +488,7 @@
       <button class="boton-buscar" onclick="realizarBusqueda()">🔍 Buscar Vehículos</button>
     </div>
 
-    <div class="navegacion" id="caja_navegacion">
-      <button id="btnAnterior" disabled>◀ Anterior</button>
-      <span id="contador" class="contador">—</span>
-      <button id="btnSiguiente" disabled>Siguiente ▶</button>
-    </div>
+    <div class="contador" id="contador"></div>
 
     <div id="caja_resultado"></div>
 
@@ -545,21 +508,21 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    const nombresFotos = [
-      'Motor', 'Frente', 'Lateral izquierdo', 'Lateral derecho', 'Parte trasera',
-      'Interior 1', 'Interior 2', 'Interior 3', 'Interior 4',
-      'Ruedas', 'Detalle Extra 1', 'Detalle Extra 2'
-    ];
-
     let sbClient = null;
     let idsFiltrados = [];
     let indiceActual = 0;
     let idVehiculoActual = null;
 
+    // Variables para deslizar con el dedo
+    let xInicio = 0;
+    let xFin = 0;
+    const UMBRAL_DESLIZAR = 50;
+
     // Elementos de la ventana de fotos
     const ventanaFoto = document.getElementById('ventanaFoto');
     const fotoGrande = document.getElementById('fotoGrande');
     const cerrarFoto = document.getElementById('cerrarFoto');
+    const cajaResultado = document.getElementById('caja_resultado');
 
     async function getSupabase() {
       if (!sbClient) {
@@ -691,6 +654,30 @@
       }
     });
 
+    // Funciones deslizar con el dedo
+    function registrarInicioDeslizamiento(e) {
+      xInicio = e.touches ? e.touches[0].clientX : e.clientX;
+    }
+
+    function registrarFinDeslizamiento(e) {
+      xFin = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
+      calcularDeslizamiento();
+    }
+
+    function calcularDeslizamiento() {
+      const diferencia = xInicio - xFin;
+      
+      if (Math.abs(diferencia) > UMBRAL_DESLIZAR) {
+        if (diferencia > 0) {
+          // Deslizó a la izquierda → siguiente
+          vehiculoSiguiente();
+        } else {
+          // Deslizó a la derecha → anterior
+          vehiculoAnterior();
+        }
+      }
+    }
+
     async function realizarBusqueda() {
       const tipo = document.getElementById('buscar_tipo').value;
       const marca = document.getElementById('buscar_marca').value.trim();
@@ -705,17 +692,13 @@
       const precioMax = document.getElementById('buscar_precio_max').value.trim();
 
       const caja = document.getElementById('caja_resultado');
-      const cajaNav = document.getElementById('caja_navegacion');
-      const btnAnt = document.getElementById('btnAnterior');
-      const btnSig = document.getElementById('btnSiguiente');
+      const contador = document.getElementById('contador');
       
       caja.innerHTML = `<div class="cargando">🔄 Buscando vehículos...</div>`;
+      contador.textContent = '';
       idsFiltrados = [];
       indiceActual = 0;
       idVehiculoActual = null;
-      btnAnt.disabled = true;
-      btnSig.disabled = true;
-      cajaNav.classList.remove('activa');
 
       const sb = await getSupabase();
       let consulta = sb.from('autos').select('*');
@@ -789,9 +772,6 @@
       }
 
       idsFiltrados = resultados.map(item => item.id);
-      cajaNav.classList.add('activa');
-      btnAnt.disabled = false;
-      btnSig.disabled = false;
       await cargarUno(0);
     }
 
@@ -799,6 +779,8 @@
       if (posicion < 0 || posicion >= idsFiltrados.length) return;
 
       const caja = document.getElementById('caja_resultado');
+      const contador = document.getElementById('contador');
+      
       caja.innerHTML = `<div class="cargando">🔄 Cargando vehículo ${posicion+1} de ${idsFiltrados.length}...</div>`;
 
       const sb = await getSupabase();
@@ -822,9 +804,8 @@
           fotosHtml += `
             <div class="foto-caja">
               <div class="foto-ver" onclick="ampliarFoto('${foto}')">
-                <img src="${foto}" alt="${nombresFotos[i-1]}">
+                <img src="${foto}" alt="">
               </div>
-              <div class="foto-nombre">${nombresFotos[i-1]}</div>
             </div>
           `;
         }
@@ -843,7 +824,7 @@
           <button class="boton-cancelar" onclick="ocultarCajaCodigo()">❌ Cancelar</button>
         </div>
         
-        <div class="tarjeta">
+        <div class="tarjeta" id="tarjetaDeslizable">
           ${vehiculo.tipo_vehiculo ? `<span class="etiqueta-tipo">${vehiculo.tipo_vehiculo}</span>` : ''}
           
           <div class="titulo-vehiculo">${vehiculo.marca || ''} ${vehiculo.modelo || ''} — ${vehiculo.anio || ''}</div>
@@ -869,8 +850,19 @@
           ` : ''}
         </div>
       `;
-      document.getElementById('contador').textContent = 
-        `${posicion + 1} de ${idsFiltrados.length}`;
+      
+      contador.textContent = `${posicion + 1} de ${idsFiltrados.length}`;
+      
+      // Volver a agregar eventos de deslizamiento
+      setTimeout(() => {
+        const tarjeta = document.getElementById('tarjetaDeslizable');
+        if (tarjeta) {
+          tarjeta.addEventListener('touchstart', registrarInicioDeslizamiento);
+          tarjeta.addEventListener('touchend', registrarFinDeslizamiento);
+          tarjeta.addEventListener('mousedown', registrarInicioDeslizamiento);
+          tarjeta.addEventListener('mouseup', registrarFinDeslizamiento);
+        }
+      }, 100);
     }
 
     async function vehiculoAnterior() {
@@ -893,12 +885,15 @@
       await cargarUno(indiceActual);
     }
 
-    document.getElementById('btnAnterior').addEventListener('click', vehiculoAnterior);
-    document.getElementById('btnSiguiente').addEventListener('click', vehiculoSiguiente);
-
     async function iniciar() {
       verificarSesion();
       await getSupabase();
+      
+      // Eventos globales de deslizamiento
+      document.addEventListener('touchstart', registrarInicioDeslizamiento);
+      document.addEventListener('touchend', registrarFinDeslizamiento);
+      document.addEventListener('mousedown', registrarInicioDeslizamiento);
+      document.addEventListener('mouseup', registrarFinDeslizamiento);
     }
 
     iniciar();
