@@ -177,14 +177,16 @@
     .volver {
       display: block;
       text-align: center;
-      margin-top: 10px;
+      margin-top: 20px;
       color: #ffffff;
       text-decoration: none;
-      font-weight: 600;
-      padding: 12px 24px;
-      background: #7aa7c9;
-      border-radius: 10px;
+      font-weight: bold;
+      font-size: 16px;
+      padding: 14px 24px;
+      background: #5a91b8;
+      border-radius: 12px;
       transition: background 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     }
 
     .volver:hover {
@@ -258,18 +260,6 @@
       font-size: 17px;
       padding: 60px 40px;
     }
-
-    .boton-whatsapp {
-      display: block;
-      text-align: center;
-      background: #25D366;
-      color: white;
-      padding: 14px;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: bold;
-      margin-top: 20px;
-    }
   </style>
 </head>
 <body>
@@ -289,6 +279,7 @@
 
       <div class="puntos" id="puntos"></div>
 
+      <!-- ✅ BOTÓN DE VOLVER BIEN VISIBLE Y DESTACADO -->
       <a href="catalogo.html" class="volver">← Volver al Catálogo</a>
     </div>
 
@@ -394,7 +385,7 @@
             
             <p class="indicacion-foto">👆 Tocá cualquier foto para verla grande</p>
             
-            <!-- 📋 TODOS LOS CAMPOS COMPLETOS -->
+            <!-- 📋 TODOS LOS CAMPOS COMPLETOS — SIN BOTÓN DE WHATSAPP -->
             <div class="campos-resumen">
               <div class="campo">
                 <span class="etiqueta">Marca:</span>
@@ -462,8 +453,6 @@
                 <span class="valor" style="white-space:pre-wrap; text-align:justify;">${veh.descripcion}</span>
               </div>` : ""}
             </div>
-            
-            ${veh.telefono ? `<a href="https://wa.me/549${veh.telefono}" target="_blank" class="boton-whatsapp">💬 Escribir por WhatsApp</a>` : ""}
           </div>
         `;
         fila.appendChild(pantalla);
