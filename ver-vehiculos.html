@@ -202,6 +202,7 @@
       font-size: 16px;
     }
 
+    /* 🟦 FOTO AMPLIADA */
     .fondo-ampliada {
       position: fixed;
       top: 0;
@@ -235,6 +236,22 @@
       display: block;
     }
 
+    /* 💬 WhatsApp — ARRIBA IZQUIERDA en foto ampliada */
+    .whatsapp-flotante {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: #25D366;
+      color: white;
+      padding: 8px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 14px;
+      z-index: 15;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+    }
+
     .cerrar-ampliada {
       position: absolute;
       top: 10px;
@@ -249,6 +266,7 @@
       color: #5d4e37;
       font-weight: bold;
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      z-index: 15;
     }
 
     .sin-resultados {
@@ -298,8 +316,12 @@
     </div>
   </div>
 
+  <!-- FOTO AMPLIADA → WhatsApp arriba a la izquierda -->
   <div class="fondo-ampliada" id="fondo-ampliada" onclick="cerrarAmpliada(event)">
     <div class="foto-ampliada-caja">
+      <!-- 💬 Arriba izquierda: WhatsApp -->
+      <a href="" id="link-whatsapp-flotante" target="_blank" class="whatsapp-flotante">💬 WhatsApp</a>
+      
       <button class="cerrar-ampliada" onclick="cerrarAmpliada(event)">✕</button>
       <img src="" alt="Foto ampliada" class="foto-ampliada-img" id="foto-ampliada-img">
     </div>
@@ -313,6 +335,7 @@
 
     let listaVehiculos = [];
     let indiceActual = 0;
+    let vehiculoActivo = null;
     let inicioX = 0;
     let ultimoDesplazamiento = 0;
 
@@ -376,7 +399,6 @@
           }
         }
 
-        // ✅ MENSAJE DE WHATSAPP PERSONALIZADO
         const mensaje = encodeURIComponent(
           `Hola! 👋 Vi tu anuncio en Vehículos en Venta y me gustaría comunicarme con vos sobre el vehículo ${veh.marca || ''} ${veh.modelo || ''}. Quedo atento, gracias!`
         );
@@ -387,7 +409,7 @@
           <div class="tarjeta-vehiculo">
             <div class="fotos-cuadricula">
               ${fotos.map((foto, idx) => foto 
-                ? `<div class="foto-cuadrito" onclick="abrirAmpliada('${foto.replace(/'/g, "\\'")}')"><img src="${foto}" alt="Foto ${idx+1}"></div>`
+                ? `<div class="foto-cuadrito" onclick="abrirAmpliada('${foto.replace(/'/g, "\\'")}', ${i})"><img src="${foto}" alt="Foto ${idx+1}"></div>`
                 : `<div class="foto-cuadrito"><div class="sin-foto-cuadrito">Sin foto</div></div>`
               ).join("")}
             </div>
@@ -521,13 +543,29 @@
       }, { passive: true });
     }
 
-    function abrirAmpliada(url) {
+    // ✅ ABRIR FOTO GRANDE — actualiza el enlace de WhatsApp flotante
+    function abrirAmpliada(url, indiceVehiculo) {
+      vehiculoActivo = listaVehiculos[indiceVehiculo];
       document.getElementById("foto-ampliada-img").src = url;
+      
+      // Arma el enlace con el teléfono del vehículo
+      if (vehiculoActivo && vehiculoActivo.telefono) {
+        const mensaje = encodeURIComponent(
+          `Hola! 👋 Vi tu anuncio en Vehículos en Venta y me gustaría comunicarme con vos sobre el vehículo ${vehiculoActivo.marca || ''} ${vehiculoActivo.modelo || ''}. Quedo atento, gracias!`
+        );
+        document.getElementById("link-whatsapp-flotante").href = 
+          `https://wa.me/549${vehiculoActivo.telefono}?text=${mensaje}`;
+        document.getElementById("link-whatsapp-flotante").style.display = "block";
+      } else {
+        document.getElementById("link-whatsapp-flotante").style.display = "none";
+      }
+      
       document.getElementById("fondo-ampliada").classList.add("visible");
     }
 
     function cerrarAmpliada(event) {
-      if (!event.target.closest('.foto-ampliada-img')) {
+      if (!event.target.closest('.foto-ampliada-img') && 
+          !event.target.closest('.whatsapp-flotante')) {
         document.getElementById("fondo-ampliada").classList.remove("visible");
       }
     }
