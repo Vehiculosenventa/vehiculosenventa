@@ -48,63 +48,57 @@
       margin-bottom: 20px;
     }
 
-    .deslizador {
-      overflow: hidden;
-      touch-action: pan-y;
-    }
-
-    .fila-tarjetas {
-      display: flex;
-      transition: transform 0.3s ease-out;
-      will-change: transform;
-    }
-
-    .tarjeta-pantalla {
-      min-width: 100%;
-      padding: 0 5px;
-    }
-
     /* 🟤 TARJETA — TODO CREMA, NADA DE BLANCO */
     .tarjeta-vehiculo {
       background: #f5efe0 !important;
       border-radius: 20px;
-      padding: 0;
+      padding: 20px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
       border: 3px solid #7aa7c9;
-      cursor: pointer;
-      transition: transform 0.2s ease;
+      margin-bottom: 25px;
+    }
+
+    /* 📸 CUADRITOS DE LAS 6 FOTOS */
+    .fotos-cuadricula {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .foto-cuadrito {
+      aspect-ratio: 4/3;
+      border-radius: 10px;
       overflow: hidden;
-      width: 100%;
-    }
-
-    .tarjeta-vehiculo:active {
-      transform: scale(0.98);
-    }
-
-    .foto-principal {
-      width: 100%;
-      height: 180px; /* ✅ Más chiquita en la tarjeta */
       background: #d9ccb4;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: transform 0.2s ease, border-color 0.2s ease;
     }
 
-    .foto-principal img {
+    .foto-cuadrito:active {
+      transform: scale(0.95);
+      border-color: #7aa7c9;
+    }
+
+    .foto-cuadrito img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
 
-    .sin-foto {
+    .sin-foto-cuadrito {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       color: #8a7d65;
-      font-size: 16px;
+      font-size: 12px;
+      height: 100%;
     }
 
     /* 🟤 CAMPOS — TODO CREMA SIN BLANCO */
     .campos-resumen {
-      padding: 20px 25px;
+      padding-top: 10px;
       background: #f5efe0 !important;
     }
 
@@ -137,36 +131,6 @@
       font-weight: bold;
     }
 
-    .indicacion-tocar {
-      text-align: center;
-      font-size: 12px;
-      color: #8a7d65;
-      padding: 0 0 15px;
-      background: #f5efe0 !important;
-      margin: 0;
-    }
-
-    .puntos {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin: 20px 0;
-    }
-
-    .punto {
-      width: 12px;
-      height: 12px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.4);
-      transition: all 0.2s ease;
-      cursor: pointer;
-    }
-
-    .punto.activo {
-      background: #ffffff;
-      box-shadow: 0 0 6px rgba(255,255,255,0.6);
-    }
-
     .volver {
       display: block;
       text-align: center;
@@ -184,149 +148,63 @@
       background: #5fa8d3;
     }
 
-    /* 🟦 FONDO DE DETALLE — CELESTE NUESTRO */
-    .fondo-detalle {
+    /* 🟦 FONDO DE FOTO AMPLIADA — CELESTE NUESTRO */
+    .fondo-ampliada {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(122, 167, 201, 0.92) !important;
+      background: rgba(122, 167, 201, 0.95) !important;
       z-index: 9999;
       display: none;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      overflow-y: auto;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
     }
 
-    .fondo-detalle.visible {
-      display: block;
-      opacity: 1;
+    .fondo-ampliada.visible {
+      display: flex;
     }
 
-    /* 🟤 CAJA DE DETALLE — TODO CREMA, CERO BLANCO */
-    .caja-detalle {
-      max-width: 550px;
-      margin: 0 auto;
-      background: #f5efe0 !important;
-      border-radius: 20px;
-      overflow: hidden;
+    .foto-ampliada-caja {
       position: relative;
+      max-width: 95%;
+      max-height: 85vh;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 0 30px rgba(0,0,0,0.3);
     }
 
-    .boton-cerrar {
+    .foto-ampliada-img {
+      max-width: 100%;
+      max-height: 80vh;
+      display: block;
+    }
+
+    .cerrar-ampliada {
       position: absolute;
-      top: 12px;
-      right: 12px;
-      z-index: 10;
-      background: #f5efe0 !important;
-      border: 2px solid #7aa7c9;
+      top: 10px;
+      right: 10px;
+      background: rgba(255,255,255,0.9);
+      border: none;
       width: 36px;
       height: 36px;
       border-radius: 50%;
       font-size: 18px;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
       color: #5d4e37;
-    }
-
-    /* ✅ FOTO SE AGRANDA AL ABRIR */
-    .galeria-detalle {
-      position: relative;
-      overflow: hidden;
-      height: 320px; /* ✅ MÁS GRANDE al hacer clic */
-      background: #d9ccb4;
-    }
-
-    .fila-fotos {
-      display: flex;
-      height: 100%;
-      transition: transform 0.3s ease-out;
-    }
-
-    .foto-galeria {
-      min-width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #d9ccb4;
-    }
-
-    .foto-galeria img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-
-    .sin-foto-galeria {
-      color: #8a7d65;
-    }
-
-    .puntos-galeria {
-      position: absolute;
-      bottom: 12px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 8px;
-    }
-
-    .punto-galeria {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.5);
-    }
-
-    .punto-galeria.activo {
-      background: white;
-    }
-
-    /* 🟤 CAMPOS DETALLE — TODO CREMA */
-    .contenido-detalle {
-      padding: 25px;
-      background: #f5efe0 !important;
-    }
-
-    .contenido-detalle h2 {
-      color: #5d4e37;
-      margin-bottom: 20px;
-      font-size: 20px;
-    }
-
-    .fila-detalle {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-bottom: 8px;
-      background: #f5efe0 !important;
-    }
-
-    .campo-detalle {
-      flex: 1 1 45%;
-      background: #f5efe0 !important;
-      padding: 4px 0;
-    }
-
-    .campo-detalle label {
-      font-size: 13px;
-      color: #8a7d65;
-      display: block;
-    }
-
-    .campo-detalle span {
-      font-weight: 600;
-      color: #3a2f1f;
-      font-size: 15px;
-    }
-
-    .precio-detalle {
-      font-size: 24px;
-      color: #2e7d32;
       font-weight: bold;
-      margin: 15px 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+
+    .indicacion-tocar {
+      text-align: center;
+      font-size: 12px;
+      color: #8a7d65;
+      padding: 10px 0 0;
+      background: #f5efe0 !important;
+      margin: 0;
     }
 
     .sin-resultados {
@@ -346,6 +224,18 @@
       font-size: 17px;
       padding: 60px 40px;
     }
+
+    .boton-whatsapp {
+      display: block;
+      text-align: center;
+      background: #25D366;
+      color: white;
+      padding: 14px;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      margin-top: 20px;
+    }
   </style>
 </head>
 <body>
@@ -357,15 +247,8 @@
     <div id="cargando" class="cargando">🔍 Buscando vehículos...</div>
 
     <div id="contenido" style="display:none;">
-      <div class="contador" id="contador">1 de 1</div>
-
-      <div class="deslizador" id="deslizador">
-        <div class="fila-tarjetas" id="fila-tarjetas">
-        </div>
-      </div>
-
-      <div class="puntos" id="puntos"></div>
-
+      <div class="contador" id="contador"></div>
+      <div id="lista-vehiculos"></div>
       <a href="catalogo.html" class="volver">← Volver al Catálogo</a>
     </div>
 
@@ -377,16 +260,11 @@
     </div>
   </div>
 
-  <div class="fondo-detalle" id="fondo-detalle">
-    <div class="caja-detalle">
-      <button class="boton-cerrar" onclick="cerrarDetalle()">✕</button>
-      
-      <div class="galeria-detalle" id="galeria-detalle">
-        <div class="fila-fotos" id="fila-fotos-detalle"></div>
-        <div class="puntos-galeria" id="puntos-galeria"></div>
-      </div>
-      
-      <div class="contenido-detalle" id="contenido-detalle"></div>
+  <!-- FOTO AMPLIADA AL TOCAR -->
+  <div class="fondo-ampliada" id="fondo-ampliada" onclick="cerrarAmpliada(event)">
+    <div class="foto-ampliada-caja">
+      <button class="cerrar-ampliada" onclick="cerrarAmpliada(event)">✕</button>
+      <img src="" alt="Foto ampliada" class="foto-ampliada-img" id="foto-ampliada-img">
     </div>
   </div>
 
@@ -397,12 +275,6 @@
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let listaVehiculos = [];
-    let indiceActual = 0;
-    let tipoSeleccionado = "";
-    let inicioX = 0;
-    let ultimoDesplazamiento = 0;
-    let indiceFotoDetalle = 0;
-    let fotosActuales = [];
 
     function obtenerTipo() {
       const params = new URLSearchParams(window.location.search);
@@ -410,7 +282,7 @@
     }
 
     async function cargarVehiculos() {
-      tipoSeleccionado = obtenerTipo();
+      const tipoSeleccionado = obtenerTipo();
       
       document.getElementById("titulo-tipo").textContent = tipoSeleccionado || "Vehículos";
       document.getElementById("subtitulo-tipo").textContent = tipoSeleccionado 
@@ -439,210 +311,127 @@
       }
 
       listaVehiculos = data;
-      indiceActual = 0;
-
       document.getElementById("contenido").style.display = "block";
+      document.getElementById("contador").textContent = `${listaVehiculos.length} vehículo${listaVehiculos.length !== 1 ? 's' : ''} encontrado${listaVehiculos.length !== 1 ? 's' : ''}`;
       armarTarjetas();
-      mostrarVehiculoActual();
-      configurarDeslizamiento();
     }
 
     function armarTarjetas() {
-      const fila = document.getElementById("fila-tarjetas");
-      const puntos = document.getElementById("puntos");
+      const contenedor = document.getElementById("lista-vehiculos");
+      contenedor.innerHTML = "";
 
-      fila.innerHTML = "";
-      puntos.innerHTML = "";
-
-      listaVehiculos.forEach((veh, i) => {
-        const fotoPrincipal = veh.foto1 || "";
+      listaVehiculos.forEach((veh) => {
+        // ✅ SOLO LAS 6 FOTOS
+        const fotos = [];
+        for (let i = 1; i <= 6; i++) {
+          const campo = `foto${i}`;
+          if (veh[campo] && veh[campo] !== null && veh[campo] !== "") {
+            fotos.push(veh[campo]);
+          } else {
+            fotos.push(null);
+          }
+        }
 
         const tarjeta = document.createElement("div");
-        tarjeta.className = "tarjeta-pantalla";
-        tarjeta.onclick = () => abrirDetalle(i);
+        tarjeta.className = "tarjeta-vehiculo";
         tarjeta.innerHTML = `
-          <div class="tarjeta-vehiculo">
-            <div class="foto-principal">
-              ${fotoPrincipal 
-                ? `<img src="${fotoPrincipal}" alt="Foto principal">` 
-                : `<span class="sin-foto">📷 Sin foto</span>`
-              }
-            </div>
-            
-            <div class="campos-resumen">
-              <div class="campo">
-                <span class="etiqueta">Marca:</span>
-                <span class="valor">${veh.marca || "-"}</span>
-              </div>
-              <div class="campo">
-                <span class="etiqueta">Modelo:</span>
-                <span class="valor">${veh.modelo || "-"}</span>
-              </div>
-              <div class="campo">
-                <span class="etiqueta">Año:</span>
-                <span class="valor">${veh.anio || "-"}</span>
-              </div>
-              <div class="campo">
-                <span class="etiqueta">Precio:</span>
-                <span class="valor precio-destacado">$ ${veh.precio ? Number(veh.precio).toLocaleString("es-AR") : "-"}</span>
-              </div>
-            </div>
-            <p class="indicacion-tocar">👆 Tocar arriba para ver TODOS los datos y fotos</p>
+          <!-- 📸 LAS 6 FOTOS EN CUADRITOS -->
+          <div class="fotos-cuadricula">
+            ${fotos.map((foto, i) => foto 
+              ? `<div class="foto-cuadrito" onclick="abrirAmpliada('${foto.replace(/'/g, "\\'")}')"><img src="${foto}" alt="Foto ${i+1}"></div>`
+              : `<div class="foto-cuadrito"><div class="sin-foto-cuadrito">Sin foto</div></div>`
+            ).join("")}
           </div>
-        `;
-        fila.appendChild(tarjeta);
-
-        const punto = document.createElement("span");
-        punto.className = "punto" + (i === 0 ? " activo" : "");
-        punto.onclick = () => irA(i);
-        puntos.appendChild(punto);
-      });
-    }
-
-    function mostrarVehiculoActual() {
-      document.getElementById("contador").textContent = `${indiceActual + 1} de ${listaVehiculos.length}`;
-      document.getElementById("fila-tarjetas").style.transform = `translateX(-${indiceActual * 100}%)`;
-      document.querySelectorAll(".punto").forEach((p, i) => {
-        p.classList.toggle("activo", i === indiceActual);
-      });
-    }
-
-    function irA(n) {
-      if (n >= 0 && n < listaVehiculos.length) {
-        indiceActual = n;
-        mostrarVehiculoActual();
-      }
-    }
-
-    function siguiente() {
-      if (indiceActual < listaVehiculos.length - 1) {
-        indiceActual++;
-        mostrarVehiculoActual();
-      }
-    }
-
-    function anterior() {
-      if (indiceActual > 0) {
-        indiceActual--;
-        mostrarVehiculoActual();
-      }
-    }
-
-    function configurarDeslizamiento() {
-      const deslizador = document.getElementById("deslizador");
-
-      deslizador.addEventListener("touchstart", (e) => {
-        inicioX = e.touches[0].clientX;
-        ultimoDesplazamiento = 0;
-      }, { passive: true });
-
-      deslizador.addEventListener("touchmove", (e) => {
-        ultimoDesplazamiento = e.touches[0].clientX - inicioX;
-      }, { passive: true });
-
-      deslizador.addEventListener("touchend", () => {
-        if (ultimoDesplazamiento < -50) siguiente();
-        else if (ultimoDesplazamiento > 50) anterior();
-      }, { passive: true });
-    }
-
-    function abrirDetalle(indice) {
-      const veh = listaVehiculos[indice];
-      
-      const filaFotos = document.getElementById("fila-fotos-detalle");
-      const puntosGaleria = document.getElementById("puntos-galeria");
-      
-      filaFotos.innerHTML = "";
-      puntosGaleria.innerHTML = "";
-      indiceFotoDetalle = 0;
-      fotosActuales = [];
-      
-      // ✅ TODAS LAS FOTOS DE 1 A 8
-      for (let i = 1; i <= 8; i++) {
-        const campo = `foto${i}`;
-        if (veh[campo] && veh[campo] !== null && veh[campo] !== "") {
-          fotosActuales.push(veh[campo]);
-        }
-      }
-      
-      if (fotosActuales.length === 0) {
-        filaFotos.innerHTML = `<div class="foto-galeria"><span class="sin-foto-galeria">📷 Sin fotos</span></div>`;
-      } else {
-        fotosActuales.forEach((foto, i) => {
-          const div = document.createElement("div");
-          div.className = "foto-galeria";
-          div.innerHTML = `<img src="${foto}" alt="Foto ${i+1}">`;
-          filaFotos.appendChild(div);
           
-          const p = document.createElement("span");
-          p.className = "punto-galeria" + (i === 0 ? " activo" : "");
-          puntosGaleria.appendChild(p);
-        });
+          <p class="indicacion-tocar">👆 Tocá cualquier foto para verla grande</p>
+          
+          <!-- 📋 TODOS LOS CAMPOS COMPLETOS -->
+          <div class="campos-resumen">
+            <div class="campo">
+              <span class="etiqueta">Marca:</span>
+              <span class="valor">${veh.marca || "-"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Modelo:</span>
+              <span class="valor">${veh.modelo || "-"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Versión:</span>
+              <span class="valor">${veh.version || "-"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Año:</span>
+              <span class="valor">${veh.anio || "-"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Combustible:</span>
+              <span class="valor">${veh.combustible || "-"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Transmisión:</span>
+              <span class="valor">${veh.transmision || "-"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Kilometraje:</span>
+              <span class="valor">${veh.kilometraje ? veh.kilometraje + " km" : "-"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Precio:</span>
+              <span class="valor precio-destacado">$ ${veh.precio ? Number(veh.precio).toLocaleString("es-AR") : "-"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Dueño:</span>
+              <span class="valor">${veh.dueno || "-"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Dirección:</span>
+              <span class="valor">${veh.direccion || "-"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Ciudad:</span>
+              <span class="valor">${veh.ciudad || "-"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Teléfono:</span>
+              <span class="valor">${veh.telefono || "-"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Permuta:</span>
+              <span class="valor">${veh.permuta ? "Sí" : "No"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Contado:</span>
+              <span class="valor">${veh.contado ? "Sí" : "No"}</span>
+            </div>
+            <div class="campo">
+              <span class="etiqueta">Deuda:</span>
+              <span class="valor">${veh.deuda || "-"}</span>
+            </div>
+            ${veh.descripcion ? `
+            <div class="campo" style="border-bottom:none; margin-top:10px;">
+              <span class="etiqueta">Descripción:</span>
+              <span class="valor" style="white-space:pre-wrap; text-align:justify;">${veh.descripcion}</span>
+            </div>` : ""}
+          </div>
+          
+          ${veh.telefono ? `<a href="https://wa.me/549${veh.telefono}" target="_blank" class="boton-whatsapp">💬 Escribir por WhatsApp</a>` : ""}
+        `;
+        contenedor.appendChild(tarjeta);
+      });
+    }
+
+    // ✅ ABRIR FOTO GRANDE
+    function abrirAmpliada(url) {
+      document.getElementById("foto-ampliada-img").src = url;
+      document.getElementById("fondo-ampliada").classList.add("visible");
+    }
+
+    // ✅ CERRAR AL SOLTAR / TOCAR AFUERA
+    function cerrarAmpliada(event) {
+      if (!event.target.closest('.foto-ampliada-img')) {
+        document.getElementById("fondo-ampliada").classList.remove("visible");
       }
-      
-      // ✅ TODOS LOS CAMPOS EXACTOS DE TU TABLA
-      const contenido = document.getElementById("contenido-detalle");
-      contenido.innerHTML = `
-        <h2>${veh.marca || ""} ${veh.modelo || ""}</h2>
-        
-        <div class="fila-detalle">
-          <div class="campo-detalle"><label>ID</label><span>${veh.id || "-"}</span></div>
-          <div class="campo-detalle"><label>Tipo de vehículo</label><span>${veh.tipo_vehiculo || tipoSeleccionado || "-"}</span></div>
-          <div class="campo-detalle"><label>Marca</label><span>${veh.marca || "-"}</span></div>
-          <div class="campo-detalle"><label>Modelo</label><span>${veh.modelo || "-"}</span></div>
-          <div class="campo-detalle"><label>Versión</label><span>${veh.version || "-"}</span></div>
-          <div class="campo-detalle"><label>Año</label><span>${veh.anio || "-"}</span></div>
-          <div class="campo-detalle"><label>Kilometraje</label><span>${veh.kilometraje ? veh.kilometraje + " km" : "-"}</span></div>
-          <div class="campo-detalle"><label>Ciudad</label><span>${veh.ciudad || "-"}</span></div>
-          <div class="campo-detalle"><label>Combustible</label><span>${veh.combustible || "-"}</span></div>
-          <div class="campo-detalle"><label>Transmisión</label><span>${veh.transmision || "-"}</span></div>
-          <div class="campo-detalle"><label>Dueño</label><span>${veh.dueno || "-"}</span></div>
-          <div class="campo-detalle"><label>Dirección</label><span>${veh.direccion || "-"}</span></div>
-          <div class="campo-detalle"><label>Teléfono</label><span>${veh.telefono || "-"}</span></div>
-          <div class="campo-detalle"><label>Permuta</label><span>${veh.permuta ? "Sí" : "No"}</span></div>
-          <div class="campo-detalle"><label>Contado</label><span>${veh.contado ? "Sí" : "No"}</span></div>
-          <div class="campo-detalle"><label>Deuda</label><span>${veh.deuda || "-"}</span></div>
-        </div>
-        
-        ${veh.descripcion ? `<div style="margin:12px 0;"><label style="font-size:13px;color:#8a7d65;">Descripción</label><p style="color:#3a2f1f;white-space:pre-wrap;">${veh.descripcion}</p></div>` : ""}
-        
-        <div class="precio-detalle">Precio: $ ${veh.precio ? Number(veh.precio).toLocaleString("es-AR") : "-"}</div>
-        
-        ${veh.nombre_usuario ? `<div class="campo-detalle" style="margin:8px 0;"><label>Publicado por</label><span>${veh.nombre_usuario}</span></div>` : ""}
-        
-        ${veh.telefono ? `<a href="https://wa.me/549${veh.telefono}" target="_blank" style="display:block;text-align:center;background:#25D366;color:white;padding:14px;border-radius:10px;text-decoration:none;font-weight:bold;margin-top:20px;">💬 Escribir por WhatsApp</a>` : ""}
-      `;
-      
-      document.getElementById("fondo-detalle").classList.add("visible");
-      
-      let inicioFoto = 0, desplazFoto = 0;
-      const galeria = document.querySelector(".galeria-detalle");
-      
-      galeria.removeEventListener("touchstart", galeria._ts);
-      galeria.removeEventListener("touchmove", galeria._tm);
-      galeria.removeEventListener("touchend", galeria._te);
-      
-      galeria._ts = (e) => { inicioFoto = e.touches[0].clientX; };
-      galeria._tm = (e) => { desplazFoto = e.touches[0].clientX - inicioFoto; };
-      galeria._te = () => {
-        if (desplazFoto < -50 && indiceFotoDetalle < fotosActuales.length - 1) indiceFotoDetalle++;
-        if (desplazFoto > 50 && indiceFotoDetalle > 0) indiceFotoDetalle--;
-        filaFotos.style.transform = `translateX(-${indiceFotoDetalle * 100}%)`;
-        document.querySelectorAll(".punto-galeria").forEach((p, i) => p.classList.toggle("activo", i === indiceFotoDetalle));
-      };
-      
-      galeria.addEventListener("touchstart", galeria._ts, { passive: true });
-      galeria.addEventListener("touchmove", galeria._tm, { passive: true });
-      galeria.addEventListener("touchend", galeria._te);
     }
-
-    function cerrarDetalle() {
-      document.getElementById("fondo-detalle").classList.remove("visible");
-    }
-
-    document.getElementById("fondo-detalle").addEventListener("click", (e) => {
-      if (e.target.id === "fondo-detalle") cerrarDetalle();
-    });
 
     cargarVehiculos();
   </script>
