@@ -36,7 +36,7 @@
     .subtitulo {
       text-align: center;
       color: #e0edf7;
-      margin-bottom: 25px;
+      margin-bottom: 15px;
       font-size: 15px;
     }
 
@@ -45,7 +45,24 @@
       color: #ffffff;
       font-weight: 600;
       font-size: 15px;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
+    }
+
+    /* 📱 DESLIZADOR — UNO A LA VEZ */
+    .deslizador {
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+
+    .fila-tarjetas {
+      display: flex;
+      transition: transform 0.3s ease-out;
+      will-change: transform;
+    }
+
+    .pantalla-vehiculo {
+      min-width: 100%;
+      padding: 0 5px;
     }
 
     /* 🟤 TARJETA — TODO CREMA, NADA DE BLANCO */
@@ -55,7 +72,6 @@
       padding: 20px;
       box-shadow: 0 8px 24px rgba(0,0,0,0.15);
       border: 3px solid #7aa7c9;
-      margin-bottom: 25px;
     }
 
     /* 📸 CUADRITOS DE LAS 6 FOTOS */
@@ -96,9 +112,15 @@
       height: 100%;
     }
 
+    .indicacion-foto {
+      text-align: center;
+      font-size: 12px;
+      color: #8a7d65;
+      padding: 0 0 15px;
+    }
+
     /* 🟤 CAMPOS — TODO CREMA SIN BLANCO */
     .campos-resumen {
-      padding-top: 10px;
       background: #f5efe0 !important;
     }
 
@@ -129,6 +151,27 @@
       font-size: 20px;
       color: #2e7d32;
       font-weight: bold;
+    }
+
+    .puntos {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .punto {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .punto.activo {
+      background: #ffffff;
+      box-shadow: 0 0 6px rgba(255,255,255,0.6);
     }
 
     .volver {
@@ -198,15 +241,6 @@
       box-shadow: 0 2px 6px rgba(0,0,0,0.2);
     }
 
-    .indicacion-tocar {
-      text-align: center;
-      font-size: 12px;
-      color: #8a7d65;
-      padding: 10px 0 0;
-      background: #f5efe0 !important;
-      margin: 0;
-    }
-
     .sin-resultados {
       background: #f5efe0 !important;
       border-radius: 20px;
@@ -248,7 +282,13 @@
 
     <div id="contenido" style="display:none;">
       <div class="contador" id="contador"></div>
-      <div id="lista-vehiculos"></div>
+
+      <div class="deslizador" id="deslizador">
+        <div class="fila-tarjetas" id="fila-tarjetas"></div>
+      </div>
+
+      <div class="puntos" id="puntos"></div>
+
       <a href="catalogo.html" class="volver">← Volver al Catálogo</a>
     </div>
 
@@ -275,6 +315,9 @@
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let listaVehiculos = [];
+    let indiceActual = 0;
+    let inicioX = 0;
+    let ultimoDesplazamiento = 0;
 
     function obtenerTipo() {
       const params = new URLSearchParams(window.location.search);
@@ -311,20 +354,25 @@
       }
 
       listaVehiculos = data;
+      indiceActual = 0;
       document.getElementById("contenido").style.display = "block";
-      document.getElementById("contador").textContent = `${listaVehiculos.length} vehículo${listaVehiculos.length !== 1 ? 's' : ''} encontrado${listaVehiculos.length !== 1 ? 's' : ''}`;
       armarTarjetas();
+      mostrarVehiculoActual();
+      configurarDeslizamiento();
     }
 
     function armarTarjetas() {
-      const contenedor = document.getElementById("lista-vehiculos");
-      contenedor.innerHTML = "";
+      const fila = document.getElementById("fila-tarjetas");
+      const puntos = document.getElementById("puntos");
 
-      listaVehiculos.forEach((veh) => {
+      fila.innerHTML = "";
+      puntos.innerHTML = "";
+
+      listaVehiculos.forEach((veh, i) => {
         // ✅ SOLO LAS 6 FOTOS
         const fotos = [];
-        for (let i = 1; i <= 6; i++) {
-          const campo = `foto${i}`;
+        for (let f = 1; f <= 6; f++) {
+          const campo = `foto${f}`;
           if (veh[campo] && veh[campo] !== null && veh[campo] !== "") {
             fotos.push(veh[campo]);
           } else {
@@ -332,92 +380,146 @@
           }
         }
 
-        const tarjeta = document.createElement("div");
-        tarjeta.className = "tarjeta-vehiculo";
-        tarjeta.innerHTML = `
-          <!-- 📸 LAS 6 FOTOS EN CUADRITOS -->
-          <div class="fotos-cuadricula">
-            ${fotos.map((foto, i) => foto 
-              ? `<div class="foto-cuadrito" onclick="abrirAmpliada('${foto.replace(/'/g, "\\'")}')"><img src="${foto}" alt="Foto ${i+1}"></div>`
-              : `<div class="foto-cuadrito"><div class="sin-foto-cuadrito">Sin foto</div></div>`
-            ).join("")}
+        const pantalla = document.createElement("div");
+        pantalla.className = "pantalla-vehiculo";
+        pantalla.innerHTML = `
+          <div class="tarjeta-vehiculo">
+            <!-- 📸 LAS 6 FOTOS EN CUADRITOS -->
+            <div class="fotos-cuadricula">
+              ${fotos.map((foto, idx) => foto 
+                ? `<div class="foto-cuadrito" onclick="abrirAmpliada('${foto.replace(/'/g, "\\'")}')"><img src="${foto}" alt="Foto ${idx+1}"></div>`
+                : `<div class="foto-cuadrito"><div class="sin-foto-cuadrito">Sin foto</div></div>`
+              ).join("")}
+            </div>
+            
+            <p class="indicacion-foto">👆 Tocá cualquier foto para verla grande</p>
+            
+            <!-- 📋 TODOS LOS CAMPOS COMPLETOS -->
+            <div class="campos-resumen">
+              <div class="campo">
+                <span class="etiqueta">Marca:</span>
+                <span class="valor">${veh.marca || "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Modelo:</span>
+                <span class="valor">${veh.modelo || "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Versión:</span>
+                <span class="valor">${veh.version || "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Año:</span>
+                <span class="valor">${veh.anio || "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Combustible:</span>
+                <span class="valor">${veh.combustible || "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Transmisión:</span>
+                <span class="valor">${veh.transmision || "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Kilometraje:</span>
+                <span class="valor">${veh.kilometraje ? veh.kilometraje + " km" : "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Precio:</span>
+                <span class="valor precio-destacado">$ ${veh.precio ? Number(veh.precio).toLocaleString("es-AR") : "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Dueño:</span>
+                <span class="valor">${veh.dueno || "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Dirección:</span>
+                <span class="valor">${veh.direccion || "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Ciudad:</span>
+                <span class="valor">${veh.ciudad || "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Teléfono:</span>
+                <span class="valor">${veh.telefono || "-"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Permuta:</span>
+                <span class="valor">${veh.permuta ? "Sí" : "No"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Contado:</span>
+                <span class="valor">${veh.contado ? "Sí" : "No"}</span>
+              </div>
+              <div class="campo">
+                <span class="etiqueta">Deuda:</span>
+                <span class="valor">${veh.deuda || "-"}</span>
+              </div>
+              ${veh.descripcion ? `
+              <div class="campo" style="border-bottom:none; margin-top:10px;">
+                <span class="etiqueta">Descripción:</span>
+                <span class="valor" style="white-space:pre-wrap; text-align:justify;">${veh.descripcion}</span>
+              </div>` : ""}
+            </div>
+            
+            ${veh.telefono ? `<a href="https://wa.me/549${veh.telefono}" target="_blank" class="boton-whatsapp">💬 Escribir por WhatsApp</a>` : ""}
           </div>
-          
-          <p class="indicacion-tocar">👆 Tocá cualquier foto para verla grande</p>
-          
-          <!-- 📋 TODOS LOS CAMPOS COMPLETOS -->
-          <div class="campos-resumen">
-            <div class="campo">
-              <span class="etiqueta">Marca:</span>
-              <span class="valor">${veh.marca || "-"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Modelo:</span>
-              <span class="valor">${veh.modelo || "-"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Versión:</span>
-              <span class="valor">${veh.version || "-"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Año:</span>
-              <span class="valor">${veh.anio || "-"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Combustible:</span>
-              <span class="valor">${veh.combustible || "-"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Transmisión:</span>
-              <span class="valor">${veh.transmision || "-"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Kilometraje:</span>
-              <span class="valor">${veh.kilometraje ? veh.kilometraje + " km" : "-"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Precio:</span>
-              <span class="valor precio-destacado">$ ${veh.precio ? Number(veh.precio).toLocaleString("es-AR") : "-"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Dueño:</span>
-              <span class="valor">${veh.dueno || "-"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Dirección:</span>
-              <span class="valor">${veh.direccion || "-"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Ciudad:</span>
-              <span class="valor">${veh.ciudad || "-"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Teléfono:</span>
-              <span class="valor">${veh.telefono || "-"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Permuta:</span>
-              <span class="valor">${veh.permuta ? "Sí" : "No"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Contado:</span>
-              <span class="valor">${veh.contado ? "Sí" : "No"}</span>
-            </div>
-            <div class="campo">
-              <span class="etiqueta">Deuda:</span>
-              <span class="valor">${veh.deuda || "-"}</span>
-            </div>
-            ${veh.descripcion ? `
-            <div class="campo" style="border-bottom:none; margin-top:10px;">
-              <span class="etiqueta">Descripción:</span>
-              <span class="valor" style="white-space:pre-wrap; text-align:justify;">${veh.descripcion}</span>
-            </div>` : ""}
-          </div>
-          
-          ${veh.telefono ? `<a href="https://wa.me/549${veh.telefono}" target="_blank" class="boton-whatsapp">💬 Escribir por WhatsApp</a>` : ""}
         `;
-        contenedor.appendChild(tarjeta);
+        fila.appendChild(pantalla);
+
+        const punto = document.createElement("span");
+        punto.className = "punto" + (i === 0 ? " activo" : "");
+        punto.onclick = () => irA(i);
+        puntos.appendChild(punto);
       });
+    }
+
+    function mostrarVehiculoActual() {
+      document.getElementById("contador").textContent = `${indiceActual + 1} de ${listaVehiculos.length}`;
+      document.getElementById("fila-tarjetas").style.transform = `translateX(-${indiceActual * 100}%)`;
+      document.querySelectorAll(".punto").forEach((p, i) => {
+        p.classList.toggle("activo", i === indiceActual);
+      });
+    }
+
+    function irA(n) {
+      if (n >= 0 && n < listaVehiculos.length) {
+        indiceActual = n;
+        mostrarVehiculoActual();
+      }
+    }
+
+    function siguiente() {
+      if (indiceActual < listaVehiculos.length - 1) {
+        indiceActual++;
+        mostrarVehiculoActual();
+      }
+    }
+
+    function anterior() {
+      if (indiceActual > 0) {
+        indiceActual--;
+        mostrarVehiculoActual();
+      }
+    }
+
+    function configurarDeslizamiento() {
+      const deslizador = document.getElementById("deslizador");
+
+      deslizador.addEventListener("touchstart", (e) => {
+        inicioX = e.touches[0].clientX;
+        ultimoDesplazamiento = 0;
+      }, { passive: true });
+
+      deslizador.addEventListener("touchmove", (e) => {
+        ultimoDesplazamiento = e.touches[0].clientX - inicioX;
+      }, { passive: true });
+
+      deslizador.addEventListener("touchend", () => {
+        if (ultimoDesplazamiento < -50) siguiente();
+        else if (ultimoDesplazamiento > 50) anterior();
+      }, { passive: true });
     }
 
     // ✅ ABRIR FOTO GRANDE
@@ -426,7 +528,7 @@
       document.getElementById("fondo-ampliada").classList.add("visible");
     }
 
-    // ✅ CERRAR AL SOLTAR / TOCAR AFUERA
+    // ✅ CERRAR AL TOCAR AFUERA
     function cerrarAmpliada(event) {
       if (!event.target.closest('.foto-ampliada-img')) {
         document.getElementById("fondo-ampliada").classList.remove("visible");
