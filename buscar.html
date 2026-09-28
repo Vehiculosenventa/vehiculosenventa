@@ -22,67 +22,35 @@
       margin-bottom: 20px;
       padding-bottom: 12px;
       border-bottom: 2px solid rgba(44, 82, 130, 0.15);
-      flex-wrap: wrap;
-      gap: 10px;
     }
-    .titulo-pagina {
-      font-size: 18px;
-      font-weight: 800;
-      color: #2c5282;
-    }
-    .zona-usuario {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .texto-favoritos {
-      color: #1d4ed8;
-      font-weight: 700;
-      font-size: 14px;
-      text-decoration: none;
-    }
-    .texto-favoritos:hover {text-decoration: underline;}
-    .texto-conectado {
+    .zona-izquierda {
+      order: 1;
       color: #166534;
       font-weight: 700;
       font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .texto-cerrar {
+    .titulo-pagina {
+      order: 2;
+      font-size: 18px;
+      font-weight: 800;
+      color: #2c5282;
+      text-align: center;
+      flex: 1;
+    }
+    .zona-derecha {
+      order: 3;
       color: #1d4ed8;
       font-weight: 700;
       font-size: 14px;
       cursor: pointer;
       text-decoration: none;
+      text-align: right;
     }
-    .texto-cerrar:hover {text-decoration: underline;}
-    .btn-sesion {
-      padding: 8px 14px;
-      border-radius: 10px;
-      font-weight: 700;
-      text-decoration: none;
-      font-size: 14px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-iniciar {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
-    }
-    .btn-iniciar:hover {transform: translateY(-1px);}
-    .btn-registrar {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      color: white;
-    }
-    .btn-registrar:hover {transform: translateY(-1px);}
+    .zona-derecha:hover {text-decoration: underline;}
 
-    h1 {
-      text-align: center;
-      color: #2c5282;
-      margin-bottom: 20px;
-      font-size: 23px;
-    }
     .buscador {
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 28px;
@@ -176,14 +144,8 @@
       cursor: default;
       justify-content: flex-end;
     }
-    .estrella-amarilla {
-      color: #facc15;
-      font-size: 20px;
-    }
-    .estrella-gris {
-      color: #9ca3af;
-      font-size: 20px;
-    }
+    .estrella-amarilla { color: #facc15; font-size: 20px; }
+    .estrella-verde { color: #16a34a; font-size: 20px; }
 
     .boton-whatsapp {
       display: flex;
@@ -206,66 +168,24 @@
       transition: all 0.2s;
     }
     .boton-whatsapp:hover {transform: translateY(-2px);}
-    .icono-wsp {
-      width: 24px;
-      height: 24px;
+
+    .boton-wsp-flotante {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
-      background: white;
+      background: #25D366;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #25D366;
-      font-weight: bold;
-      font-size: 16px;
+      z-index: 10000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      transition: transform 0.2s;
     }
-
-    .caja-codigo {
-      background: #fefceb;
-      padding: 20px;
-      border-radius: 12px;
-      margin: 0 0 18px 0;
-      border: 2px solid #fde68a;
-      display: none;
-    }
-    .caja-codigo.mostrar {display: block;}
-    .caja-codigo h3 {
-      color: #713f12;
-      margin-bottom: 12px;
-      font-size: 16px;
-    }
-    .input-codigo {
-      width: 100%;
-      padding: 14px;
-      font-size: 18px;
-      text-align: center;
-      letter-spacing: 4px;
-      border: 2px solid #facc15;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      font-weight: bold;
-    }
-    .boton-guardar {
-      background: #eab308;
-      color: #713f12;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-    }
-    .boton-cancelar {
-      background: #f3f4f6;
-      color: #4b5563;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 14px;
-      margin-top: 10px;
-      cursor: pointer;
-      width: 100%;
-    }
+    .boton-wsp-flotante:hover {transform: scale(1.1);}
+    .boton-wsp-flotante svg {width: 26px; height: 26px; fill: white;}
 
     .tarjeta {
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
@@ -279,8 +199,8 @@
       user-select: none;
     }
     @keyframes aparecer {
-      from {opacity: 0; transform: translateX(8px);}
-      to {opacity: 1; transform: translateX(0);}
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
     }
     .etiqueta-tipo {
       display: inline-block;
@@ -292,14 +212,7 @@
       margin-bottom: 15px;
       font-size: 15px;
     }
-    .fotos-titulo {
-      margin-top: 0;
-      margin-bottom: 12px;
-      font-weight: 700;
-      color: #2c5282;
-      font-size: 15px;
-      text-align: center;
-    }
+    .fotos-titulo {display: none;}
     .fotos-cuadricula {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
@@ -320,7 +233,12 @@
       cursor: pointer;
     }
     .foto-ver:hover {transform: scale(1.05);}
-    .foto-ver img {width: 100%; height: 100%; object-fit: cover;}
+    .foto-ver img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      loading: lazy;
+    }
 
     .titulo-vehiculo {
       font-size: 20px;
@@ -337,10 +255,7 @@
       border-bottom: 1px solid rgba(90, 79, 63, 0.1);
       color: #5a4f3f;
     }
-    .fila strong {
-      color: #1e40af;
-      flex-shrink: 0;
-    }
+    .fila strong {color: #1e40af; flex-shrink: 0;}
     .etiqueta {
       display: inline-block;
       padding: 6px 14px;
@@ -352,12 +267,6 @@
     .permuta {background: #e8d9bc; color: #78350f;}
     .contado {background: #b8d8b5; color: #166534;}
 
-    .cargando {
-      text-align: center;
-      padding: 50px 20px;
-      color: #5a6872;
-      font-size: 17px;
-    }
     .sin-resultado {
       text-align: center;
       padding: 50px 20px;
@@ -428,17 +337,33 @@
       font-weight: bold;
       line-height: 1;
     }
+    .navegacion-foto {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 15px;
+      color: white;
+    }
+    .navegacion-foto span {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.1);
+      transition: background 0.2s;
+    }
+    .navegacion-foto span:hover {background: rgba(255,255,255,0.2);}
+    .indicador-foto {color: #ccc; font-size: 14px;}
   </style>
 </head>
 <body>
 
   <div class="contenedor">
     <div class="barra-superior">
+      <div class="zona-izquierda" id="zonaIzquierda">🔄 Verificando...</div>
       <div class="titulo-pagina">🔍 Buscar Vehículo</div>
-      <div id="zonaUsuario" class="zona-usuario"></div>
+      <a href="#" class="zona-derecha" id="botonCerrar" onclick="cerrarSesion(); return false;" style="display:none;">Cerrar sesión</a>
     </div>
-
-    <h1>Buscar Vehículo</h1>
 
     <div class="buscador">
       <p class="leyenda">Dejá vacío lo que no querés filtrar ✨</p>
@@ -467,7 +392,7 @@
       </div>
       <div class="campo">
         <label>📅 Año</label>
-        <input type="number" id="buscar_anio" placeholder="Ej: 2024 — Solo 4 dígitos" min="1900" max="2100" oninput="this.value=this.value.slice(0,4)">
+        <input type="number" id="buscar_anio" placeholder="Ej: 2024" min="1900" max="2100" oninput="this.value=this.value.slice(0,4)">
       </div>
       
       <div class="campo">
@@ -490,8 +415,6 @@
           <option value="Recreo">Recreo</option>
           <option value="Roldán">Roldán</option>
           <option value="San Carlos Centro">San Carlos Centro</option>
-          <option value="San Carlos Norte">San Carlos Norte</option>
-          <option value="San Carlos Sud">San Carlos Sud</option>
           <option value="San Lorenzo">San Lorenzo</option>
           <option value="Santa Fe">Santa Fe</option>
           <option value="Santo Tomé">Santo Tomé</option>
@@ -525,22 +448,22 @@
       <div class="fila" style="display: flex; gap: 15px; flex-wrap: wrap;">
         <div class="campo" style="flex: 1; min-width: 200px;">
           <label>📏 Kilometraje Mínimo</label>
-          <input type="number" id="buscar_km_min" placeholder="Ej: 0 — Dejalo vacío sin límite">
+          <input type="number" id="buscar_km_min" placeholder="Ej: 0">
         </div>
         <div class="campo" style="flex: 1; min-width: 200px;">
           <label>📏 Kilometraje Máximo</label>
-          <input type="number" id="buscar_km_max" placeholder="Ej: 100000 — Dejalo vacío sin límite">
+          <input type="number" id="buscar_km_max" placeholder="Ej: 100000">
         </div>
       </div>
       
       <div class="fila" style="display: flex; gap: 15px; flex-wrap: wrap;">
         <div class="campo" style="flex: 1; min-width: 200px;">
           <label>💰 Precio Mínimo ($)</label>
-          <input type="number" id="buscar_precio_min" placeholder="Ej: 0 — Dejalo vacío sin límite">
+          <input type="number" id="buscar_precio_min" placeholder="Ej: 0">
         </div>
         <div class="campo" style="flex: 1; min-width: 200px;">
           <label>💰 Precio Máximo ($)</label>
-          <input type="number" id="buscar_precio_max" placeholder="Ej: 1500000 — Dejalo vacío sin límite">
+          <input type="number" id="buscar_precio_max" placeholder="Ej: 1500000">
         </div>
       </div>
 
@@ -548,317 +471,195 @@
     </div>
 
     <div class="contador" id="contador"></div>
-
     <div id="caja_resultado"></div>
-
     <a href="index.html" class="volver">← Volver a la página principal</a>
   </div>
 
   <div class="ventana-foto" id="ventanaFoto">
     <div class="contenedor-foto-grande">
-      <span class="cerrar-foto" id="cerrarFoto">&times;</span>
-      <img src="" alt="Foto ampliada" class="foto-grande" id="fotoGrande">
+      <a id="botonWspFlotante" href="" target="_blank" class="boton-wsp-flotante" title="Enviar por WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path fill="white" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.76.97-.93 1.17-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.47-1.76-1.65-2.07-.17-.3-.34-.34-.5-.34-.16 0-.33.01-.47.01-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5c0 1.24-.5 2.36-1.32 3.18-.22.22-.43.45-.65.67-.22.22-.45.43-.67.65-.82.82-1.94 1.32-3.18 1.32z"/>
+          <path fill="white" d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm0 22c-5.51 0-10-4.49-10-10S6.49 2 12 2s10 4.49 10 10-4.49 10-10 10z"/>
+        </svg>
+      </a>
       <div class="logo-agua-foto"></div>
+      <span class="cerrar-foto" onclick="cerrarFoto()">×</span>
+      <img src="" alt="Foto ampliada" class="foto-grande" id="fotoGrande">
+      <div class="navegacion-foto">
+        <span onclick="fotoAnterior()">◀ Anterior</span>
+        <span class="indicador-foto" id="indicadorFoto"></span>
+        <span onclick="fotoSiguiente()">Siguiente ▶</span>
+      </div>
     </div>
   </div>
 
-  <script>
-    const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+<script>
+const supabase = supabase.createClient(
+  'TU_URL_DE_SUPABASE',
+  'TU_CLAVE_PUBLICA_DE_SUPABASE'
+);
 
-    let sbClient = null;
-    let idsFiltrados = [];
-    let indiceActual = 0;
-    let idVehiculoActual = null;
-    let telefonoActual = '';
-    let idUsuarioActual = null;
+let sesionActiva = null;
+let vehiculosActuales = [];
+let indiceFotoActual = 0;
+let fotosVehiculoActual = [];
+let telefonoActual = '';
 
-    let xInicio = 0, xFin = 0;
-    const UMBRAL_DESLIZAR = 50;
-    let bloqueadoDeslizamiento = false;
+async function verificarSesion() {
+  const { data: { session } } = await supabase.auth.getSession();
+  sesionActiva = session;
+  
+  if (session) {
+    document.getElementById('zonaIzquierda').innerHTML = '✅ Conectado';
+    document.getElementById('botonCerrar').style.display = 'block';
+  } else {
+    document.getElementById('zonaIzquierda').innerHTML = '🔒 Sin sesión';
+    document.getElementById('botonCerrar').style.display = 'none';
+  }
+}
 
-    const ventanaFoto = document.getElementById('ventanaFoto');
-    const fotoGrande = document.getElementById('fotoGrande');
-    const cerrarFoto = document.getElementById('cerrarFoto');
+async function cerrarSesion() {
+  await supabase.auth.signOut();
+  window.location.href = 'index.html';
+}
 
-    async function getSupabase() {
-      if (!sbClient) sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      return sbClient;
+function cerrarFoto() {
+  document.getElementById('ventanaFoto').classList.remove('mostrar');
+}
+
+function fotoAnterior() {
+  if (indiceFotoActual > 0) {
+    indiceFotoActual--;
+    mostrarFotoActual();
+  }
+}
+
+function fotoSiguiente() {
+  if (indiceFotoActual < fotosVehiculoActual.length - 1) {
+    indiceFotoActual++;
+    mostrarFotoActual();
+  }
+}
+
+function mostrarFotoActual() {
+  document.getElementById('fotoGrande').src = fotosVehiculoActual[indiceFotoActual];
+  document.getElementById('indicadorFoto').textContent = `${indiceFotoActual + 1} / ${fotosVehiculoActual.length}`;
+  
+  const enlaceWsp = `https://wa.me/54${telefonoActual}?text=${encodeURIComponent('Vi tu anuncio en Vehículos en Venta. Me gustaría comunicarme con vos.')}`;
+  document.getElementById('botonWspFlotante').href = enlaceWsp;
+}
+
+function abrirFoto(fotos, indice, telefono) {
+  fotosVehiculoActual = fotos;
+  indiceFotoActual = indice;
+  telefonoActual = telefono;
+  document.getElementById('ventanaFoto').classList.add('mostrar');
+  mostrarFotoActual();
+}
+
+async function realizarBusqueda() {
+  const tipo = document.getElementById('buscar_tipo').value;
+  const marca = document.getElementById('buscar_marca').value.trim().toLowerCase();
+  const modelo = document.getElementById('buscar_modelo').value.trim().toLowerCase();
+  const anio = document.getElementById('buscar_anio').value;
+  const ciudad = document.getElementById('buscar_ciudad').value;
+  const combustible = document.getElementById('buscar_combustible').value;
+  const transmision = document.getElementById('buscar_transmision').value;
+  const kmMin = document.getElementById('buscar_km_min').value;
+  const kmMax = document.getElementById('buscar_km_max').value;
+  const precioMin = document.getElementById('buscar_precio_min').value;
+  const precioMax = document.getElementById('buscar_precio_max').value;
+
+  let consulta = supabase.from('vehiculos').select('*');
+
+  if (tipo) consulta = consulta.eq('tipo', tipo);
+  if (marca) consulta = consulta.ilike('marca', `%${marca}%`);
+  if (modelo) consulta = consulta.ilike('modelo', `%${modelo}%`);
+  if (anio) consulta = consulta.eq('anio', anio);
+  if (ciudad && ciudad !== 'otra') consulta = consulta.eq('ciudad', ciudad);
+  if (combustible) consulta = consulta.eq('combustible', combustible);
+  if (transmision) consulta = consulta.eq('transmision', transmision);
+  if (kmMin) consulta = consulta.gte('kilometraje', kmMin);
+  if (kmMax) consulta = consulta.lte('kilometraje', kmMax);
+  if (precioMin) consulta = consulta.gte('precio', precioMin);
+  if (precioMax) consulta = consulta.lte('precio', precioMax);
+
+  const { data: vehiculos, error } = await consulta.order('creado_en', { ascending: false });
+
+  if (error) {
+    document.getElementById('caja_resultado').innerHTML = `<div class="sin-resultado">⚠️ Error al buscar: ${error.message}</div>`;
+    return;
+  }
+
+  vehiculosActuales = vehiculos || [];
+  document.getElementById('contador').textContent = vehiculosActuales.length === 1 
+    ? '✅ 1 vehículo encontrado' 
+    : `✅ ${vehiculosActuales.length} vehículos encontrados`;
+
+  if (!vehiculosActuales.length) {
+    document.getElementById('caja_resultado').innerHTML = `
+      <div class="sin-resultado">
+        😔 No se encontraron vehículos con esos filtros.<br>
+        Probá cambiar alguna opción o dejá todo vacío para ver todos.
+      </div>`;
+    return;
+  }
+
+  let html = '';
+  for (const v of vehiculosActuales) {
+    const fotos = [];
+    for (let i = 1; i <= 6; i++) {
+      const campo = v[`foto${i}`];
+      if (campo) fotos.push(campo);
     }
 
-    async function verificarSesion() {
-      const zonaUsuario = document.getElementById('zonaUsuario');
-      const sb = await getSupabase();
-      const { data: { session } } = await sb.auth.getSession();
-      
-      if (session) {
-        localStorage.setItem('correo_usuario', session.user.email || 'conectado');
-        localStorage.setItem('nombre_usuario', session.user.user_metadata?.nombre || 'Usuario');
-        zonaUsuario.innerHTML = `
-          <a href="mis-vehiculos.html" class="texto-favoritos">⭐ Mis Vehículos</a>
-          <span class="texto-conectado">✅ Conectado</span>
-          <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
-        `;
-        return true;
-      }
-      
-      const correo = localStorage.getItem('correo_usuario');
-      const nombre = localStorage.getItem('nombre_usuario');
-      if (correo && nombre) {
-        zonaUsuario.innerHTML = `
-          <a href="mis-vehiculos.html" class="texto-favoritos">⭐ Mis Vehículos</a>
-          <span class="texto-conectado">✅ Conectado</span>
-          <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
-        `;
-        return true;
-      }
-      
-      zonaUsuario.innerHTML = `
-        <a href="iniciar-sesion.html" class="btn-sesion btn-iniciar">🔑 Iniciar sesión</a>
-        <a href="registrarse.html" class="btn-sesion btn-registrar">✨ Registrarse</a>
-      `;
-      return false;
-    }
+    const etiquetaPago = v.forma_pago === 'Permuta' 
+      ? '<span class="etiqueta permuta">🔄 Permuta</span>' 
+      : '<span class="etiqueta contado">💰 Contado</span>';
 
-    async function cerrarSesion() {
-      const sb = await getSupabase();
-      await sb.auth.signOut();
-      localStorage.clear();
-      window.location.href = 'index.html';
-    }
+    const enlaceWsp = `https://wa.me/54${v.telefono}?text=${encodeURIComponent(
+      `Hola! Vi tu ${v.marca} ${v.modelo} publicado en Vehículos en Venta. Me interesa saber más.`
+    )}`;
 
-    async function obtenerUsuarioId(correo) {
-      if (!correo) return null;
-      const sb = await getSupabase();
-      const { data } = await sb.from('usuarios').select('id').eq('correo', correo).single();
-      return data?.id || null;
-    }
-
-    async function yaEstaGuardado(vehiculoId) {
-      if (!idUsuarioActual || !vehiculoId) return false;
-      const sb = await getSupabase();
-      const { data } = await sb.from('mis_vehiculos').select('id')
-        .eq('usuario_id', idUsuarioActual)
-        .eq('vehiculo_id', vehiculoId)
-        .maybeSingle();
-      return !!data;
-    }
-
-    function limpiarPrecio(precioTexto) {
-      if (!precioTexto) return null;
-      const v = parseFloat(String(precioTexto).replace(/[^0-9.,]/g, '').replace(',', '.'));
-      return isNaN(v) ? null : v;
-    }
-
-    async function mostrarCajaCodigo() {
-      const tieneSesion = await verificarSesion();
-      if (!tieneSesion) {
-        alert('🔐 Primero debés entrar con tu cuenta');
-        window.location.href = 'iniciar-sesion.html';
-        return;
-      }
-      document.getElementById('cajaCodigo').classList.add('mostrar');
-      document.getElementById('codigoIngresado').value = '';
-      document.getElementById('codigoIngresado').focus();
-    }
-
-    function ocultarCajaCodigo() {
-      document.getElementById('cajaCodigo').classList.remove('mostrar');
-    }
-
-    async function guardarConCodigo() {
-      const codigo = document.getElementById('codigoIngresado').value.trim();
-      if (!codigo || codigo.length < 6) { alert('⚠️ El código debe tener 6 caracteres'); return; }
-      if (!idVehiculoActual) { alert('⚠️ No hay vehículo seleccionado'); return; }
-
-      const correo = localStorage.getItem('correo_usuario');
-      const usuario_id = await obtenerUsuarioId(correo);
-      if (!usuario_id) { alert('❌ No se encontró tu cuenta'); return; }
-
-      const sb = await getSupabase();
-      const { data: existe } = await sb.from('mis_vehiculos').select('id')
-        .eq('usuario_id', usuario_id).eq('vehiculo_id', idVehiculoActual).maybeSingle();
-      
-      if (existe) { alert('⭐ Ya está guardado en "Mis Vehículos"'); ocultarCajaCodigo(); return; }
-
-      const { error } = await sb.from('mis_vehiculos').insert({ usuario_id, vehiculo_id: idVehiculoActual });
-      if (error) { alert('❌ Error: ' + error.message); return; }
-      
-      alert('✅ ¡Agregado a "Mis Vehículos"! ⭐🎉');
-      ocultarCajaCodigo();
-      await cargarUno(indiceActual);
-    }
-
-    function armarEnlaceWhatsApp(telefono) {
-      const msg = encodeURIComponent('Hola, vi tu vehículo publicado en Mis Vehículos en Venta');
-      const num = String(telefono || '').replace(/\D/g, '');
-      return num ? `https://wa.me/${num}?text=${msg}` : '#';
-    }
-
-    function ampliarFoto(src) {
-      fotoGrande.src = src;
-      ventanaFoto.classList.add('mostrar');
-    }
-
-    cerrarFoto.addEventListener('click', () => ventanaFoto.classList.remove('mostrar'));
-    ventanaFoto.addEventListener('click', e => e.target === ventanaFoto && ventanaFoto.classList.remove('mostrar'));
-
-    function registrarInicioDeslizamiento(e) {
-      xInicio = e.touches ? e.touches[0].clientX : e.clientX;
-    }
-    function registrarFinDeslizamiento(e) {
-      if (bloqueadoDeslizamiento) return;
-      xFin = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-      const dif = xInicio - xFin;
-      if (Math.abs(dif) > UMBRAL_DESLIZAR) {
-        bloqueadoDeslizamiento = true;
-        dif > 0 ? vehiculoSiguiente() : vehiculoAnterior();
-        setTimeout(() => { bloqueadoDeslizamiento = false; }, 300);
-      }
-    }
-
-    async function realizarBusqueda() {
-      const tipo = document.getElementById('buscar_tipo').value;
-      const marca = document.getElementById('buscar_marca').value.trim();
-      const modelo = document.getElementById('buscar_modelo').value.trim();
-      const anio = document.getElementById('buscar_anio').value.trim();
-      const ciudad = document.getElementById('buscar_ciudad').value;
-      const combustible = document.getElementById('buscar_combustible').value;
-      const transmision = document.getElementById('buscar_transmision').value;
-      const kmMin = document.getElementById('buscar_km_min').value.trim();
-      const kmMax = document.getElementById('buscar_km_max').value.trim();
-      const precioMin = document.getElementById('buscar_precio_min').value.trim();
-      const precioMax = document.getElementById('buscar_precio_max').value.trim();
-
-      const caja = document.getElementById('caja_resultado');
-      const contador = document.getElementById('contador');
-      caja.innerHTML = `<div class="cargando">🔄 Buscando vehículos...</div>`;
-      contador.textContent = '';
-      idsFiltrados = []; indiceActual = 0; idVehiculoActual = null; telefonoActual = '';
-
-      const correo = localStorage.getItem('correo_usuario');
-      idUsuarioActual = await obtenerUsuarioId(correo);
-
-      const sb = await getSupabase();
-      let consulta = sb.from('autos').select('*');
-      if (tipo) consulta = consulta.eq('tipo_vehiculo', tipo);
-      if (marca) consulta = consulta.ilike('marca', `%${marca}%`);
-      if (modelo) consulta = consulta.ilike('modelo', `%${modelo}%`);
-      if (anio && anio.length === 4) { const n = parseInt(anio); if (!isNaN(n)) consulta = consulta.eq('anio', n); }
-      if (ciudad && ciudad !== 'otra') consulta = consulta.eq('ciudad', ciudad);
-      if (combustible) consulta = consulta.eq('combustible', combustible);
-      if (transmision) consulta = consulta.eq('transmision', transmision);
-      consulta = consulta.order('id', { ascending: false });
-      
-      const { data, error } = await consulta;
-      if (error) { caja.innerHTML = `<div class="sin-resultado">❌ Error: ${error.message}</div>`; return; }
-      if (!data || !data.length) { caja.innerHTML = `<div class="sin-resultado">📭 No se encontraron vehículos</div>`; return; }
-
-      let resultados = data;
-      if (kmMin) { const n = parseInt(kmMin); if (!isNaN(n)) resultados = resultados.filter(a => a.kilometraje !== null && a.kilometraje >= n); }
-      if (kmMax) { const n = parseInt(kmMax); if (!isNaN(n)) resultados = resultados.filter(a => a.kilometraje === null || a.kilometraje <= n); }
-      if (precioMin) { const n = limpiarPrecio(precioMin); if (n !== null) resultados = resultados.filter(a => { const v = limpiarPrecio(a.precio); return v === null || v >= n; }); }
-      if (precioMax) { const n = limpiarPrecio(precioMax); if (n !== null) resultados = resultados.filter(a => { const v = limpiarPrecio(a.precio); return v === null || v <= n; }); }
-      
-      if (!resultados.length) { caja.innerHTML = `<div class="sin-resultado">📭 Ningún vehículo cumple con los filtros</div>`; return; }
-      
-      idsFiltrados = resultados.map(r => r.id);
-      await cargarUno(0);
-    }
-
-    async function cargarUno(posicion) {
-      if (posicion < 0 || posicion >= idsFiltrados.length) return;
-      const caja = document.getElementById('caja_resultado');
-      const contador = document.getElementById('contador');
-      caja.innerHTML = `<div class="cargando">🔄 Cargando vehículo ${posicion+1} de ${idsFiltrados.length}...</div>`;
-
-      const sb = await getSupabase();
-      const { data: vehiculo, error } = await sb.from('autos').select('*').eq('id', idsFiltrados[posicion]).single();
-      if (error || !vehiculo) { caja.innerHTML = `<div class="sin-resultado">❌ Error al cargar</div>`; return; }
-
-      idVehiculoActual = vehiculo.id;
-      telefonoActual = vehiculo.telefono || '';
-
-      const guardado = await yaEstaGuardado(vehiculo.id);
-
-      let fotosHtml = '';
-      for (let i = 1; i <= 6; i++) {
-        const foto = vehiculo[`foto${i}`];
-        if (foto) fotosHtml += `<div class="foto-caja"><div class="foto-ver" onclick="ampliarFoto('${foto}')"><img src="${foto}" alt="" loading="lazy"></div></div>`;
-      }
-      const hayFotos = fotosHtml !== '';
-
-      const enlaceFavoritoHtml = guardado
-        ? `<span class="enlace-favorito guardado"><span class="estrella-gris">⭐</span> En Mis Vehículos</span>`
-        : `<span class="enlace-favorito agregar" onclick="mostrarCajaCodigo()"><span class="estrella-amarilla">⭐</span> Agregar a Mi Vehículo</span>`;
-
-      caja.innerHTML = `
-        <div class="tarjeta" id="tarjetaDeslizable">
-          ${vehiculo.tipo_vehiculo ? `<span class="etiqueta-tipo">${vehiculo.tipo_vehiculo}</span>` : ''}
-          
-          ${enlaceFavoritoHtml}
-          
-          <div id="cajaCodigo" class="caja-codigo">
-            <h3>🔐 Escribí tu código de seguridad</h3>
-            <input type="text" id="codigoIngresado" class="input-codigo" placeholder="Tu código..." maxlength="6">
-            <button class="boton-guardar" onclick="guardarConCodigo()">✅ Guardar</button>
-            <button class="boton-cancelar" onclick="ocultarCajaCodigo()">❌ Cancelar</button>
-          </div>
-          
-          ${hayFotos ? `<div class="fotos-titulo">📸 Fotos del vehículo — Tocar para agrandar</div><div class="fotos-cuadricula">${fotosHtml}</div>` : ''}
-          
-          <div class="titulo-vehiculo">${vehiculo.marca || ''} ${vehiculo.modelo || ''} — ${vehiculo.anio || ''}</div>
-          <div class="fila"><strong>Versión:</strong> ${vehiculo.version || '-'}</div>
-          <div class="fila"><strong>Ciudad:</strong> ${vehiculo.ciudad || '-'}</div>
-          <div class="fila"><strong>Kilometraje:</strong> ${vehiculo.kilometraje ? vehiculo.kilometraje.toLocaleString('es-AR') + ' km' : 'No indicado'}</div>
-          <div class="fila"><strong>Combustible:</strong> ${vehiculo.combustible || '-'}</div>
-          <div class="fila"><strong>Transmisión:</strong> ${vehiculo.transmision || '-'}</div>
-          <div class="fila"><strong>Precio:</strong> ${vehiculo.precio || '-'}</div>
-          <div class="fila"><strong>Dueño:</strong> ${vehiculo.dueno || '-'}</div>
-          <div class="fila"><strong>Dirección:</strong> ${vehiculo.direccion || '-'}</div>
-          <div class="fila"><strong>Teléfono:</strong> ${vehiculo.telefono || '-'}</div>
-          <div>${vehiculo.permuta ? '<span class="etiqueta permuta">✅ Acepta permuta</span>' : ''}${vehiculo.contado ? '<span class="etiqueta contado">💵 Solo contado</span>' : ''}</div>
-          <div class="fila" style="margin-top: 10px;"><strong>Deuda:</strong> ${vehiculo.deuda || 'Sin deudas'}</div>
-          <div class="fila"><strong>Descripción:</strong> ${vehiculo.descripcion || '-'}</div>
-          
-          <a href="${armarEnlaceWhatsApp(telefonoActual)}" class="boton-whatsapp" target="_blank">
-            <span class="icono-wsp">✓</span> ENVIAR MENSAJE POR WHATSAPP
-          </a>
+    html += `
+      <div class="tarjeta">
+        <span class="etiqueta-tipo">${v.tipo || 'Vehículo'}</span>
+        
+        <div class="fotos-titulo">Fotos del vehículo</div>
+        <div class="fotos-cuadricula">
+          ${fotos.map((foto, idx) => `
+            <div class="foto-caja">
+              <div class="foto-ver" onclick="abrirFoto(${JSON.stringify(fotos).replace(/"/g,'&quot;')}, ${idx}, '${v.telefono}')">
+                <img src="${foto}" alt="Foto ${idx+1}" loading="lazy">
+              </div>
+            </div>
+          `).join('')}
         </div>
-      `;
-      contador.textContent = `${posicion + 1} de ${idsFiltrados.length}`;
-      
-      setTimeout(() => {
-        const t = document.getElementById('tarjetaDeslizable');
-        if (t) {
-          t.addEventListener('touchstart', registrarInicioDeslizamiento, { passive: true });
-          t.addEventListener('touchend', registrarFinDeslizamiento, { passive: true });
-          t.addEventListener('mousedown', registrarInicioDeslizamiento);
-          t.addEventListener('mouseup', registrarFinDeslizamiento);
-        }
-      }, 100);
-    }
 
-    async function vehiculoAnterior() {
-      if (!idsFiltrados.length) return;
-      indiceActual = indiceActual === 0 ? idsFiltrados.length - 1 : indiceActual - 1;
-      await cargarUno(indiceActual);
-    }
-    async function vehiculoSiguiente() {
-      if (!idsFiltrados.length) return;
-      indiceActual = indiceActual === idsFiltrados.length - 1 ? 0 : indiceActual + 1;
-      await cargarUno(indiceActual);
-    }
+        <h3 class="titulo-vehiculo">${v.marca || ''} ${v.modelo || ''} — ${v.anio || ''}</h3>
+        
+        <div class="fila"><strong>📍 Ciudad:</strong> ${v.ciudad || 'No especificada'}</div>
+        <div class="fila"><strong>⛽ Combustible:</strong> ${v.combustible || '-'}</div>
+        <div class="fila"><strong>⚙️ Transmisión:</strong> ${v.transmision || '-'}</div>
+        <div class="fila"><strong>📏 Kilometraje:</strong> ${v.kilometraje ? v.kilometraje + ' km' : '-'}</div>
+        <div class="fila"><strong>💰 Precio:</strong> ${v.precio ? '$ ' + Number(v.precio).toLocaleString('es-AR') : 'Consultar'}</div>
+        <div style="margin-top: 10px;">${etiquetaPago}</div>
+        
+        <a href="${enlaceWsp}" target="_blank" class="boton-whatsapp">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="white" viewBox="0 0 24 24">
+            <path d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.76.97-.93 1.17-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.47-1.76-1.65-2.07-.17-.3-.34-.34-.5-.34-.16 0-.33.01-.47.01-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5c0 1.24-.5 2.36-1.32 3.18-.22.22-.43.45-.65.67-.22.22-.45.43-.67.65-.82.82-1.94 1.32-3.18 1.32z"/>
+          </svg>
+          Consultar por WhatsApp
+        </a>
+      </div>
+    `;
+  }
+  
+  document.getElementById('caja_resultado').innerHTML = html;
+}
 
-    async function iniciar() {
-      await verificarSesion();
-      await getSupabase();
-      document.addEventListener('touchstart', registrarInicioDeslizamiento, { passive: true });
-      document.addEventListener('touchend', registrarFinDeslizamiento, { passive: true });
-      document.addEventListener('mousedown', registrarInicioDeslizamiento);
-      document.addEventListener('mouseup', registrarFinDeslizamiento);
-    }
-    iniciar();
-  </script>
+verificarSesion();
+</script>
 </body>
 </html>
