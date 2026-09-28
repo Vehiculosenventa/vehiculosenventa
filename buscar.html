@@ -32,9 +32,24 @@
     }
     .zona-usuario {
       display: flex;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
       align-items: center;
+    }
+    .texto-conectado {
+      color: #166534;
+      font-weight: 700;
+      font-size: 14px;
+    }
+    .texto-cerrar {
+      color: #1d4ed8;
+      font-weight: 700;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .texto-cerrar:hover {
+      text-decoration: underline;
     }
     .btn-sesion {
       padding: 8px 14px;
@@ -46,32 +61,16 @@
       cursor: pointer;
       transition: all 0.2s;
     }
-    .btn-salir {
-      background: #fef2f2;
-      color: #c53030;
-      border: 2px solid #feb2b2;
+    .btn-iniciar {
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: white;
     }
-    .btn-salir:hover { background: #fee2e2; }
-    .nombre-usuario {
-      font-weight: 600;
-      color: #276749;
-      font-size: 14px;
+    .btn-iniciar:hover { transform: translateY(-1px); }
+    .btn-registrar {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: white;
     }
-    .olvido {
-      width: 100%;
-      text-align: center;
-      margin-top: 10px;
-      margin-bottom: 15px;
-    }
-    .olvido a {
-      color: #4a5568;
-      text-decoration: none;
-      font-size: 14px;
-    }
-    .olvido a:hover {
-      color: #1565C0;
-      text-decoration: underline;
-    }
+    .btn-registrar:hover { transform: translateY(-1px); }
 
     h1 {
       text-align: center;
@@ -420,7 +419,6 @@
       <div class="titulo-pagina">🔍 Buscar Vehículo</div>
       <div id="zonaUsuario" class="zona-usuario"></div>
     </div>
-    <div id="zonaOlvido" class="olvido"></div>
 
     <h1>Buscar Vehículo</h1>
 
@@ -583,17 +581,19 @@
       const correo = localStorage.getItem('correo_usuario');
       const nombre = localStorage.getItem('nombre_usuario');
       const zonaUsuario = document.getElementById('zonaUsuario');
-      const zonaOlvido = document.getElementById('zonaOlvido');
 
       if (correo && nombre) {
+        // ✅ Conectado: verde texto + Cerrar sesión azul texto
         zonaUsuario.innerHTML = `
-          <span class="nombre-usuario">👤 ${nombre}</span>
-          <button onclick="cerrarSesion()" class="btn-sesion btn-salir">Cerrar sesión</button>`;
-        zonaOlvido.style.display = 'none';
+          <span class="texto-conectado">✅ Conectado</span>
+          <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
+        `;
       } else {
-        zonaUsuario.innerHTML = '';
-        zonaOlvido.innerHTML = `<a href="index.html">Volvé al inicio para entrar o crear tu cuenta</a>`;
-        zonaOlvido.style.display = 'block';
+        // ❌ No conectado: botones Iniciar / Registrarse
+        zonaUsuario.innerHTML = `
+          <a href="ingresar.html" class="btn-sesion btn-iniciar">🔑 Iniciar sesión</a>
+          <a href="registro.html" class="btn-sesion btn-registrar">✨ Registrarse</a>
+        `;
       }
     }
 
@@ -625,8 +625,8 @@
     function mostrarCajaCodigo() {
       const correo = localStorage.getItem('correo_usuario');
       if (!correo) {
-        alert('🔐 Primero debes entrar desde la página principal');
-        window.location.href = 'index.html';
+        alert('🔐 Primero debés entrar con tu cuenta');
+        window.location.href = 'ingresar.html';
         return;
       }
       document.getElementById('cajaCodigo').classList.add('mostrar');
