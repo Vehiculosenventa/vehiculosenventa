@@ -554,23 +554,28 @@ async function getSupabase() {
 }
 
 function verificarSesion() {
-  // 🔍 BUSCA EN TODAS LAS VARIANTES DE NOMBRES PARA QUE NO FALLE
-  const correo = 
-    localStorage.getItem('correo_usuario') || 
-    localStorage.getItem('correo') || 
-    localStorage.getItem('email') || 
-    localStorage.getItem('correo_registrado');
-  
-  const nombre = 
-    localStorage.getItem('nombre_usuario') || 
-    localStorage.getItem('nombre') || 
-    localStorage.getItem('nombre_registrado') ||
-    localStorage.getItem('usuario_nombre');
-  
-  const usuario_id = 
-    localStorage.getItem('usuario_id') || 
-    localStorage.getItem('id') || 
-    localStorage.getItem('user_id');
+  // 🔍 LEE TODO lo guardado sin importar el nombre
+  let correo = null;
+  let nombre = null;
+  let usuario_id = null;
+
+  console.log('📦 Buscando TODO en localStorage...');
+  for (let i = 0; i < localStorage.length; i++) {
+    const clave = localStorage.key(i);
+    const valor = localStorage.getItem(clave);
+    console.log(`  → ${clave}: ${valor}`);
+
+    const claveMin = clave.toLowerCase();
+    if (!correo && (claveMin.includes('correo') || claveMin.includes('email'))) {
+      correo = valor;
+    }
+    if (!nombre && (claveMin.includes('nombre') || claveMin.includes('usuario_nombre'))) {
+      nombre = valor;
+    }
+    if (!usuario_id && (claveMin.includes('id') || claveMin.includes('user_id'))) {
+      usuario_id = valor;
+    }
+  }
 
   console.log('📧 Correo encontrado:', correo);
   console.log('👤 Nombre encontrado:', nombre);
@@ -580,7 +585,6 @@ function verificarSesion() {
   const ladoDerecho = document.getElementById('ladoDerecho');
   const zonaOlvido = document.getElementById('zonaOlvido');
 
-  // Si hay correo, está conectado - usamos el nombre o el correo si no hay nombre
   if (correo) {
     const nombreMostrar = nombre || correo.split('@')[0];
     ladoIzquierdo.innerHTML = `<span class="texto-conectado">${nombreMostrar} — Conectado</span>`;
@@ -588,11 +592,11 @@ function verificarSesion() {
     zonaOlvido.style.display = 'none';
     console.log('✅ SESIÓN DETECTADA CORRECTAMENTE');
   } else {
-    ladoIzquierdo.innerHTML = `<a href="iniciar-sesion.html" class="boton-azul">Iniciar sesión</a>`;
-    ladoDerecho.innerHTML = `<a href="registrarse.html" class="boton-azul">Registrarse</a>`;
-    zonaOlvido.innerHTML = `<a href="index.html">Volvé al inicio para entrar o crear tu cuenta</a>`;
+    ladoIzquierdo.innerHTML = `<a href="index.html" class="boton-azul">Ir al Inicio</a>`;
+    ladoDerecho.innerHTML = `<a href="iniciar-sesion.html" class="boton-azul">Entrar</a>`;
+    zonaOlvido.innerHTML = `<a href="index.html">👉 Entrá desde la página principal primero</a>`;
     zonaOlvido.style.display = 'block';
-    console.log('❌ Sin sesión - entrá desde la página principal primero');
+    console.log('❌ Sin sesión detectada — entrá desde la página principal');
   }
 }
 
