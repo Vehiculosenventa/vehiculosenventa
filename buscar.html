@@ -30,59 +30,23 @@
       font-weight: 800;
       color: #2c5282;
     }
-    .zona-usuario {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .texto-favoritos {
-      color: #1d4ed8;
-      font-weight: 700;
-      font-size: 14px;
-      text-decoration: none;
-    }
-    .texto-favoritos:hover {text-decoration: underline;}
-    .texto-conectado {
+    .zona-izquierda {
       color: #166534;
       font-weight: 700;
       font-size: 14px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    .texto-cerrar {
+    .zona-derecha {
       color: #1d4ed8;
       font-weight: 700;
       font-size: 14px;
       cursor: pointer;
       text-decoration: none;
     }
-    .texto-cerrar:hover {text-decoration: underline;}
-    .btn-sesion {
-      padding: 8px 14px;
-      border-radius: 10px;
-      font-weight: 700;
-      text-decoration: none;
-      font-size: 14px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-iniciar {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
-    }
-    .btn-iniciar:hover {transform: translateY(-1px);}
-    .btn-registrar {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      color: white;
-    }
-    .btn-registrar:hover {transform: translateY(-1px);}
+    .zona-derecha:hover {text-decoration: underline;}
 
-    h1 {
-      text-align: center;
-      color: #2c5282;
-      margin-bottom: 20px;
-      font-size: 23px;
-    }
     .buscador {
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 28px;
@@ -147,6 +111,21 @@
       padding: 8px;
       background: rgba(255,255,255,0.5);
       border-radius: 8px;
+    }
+
+    .cargando-primero {
+      text-align: center;
+      padding: 30px 20px;
+      color: #2c5282;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .cargando-mas {
+      text-align: center;
+      padding: 10px;
+      color: #6b7280;
+      font-size: 13px;
+      font-style: italic;
     }
 
     .enlace-favorito {
@@ -279,8 +258,8 @@
       user-select: none;
     }
     @keyframes aparecer {
-      from {opacity: 0; transform: translateX(8px);}
-      to {opacity: 1; transform: translateX(0);}
+      from {opacity: 0; transform: translateY(10px);}
+      to {opacity: 1; transform: translateY(0);}
     }
     .etiqueta-tipo {
       display: inline-block;
@@ -352,12 +331,6 @@
     .permuta {background: #e8d9bc; color: #78350f;}
     .contado {background: #b8d8b5; color: #166534;}
 
-    .cargando {
-      text-align: center;
-      padding: 50px 20px;
-      color: #5a6872;
-      font-size: 17px;
-    }
     .sin-resultado {
       text-align: center;
       padding: 50px 20px;
@@ -435,10 +408,9 @@
   <div class="contenedor">
     <div class="barra-superior">
       <div class="titulo-pagina">🔍 Buscar Vehículo</div>
-      <div id="zonaUsuario" class="zona-usuario"></div>
+      <div class="zona-izquierda" id="zonaIzquierda">✅ Conectado</div>
+      <a href="#" class="zona-derecha" id="botonCerrar" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
     </div>
-
-    <h1>Buscar Vehículo</h1>
 
     <div class="buscador">
       <p class="leyenda">Dejá vacío lo que no querés filtrar ✨</p>
@@ -548,9 +520,7 @@
     </div>
 
     <div class="contador" id="contador"></div>
-
     <div id="caja_resultado"></div>
-
     <a href="index.html" class="volver">← Volver a la página principal</a>
   </div>
 
@@ -567,11 +537,12 @@
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
     let sbClient = null;
-    let idsFiltrados = [];
+    let listaVehiculos = [];
     let indiceActual = 0;
     let idVehiculoActual = null;
     let telefonoActual = '';
     let idUsuarioActual = null;
+    let cargandoMas = false;
 
     let xInicio = 0, xFin = 0;
     const UMBRAL_DESLIZAR = 50;
@@ -587,36 +558,19 @@
     }
 
     async function verificarSesion() {
-      const zonaUsuario = document.getElementById('zonaUsuario');
+      const zonaIzquierda = document.getElementById('zonaIzquierda');
+      const botonCerrar = document.getElementById('botonCerrar');
       const sb = await getSupabase();
       const { data: { session } } = await sb.auth.getSession();
       
-      if (session) {
-        localStorage.setItem('correo_usuario', session.user.email || 'conectado');
-        localStorage.setItem('nombre_usuario', session.user.user_metadata?.nombre || 'Usuario');
-        zonaUsuario.innerHTML = `
-          <a href="mis-vehiculos.html" class="texto-favoritos">⭐ Mis Vehículos</a>
-          <span class="texto-conectado">✅ Conectado</span>
-          <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
-        `;
+      if (session || localStorage.getItem('correo_usuario')) {
+        zonaIzquierda.textContent = "✅ Conectado";
+        botonCerrar.style.display = "inline";
         return true;
       }
       
-      const correo = localStorage.getItem('correo_usuario');
-      const nombre = localStorage.getItem('nombre_usuario');
-      if (correo && nombre) {
-        zonaUsuario.innerHTML = `
-          <a href="mis-vehiculos.html" class="texto-favoritos">⭐ Mis Vehículos</a>
-          <span class="texto-conectado">✅ Conectado</span>
-          <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
-        `;
-        return true;
-      }
-      
-      zonaUsuario.innerHTML = `
-        <a href="iniciar-sesion.html" class="btn-sesion btn-iniciar">🔑 Iniciar sesión</a>
-        <a href="registrarse.html" class="btn-sesion btn-registrar">✨ Registrarse</a>
-      `;
+      zonaIzquierda.textContent = "";
+      botonCerrar.style.display = "none";
       return false;
     }
 
@@ -651,8 +605,7 @@
     }
 
     async function mostrarCajaCodigo() {
-      const tieneSesion = await verificarSesion();
-      if (!tieneSesion) {
+      if (!await verificarSesion()) {
         alert('🔐 Primero debés entrar con tu cuenta');
         window.location.href = 'iniciar-sesion.html';
         return;
@@ -690,7 +643,7 @@
     }
 
     function armarEnlaceWhatsApp(telefono) {
-      const msg = encodeURIComponent('Hola, vi tu vehículo publicado en Mis Vehículos en Venta');
+      const msg = encodeURIComponent('Hola, vi tu vehículo publicado en Vehículos en Venta');
       const num = String(telefono || '').replace(/\D/g, '');
       return num ? `https://wa.me/${num}?text=${msg}` : '#';
     }
@@ -717,64 +670,10 @@
       }
     }
 
-    async function realizarBusqueda() {
-      const tipo = document.getElementById('buscar_tipo').value;
-      const marca = document.getElementById('buscar_marca').value.trim();
-      const modelo = document.getElementById('buscar_modelo').value.trim();
-      const anio = document.getElementById('buscar_anio').value.trim();
-      const ciudad = document.getElementById('buscar_ciudad').value;
-      const combustible = document.getElementById('buscar_combustible').value;
-      const transmision = document.getElementById('buscar_transmision').value;
-      const kmMin = document.getElementById('buscar_km_min').value.trim();
-      const kmMax = document.getElementById('buscar_km_max').value.trim();
-      const precioMin = document.getElementById('buscar_precio_min').value.trim();
-      const precioMax = document.getElementById('buscar_precio_max').value.trim();
-
+    // ⚡ Mostrar tarjeta de un vehículo
+    async function mostrarTarjeta(vehiculo, posicion, total) {
       const caja = document.getElementById('caja_resultado');
       const contador = document.getElementById('contador');
-      caja.innerHTML = `<div class="cargando">🔄 Buscando vehículos...</div>`;
-      contador.textContent = '';
-      idsFiltrados = []; indiceActual = 0; idVehiculoActual = null; telefonoActual = '';
-
-      const correo = localStorage.getItem('correo_usuario');
-      idUsuarioActual = await obtenerUsuarioId(correo);
-
-      const sb = await getSupabase();
-      let consulta = sb.from('autos').select('*');
-      if (tipo) consulta = consulta.eq('tipo_vehiculo', tipo);
-      if (marca) consulta = consulta.ilike('marca', `%${marca}%`);
-      if (modelo) consulta = consulta.ilike('modelo', `%${modelo}%`);
-      if (anio && anio.length === 4) { const n = parseInt(anio); if (!isNaN(n)) consulta = consulta.eq('anio', n); }
-      if (ciudad && ciudad !== 'otra') consulta = consulta.eq('ciudad', ciudad);
-      if (combustible) consulta = consulta.eq('combustible', combustible);
-      if (transmision) consulta = consulta.eq('transmision', transmision);
-      consulta = consulta.order('id', { ascending: false });
-      
-      const { data, error } = await consulta;
-      if (error) { caja.innerHTML = `<div class="sin-resultado">❌ Error: ${error.message}</div>`; return; }
-      if (!data || !data.length) { caja.innerHTML = `<div class="sin-resultado">📭 No se encontraron vehículos</div>`; return; }
-
-      let resultados = data;
-      if (kmMin) { const n = parseInt(kmMin); if (!isNaN(n)) resultados = resultados.filter(a => a.kilometraje !== null && a.kilometraje >= n); }
-      if (kmMax) { const n = parseInt(kmMax); if (!isNaN(n)) resultados = resultados.filter(a => a.kilometraje === null || a.kilometraje <= n); }
-      if (precioMin) { const n = limpiarPrecio(precioMin); if (n !== null) resultados = resultados.filter(a => { const v = limpiarPrecio(a.precio); return v === null || v >= n; }); }
-      if (precioMax) { const n = limpiarPrecio(precioMax); if (n !== null) resultados = resultados.filter(a => { const v = limpiarPrecio(a.precio); return v === null || v <= n; }); }
-      
-      if (!resultados.length) { caja.innerHTML = `<div class="sin-resultado">📭 Ningún vehículo cumple con los filtros</div>`; return; }
-      
-      idsFiltrados = resultados.map(r => r.id);
-      await cargarUno(0);
-    }
-
-    async function cargarUno(posicion) {
-      if (posicion < 0 || posicion >= idsFiltrados.length) return;
-      const caja = document.getElementById('caja_resultado');
-      const contador = document.getElementById('contador');
-      caja.innerHTML = `<div class="cargando">🔄 Cargando vehículo ${posicion+1} de ${idsFiltrados.length}...</div>`;
-
-      const sb = await getSupabase();
-      const { data: vehiculo, error } = await sb.from('autos').select('*').eq('id', idsFiltrados[posicion]).single();
-      if (error || !vehiculo) { caja.innerHTML = `<div class="sin-resultado">❌ Error al cargar</div>`; return; }
 
       idVehiculoActual = vehiculo.id;
       telefonoActual = vehiculo.telefono || '';
@@ -792,7 +691,7 @@
         ? `<span class="enlace-favorito guardado"><span class="estrella-gris">⭐</span> En Mis Vehículos</span>`
         : `<span class="enlace-favorito agregar" onclick="mostrarCajaCodigo()"><span class="estrella-amarilla">⭐</span> Agregar a Mi Vehículo</span>`;
 
-      caja.innerHTML = `
+      const tarjetaHtml = `
         <div class="tarjeta" id="tarjetaDeslizable">
           ${vehiculo.tipo_vehiculo ? `<span class="etiqueta-tipo">${vehiculo.tipo_vehiculo}</span>` : ''}
           
@@ -826,7 +725,9 @@
           </a>
         </div>
       `;
-      contador.textContent = `${posicion + 1} de ${idsFiltrados.length}`;
+
+      caja.innerHTML = tarjetaHtml;
+      contador.textContent = `${posicion + 1} de ${total}`;
       
       setTimeout(() => {
         const t = document.getElementById('tarjetaDeslizable');
@@ -836,18 +737,85 @@
           t.addEventListener('mousedown', registrarInicioDeslizamiento);
           t.addEventListener('mouseup', registrarFinDeslizamiento);
         }
-      }, 100);
+      }, 50);
     }
 
     async function vehiculoAnterior() {
-      if (!idsFiltrados.length) return;
-      indiceActual = indiceActual === 0 ? idsFiltrados.length - 1 : indiceActual - 1;
-      await cargarUno(indiceActual);
+      if (!listaVehiculos.length) return;
+      indiceActual = indiceActual === 0 ? listaVehiculos.length - 1 : indiceActual - 1;
+      await mostrarTarjeta(listaVehiculos[indiceActual], indiceActual, listaVehiculos.length);
     }
     async function vehiculoSiguiente() {
-      if (!idsFiltrados.length) return;
-      indiceActual = indiceActual === idsFiltrados.length - 1 ? 0 : indiceActual + 1;
-      await cargarUno(indiceActual);
+      if (!listaVehiculos.length) return;
+      indiceActual = indiceActual === listaVehiculos.length - 1 ? 0 : indiceActual + 1;
+      await mostrarTarjeta(listaVehiculos[indiceActual], indiceActual, listaVehiculos.length);
+    }
+
+    async function realizarBusqueda() {
+      const tipo = document.getElementById('buscar_tipo').value;
+      const marca = document.getElementById('buscar_marca').value.trim();
+      const modelo = document.getElementById('buscar_modelo').value.trim();
+      const anio = document.getElementById('buscar_anio').value.trim();
+      const ciudad = document.getElementById('buscar_ciudad').value;
+      const combustible = document.getElementById('buscar_combustible').value;
+      const transmision = document.getElementById('buscar_transmision').value;
+      const kmMin = document.getElementById('buscar_km_min').value.trim();
+      const kmMax = document.getElementById('buscar_km_max').value.trim();
+      const precioMin = document.getElementById('buscar_precio_min').value.trim();
+      const precioMax = document.getElementById('buscar_precio_max').value.trim();
+
+      const caja = document.getElementById('caja_resultado');
+      const contador = document.getElementById('contador');
+      
+      // ⚡ Mostrar cartelito rápido
+      caja.innerHTML = `<div class="cargando-primero">🔄 Cargando el primero...</div>`;
+      contador.textContent = '';
+      listaVehiculos = []; indiceActual = 0; idVehiculoActual = null; telefonoActual = ''; cargandoMas = false;
+
+      const correo = localStorage.getItem('correo_usuario');
+      idUsuarioActual = await obtenerUsuarioId(correo);
+
+      const sb = await getSupabase();
+      let consulta = sb.from('autos').select('*');
+      if (tipo) consulta = consulta.eq('tipo_vehiculo', tipo);
+      if (marca) consulta = consulta.ilike('marca', `%${marca}%`);
+      if (modelo) consulta = consulta.ilike('modelo', `%${modelo}%`);
+      if (anio && anio.length === 4) { const n = parseInt(anio); if (!isNaN(n)) consulta = consulta.eq('anio', n); }
+      if (ciudad && ciudad !== 'otra') consulta = consulta.eq('ciudad', ciudad);
+      if (combustible) consulta = consulta.eq('combustible', combustible);
+      if (transmision) consulta = consulta.eq('transmision', transmision);
+      consulta = consulta.order('id', { ascending: false });
+      
+      const { data, error } = await consulta;
+      
+      if (error) { 
+        caja.innerHTML = `<div class="sin-resultado">❌ Error: ${error.message}</div>`; 
+        return; 
+      }
+      if (!data || !data.length) { 
+        caja.innerHTML = `<div class="sin-resultado">📭 No se encontraron vehículos</div>`; 
+        return; 
+      }
+
+      // Aplicar filtros adicionales
+      let resultados = data;
+      if (kmMin) { const n = parseInt(kmMin); if (!isNaN(n)) resultados = resultados.filter(a => a.kilometraje !== null && a.kilometraje >= n); }
+      if (kmMax) { const n = parseInt(kmMax); if (!isNaN(n)) resultados = resultados.filter(a => a.kilometraje === null || a.kilometraje <= n); }
+      if (precioMin) { const n = limpiarPrecio(precioMin); if (n !== null) resultados = resultados.filter(a => { const v = limpiarPrecio(a.precio); return v === null || v >= n; }); }
+      if (precioMax) { const n = limpiarPrecio(precioMax); if (n !== null) resultados = resultados.filter(a => { const v = limpiarPrecio(a.precio); return v === null || v <= n; }); }
+      
+      if (!resultados.length) { 
+        caja.innerHTML = `<div class="sin-resultado">📭 Ningún vehículo cumple con los filtros</div>`; 
+        return; 
+      }
+
+      listaVehiculos = resultados;
+      
+      // ⚡ MOSTRAR EL PRIMERO DE INMEDIATO
+      await mostrarTarjeta(listaVehiculos[0], 0, listaVehiculos.length);
+      
+      // ⚡ El resto ya está cargado, no hay que esperar nada más
+      // Todo listo para deslizar
     }
 
     async function iniciar() {
