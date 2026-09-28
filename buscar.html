@@ -110,12 +110,8 @@
       background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
     }
 
-    /* SIN BOTONES ANTERIOR/SIGUIENTE */
-    .navegacion {
-      display: none;
-    }
+    .navegacion { display: none; }
 
-    /* TARJETA DESLIZABLE */
     .zona-tarjeta {
       position: relative;
       overflow: hidden;
@@ -313,7 +309,6 @@
     .foto-ver img {width: 100%; height: 100%; object-fit: cover;}
     .foto-nombre {display: none;}
 
-    /* VENTANA FOTO GRANDE */
     .ventana-foto {
       position: fixed;
       top: 0; left: 0;
@@ -339,7 +334,6 @@
       border-radius: 12px;
     }
 
-    /* LOGO WHATSAPP CHICO EN FOTO GRANDE */
     .boton-wsp-flotante {
       position: absolute;
       top: 10px;
@@ -541,7 +535,6 @@ let idVehiculoActual = null;
 let fotosVehiculoActual = [];
 let indiceFotoActual = 0;
 let telefonoActual = '';
-let inicioToque = 0;
 let inicioX = 0;
 let finX = 0;
 
@@ -660,10 +653,10 @@ function abrirFoto(fotos, indice, telefono) {
 }
 
 document.getElementById('contenedorFotoGrande').addEventListener('touchstart', e => {
-  inicioToque = e.touches[0].clientX;
+  inicioX = e.touches[0].clientX;
 });
 document.getElementById('contenedorFotoGrande').addEventListener('touchend', e => {
-  const diferencia = inicioToque - e.changedTouches[0].clientX;
+  const diferencia = inicioX - e.changedTouches[0].clientX;
   if (Math.abs(diferencia) > 50) diferencia > 0 ? fotoSiguiente() : fotoAnterior();
 });
 
@@ -738,7 +731,7 @@ async function realizarBusqueda() {
   idVehiculoActual = null;
 
   const sb = await getSupabase();
-  let consulta = sb.from('autos').select('*');
+  let consulta = sb.from('autos').select('id, tipo_vehiculo, marca, modelo, anio, version, ciudad, kilometraje, combustible, transmision, precio, telefono, permuta, contado, foto1, foto2, foto3, foto4, foto5, foto6');
 
   if (tipo) consulta = consulta.eq('tipo_vehiculo', tipo);
   if (marca) consulta = consulta.ilike('marca', `%${marca}%`);
@@ -792,7 +785,6 @@ async function cargarUno(posicion) {
         <div class="tarjeta">
           <div class="encabezado-tarjeta">
             ${v.tipo_vehiculo ? `<span class="etiqueta-tipo">${v.tipo_vehiculo}</span>` : '<span></span>'}
-
             <button class="boton-favorito-tarjeta" onclick="mostrarCajaCodigo()" ${!puedeAgregar ? 'disabled' : ''}>
               <span class="estrella">⭐</span>
               <span class="texto-favorito">Agregar a mi favorito</span>
@@ -836,21 +828,15 @@ async function cargarUno(posicion) {
   `;
 
   const contenedorTarjetas = document.getElementById('contenedorTarjetas');
-
   contenedorTarjetas.addEventListener('touchstart', e => {
     inicioX = e.touches[0].clientX;
   });
-
   contenedorTarjetas.addEventListener('touchend', e => {
     finX = e.changedTouches[0].clientX;
     const diff = inicioX - finX;
-
     if (Math.abs(diff) > 50) {
-      if (diff > 0) {
-        vehiculoSiguiente();
-      } else {
-        vehiculoAnterior();
-      }
+      if (diff > 0) vehiculoSiguiente();
+      else vehiculoAnterior();
     }
   });
 }
