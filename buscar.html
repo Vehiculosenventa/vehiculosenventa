@@ -561,15 +561,21 @@ function verificarSesion() {
   const ladoDerecho = document.getElementById('ladoDerecho');
   const zonaOlvido = document.getElementById('zonaOlvido');
 
+  console.log('🔍 Verificando sesión...');
+  console.log('📧 Correo:', correo);
+  console.log('👤 Nombre:', nombre);
+
   if (correo && nombre) {
     ladoIzquierdo.innerHTML = `<span class="texto-conectado">${nombre} — Conectado</span>`;
     ladoDerecho.innerHTML = `<button class="boton-azul" onclick="cerrarSesion()">Cerrar sesión</button>`;
     zonaOlvido.style.display = 'none';
+    console.log('✅ Sesión detectada correctamente');
   } else {
     ladoIzquierdo.innerHTML = `<a href="iniciar-sesion.html" class="boton-azul">Iniciar sesión</a>`;
     ladoDerecho.innerHTML = `<a href="registrarse.html" class="boton-azul">Registrarse</a>`;
     zonaOlvido.innerHTML = `<a href="index.html">Volvé al inicio para entrar o crear tu cuenta</a>`;
     zonaOlvido.style.display = 'block';
+    console.log('❌ Sin sesión detectada');
   }
 }
 
