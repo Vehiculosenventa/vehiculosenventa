@@ -73,32 +73,52 @@
       position: relative;
     }
 
-    /* ⭐ ESTRELLA DE FAVORITOS — arriba a la derecha */
-    .boton-favorito {
+    /* ⭐ ÁREA DE FAVORITOS — arriba a la derecha con texto */
+    .caja-favorito {
       position: absolute;
       top: 10px;
       right: 10px;
-      background: transparent;
-      border: none;
-      font-size: 28px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
       cursor: pointer;
       z-index: 10;
+      background: transparent;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 8px;
+      transition: background 0.2s ease;
+    }
+
+    .caja-favorito:active {
+      background: rgba(0,0,0,0.05);
+    }
+
+    .texto-favorito {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .no-favorito .texto-favorito {
+      color: #0066cc;
+    }
+
+    .es-favorito .texto-favorito {
+      color: #888888;
+    }
+
+    .icono-favorito {
+      font-size: 22px;
       line-height: 1;
-      padding: 0;
       transition: transform 0.2s ease, color 0.2s ease;
     }
 
-    .boton-favorito:active {
-      transform: scale(0.9);
-    }
-
-    .boton-favorito.no-favorito {
-      color: #999999;
-    }
-
-    .boton-favorito.es-favorito {
+    .no-favorito .icono-favorito {
       color: #ffcc00;
-      text-shadow: 0 0 4px rgba(255, 204, 0, 0.4);
+    }
+
+    .es-favorito .icono-favorito {
+      color: #999999;
     }
 
     .fotos-cuadricula {
@@ -106,7 +126,7 @@
       grid-template-columns: repeat(3, 1fr);
       gap: 10px;
       margin-bottom: 20px;
-      margin-top: 30px;
+      margin-top: 45px;
     }
 
     .foto-cuadrito {
@@ -347,7 +367,7 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZkZW5jaHkib25seSIsInJvbGUiOiJhbm9uIiwicGFzc3dvcmQiOmZhbHNlLCJleHBpcmVzIjo5OTk5OTk5OTk5fQ==";
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -444,11 +464,13 @@
         pantalla.className = "pantalla-vehiculo";
         pantalla.innerHTML = `
           <div class="tarjeta-vehiculo">
-            <!-- ⭐ ESTRELLA DE FAVORITOS ARRIBA A LA DERECHA -->
-            <button class="boton-favorito ${estaFavorito ? 'es-favorito' : 'no-favorito'}" 
-                    onclick="alternarFavorito(${idVeh})" 
-                    title="${estaFavorito ? 'Quitar de Mis Favoritos' : 'Agregar a Mis Favoritos'}">
-              ★
+            <!-- ⭐ ESTRELLA + TEXTO ARRIBA A LA DERECHA -->
+            <button class="caja-favorito ${estaFavorito ? 'es-favorito' : 'no-favorito'}" 
+                    onclick="alternarFavorito(${idVeh})">
+              <span class="icono-favorito">★</span>
+              <span class="texto-favorito">
+                ${estaFavorito ? 'Quitar de Mi Favorito' : 'Agregar a Mi Favorito'}
+              </span>
             </button>
             
             <div class="fotos-cuadricula">
