@@ -554,35 +554,50 @@ async function getSupabase() {
 }
 
 function verificarSesion() {
-  const correo = localStorage.getItem('correo_usuario');
-  const nombre = localStorage.getItem('nombre_usuario');
-  const usuario_id = localStorage.getItem('usuario_id');
+  // 🔍 BUSCA EN TODAS LAS VARIANTES DE NOMBRES PARA QUE NO FALLE
+  const correo = 
+    localStorage.getItem('correo_usuario') || 
+    localStorage.getItem('correo') || 
+    localStorage.getItem('email') || 
+    localStorage.getItem('correo_registrado');
+  
+  const nombre = 
+    localStorage.getItem('nombre_usuario') || 
+    localStorage.getItem('nombre') || 
+    localStorage.getItem('nombre_registrado') ||
+    localStorage.getItem('usuario_nombre');
+  
+  const usuario_id = 
+    localStorage.getItem('usuario_id') || 
+    localStorage.getItem('id') || 
+    localStorage.getItem('user_id');
+
+  console.log('📧 Correo encontrado:', correo);
+  console.log('👤 Nombre encontrado:', nombre);
+  console.log('🆔 ID encontrado:', usuario_id);
+
   const ladoIzquierdo = document.getElementById('ladoIzquierdo');
   const ladoDerecho = document.getElementById('ladoDerecho');
   const zonaOlvido = document.getElementById('zonaOlvido');
 
-  console.log('🔍 Verificando sesión...');
-  console.log('📧 Correo:', correo);
-  console.log('👤 Nombre:', nombre);
-
-  if (correo && nombre) {
-    ladoIzquierdo.innerHTML = `<span class="texto-conectado">${nombre} — Conectado</span>`;
+  // Si hay correo, está conectado - usamos el nombre o el correo si no hay nombre
+  if (correo) {
+    const nombreMostrar = nombre || correo.split('@')[0];
+    ladoIzquierdo.innerHTML = `<span class="texto-conectado">${nombreMostrar} — Conectado</span>`;
     ladoDerecho.innerHTML = `<button class="boton-azul" onclick="cerrarSesion()">Cerrar sesión</button>`;
     zonaOlvido.style.display = 'none';
-    console.log('✅ Sesión detectada correctamente');
+    console.log('✅ SESIÓN DETECTADA CORRECTAMENTE');
   } else {
     ladoIzquierdo.innerHTML = `<a href="iniciar-sesion.html" class="boton-azul">Iniciar sesión</a>`;
     ladoDerecho.innerHTML = `<a href="registrarse.html" class="boton-azul">Registrarse</a>`;
     zonaOlvido.innerHTML = `<a href="index.html">Volvé al inicio para entrar o crear tu cuenta</a>`;
     zonaOlvido.style.display = 'block';
-    console.log('❌ Sin sesión detectada');
+    console.log('❌ Sin sesión - entrá desde la página principal primero');
   }
 }
 
 function cerrarSesion() {
-  localStorage.removeItem('correo_usuario');
-  localStorage.removeItem('nombre_usuario');
-  localStorage.removeItem('usuario_id');
+  localStorage.clear();
   window.location.href = 'cerrar-secion.html';
 }
 
@@ -602,12 +617,18 @@ async function contarFavoritos(usuario_id) {
 }
 
 function tieneLimiteLibre() {
-  const correo = localStorage.getItem('correo_usuario');
+  const correo = 
+    localStorage.getItem('correo_usuario') || 
+    localStorage.getItem('correo') || 
+    localStorage.getItem('email');
   return correo === CORREO_SIN_LIMITE;
 }
 
 async function verificarLimiteFavoritos() {
-  const correo = localStorage.getItem('correo_usuario');
+  const correo = 
+    localStorage.getItem('correo_usuario') || 
+    localStorage.getItem('correo') || 
+    localStorage.getItem('email');
   if (!correo) return true;
   if (tieneLimiteLibre()) return true;
 
@@ -681,7 +702,10 @@ function mostrarCajaCodigo() {
       alert(`⚠️ Llegaste al límite de ${LIMITE_FAVORITOS} favoritos. Eliminá uno para agregar otro.`);
       return;
     }
-    const correo = localStorage.getItem('correo_usuario');
+    const correo = 
+      localStorage.getItem('correo_usuario') || 
+      localStorage.getItem('correo') || 
+      localStorage.getItem('email');
     if (!correo) {
       alert('🔐 Primero entrá desde la página principal');
       window.location.href = 'index.html';
@@ -700,7 +724,10 @@ async function guardarConCodigo() {
   if (!codigo || codigo.length < 6) { alert('⚠️ El código debe tener 6 caracteres'); return; }
   if (!idVehiculoActual) { alert('⚠️ No hay vehículo seleccionado'); return; }
 
-  const correo = localStorage.getItem('correo_usuario');
+  const correo = 
+    localStorage.getItem('correo_usuario') || 
+    localStorage.getItem('correo') || 
+    localStorage.getItem('email');
   const usuario_id = await obtenerUsuarioId(correo);
   if (!usuario_id) { alert('❌ No se encontró tu cuenta'); return; }
 
