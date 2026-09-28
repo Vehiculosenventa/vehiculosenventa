@@ -25,22 +25,30 @@
     }
     .lado-izquierdo {
       font-weight: 600;
-      color: #16a34a;
-      font-size: 14px;
+      color: #15803d; /* Verde más oscuro */
+      font-size: 14px; /* Mismo tamaño que Cerrar sesión */
     }
     .titulo-pagina {
-      font-size: 18px;
+      font-size: 22px; /* Más grande */
       font-weight: 800;
       color: #2c5282;
+      text-align: center;
+      flex: 1;
+      order: 2; /* Queda en el medio */
     }
     .link-cerrar {
       color: #1e40af;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 14px; /* Mismo tamaño */
       text-decoration: none;
+      order: 3;
     }
     .link-cerrar:hover {
       text-decoration: underline;
+    }
+    .espacio-izquierda {
+      width: 100px;
+      order: 1;
     }
 
     .olvido {
@@ -386,9 +394,12 @@
 
   <div class="contenedor">
     <div class="barra-superior">
-      <div class="lado-izquierdo" id="ladoIzquierdo"></div>
+      <div class="espacio-izquierda"></div>
       <div class="titulo-pagina">🔍 Buscar Vehículo</div>
-      <a href="#" class="link-cerrar" id="linkCerrar" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
+      <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+        <div class="lado-izquierdo" id="ladoIzquierdo"></div>
+        <a href="#" class="link-cerrar" id="linkCerrar" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
+      </div>
     </div>
     <div id="zonaOlvido" class="olvido"></div>
 
