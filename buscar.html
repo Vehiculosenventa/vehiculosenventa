@@ -36,11 +36,6 @@
       flex-wrap: wrap;
       align-items: center;
     }
-    .texto-conectado {
-      color: #166534;
-      font-weight: 700;
-      font-size: 14px;
-    }
     .texto-favoritos {
       color: #1d4ed8;
       font-weight: 700;
@@ -48,6 +43,11 @@
       text-decoration: none;
     }
     .texto-favoritos:hover {text-decoration: underline;}
+    .texto-conectado {
+      color: #166534;
+      font-weight: 700;
+      font-size: 14px;
+    }
     .texto-cerrar {
       color: #1d4ed8;
       font-weight: 700;
@@ -182,7 +182,7 @@
       cursor: pointer;
       text-decoration: none;
       text-align: center;
-      margin: 0 0 18px 0;
+      margin: 18px 0 0 0;
       box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
       transition: all 0.2s;
     }
@@ -765,9 +765,6 @@
 
       caja.innerHTML = `
         <button class="boton-favorito" onclick="mostrarCajaCodigo()">💙 AGREGAR A MIS VEHÍCULOS</button>
-        <a href="${armarEnlaceWhatsApp(telefonoActual)}" class="boton-whatsapp" target="_blank">
-          <span class="icono-wsp">✓</span> ENVIAR MENSAJE POR WHATSAPP
-        </a>
         <div id="cajaCodigo" class="caja-codigo">
           <h3>🔐 Escribí tu código de seguridad</h3>
           <input type="text" id="codigoIngresado" class="input-codigo" placeholder="Tu código..." maxlength="6">
@@ -790,6 +787,9 @@
           <div>${vehiculo.permuta ? '<span class="etiqueta permuta">✅ Acepta permuta</span>' : ''}${vehiculo.contado ? '<span class="etiqueta contado">💵 Solo contado</span>' : ''}</div>
           <div class="fila" style="margin-top: 10px;"><strong>Deuda:</strong> ${vehiculo.deuda || 'Sin deudas'}</div>
           <div class="fila"><strong>Descripción:</strong> ${vehiculo.descripcion || '-'}</div>
+          <a href="${armarEnlaceWhatsApp(telefonoActual)}" class="boton-whatsapp" target="_blank">
+            <span class="icono-wsp">✓</span> ENVIAR MENSAJE POR WHATSAPP
+          </a>
         </div>
       `;
       contador.textContent = `${posicion + 1} de ${idsFiltrados.length}`;
