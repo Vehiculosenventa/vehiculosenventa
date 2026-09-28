@@ -16,9 +16,8 @@
 
     .barra-superior {
       display: flex;
-      justify-content: flex-start;
+      justify-content: space-between;
       align-items: center;
-      gap: 15px;
       margin-bottom: 20px;
       padding-bottom: 12px;
       border-bottom: 2px solid rgba(44, 82, 130, 0.15);
@@ -28,32 +27,27 @@
       font-size: 18px;
       font-weight: 800;
       color: #2c5282;
-      margin-right: 20px;
     }
     .zona-usuario {
       display: flex;
-      gap: 12px;
+      gap: 15px;
       align-items: center;
       flex-wrap: wrap;
     }
-    .texto-usuario {
+    .nombre-usuario {
       font-weight: 600;
-      color: #1e40af;
+      color: #16a34a;
       font-size: 14px;
     }
-    .btn-salir {
-      padding: 6px 12px;
-      border-radius: 8px;
-      background: #fef2f2;
-      color: #c53030;
-      border: 2px solid #feb2b2;
+    .link-cerrar {
+      color: #1e40af;
       font-weight: 600;
-      font-size: 13px;
-      cursor: pointer;
+      font-size: 14px;
       text-decoration: none;
-      transition: all 0.2s;
     }
-    .btn-salir:hover { background: #fee2e2; }
+    .link-cerrar:hover {
+      text-decoration: underline;
+    }
 
     .olvido {
       width: 100%;
@@ -397,7 +391,10 @@
   <div class="contenedor">
     <div class="barra-superior">
       <div class="titulo-pagina">🔍 Buscar Vehículo</div>
-      <div id="zonaUsuario" class="zona-usuario"></div>
+      <div class="zona-usuario">
+        <span class="nombre-usuario" id="nombreUsuario"></span>
+        <a href="#" class="link-cerrar" id="linkCerrar" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
+      </div>
     </div>
     <div id="zonaOlvido" class="olvido"></div>
 
@@ -560,16 +557,19 @@ async function getSupabase() {
 function verificarSesion() {
   const correo = localStorage.getItem('correo_usuario');
   const nombre = localStorage.getItem('nombre_usuario');
-  const zonaUsuario = document.getElementById('zonaUsuario');
+  const nombreUsuario = document.getElementById('nombreUsuario');
+  const linkCerrar = document.getElementById('linkCerrar');
   const zonaOlvido = document.getElementById('zonaOlvido');
 
   if (correo && nombre) {
-    zonaUsuario.innerHTML = `
-      <span class="texto-usuario">👤 ${nombre} — Conectado</span>
-      <a href="#" onclick="cerrarSesion(); return false;" class="btn-salir">Cerrar sesión</a>`;
+    nombreUsuario.textContent = nombre;
+    nombreUsuario.style.display = 'inline';
+    linkCerrar.style.display = 'inline';
     zonaOlvido.style.display = 'none';
   } else {
-    zonaUsuario.innerHTML = '';
+    nombreUsuario.textContent = '';
+    nombreUsuario.style.display = 'none';
+    linkCerrar.style.display = 'none';
     zonaOlvido.innerHTML = `<a href="index.html">Volvé al inicio para entrar o crear tu cuenta</a>`;
     zonaOlvido.style.display = 'block';
   }
@@ -663,7 +663,6 @@ function abrirFoto(fotos, indice, telefono) {
   mostrarFotoActual();
 }
 
-// Deslizar con el dedo en fotos
 document.getElementById('contenedorFotoGrande').addEventListener('touchstart', e => {
   inicioToque = e.touches[0].clientX;
 });
