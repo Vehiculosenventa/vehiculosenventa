@@ -21,34 +21,26 @@
       margin-bottom: 20px;
       padding-bottom: 12px;
       border-bottom: 2px solid rgba(44, 82, 130, 0.15);
-      flex-wrap: wrap;
     }
     .lado-izquierdo {
       font-weight: 600;
       color: #15803d; /* Verde más oscuro */
-      font-size: 14px; /* Mismo tamaño que Cerrar sesión */
+      font-size: 14px; /* Mismo tamaño */
     }
     .titulo-pagina {
       font-size: 22px; /* Más grande */
       font-weight: 800;
       color: #2c5282;
       text-align: center;
-      flex: 1;
-      order: 2; /* Queda en el medio */
     }
     .link-cerrar {
       color: #1e40af;
       font-weight: 600;
       font-size: 14px; /* Mismo tamaño */
       text-decoration: none;
-      order: 3;
     }
     .link-cerrar:hover {
       text-decoration: underline;
-    }
-    .espacio-izquierda {
-      width: 100px;
-      order: 1;
     }
 
     .olvido {
@@ -230,7 +222,7 @@
       text-decoration: none;
       font-weight: 600;
       padding: 12px;
-      background: rgba(255, 255, 255, 0.6);
+      background: rgba(255,255,255,0.6);
       border-radius: 10px;
     }
     .volver:hover {
@@ -346,19 +338,19 @@
       position: absolute;
       top: 10px;
       left: 10px;
-      width: 34px;
-      height: 34px;
+      width: 44px;
+      height: 44px;
       border-radius: 50%;
       background: #25D366;
       display: flex;
       align-items: center;
       justify-content: center;
       z-index: 10000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
     }
     .boton-wsp-flotante svg {
-      width: 18px;
-      height: 18px;
+      width: 22px;
+      height: 22px;
       fill: white;
     }
 
@@ -394,12 +386,9 @@
 
   <div class="contenedor">
     <div class="barra-superior">
-      <div class="espacio-izquierda"></div>
+      <div class="lado-izquierdo" id="ladoIzquierdo"></div>
       <div class="titulo-pagina">🔍 Buscar Vehículo</div>
-      <div style="display: flex; justify-content: space-between; align-items: center; gap: 15px;">
-        <div class="lado-izquierdo" id="ladoIzquierdo"></div>
-        <a href="#" class="link-cerrar" id="linkCerrar" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
-      </div>
+      <a href="#" class="link-cerrar" id="linkCerrar" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
     </div>
     <div id="zonaOlvido" class="olvido"></div>
 
@@ -563,8 +552,8 @@ function verificarSesion() {
 
   if (correo && nombre) {
     ladoIzquierdo.textContent = `${nombre} — Conectado`;
-    ladoIzquierdo.style.display = 'inline';
-    linkCerrar.style.display = 'inline';
+    ladoIzquierdo.style.display = 'block';
+    linkCerrar.style.display = 'block';
     zonaOlvido.style.display = 'none';
   } else {
     ladoIzquierdo.textContent = '';
