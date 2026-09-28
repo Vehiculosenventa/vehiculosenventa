@@ -48,9 +48,7 @@
       cursor: pointer;
       text-decoration: none;
     }
-    .texto-cerrar:hover {
-      text-decoration: underline;
-    }
+    .texto-cerrar:hover {text-decoration: underline;}
     .btn-sesion {
       padding: 8px 14px;
       border-radius: 10px;
@@ -65,12 +63,12 @@
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
       color: white;
     }
-    .btn-iniciar:hover { transform: translateY(-1px); }
+    .btn-iniciar:hover {transform: translateY(-1px);}
     .btn-registrar {
       background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
       color: white;
     }
-    .btn-registrar:hover { transform: translateY(-1px); }
+    .btn-registrar:hover {transform: translateY(-1px);}
 
     h1 {
       text-align: center;
@@ -359,7 +357,6 @@
       text-decoration: none;
     }
 
-    /* 🔍 VENTANA AMPLIAR FOTO */
     .ventana-foto {
       position: fixed;
       top: 0; left: 0;
@@ -384,7 +381,6 @@
       border-radius: 12px;
       box-shadow: 0 0 30px rgba(0,0,0,0.5);
     }
-    /* 💧 LOGO DE AGUA EN ESQUINA SUPERIOR DERECHA */
     .logo-agua-foto {
       position: absolute;
       top: 10px;
@@ -536,7 +532,6 @@
     <a href="index.html" class="volver">← Volver a la página principal</a>
   </div>
 
-  <!-- 🔍 VENTANA PARA VER FOTO GRANDE CON LOGO DE AGUA Y BOTÓN WHATSAPP -->
   <div class="ventana-foto" id="ventanaFoto">
     <div class="contenedor-foto-grande">
       <span class="cerrar-foto" id="cerrarFoto">&times;</span>
@@ -551,7 +546,7 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizWtpeWJ5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
     let sbClient = null;
     let idsFiltrados = [];
@@ -559,34 +554,26 @@
     let idVehiculoActual = null;
     let telefonoActual = '';
 
-    // Variables para deslizar con el dedo
-    let xInicio = 0;
-    let xFin = 0;
+    let xInicio = 0, xFin = 0;
     const UMBRAL_DESLIZAR = 50;
 
-    // Elementos de la ventana de fotos
     const ventanaFoto = document.getElementById('ventanaFoto');
     const fotoGrande = document.getElementById('fotoGrande');
     const cerrarFoto = document.getElementById('cerrarFoto');
     const enlaceWhatsAppFoto = document.getElementById('enlaceWhatsAppFoto');
 
     async function getSupabase() {
-      if (!sbClient) {
-        sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      }
+      if (!sbClient) sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
       return sbClient;
     }
 
-    // ✅ VERIFICAR SESIÓN REAL DE SUPABASE + respaldo localStorage
+    // ✅ DETECTAR SESIÓN CORRECTAMENTE
     async function verificarSesion() {
       const zonaUsuario = document.getElementById('zonaUsuario');
       const sb = await getSupabase();
-      
-      // 1. Primero consultamos la sesión REAL de Supabase
       const { data: { session } } = await sb.auth.getSession();
       
       if (session) {
-        // ✅ Conectado: guardamos también en localStorage para compartir entre páginas
         localStorage.setItem('correo_usuario', session.user.email || 'conectado');
         localStorage.setItem('nombre_usuario', session.user.user_metadata?.nombre || 'Usuario');
         zonaUsuario.innerHTML = `
@@ -596,7 +583,6 @@
         return true;
       }
       
-      // 2. Si no hay sesión en Supabase, revisamos localStorage como respaldo
       const correo = localStorage.getItem('correo_usuario');
       const nombre = localStorage.getItem('nombre_usuario');
       if (correo && nombre) {
@@ -607,7 +593,6 @@
         return true;
       }
       
-      // ❌ No conectado
       zonaUsuario.innerHTML = `
         <a href="ingresar.html" class="btn-sesion btn-iniciar">🔑 Iniciar sesión</a>
         <a href="registro.html" class="btn-sesion btn-registrar">✨ Registrarse</a>
@@ -618,31 +603,24 @@
     async function cerrarSesion() {
       const sb = await getSupabase();
       await sb.auth.signOut();
-      localStorage.removeItem('correo_usuario');
-      localStorage.removeItem('nombre_usuario');
-      localStorage.removeItem('usuario_id');
+      localStorage.clear();
       window.location.href = 'index.html';
     }
 
     async function obtenerUsuarioId(correo) {
       if (!correo) return null;
       const sb = await getSupabase();
-      const { data, error } = await sb
-        .from('usuarios')
-        .select('id')
-        .eq('correo', correo)
-        .single();
-      return error ? null : data?.id;
+      const { data } = await sb.from('usuarios').select('id').eq('correo', correo).single();
+      return data?.id || null;
     }
 
     function limpiarPrecio(precioTexto) {
       if (!precioTexto) return null;
-      const soloNumeros = String(precioTexto).replace(/[^0-9.,]/g, '').replace(',', '.');
-      const valor = parseFloat(soloNumeros);
-      return isNaN(valor) ? null : valor;
+      const v = parseFloat(String(precioTexto).replace(/[^0-9.,]/g, '').replace(',', '.'));
+      return isNaN(v) ? null : v;
     }
 
-    // ✅ MOSTRAR CAJA DE CÓDIGO: revisa sesión real antes de redirigir
+    // ✅ ARREGLADO: Verifica sesión real antes de pedir código
     async function mostrarCajaCodigo() {
       const tieneSesion = await verificarSesion();
       if (!tieneSesion) {
@@ -661,97 +639,48 @@
 
     async function guardarConCodigo() {
       const codigo = document.getElementById('codigoIngresado').value.trim();
-      
-      if (!codigo || codigo.length < 6) {
-        alert('⚠️ El código debe tener 6 caracteres');
-        return;
-      }
-      if (!idVehiculoActual) {
-        alert('⚠️ No hay vehículo seleccionado');
-        return;
-      }
+      if (!codigo || codigo.length < 6) { alert('⚠️ El código debe tener 6 caracteres'); return; }
+      if (!idVehiculoActual) { alert('⚠️ No hay vehículo seleccionado'); return; }
 
       const correo = localStorage.getItem('correo_usuario');
       const usuario_id = await obtenerUsuarioId(correo);
-      if (!usuario_id) {
-        alert('❌ No se encontró tu cuenta');
-        return;
-      }
+      if (!usuario_id) { alert('❌ No se encontró tu cuenta'); return; }
 
       const sb = await getSupabase();
+      const { data: existe } = await sb.from('mis_vehiculos').select('id')
+        .eq('usuario_id', usuario_id).eq('vehiculo_id', idVehiculoActual).maybeSingle();
+      
+      if (existe) { alert('ℹ️ Ya está en "Mis Vehículos"'); ocultarCajaCodigo(); return; }
 
-      const { data: existe } = await sb
-        .from('mis_vehiculos')
-        .select('id')
-        .eq('usuario_id', usuario_id)
-        .eq('vehiculo_id', idVehiculoActual)
-        .maybeSingle();
-
-      if (existe) {
-        alert('ℹ️ Este vehículo ya está en "Mis Vehículos"');
-        ocultarCajaCodigo();
-        return;
-      }
-
-      const { error } = await sb.from('mis_vehiculos').insert({
-        usuario_id: usuario_id,
-        vehiculo_id: idVehiculoActual
-      });
-
-      if (error) {
-        alert('❌ Error: ' + error.message);
-        return;
-      }
-
-      alert('✅ ¡Agregado a "Mis Vehículos" correctamente! 🎉');
+      const { error } = await sb.from('mis_vehiculos').insert({ usuario_id, vehiculo_id: idVehiculoActual });
+      if (error) { alert('❌ Error: ' + error.message); return; }
+      
+      alert('✅ ¡Agregado correctamente! 🎉');
       ocultarCajaCodigo();
     }
 
-    // Armar enlace de WhatsApp con mensaje
     function armarEnlaceWhatsApp(telefono) {
-      const mensaje = encodeURIComponent('Hola, vi tu vehículo publicado en Mis Vehículos en Venta');
-      const numeroLimpio = String(telefono || '').replace(/\D/g, '');
-      if (!numeroLimpio) return '#';
-      return `https://wa.me/${numeroLimpio}?text=${mensaje}`;
+      const msg = encodeURIComponent('Hola, vi tu vehículo publicado en Mis Vehículos en Venta');
+      const num = String(telefono || '').replace(/\D/g, '');
+      return num ? `https://wa.me/${num}?text=${msg}` : '#';
     }
 
-    // Ampliar foto al tocar
     function ampliarFoto(src) {
       fotoGrande.src = src;
       enlaceWhatsAppFoto.href = armarEnlaceWhatsApp(telefonoActual);
       ventanaFoto.classList.add('mostrar');
     }
 
-    // Cerrar foto ampliada
-    cerrarFoto.addEventListener('click', () => {
-      ventanaFoto.classList.remove('mostrar');
-    });
-    ventanaFoto.addEventListener('click', (e) => {
-      if (e.target === ventanaFoto) {
-        ventanaFoto.classList.remove('mostrar');
-      }
-    });
+    cerrarFoto.addEventListener('click', () => ventanaFoto.classList.remove('mostrar'));
+    ventanaFoto.addEventListener('click', e => e.target === ventanaFoto && ventanaFoto.classList.remove('mostrar'));
 
-    // Funciones deslizar con el dedo — SIN botones
     function registrarInicioDeslizamiento(e) {
       xInicio = e.touches ? e.touches[0].clientX : e.clientX;
     }
-
     function registrarFinDeslizamiento(e) {
       xFin = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
-      calcularDeslizamiento();
-    }
-
-    function calcularDeslizamiento() {
-      const diferencia = xInicio - xFin;
-      
-      if (Math.abs(diferencia) > UMBRAL_DESLIZAR) {
-        if (diferencia > 0) {
-          vehiculoSiguiente();
-        } else {
-          vehiculoAnterior();
-        }
-      }
+      const dif = xInicio - xFin;
+      if (Math.abs(dif) > UMBRAL_DESLIZAR) dif > 0 ? vehiculoSiguiente() : vehiculoAnterior();
     }
 
     async function realizarBusqueda() {
@@ -769,108 +698,46 @@
 
       const caja = document.getElementById('caja_resultado');
       const contador = document.getElementById('contador');
-      
       caja.innerHTML = `<div class="cargando">🔄 Buscando vehículos...</div>`;
       contador.textContent = '';
-      idsFiltrados = [];
-      indiceActual = 0;
-      idVehiculoActual = null;
-      telefonoActual = '';
+      idsFiltrados = []; indiceActual = 0; idVehiculoActual = null; telefonoActual = '';
 
       const sb = await getSupabase();
       let consulta = sb.from('autos').select('*');
-
       if (tipo) consulta = consulta.eq('tipo_vehiculo', tipo);
       if (marca) consulta = consulta.ilike('marca', `%${marca}%`);
       if (modelo) consulta = consulta.ilike('modelo', `%${modelo}%`);
-      if (anio && anio.length === 4) {
-        const numAnio = parseInt(anio);
-        if (!isNaN(numAnio)) consulta = consulta.eq('anio', numAnio);
-      }
-      if (ciudad && ciudad !== 'otra') {
-        consulta = consulta.eq('ciudad', ciudad);
-      }
+      if (anio && anio.length === 4) { const n = parseInt(anio); if (!isNaN(n)) consulta = consulta.eq('anio', n); }
+      if (ciudad && ciudad !== 'otra') consulta = consulta.eq('ciudad', ciudad);
       if (combustible) consulta = consulta.eq('combustible', combustible);
       if (transmision) consulta = consulta.eq('transmision', transmision);
-
       consulta = consulta.order('id', { ascending: false });
+      
       const { data, error } = await consulta;
-
-      if (error) {
-        caja.innerHTML = `<div class="sin-resultado">❌ Error: ${error.message}</div>`;
-        return;
-      }
-      if (!data || data.length === 0) {
-        caja.innerHTML = `<div class="sin-resultado">📭 No se encontraron vehículos con esos datos</div>`;
-        return;
-      }
+      if (error) { caja.innerHTML = `<div class="sin-resultado">❌ Error: ${error.message}</div>`; return; }
+      if (!data || !data.length) { caja.innerHTML = `<div class="sin-resultado">📭 No se encontraron vehículos</div>`; return; }
 
       let resultados = data;
+      if (kmMin) { const n = parseInt(kmMin); if (!isNaN(n)) resultados = resultados.filter(a => a.kilometraje !== null && a.kilometraje >= n); }
+      if (kmMax) { const n = parseInt(kmMax); if (!isNaN(n)) resultados = resultados.filter(a => a.kilometraje === null || a.kilometraje <= n); }
+      if (precioMin) { const n = limpiarPrecio(precioMin); if (n !== null) resultados = resultados.filter(a => { const v = limpiarPrecio(a.precio); return v === null || v >= n; }); }
+      if (precioMax) { const n = limpiarPrecio(precioMax); if (n !== null) resultados = resultados.filter(a => { const v = limpiarPrecio(a.precio); return v === null || v <= n; }); }
       
-      if (kmMin) {
-        const numKmMin = parseInt(kmMin);
-        if (!isNaN(numKmMin)) {
-          resultados = resultados.filter(auto => 
-            auto.kilometraje !== null && auto.kilometraje >= numKmMin
-          );
-        }
-      }
-      if (kmMax) {
-        const numKmMax = parseInt(kmMax);
-        if (!isNaN(numKmMax)) {
-          resultados = resultados.filter(auto => 
-            auto.kilometraje === null || auto.kilometraje <= numKmMax
-          );
-        }
-      }
+      if (!resultados.length) { caja.innerHTML = `<div class="sin-resultado">📭 Ningún vehículo cumple con los filtros</div>`; return; }
       
-      if (precioMin) {
-        const numPrecioMin = parseFloat(precioMin);
-        if (!isNaN(numPrecioMin)) {
-          resultados = resultados.filter(auto => {
-            const valor = limpiarPrecio(auto.precio);
-            return valor === null || valor >= numPrecioMin;
-          });
-        }
-      }
-      if (precioMax) {
-        const numPrecioMax = parseFloat(precioMax);
-        if (!isNaN(numPrecioMax)) {
-          resultados = resultados.filter(auto => {
-            const valor = limpiarPrecio(auto.precio);
-            return valor === null || valor <= numPrecioMax;
-          });
-        }
-      }
-
-      if (resultados.length === 0) {
-        caja.innerHTML = `<div class="sin-resultado">📭 Ningún vehículo cumple con los filtros elegidos</div>`;
-        return;
-      }
-
-      idsFiltrados = resultados.map(item => item.id);
+      idsFiltrados = resultados.map(r => r.id);
       await cargarUno(0);
     }
 
     async function cargarUno(posicion) {
       if (posicion < 0 || posicion >= idsFiltrados.length) return;
-
       const caja = document.getElementById('caja_resultado');
       const contador = document.getElementById('contador');
-      
       caja.innerHTML = `<div class="cargando">🔄 Cargando vehículo ${posicion+1} de ${idsFiltrados.length}...</div>`;
 
       const sb = await getSupabase();
-      const { data: vehiculo, error } = await sb
-        .from('autos')
-        .select('*')
-        .eq('id', idsFiltrados[posicion])
-        .single();
-
-      if (error || !vehiculo) {
-        caja.innerHTML = `<div class="sin-resultado">❌ Error al cargar el vehículo</div>`;
-        return;
-      }
+      const { data: vehiculo, error } = await sb.from('autos').select('*').eq('id', idsFiltrados[posicion]).single();
+      if (error || !vehiculo) { caja.innerHTML = `<div class="sin-resultado">❌ Error al cargar</div>`; return; }
 
       idVehiculoActual = vehiculo.id;
       telefonoActual = vehiculo.telefono || '';
@@ -878,43 +745,24 @@
       let fotosHtml = '';
       for (let i = 1; i <= 12; i++) {
         const foto = vehiculo[`foto${i}`];
-        if (foto) {
-          fotosHtml += `
-            <div class="foto-caja">
-              <div class="foto-ver" onclick="ampliarFoto('${foto}')">
-                <img src="${foto}" alt="" loading="lazy">
-              </div>
-            </div>
-          `;
-        }
+        if (foto) fotosHtml += `<div class="foto-caja"><div class="foto-ver" onclick="ampliarFoto('${foto}')"><img src="${foto}" alt="" loading="lazy"></div></div>`;
       }
       const hayFotos = fotosHtml !== '';
 
       caja.innerHTML = `
-        <button class="boton-favorito" onclick="mostrarCajaCodigo()">
-          💙 AGREGAR A MIS VEHÍCULOS
-        </button>
-
+        <button class="boton-favorito" onclick="mostrarCajaCodigo()">💙 AGREGAR A MIS VEHÍCULOS</button>
         <a href="${armarEnlaceWhatsApp(telefonoActual)}" class="boton-whatsapp" target="_blank">
-          <span class="icono-wsp">✓</span>
-          ENVIAR MENSAJE POR WHATSAPP
+          <span class="icono-wsp">✓</span> ENVIAR MENSAJE POR WHATSAPP
         </a>
-
         <div id="cajaCodigo" class="caja-codigo">
           <h3>🔐 Escribí tu código de seguridad</h3>
           <input type="text" id="codigoIngresado" class="input-codigo" placeholder="Tu código..." maxlength="6">
           <button class="boton-guardar" onclick="guardarConCodigo()">✅ Guardar en Mis Vehículos</button>
           <button class="boton-cancelar" onclick="ocultarCajaCodigo()">❌ Cancelar</button>
         </div>
-        
         <div class="tarjeta" id="tarjetaDeslizable">
           ${vehiculo.tipo_vehiculo ? `<span class="etiqueta-tipo">${vehiculo.tipo_vehiculo}</span>` : ''}
-          
-          ${hayFotos ? `
-          <div class="fotos-titulo">📸 Fotos del vehículo — Tocar para agrandar</div>
-          <div class="fotos-cuadricula">${fotosHtml}</div>
-          ` : ''}
-          
+          ${hayFotos ? `<div class="fotos-titulo">📸 Fotos del vehículo — Tocar para agrandar</div><div class="fotos-cuadricula">${fotosHtml}</div>` : ''}
           <div class="titulo-vehiculo">${vehiculo.marca || ''} ${vehiculo.modelo || ''} — ${vehiculo.anio || ''}</div>
           <div class="fila"><strong>Versión:</strong> ${vehiculo.version || '-'}</div>
           <div class="fila"><strong>Ciudad:</strong> ${vehiculo.ciudad || '-'}</div>
@@ -925,62 +773,44 @@
           <div class="fila"><strong>Dueño:</strong> ${vehiculo.dueno || '-'}</div>
           <div class="fila"><strong>Dirección:</strong> ${vehiculo.direccion || '-'}</div>
           <div class="fila"><strong>Teléfono:</strong> ${vehiculo.telefono || '-'}</div>
-          <div>
-            ${vehiculo.permuta ? '<span class="etiqueta permuta">✅ Acepta permuta</span>' : ''}
-            ${vehiculo.contado ? '<span class="etiqueta contado">💵 Solo contado</span>' : ''}
-          </div>
+          <div>${vehiculo.permuta ? '<span class="etiqueta permuta">✅ Acepta permuta</span>' : ''}${vehiculo.contado ? '<span class="etiqueta contado">💵 Solo contado</span>' : ''}</div>
           <div class="fila" style="margin-top: 10px;"><strong>Deuda:</strong> ${vehiculo.deuda || 'Sin deudas'}</div>
           <div class="fila"><strong>Descripción:</strong> ${vehiculo.descripcion || '-'}</div>
         </div>
       `;
-      
       contador.textContent = `${posicion + 1} de ${idsFiltrados.length}`;
       
-      // Agregar eventos de deslizamiento a la tarjeta
       setTimeout(() => {
-        const tarjeta = document.getElementById('tarjetaDeslizable');
-        if (tarjeta) {
-          tarjeta.addEventListener('touchstart', registrarInicioDeslizamiento);
-          tarjeta.addEventListener('touchend', registrarFinDeslizamiento);
-          tarjeta.addEventListener('mousedown', registrarInicioDeslizamiento);
-          tarjeta.addEventListener('mouseup', registrarFinDeslizamiento);
+        const t = document.getElementById('tarjetaDeslizable');
+        if (t) {
+          t.addEventListener('touchstart', registrarInicioDeslizamiento);
+          t.addEventListener('touchend', registrarFinDeslizamiento);
+          t.addEventListener('mousedown', registrarInicioDeslizamiento);
+          t.addEventListener('mouseup', registrarFinDeslizamiento);
         }
       }, 100);
     }
 
     async function vehiculoAnterior() {
-      if (idsFiltrados.length === 0) return;
-      if (indiceActual === 0) {
-        indiceActual = idsFiltrados.length - 1;
-      } else {
-        indiceActual--;
-      }
+      if (!idsFiltrados.length) return;
+      indiceActual = indiceActual === 0 ? idsFiltrados.length - 1 : indiceActual - 1;
       await cargarUno(indiceActual);
     }
-
     async function vehiculoSiguiente() {
-      if (idsFiltrados.length === 0) return;
-      if (indiceActual === idsFiltrados.length - 1) {
-        indiceActual = 0;
-      } else {
-        indiceActual++;
-      }
+      if (!idsFiltrados.length) return;
+      indiceActual = indiceActual === idsFiltrados.length - 1 ? 0 : indiceActual + 1;
       await cargarUno(indiceActual);
     }
 
     async function iniciar() {
       await verificarSesion();
       await getSupabase();
-      
-      // Eventos globales de deslizamiento
       document.addEventListener('touchstart', registrarInicioDeslizamiento);
       document.addEventListener('touchend', registrarFinDeslizamiento);
       document.addEventListener('mousedown', registrarInicioDeslizamiento);
       document.addEventListener('mouseup', registrarFinDeslizamiento);
     }
-
     iniciar();
   </script>
-
 </body>
 </html>
