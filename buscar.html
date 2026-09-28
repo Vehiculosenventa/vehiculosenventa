@@ -554,7 +554,6 @@ async function getSupabase() {
 }
 
 function verificarSesion() {
-  // 🔍 LEE TODO lo guardado sin importar el nombre
   let correo = null;
   let nombre = null;
   let usuario_id = null;
@@ -680,8 +679,14 @@ function fotoSiguiente() {
 function mostrarFotoActual() {
   document.getElementById('fotoGrande').src = fotosVehiculoActual[indiceFotoActual];
   document.getElementById('indicadorFoto').textContent = `${indiceFotoActual + 1} / ${fotosVehiculoActual.length}`;
+  
+  // ✅ Mensaje de WhatsApp personalizado
+  const mensaje = encodeURIComponent(
+    `Hola! 👋 Vi tu anuncio en Vehículos en Venta y me gustaría comunicarme con vos. Quedo atento, gracias!`
+  );
+  // ✅ Número directo SIN el 15
   document.getElementById('botonWspFlotante').href = 
-    `https://wa.me/54${telefonoActual}?text=${encodeURIComponent('Vi tu anuncio en Vehículos en Venta. Me gustaría comunicarme con vos.')}`;
+    `https://wa.me/549${telefonoActual}?text=${mensaje}`;
 }
 
 function abrirFoto(fotos, indice, telefono) {
