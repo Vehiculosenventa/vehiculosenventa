@@ -14,6 +14,15 @@
     }
     .contenedor {max-width: 620px; margin: 0 auto;}
 
+    .titulo-pagina {
+      font-size: 26px;
+      font-weight: 800;
+      color: #2c5282;
+      text-align: center;
+      margin-bottom: 18px;
+      margin-top: 10px;
+    }
+
     .barra-superior {
       display: flex;
       justify-content: space-between;
@@ -22,26 +31,14 @@
       padding-bottom: 12px;
       border-bottom: 2px solid rgba(44, 82, 130, 0.15);
     }
-    .lado-izquierdo {
+    .enlace-izq, .enlace-der {
       font-weight: 600;
-      color: #15803d;
-      font-size: 14px;
-    }
-    .titulo-pagina {
-      font-size: 22px;
-      font-weight: 800;
-      color: #2c5282;
-      text-align: center;
-    }
-    .link-cerrar {
-      color: #1e40af;
-      font-weight: 600;
-      font-size: 14px;
+      font-size: 15px;
       text-decoration: none;
     }
-    .link-cerrar:hover {
-      text-decoration: underline;
-    }
+    .enlace-izq.conectado {color: #15803d;}
+    .enlace-izq.sin-sesion, .enlace-der {color: #1e40af;}
+    .enlace-izq:hover, .enlace-der:hover {text-decoration: underline;}
 
     .olvido {
       width: 100%;
@@ -383,10 +380,11 @@
 <body>
 
   <div class="contenedor">
+    <h1 class="titulo-pagina">🔍 Buscar Vehículo</h1>
+
     <div class="barra-superior">
-      <div class="lado-izquierdo" id="ladoIzquierdo"></div>
-      <div class="titulo-pagina">🔍 Buscar Vehículo</div>
-      <a href="#" class="link-cerrar" id="linkCerrar" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
+      <a href="#" class="enlace-izq" id="enlaceIzquierdo"></a>
+      <a href="#" class="enlace-der" id="enlaceDerecho"></a>
     </div>
     <div id="zonaOlvido" class="olvido"></div>
 
@@ -544,19 +542,27 @@ async function getSupabase() {
 function verificarSesion() {
   const correo = localStorage.getItem('correo_usuario');
   const nombre = localStorage.getItem('nombre_usuario');
-  const ladoIzquierdo = document.getElementById('ladoIzquierdo');
-  const linkCerrar = document.getElementById('linkCerrar');
+  const enlaceIzquierdo = document.getElementById('enlaceIzquierdo');
+  const enlaceDerecho = document.getElementById('enlaceDerecho');
   const zonaOlvido = document.getElementById('zonaOlvido');
 
   if (correo && nombre) {
-    ladoIzquierdo.textContent = `${nombre} — Conectado`;
-    ladoIzquierdo.style.display = 'block';
-    linkCerrar.style.display = 'block';
+    enlaceIzquierdo.textContent = `${nombre} — Conectado`;
+    enlaceIzquierdo.href = '#';
+    enlaceIzquierdo.className = 'enlace-izq conectado';
+    enlaceDerecho.textContent = 'Cerrar sesión';
+    enlaceDerecho.href = '#';
+    enlaceDerecho.className = 'enlace-der';
+    enlaceDerecho.onclick = function(e) { e.preventDefault(); cerrarSesion(); };
     zonaOlvido.style.display = 'none';
   } else {
-    ladoIzquierdo.textContent = '';
-    ladoIzquierdo.style.display = 'none';
-    linkCerrar.style.display = 'none';
+    enlaceIzquierdo.textContent = 'Iniciar sesión';
+    enlaceIzquierdo.href = 'index.html';
+    enlaceIzquierdo.className = 'enlace-izq sin-sesion';
+    enlaceDerecho.textContent = 'Crear cuenta';
+    enlaceDerecho.href = 'index.html';
+    enlaceDerecho.className = 'enlace-der';
+    enlaceDerecho.onclick = null;
     zonaOlvido.innerHTML = `<a href="index.html">Volvé al inicio para entrar o crear tu cuenta</a>`;
     zonaOlvido.style.display = 'block';
   }
