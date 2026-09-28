@@ -163,23 +163,38 @@
     .boton-favorito:hover {transform: translateY(-2px);}
 
     .boton-whatsapp {
-      display: block;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
       width: 100%;
-      padding: 12px 16px;
+      padding: 14px 20px;
       background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
       color: white;
       border: none;
-      border-radius: 10px;
-      font-size: 15px;
+      border-radius: 12px;
+      font-size: 16px;
       font-weight: 700;
       cursor: pointer;
       text-decoration: none;
       text-align: center;
-      margin-top: 15px;
+      margin: 0 0 18px 0;
       box-shadow: 0 4px 14px rgba(37, 211, 102, 0.3);
       transition: all 0.2s;
     }
     .boton-whatsapp:hover {transform: translateY(-2px);}
+    .icono-wsp {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #25D366;
+      font-weight: bold;
+      font-size: 16px;
+    }
 
     .caja-codigo {
       background: #f0f7ff;
@@ -253,6 +268,36 @@
       margin-bottom: 15px;
       font-size: 15px;
     }
+    .fotos-titulo {
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-weight: 700;
+      color: #2c5282;
+      font-size: 15px;
+      text-align: center;
+    }
+    .fotos-cuadricula {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #d4c29c;
+    }
+    .foto-caja {text-align: center;}
+    .foto-ver {
+      width: 100%;
+      aspect-ratio: 4/3;
+      border-radius: 10px;
+      overflow: hidden;
+      background: #ebf4fb;
+      border: 2px solid #dceaf5;
+      transition: transform 0.2s;
+      cursor: pointer;
+    }
+    .foto-ver:hover {transform: scale(1.05);}
+    .foto-ver img {width: 100%; height: 100%; object-fit: cover;}
+
     .titulo-vehiculo {
       font-size: 20px;
       font-weight: 700;
@@ -262,14 +307,15 @@
       border-bottom: 2px solid #d4c29c;
     }
     .fila {
-      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(90, 79, 63, 0.1);
       color: #5a4f3f;
-      line-height: 1.6;
     }
     .fila strong {
       color: #1e40af;
-      min-width: 130px;
-      display: inline-block;
+      flex-shrink: 0;
     }
     .etiqueta {
       display: inline-block;
@@ -314,34 +360,6 @@
       text-decoration: none;
     }
 
-    .fotos-titulo {
-      margin-top: 22px;
-      font-weight: 700;
-      color: #2c5282;
-      font-size: 17px;
-      padding-top: 15px;
-      border-top: 2px solid #d4c29c;
-    }
-    .fotos-cuadricula {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 12px;
-      margin-top: 15px;
-    }
-    .foto-caja {text-align: center;}
-    .foto-ver {
-      width: 100%;
-      aspect-ratio: 4/3;
-      border-radius: 10px;
-      overflow: hidden;
-      background: #ebf4fb;
-      border: 2px solid #dceaf5;
-      transition: transform 0.2s;
-      cursor: pointer;
-    }
-    .foto-ver:hover {transform: scale(1.03);}
-    .foto-ver img {width: 100%; height: 100%; object-fit: cover;}
-
     /* 🔍 VENTANA AMPLIAR FOTO */
     .ventana-foto {
       position: fixed;
@@ -359,11 +377,11 @@
     .contenedor-foto-grande {
       position: relative;
       max-width: 95%;
-      max-height: 85vh;
+      max-height: 75vh;
     }
     .foto-grande {
       max-width: 100%;
-      max-height: 75vh;
+      max-height: 65vh;
       border-radius: 12px;
       box-shadow: 0 0 30px rgba(0,0,0,0.5);
     }
@@ -528,7 +546,8 @@
       <div class="logo-agua-foto"></div>
     </div>
     <a href="" id="enlaceWhatsAppFoto" class="boton-whatsapp boton-whatsapp-foto" target="_blank">
-      💬 ENVIAR MENSAJE POR WHATSAPP
+      <span class="icono-wsp">✓</span>
+      ENVIAR MENSAJE POR WHATSAPP
     </a>
   </div>
 
@@ -856,7 +875,8 @@
         </button>
 
         <a href="${armarEnlaceWhatsApp(telefonoActual)}" class="boton-whatsapp" target="_blank">
-          💬 ENVIAR MENSAJE POR WHATSAPP
+          <span class="icono-wsp">✓</span>
+          ENVIAR MENSAJE POR WHATSAPP
         </a>
 
         <div id="cajaCodigo" class="caja-codigo">
@@ -868,6 +888,11 @@
         
         <div class="tarjeta" id="tarjetaDeslizable">
           ${vehiculo.tipo_vehiculo ? `<span class="etiqueta-tipo">${vehiculo.tipo_vehiculo}</span>` : ''}
+          
+          ${hayFotos ? `
+          <div class="fotos-titulo">📸 Fotos del vehículo — Tocar para agrandar</div>
+          <div class="fotos-cuadricula">${fotosHtml}</div>
+          ` : ''}
           
           <div class="titulo-vehiculo">${vehiculo.marca || ''} ${vehiculo.modelo || ''} — ${vehiculo.anio || ''}</div>
           <div class="fila"><strong>Versión:</strong> ${vehiculo.version || '-'}</div>
@@ -885,11 +910,6 @@
           </div>
           <div class="fila" style="margin-top: 10px;"><strong>Deuda:</strong> ${vehiculo.deuda || 'Sin deudas'}</div>
           <div class="fila"><strong>Descripción:</strong> ${vehiculo.descripcion || '-'}</div>
-          
-          ${hayFotos ? `
-          <div class="fotos-titulo">📸 Fotos del vehículo — Tocar para agrandar</div>
-          <div class="fotos-cuadricula">${fotosHtml}</div>
-          ` : ''}
         </div>
       `;
       
