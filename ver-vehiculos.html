@@ -236,50 +236,26 @@
       display: block;
     }
 
-    /* 💬 Botón WhatsApp REDONDITO — LOGO OFICIAL */
-    .whatsapp-flotante {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: #25D366;
-      color: white;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-decoration: none;
-      z-index: 15;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      transition: transform 0.2s ease;
-    }
-
-    .whatsapp-flotante img {
-      width: 24px;
-      height: 24px;
-      display: block;
-    }
-
-    .whatsapp-flotante:active {
-      transform: scale(0.9);
-    }
-
+    /* ❌ CRUCECITA AFUERA — arriba a la derecha, chiquita y negra */
     .cerrar-ampliada {
       position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(255,255,255,0.9);
+      top: 15px;
+      right: 15px;
+      background: transparent;
       border: none;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      font-size: 18px;
+      font-size: 22px;
       cursor: pointer;
-      color: #5d4e37;
+      color: #000000;
       font-weight: bold;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      z-index: 15;
+      z-index: 10000;
+      line-height: 1;
+      padding: 0;
+      width: auto;
+      height: auto;
+    }
+
+    .cerrar-ampliada:hover {
+      color: #333333;
     }
 
     .sin-resultados {
@@ -329,30 +305,24 @@
     </div>
   </div>
 
-  <!-- FOTO AMPLIADA → Botón redondo con logo oficial arriba izquierda -->
+  <!-- FOTO AMPLIADA → Sin botón de WhatsApp, solo crucecita afuera -->
   <div class="fondo-ampliada" id="fondo-ampliada" onclick="cerrarAmpliada(event)">
-    <div class="foto-ampliada-caja">
-      <!-- 💬 Botón con LOGO OFICIAL de WhatsApp -->
-      <a href="" id="link-whatsapp-flotante" target="_blank" class="whatsapp-flotante" title="Escribir por WhatsApp">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.151-.197.3-.76.966-.932 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.477-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.917-2.207-.242-.571-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.21 3.074.149.198 2.096 3.2 5.077 4.487.709.305 1.262.489 1.694.625.712.227 1.36.195 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.29.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.006c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-        </svg>
-      </a>
-      
-      <button class="cerrar-ampliada" onclick="cerrarAmpliada(event)">✕</button>
+    <!-- ❌ CRUCECITA AFUERA, arriba a la derecha -->
+    <button class="cerrar-ampliada" onclick="cerrarAmpliada(event)">✕</button>
+    
+    <div class="foto-ampliada-caja" onclick="event.stopPropagation()">
       <img src="" alt="Foto ampliada" class="foto-ampliada-img" id="foto-ampliada-img">
     </div>
   </div>
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZkZW5jaHkib25seSIsInJvbGUiOiJhbm9uIiwicGFzc3dvcmQiOmZhbHNlLCJleHBpcmVzIjo5OTk5OTk5OTk5fQ==";
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let listaVehiculos = [];
     let indiceActual = 0;
-    let vehiculoActivo = null;
     let inicioX = 0;
     let ultimoDesplazamiento = 0;
 
@@ -426,7 +396,7 @@
           <div class="tarjeta-vehiculo">
             <div class="fotos-cuadricula">
               ${fotos.map((foto, idx) => foto 
-                ? `<div class="foto-cuadrito" onclick="abrirAmpliada('${foto.replace(/'/g, "\\'")}', ${i})"><img src="${foto}" alt="Foto ${idx+1}"></div>`
+                ? `<div class="foto-cuadrito" onclick="abrirAmpliada('${foto.replace(/'/g, "\\'")}')"><img src="${foto}" alt="Foto ${idx+1}"></div>`
                 : `<div class="foto-cuadrito"><div class="sin-foto-cuadrito">Sin foto</div></div>`
               ).join("")}
             </div>
@@ -560,28 +530,14 @@
       }, { passive: true });
     }
 
-    // ✅ ABRIR FOTO GRANDE — botón con logo oficial de WhatsApp
-    function abrirAmpliada(url, indiceVehiculo) {
-      vehiculoActivo = listaVehiculos[indiceVehiculo];
+    // ✅ ABRIR FOTO GRANDE — sin botón flotante de WhatsApp
+    function abrirAmpliada(url) {
       document.getElementById("foto-ampliada-img").src = url;
-      
-      if (vehiculoActivo && vehiculoActivo.telefono) {
-        const mensaje = encodeURIComponent(
-          `Hola! 👋 Vi tu anuncio en Vehículos en Venta y me gustaría comunicarme con vos sobre el vehículo ${vehiculoActivo.marca || ''} ${vehiculoActivo.modelo || ''}. Quedo atento, gracias!`
-        );
-        document.getElementById("link-whatsapp-flotante").href = 
-          `https://wa.me/549${vehiculoActivo.telefono}?text=${mensaje}`;
-        document.getElementById("link-whatsapp-flotante").style.display = "flex";
-      } else {
-        document.getElementById("link-whatsapp-flotante").style.display = "none";
-      }
-      
       document.getElementById("fondo-ampliada").classList.add("visible");
     }
 
     function cerrarAmpliada(event) {
-      if (!event.target.closest('.foto-ampliada-img') && 
-          !event.target.closest('.whatsapp-flotante')) {
+      if (event.target.closest('.cerrar-ampliada') || event.target.closest('.fondo-ampliada')) {
         document.getElementById("fondo-ampliada").classList.remove("visible");
       }
     }
