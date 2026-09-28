@@ -389,6 +389,25 @@
       border-radius: 12px;
       box-shadow: 0 0 30px rgba(0,0,0,0.5);
     }
+    .logo-wsp-esquina {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 40px;
+      height: 40px;
+      z-index: 10;
+      pointer-events: auto;
+      cursor: pointer;
+      background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-size: 22px;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
     .logo-agua-foto {
       position: absolute;
       top: 10px;
@@ -408,11 +427,6 @@
       cursor: pointer;
       font-weight: bold;
       line-height: 1;
-    }
-    .boton-whatsapp-foto {
-      margin-top: 20px;
-      width: 90%;
-      max-width: 400px;
     }
   </style>
 </head>
@@ -542,14 +556,11 @@
 
   <div class="ventana-foto" id="ventanaFoto">
     <div class="contenedor-foto-grande">
+      <a href="" id="enlaceWhatsAppFoto" class="logo-wsp-esquina" target="_blank">💬</a>
       <span class="cerrar-foto" id="cerrarFoto">&times;</span>
       <img src="" alt="Foto ampliada" class="foto-grande" id="fotoGrande">
       <div class="logo-agua-foto"></div>
     </div>
-    <a href="" id="enlaceWhatsAppFoto" class="boton-whatsapp boton-whatsapp-foto" target="_blank">
-      <span class="icono-wsp">✓</span>
-      ENVIAR MENSAJE POR WHATSAPP
-    </a>
   </div>
 
   <script>
