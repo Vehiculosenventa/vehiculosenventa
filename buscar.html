@@ -22,15 +22,9 @@
       margin-bottom: 20px;
       padding-bottom: 12px;
       border-bottom: 2px solid rgba(44, 82, 130, 0.15);
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .titulo-pagina {
-      font-size: 18px;
-      font-weight: 800;
-      color: #2c5282;
     }
     .zona-izquierda {
+      order: 1;
       color: #166534;
       font-weight: 700;
       font-size: 14px;
@@ -38,12 +32,22 @@
       align-items: center;
       gap: 6px;
     }
+    .titulo-pagina {
+      order: 2;
+      font-size: 18px;
+      font-weight: 800;
+      color: #2c5282;
+      text-align: center;
+      flex: 1;
+    }
     .zona-derecha {
+      order: 3;
       color: #1d4ed8;
       font-weight: 700;
       font-size: 14px;
       cursor: pointer;
       text-decoration: none;
+      text-align: right;
     }
     .zona-derecha:hover {text-decoration: underline;}
 
@@ -113,21 +117,6 @@
       border-radius: 8px;
     }
 
-    .cargando-primero {
-      text-align: center;
-      padding: 30px 20px;
-      color: #2c5282;
-      font-size: 16px;
-      font-weight: 600;
-    }
-    .cargando-mas {
-      text-align: center;
-      padding: 10px;
-      color: #6b7280;
-      font-size: 13px;
-      font-style: italic;
-    }
-
     .enlace-favorito {
       display: inline-flex;
       align-items: center;
@@ -155,14 +144,8 @@
       cursor: default;
       justify-content: flex-end;
     }
-    .estrella-amarilla {
-      color: #facc15;
-      font-size: 20px;
-    }
-    .estrella-gris {
-      color: #9ca3af;
-      font-size: 20px;
-    }
+    .estrella-amarilla { color: #facc15; font-size: 20px; }
+    .estrella-gris { color: #9ca3af; font-size: 20px; }
 
     .boton-whatsapp {
       display: flex;
@@ -299,7 +282,12 @@
       cursor: pointer;
     }
     .foto-ver:hover {transform: scale(1.05);}
-    .foto-ver img {width: 100%; height: 100%; object-fit: cover;}
+    .foto-ver img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      loading: lazy;
+    }
 
     .titulo-vehiculo {
       font-size: 20px;
@@ -316,10 +304,7 @@
       border-bottom: 1px solid rgba(90, 79, 63, 0.1);
       color: #5a4f3f;
     }
-    .fila strong {
-      color: #1e40af;
-      flex-shrink: 0;
-    }
+    .fila strong {color: #1e40af; flex-shrink: 0;}
     .etiqueta {
       display: inline-block;
       padding: 6px 14px;
@@ -407,8 +392,8 @@
 
   <div class="contenedor">
     <div class="barra-superior">
-      <div class="titulo-pagina">🔍 Buscar Vehículo</div>
       <div class="zona-izquierda" id="zonaIzquierda">✅ Conectado</div>
+      <div class="titulo-pagina">🔍 Buscar Vehículo</div>
       <a href="#" class="zona-derecha" id="botonCerrar" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
     </div>
 
@@ -542,7 +527,6 @@
     let idVehiculoActual = null;
     let telefonoActual = '';
     let idUsuarioActual = null;
-    let cargandoMas = false;
 
     let xInicio = 0, xFin = 0;
     const UMBRAL_DESLIZAR = 50;
@@ -639,7 +623,7 @@
       
       alert('✅ ¡Agregado a "Mis Vehículos"! ⭐🎉');
       ocultarCajaCodigo();
-      await cargarUno(indiceActual);
+      await mostrarTarjeta(listaVehiculos[indiceActual], indiceActual, listaVehiculos.length);
     }
 
     function armarEnlaceWhatsApp(telefono) {
@@ -670,7 +654,6 @@
       }
     }
 
-    // ⚡ Mostrar tarjeta de un vehículo
     async function mostrarTarjeta(vehiculo, posicion, total) {
       const caja = document.getElementById('caja_resultado');
       const contador = document.getElementById('contador');
@@ -767,10 +750,9 @@
       const caja = document.getElementById('caja_resultado');
       const contador = document.getElementById('contador');
       
-      // ⚡ Mostrar cartelito rápido
-      caja.innerHTML = `<div class="cargando-primero">🔄 Cargando el primero...</div>`;
+      caja.innerHTML = `<div style="text-align:center;padding:30px;color:#2c5282;font-weight:600;">🔄 Cargando...</div>`;
       contador.textContent = '';
-      listaVehiculos = []; indiceActual = 0; idVehiculoActual = null; telefonoActual = ''; cargandoMas = false;
+      listaVehiculos = []; indiceActual = 0; idVehiculoActual = null; telefonoActual = '';
 
       const correo = localStorage.getItem('correo_usuario');
       idUsuarioActual = await obtenerUsuarioId(correo);
@@ -797,7 +779,6 @@
         return; 
       }
 
-      // Aplicar filtros adicionales
       let resultados = data;
       if (kmMin) { const n = parseInt(kmMin); if (!isNaN(n)) resultados = resultados.filter(a => a.kilometraje !== null && a.kilometraje >= n); }
       if (kmMax) { const n = parseInt(kmMax); if (!isNaN(n)) resultados = resultados.filter(a => a.kilometraje === null || a.kilometraje <= n); }
@@ -810,21 +791,12 @@
       }
 
       listaVehiculos = resultados;
-      
-      // ⚡ MOSTRAR EL PRIMERO DE INMEDIATO
       await mostrarTarjeta(listaVehiculos[0], 0, listaVehiculos.length);
-      
-      // ⚡ El resto ya está cargado, no hay que esperar nada más
-      // Todo listo para deslizar
     }
 
     async function iniciar() {
       await verificarSesion();
       await getSupabase();
-      document.addEventListener('touchstart', registrarInicioDeslizamiento, { passive: true });
-      document.addEventListener('touchend', registrarFinDeslizamiento, { passive: true });
-      document.addEventListener('mousedown', registrarInicioDeslizamiento);
-      document.addEventListener('mouseup', registrarFinDeslizamiento);
     }
     iniciar();
   </script>
