@@ -582,8 +582,8 @@
         localStorage.setItem('correo_usuario', session.user.email || 'conectado');
         localStorage.setItem('nombre_usuario', session.user.user_metadata?.nombre || 'Usuario');
         zonaUsuario.innerHTML = `
-          <a href="mis-vehiculos.html" class="texto-favoritos">💙 Mis Vehículos</a>
-          <span class="texto-conectado">✅ Conectado</span>
+          <a href="mis-vehiculos.html" class="texto-favoritos"></a>
+          <span class="texto-conectado"> Conectado</span>
           <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
         `;
         return true;
@@ -593,7 +593,7 @@
       const nombre = localStorage.getItem('nombre_usuario');
       if (correo && nombre) {
         zonaUsuario.innerHTML = `
-          <a href="mis-vehiculos.html" class="texto-favoritos">💙 Mis Vehículos</a>
+          <a href="mis-vehiculos.html" class="texto-favoritos"></a>
           <span class="texto-conectado">✅ Conectado</span>
           <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
         `;
