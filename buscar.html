@@ -350,9 +350,9 @@
 
   <div class="contenedor">
     <div class="barra-superior">
-      <div class="zona-izquierda" id="zonaIzquierda">✅ Conectado</div>
+      <div class="zona-izquierda" id="zonaIzquierda">🔄 Verificando...</div>
       <div class="titulo-pagina">🔍 Buscar Vehículo</div>
-      <a href="#" class="zona-derecha" id="botonCerrar" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
+      <a href="#" class="zona-derecha" id="botonCerrar" onclick="cerrarSesion(); return false;" style="display:none;">Cerrar sesión</a>
     </div>
 
     <div class="buscador">
@@ -477,20 +477,21 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
     const CORREO_ADMIN = "vehiculosenventas@gmail.com";
     const LIMITE_FAVORITOS = 5;
-    const CARGA_POR_PAGINA = 1; // De a uno por vez
+    const CARGA_POR_PAGINA = 1;
 
     let sbClient = null;
-    let idsCoincidentes = []; // Solo guarda los IDs, no todo
-    let vehiculosCargados = {}; // Cache de los ya cargados
+    let idsCoincidentes = [];
+    let vehiculosCargados = {};
     let indiceActual = -1;
     let idVehiculoActual = null;
     let telefonoActual = '';
     let idUsuarioActual = null;
     let correoUsuarioActual = null;
+    let sesionVerificada = false;
     let cargando = false;
 
     let xInicio = 0, xFin = 0;
@@ -510,30 +511,48 @@
       const zonaIzquierda = document.getElementById('zonaIzquierda');
       const botonCerrar = document.getElementById('botonCerrar');
       const sb = await getSupabase();
+      
+      // Revisar en TODOS los lugares posibles
       const { data: { session } } = await sb.auth.getSession();
       
-      correoUsuarioActual = localStorage.getItem('correo_usuario') || localStorage.getItem('correo');
+      // Tomar el correo de donde lo encuentre
+      correoUsuarioActual = 
+        (session?.user?.email) || 
+        localStorage.getItem('correo_usuario') || 
+        localStorage.getItem('correo');
       
       if (session || correoUsuarioActual) {
+        sesionVerificada = true;
         zonaIzquierda.textContent = "✅ Conectado";
         botonCerrar.style.display = "inline";
+        
+        // Guardar en localStorage para que siempre lo encuentre
         if (correoUsuarioActual) {
-          const { data } = await sb.from('usuarios').select('id').eq('correo', correoUsuarioActual).single();
-          idUsuarioActual = data?.id || null;
+          localStorage.setItem('correo_usuario', correoUsuarioActual);
+          try {
+            const { data } = await sb.from('usuarios').select('id').eq('correo', correoUsuarioActual).single();
+            idUsuarioActual = data?.id || null;
+          } catch (e) {
+            idUsuarioActual = null;
+          }
         }
         return true;
       }
       
+      // Ninguna sesión encontrada
+      sesionVerificada = false;
       zonaIzquierda.textContent = "";
       botonCerrar.style.display = "none";
       idUsuarioActual = null;
+      correoUsuarioActual = null;
       return false;
     }
 
     async function cerrarSesion() {
       const sb = await getSupabase();
       await sb.auth.signOut();
-      localStorage.clear();
+      localStorage.removeItem('correo_usuario');
+      localStorage.removeItem('correo');
       window.location.href = 'index.html';
     }
 
@@ -560,7 +579,8 @@
     }
 
     async function agregarFavorito(vehiculoId) {
-      if (!idUsuarioActual) {
+      // Verificación COMPLETA: revisa todos los casos
+      if (!sesionVerificada && !idUsuarioActual && !correoUsuarioActual) {
         alert('🔐 Primero debés iniciar sesión');
         window.location.href = 'iniciar-sesion.html';
         return false;
@@ -765,7 +785,6 @@
       caja.innerHTML = `<div style="text-align:center;padding:30px;color:#2c5282;font-weight:600;">🔄 Buscando...</div>`;
       contador.textContent = '';
       
-      // Reiniciar todo
       idsCoincidentes = [];
       vehiculosCargados = {};
       indiceActual = -1;
@@ -773,6 +792,7 @@
       telefonoActual = '';
       cargando = false;
 
+      // Verificar sesión ANTES de todo
       await verificarSesion();
 
       const sb = await getSupabase();
@@ -799,7 +819,6 @@
         return; 
       }
 
-      // Filtrar en el navegador los rangos
       let resultadosFiltrados = data;
       if (kmMin) { const n = parseInt(kmMin); if (!isNaN(n)) resultadosFiltrados = resultadosFiltrados.filter(a => a.kilometraje !== null && a.kilometraje >= n); }
       if (kmMax) { const n = parseInt(kmMax); if (!isNaN(n)) resultadosFiltrados = resultadosFiltrados.filter(a => a.kilometraje === null || a.kilometraje <= n); }
@@ -811,10 +830,8 @@
         return; 
       }
 
-      // Guardar SOLO los IDs, no todo el objeto
       idsCoincidentes = resultadosFiltrados.map(a => a.id);
       
-      // Cargar y mostrar el PRIMERO solamente
       indiceActual = 0;
       const primerVehiculo = await cargarVehiculoPorId(idsCoincidentes[0]);
       await mostrarTarjeta(primerVehiculo, 0, idsCoincidentes.length);
