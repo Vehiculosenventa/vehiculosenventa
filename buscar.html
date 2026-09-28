@@ -565,7 +565,7 @@ function verificarSesion() {
     ladoDerecho.innerHTML = `<button class="boton-azul" onclick="cerrarSesion()">Cerrar sesión</button>`;
     zonaOlvido.style.display = 'none';
   } else {
-    ladoIzquierdo.innerHTML = `<a href="ingresar.html" class="boton-azul">Iniciar sesión</a>`;
+    ladoIzquierdo.innerHTML = `<a href="iniciar-sesion.html" class="boton-azul">Iniciar sesión</a>`;
     ladoDerecho.innerHTML = `<a href="registrar.html" class="boton-azul">Crear cuenta</a>`;
     zonaOlvido.innerHTML = `<a href="index.html">Volvé al inicio para entrar o crear tu cuenta</a>`;
     zonaOlvido.style.display = 'block';
@@ -576,7 +576,7 @@ function cerrarSesion() {
   localStorage.removeItem('correo_usuario');
   localStorage.removeItem('nombre_usuario');
   localStorage.removeItem('usuario_id');
-  window.location.href = 'index.html';
+  window.location.href = 'cerrar-secion.html';
 }
 
 async function obtenerUsuarioId(correo) {
