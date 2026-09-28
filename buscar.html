@@ -23,21 +23,15 @@
       border-bottom: 2px solid rgba(44, 82, 130, 0.15);
       flex-wrap: wrap;
     }
+    .lado-izquierdo {
+      font-weight: 600;
+      color: #16a34a;
+      font-size: 14px;
+    }
     .titulo-pagina {
       font-size: 18px;
       font-weight: 800;
       color: #2c5282;
-    }
-    .zona-usuario {
-      display: flex;
-      gap: 15px;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .nombre-usuario {
-      font-weight: 600;
-      color: #16a34a;
-      font-size: 14px;
     }
     .link-cerrar {
       color: #1e40af;
@@ -390,11 +384,9 @@
 
   <div class="contenedor">
     <div class="barra-superior">
+      <div class="lado-izquierdo" id="ladoIzquierdo"></div>
       <div class="titulo-pagina">🔍 Buscar Vehículo</div>
-      <div class="zona-usuario">
-        <span class="nombre-usuario" id="nombreUsuario"></span>
-        <a href="#" class="link-cerrar" id="linkCerrar" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
-      </div>
+      <a href="#" class="link-cerrar" id="linkCerrar" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
     </div>
     <div id="zonaOlvido" class="olvido"></div>
 
@@ -557,18 +549,18 @@ async function getSupabase() {
 function verificarSesion() {
   const correo = localStorage.getItem('correo_usuario');
   const nombre = localStorage.getItem('nombre_usuario');
-  const nombreUsuario = document.getElementById('nombreUsuario');
+  const ladoIzquierdo = document.getElementById('ladoIzquierdo');
   const linkCerrar = document.getElementById('linkCerrar');
   const zonaOlvido = document.getElementById('zonaOlvido');
 
   if (correo && nombre) {
-    nombreUsuario.textContent = nombre;
-    nombreUsuario.style.display = 'inline';
+    ladoIzquierdo.textContent = `${nombre} — Conectado`;
+    ladoIzquierdo.style.display = 'inline';
     linkCerrar.style.display = 'inline';
     zonaOlvido.style.display = 'none';
   } else {
-    nombreUsuario.textContent = '';
-    nombreUsuario.style.display = 'none';
+    ladoIzquierdo.textContent = '';
+    ladoIzquierdo.style.display = 'none';
     linkCerrar.style.display = 'none';
     zonaOlvido.innerHTML = `<a href="index.html">Volvé al inicio para entrar o crear tu cuenta</a>`;
     zonaOlvido.style.display = 'block';
