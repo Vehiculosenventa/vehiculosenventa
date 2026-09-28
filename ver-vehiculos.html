@@ -73,7 +73,7 @@
       position: relative;
     }
 
-    /* ⭐ ÁREA DE FAVORITOS — arriba a la derecha con texto */
+    /* ⭐ ÁREA DE FAVORITOS — siempre mismo texto, solo cambia la estrella */
     .caja-favorito {
       position: absolute;
       top: 10px;
@@ -97,14 +97,7 @@
     .texto-favorito {
       font-size: 14px;
       font-weight: 600;
-    }
-
-    .no-favorito .texto-favorito {
-      color: #0066cc;
-    }
-
-    .es-favorito .texto-favorito {
-      color: #888888;
+      color: #0066cc; /* SIEMPRE AZUL — no cambia nunca */
     }
 
     .icono-favorito {
@@ -114,11 +107,11 @@
     }
 
     .no-favorito .icono-favorito {
-      color: #ffcc00;
+      color: #ffcc00; /* Amarilla = NO guardado */
     }
 
     .es-favorito .icono-favorito {
-      color: #999999;
+      color: #999999; /* Gris = SÍ guardado */
     }
 
     .fotos-cuadricula {
@@ -355,11 +348,9 @@
     </div>
   </div>
 
-  <!-- FOTO AMPLIADA → Sin botón de WhatsApp, solo crucecita afuera -->
+  <!-- FOTO AMPLIADA -->
   <div class="fondo-ampliada" id="fondo-ampliada" onclick="cerrarAmpliada(event)">
-    <!-- ❌ CRUCECITA AFUERA, arriba a la derecha -->
     <button class="cerrar-ampliada" onclick="cerrarAmpliada(event)">✕</button>
-    
     <div class="foto-ampliada-caja" onclick="event.stopPropagation()">
       <img src="" alt="Foto ampliada" class="foto-ampliada-img" id="foto-ampliada-img">
     </div>
@@ -367,7 +358,7 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZkZW5jaHkib25seSIsInJvbGUiOiJhbm9uIiwicGFzc3dvcmQiOmZhbHNlLCJleHBpcmVzIjo5OTk5OTk5OTk5fQ==";
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -464,13 +455,11 @@
         pantalla.className = "pantalla-vehiculo";
         pantalla.innerHTML = `
           <div class="tarjeta-vehiculo">
-            <!-- ⭐ ESTRELLA + TEXTO ARRIBA A LA DERECHA -->
+            <!-- ⭐ ESTRELLA + TEXTO SIEMPRE IGUAL -->
             <button class="caja-favorito ${estaFavorito ? 'es-favorito' : 'no-favorito'}" 
                     onclick="alternarFavorito(${idVeh})">
               <span class="icono-favorito">★</span>
-              <span class="texto-favorito">
-                ${estaFavorito ? 'Quitar de Mi Favorito' : 'Agregar a Mi Favorito'}
-              </span>
+              <span class="texto-favorito">Agregar a Mi Favorito</span>
             </button>
             
             <div class="fotos-cuadricula">
