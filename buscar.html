@@ -41,6 +41,13 @@
       font-weight: 700;
       font-size: 14px;
     }
+    .texto-favoritos {
+      color: #1d4ed8;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+    }
+    .texto-favoritos:hover {text-decoration: underline;}
     .texto-cerrar {
       color: #1d4ed8;
       font-weight: 700;
@@ -557,7 +564,7 @@
 
     let xInicio = 0, xFin = 0;
     const UMBRAL_DESLIZAR = 50;
-    let bloqueadoDeslizamiento = false; // ✅ Evita saltos múltiples
+    let bloqueadoDeslizamiento = false;
 
     const ventanaFoto = document.getElementById('ventanaFoto');
     const fotoGrande = document.getElementById('fotoGrande');
@@ -578,6 +585,7 @@
         localStorage.setItem('correo_usuario', session.user.email || 'conectado');
         localStorage.setItem('nombre_usuario', session.user.user_metadata?.nombre || 'Usuario');
         zonaUsuario.innerHTML = `
+          <a href="favoritos.html" class="texto-favoritos">💙 Mis Vehículos</a>
           <span class="texto-conectado">✅ Conectado</span>
           <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
         `;
@@ -588,6 +596,7 @@
       const nombre = localStorage.getItem('nombre_usuario');
       if (correo && nombre) {
         zonaUsuario.innerHTML = `
+          <a href="favoritos.html" class="texto-favoritos">💙 Mis Vehículos</a>
           <span class="texto-conectado">✅ Conectado</span>
           <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
         `;
@@ -595,8 +604,8 @@
       }
       
       zonaUsuario.innerHTML = `
-        <a href="ingresar.html" class="btn-sesion btn-iniciar">🔑 Iniciar sesión</a>
-        <a href="registro.html" class="btn-sesion btn-registrar">✨ Registrarse</a>
+        <a href="iniciar-sesion.html" class="btn-sesion btn-iniciar">🔑 Iniciar sesión</a>
+        <a href="registrarse.html" class="btn-sesion btn-registrar">✨ Registrarse</a>
       `;
       return false;
     }
@@ -625,7 +634,7 @@
       const tieneSesion = await verificarSesion();
       if (!tieneSesion) {
         alert('🔐 Primero debés entrar con tu cuenta');
-        window.location.href = 'ingresar.html';
+        window.location.href = 'iniciar-sesion.html';
         return;
       }
       document.getElementById('cajaCodigo').classList.add('mostrar');
@@ -678,13 +687,13 @@
       xInicio = e.touches ? e.touches[0].clientX : e.clientX;
     }
     function registrarFinDeslizamiento(e) {
-      if (bloqueadoDeslizamiento) return; // ✅ Bloquea si ya se deslizó
+      if (bloqueadoDeslizamiento) return;
       xFin = e.changedTouches ? e.changedTouches[0].clientX : e.clientX;
       const dif = xInicio - xFin;
       if (Math.abs(dif) > UMBRAL_DESLIZAR) {
-        bloqueadoDeslizamiento = true; // ✅ Bloquea inmediatamente
+        bloqueadoDeslizamiento = true;
         dif > 0 ? vehiculoSiguiente() : vehiculoAnterior();
-        setTimeout(() => { bloqueadoDeslizamiento = false; }, 300); // ✅ Desbloquea después
+        setTimeout(() => { bloqueadoDeslizamiento = false; }, 300);
       }
     }
 
