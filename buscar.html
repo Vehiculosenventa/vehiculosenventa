@@ -30,15 +30,31 @@
       margin-bottom: 20px;
       padding-bottom: 12px;
       border-bottom: 2px solid rgba(44, 82, 130, 0.15);
+      min-height: 48px;
     }
-    .enlace-izq, .enlace-der {
+
+    .texto-conectado {
+      color: #15803d;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .boton-azul {
+      display: inline-block;
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: white;
       font-weight: 600;
       font-size: 15px;
       text-decoration: none;
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      text-align: center;
     }
-    .enlace-izq.conectado {color: #15803d;}
-    .enlace-izq.sin-sesion, .enlace-der {color: #1e40af;}
-    .enlace-izq:hover, .enlace-der:hover {text-decoration: underline;}
+    .boton-azul:hover {
+      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
+    }
 
     .olvido {
       width: 100%;
@@ -55,8 +71,6 @@
       color: #1565C0;
       text-decoration: underline;
     }
-
-    h1 { display: none; }
 
     .buscador {
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
@@ -383,8 +397,8 @@
     <h1 class="titulo-pagina">🔍 Buscar Vehículo</h1>
 
     <div class="barra-superior">
-      <a href="#" class="enlace-izq" id="enlaceIzquierdo"></a>
-      <a href="#" class="enlace-der" id="enlaceDerecho"></a>
+      <div id="ladoIzquierdo"></div>
+      <div id="ladoDerecho"></div>
     </div>
     <div id="zonaOlvido" class="olvido"></div>
 
@@ -542,27 +556,17 @@ async function getSupabase() {
 function verificarSesion() {
   const correo = localStorage.getItem('correo_usuario');
   const nombre = localStorage.getItem('nombre_usuario');
-  const enlaceIzquierdo = document.getElementById('enlaceIzquierdo');
-  const enlaceDerecho = document.getElementById('enlaceDerecho');
+  const ladoIzquierdo = document.getElementById('ladoIzquierdo');
+  const ladoDerecho = document.getElementById('ladoDerecho');
   const zonaOlvido = document.getElementById('zonaOlvido');
 
   if (correo && nombre) {
-    enlaceIzquierdo.textContent = `${nombre} — Conectado`;
-    enlaceIzquierdo.href = '#';
-    enlaceIzquierdo.className = 'enlace-izq conectado';
-    enlaceDerecho.textContent = 'Cerrar sesión';
-    enlaceDerecho.href = '#';
-    enlaceDerecho.className = 'enlace-der';
-    enlaceDerecho.onclick = function(e) { e.preventDefault(); cerrarSesion(); };
+    ladoIzquierdo.innerHTML = `<span class="texto-conectado">${nombre} — Conectado</span>`;
+    ladoDerecho.innerHTML = `<button class="boton-azul" onclick="cerrarSesion()">Cerrar sesión</button>`;
     zonaOlvido.style.display = 'none';
   } else {
-    enlaceIzquierdo.textContent = 'Iniciar sesión';
-    enlaceIzquierdo.href = 'index.html';
-    enlaceIzquierdo.className = 'enlace-izq sin-sesion';
-    enlaceDerecho.textContent = 'Crear cuenta';
-    enlaceDerecho.href = 'index.html';
-    enlaceDerecho.className = 'enlace-der';
-    enlaceDerecho.onclick = null;
+    ladoIzquierdo.innerHTML = `<a href="index.html" class="boton-azul">Iniciar sesión</a>`;
+    ladoDerecho.innerHTML = `<a href="index.html" class="boton-azul">Crear cuenta</a>`;
     zonaOlvido.innerHTML = `<a href="index.html">Volvé al inicio para entrar o crear tu cuenta</a>`;
     zonaOlvido.style.display = 'block';
   }
