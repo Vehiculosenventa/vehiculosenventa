@@ -577,37 +577,42 @@
       return sbClient;
     }
 
-    // ✅ Verificar sesión REAL de Supabase + respaldo en localStorage
+    // ✅ VERIFICAR SESIÓN REAL DE SUPABASE + respaldo localStorage
     async function verificarSesion() {
       const zonaUsuario = document.getElementById('zonaUsuario');
       const sb = await getSupabase();
       
-      // Primero intentamos con Supabase
+      // 1. Primero consultamos la sesión REAL de Supabase
       const { data: { session } } = await sb.auth.getSession();
       
       if (session) {
-        // Conectado ✅
+        // ✅ Conectado: guardamos también en localStorage para compartir entre páginas
+        localStorage.setItem('correo_usuario', session.user.email || 'conectado');
+        localStorage.setItem('nombre_usuario', session.user.user_metadata?.nombre || 'Usuario');
         zonaUsuario.innerHTML = `
           <span class="texto-conectado">✅ Conectado</span>
           <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
         `;
-      } else {
-        // Respaldamos con localStorage por si acaso
-        const correo = localStorage.getItem('correo_usuario');
-        const nombre = localStorage.getItem('nombre_usuario');
-        if (correo && nombre) {
-          zonaUsuario.innerHTML = `
-            <span class="texto-conectado">✅ Conectado</span>
-            <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
-          `;
-        } else {
-          // No conectado ❌
-          zonaUsuario.innerHTML = `
-            <a href="ingresar.html" class="btn-sesion btn-iniciar">🔑 Iniciar sesión</a>
-            <a href="registro.html" class="btn-sesion btn-registrar">✨ Registrarse</a>
-          `;
-        }
+        return true;
       }
+      
+      // 2. Si no hay sesión en Supabase, revisamos localStorage como respaldo
+      const correo = localStorage.getItem('correo_usuario');
+      const nombre = localStorage.getItem('nombre_usuario');
+      if (correo && nombre) {
+        zonaUsuario.innerHTML = `
+          <span class="texto-conectado">✅ Conectado</span>
+          <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
+        `;
+        return true;
+      }
+      
+      // ❌ No conectado
+      zonaUsuario.innerHTML = `
+        <a href="ingresar.html" class="btn-sesion btn-iniciar">🔑 Iniciar sesión</a>
+        <a href="registro.html" class="btn-sesion btn-registrar">✨ Registrarse</a>
+      `;
+      return false;
     }
 
     async function cerrarSesion() {
@@ -637,9 +642,10 @@
       return isNaN(valor) ? null : valor;
     }
 
-    function mostrarCajaCodigo() {
-      const correo = localStorage.getItem('correo_usuario');
-      if (!correo) {
+    // ✅ MOSTRAR CAJA DE CÓDIGO: revisa sesión real antes de redirigir
+    async function mostrarCajaCodigo() {
+      const tieneSesion = await verificarSesion();
+      if (!tieneSesion) {
         alert('🔐 Primero debés entrar con tu cuenta');
         window.location.href = 'ingresar.html';
         return;
