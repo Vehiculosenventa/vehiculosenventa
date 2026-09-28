@@ -155,7 +155,6 @@
       gap: 8px;
       font-size: 17px;
       font-weight: 700;
-      cursor: pointer;
       margin: 0 0 18px 0;
       padding: 8px 4px;
       border: none;
@@ -164,6 +163,7 @@
     }
     .enlace-favorito.agregar {
       color: #1d4ed8;
+      cursor: pointer;
     }
     .enlace-favorito.agregar:hover {
       color: #1e40af;
@@ -787,7 +787,7 @@
 
       const enlaceFavoritoHtml = guardado
         ? `<span class="enlace-favorito guardado"><span class="estrella-gris">⭐</span> En Mis Vehículos</span>`
-        : `<button class="enlace-favorito agregar" onclick="mostrarCajaCodigo()"><span class="estrella-amarilla">⭐</span> Agregar a Mi Vehículo</button>`;
+        : `<span class="enlace-favorito agregar" onclick="mostrarCajaCodigo()"><span class="estrella-amarilla">⭐</span> Agregar a Mi Vehículo</span>`;
 
       caja.innerHTML = `
         <div class="tarjeta" id="tarjetaDeslizable">
