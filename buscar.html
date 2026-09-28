@@ -82,7 +82,6 @@
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 28px;
       border-radius: 18px;
-      box-shadow: 0 4px 14px rgba(44, 82, 130, 0.08);
       margin-bottom: 22px;
       border: 1px solid #bfa980;
     }
@@ -106,13 +105,11 @@
       border-radius: 10px;
       font-size: 15px;
       background: white;
-      transition: all 0.2s;
       color: #4a5568;
     }
     input:focus, select:focus {
       outline: none;
       border-color: #3182ce;
-      box-shadow: 0 0 0 3px rgba(49, 130, 206, 0.12);
     }
     .boton-buscar {
       width: 100%;
@@ -124,13 +121,10 @@
       font-size: 17px;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.2s;
       margin-top: 8px;
-      box-shadow: 0 4px 12px rgba(49, 130, 206, 0.15);
     }
     .boton-buscar:hover {
       background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
-      transform: translateY(-1px);
     }
 
     .navegacion {
@@ -141,11 +135,7 @@
       padding: 14px 18px;
       background: rgba(255, 255, 255, 0.6);
       border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(44, 82, 130, 0.08);
-      opacity: 0.4;
-      transition: opacity 0.3s;
     }
-    .navegacion.activa {opacity: 1;}
     .navegacion button {
       padding: 11px 22px;
       font-size: 15px;
@@ -155,17 +145,10 @@
       background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
       color: white;
       font-weight: 600;
-      transition: all 0.2s;
-    }
-    .navegacion button:hover {
-      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
-      transform: translateY(-1px);
     }
     .navegacion button:disabled {
       background: #c5d6e8;
       cursor: not-allowed;
-      transform: none;
-      opacity: 0.7;
     }
     .contador {
       font-size: 16px;
@@ -185,10 +168,22 @@
       font-weight: 700;
       cursor: pointer;
       margin: 0 0 18px 0;
-      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.3);
-      transition: all 0.2s;
     }
-    .boton-favorito:hover {transform: translateY(-2px);}
+    .boton-favorito:disabled {
+      background: #9ca3af;
+      cursor: not-allowed;
+    }
+    .aviso-limite {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+    }
+    .aviso-limite.mostrar {display: block;}
 
     .caja-codigo {
       background: #f0f7ff;
@@ -242,14 +237,8 @@
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 25px;
       border-radius: 16px;
-      box-shadow: 0 4px 12px rgba(44, 82, 130, 0.08);
-      animation: aparecer 0.3s ease;
       margin-bottom: 20px;
       border: 1px solid #bfa980;
-    }
-    @keyframes aparecer {
-      from {opacity: 0; transform: translateX(8px);}
-      to {opacity: 1; transform: translateX(0);}
     }
     .etiqueta-tipo {
       display: inline-block;
@@ -315,25 +304,16 @@
       padding: 12px;
       background: rgba(255, 255, 255, 0.6);
       border-radius: 10px;
-      transition: all 0.2s;
     }
     .volver:hover {
       background: #d7e6f2;
-      text-decoration: none;
     }
 
-    .fotos-titulo {
-      margin-top: 22px;
-      font-weight: 700;
-      color: #2c5282;
-      font-size: 17px;
-      padding-top: 15px;
-      border-top: 2px solid #d4c29c;
-    }
+    .fotos-titulo {display: none;}
     .fotos-cuadricula {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
       margin-top: 15px;
     }
     .foto-caja {text-align: center;}
@@ -344,24 +324,17 @@
       overflow: hidden;
       background: #ebf4fb;
       border: 2px solid #dceaf5;
-      transition: transform 0.2s;
       cursor: pointer;
     }
-    .foto-ver:hover {transform: scale(1.03);}
     .foto-ver img {width: 100%; height: 100%; object-fit: cover;}
-    .foto-nombre {
-      font-size: 11px;
-      color: #5a4f3f;
-      padding: 5px 0;
-      font-weight: 600;
-    }
+    .foto-nombre {display: none;}
 
-    /* 🔍 VENTANA AMPLIAR FOTO */
+    /* VENTANA FOTO GRANDE */
     .ventana-foto {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0,0,0,0.9);
+      background: rgba(0,0,0,0.92);
       display: none;
       align-items: center;
       justify-content: center;
@@ -373,14 +346,29 @@
       position: relative;
       max-width: 95%;
       max-height: 90vh;
+      touch-action: pan-y;
+      user-select: none;
     }
     .foto-grande {
       max-width: 100%;
-      max-height: 85vh;
+      max-height: 75vh;
       border-radius: 12px;
-      box-shadow: 0 0 30px rgba(0,0,0,0.5);
     }
-    /* 💧 LOGO DE AGUA EN ESQUINA SUPERIOR DERECHA */
+    .boton-wsp-flotante {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #25D366;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10000;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+    }
+    .boton-wsp-flotante svg {width: 26px; height: 26px; fill: white;}
     .logo-agua-foto {
       position: absolute;
       top: 10px;
@@ -400,6 +388,12 @@
       cursor: pointer;
       font-weight: bold;
       line-height: 1;
+    }
+    .indicador-foto {
+      color: #ccc;
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: center;
     }
   </style>
 </head>
@@ -441,7 +435,7 @@
       </div>
       <div class="campo">
         <label>📅 Año</label>
-        <input type="number" id="buscar_anio" placeholder="Ej: 2024 — Solo 4 dígitos" min="1900" max="2100" oninput="this.value=this.value.slice(0,4)">
+        <input type="number" id="buscar_anio" placeholder="Ej: 2024" min="1900" max="2100" oninput="this.value=this.value.slice(0,4)">
       </div>
       
       <div class="campo">
@@ -464,8 +458,6 @@
           <option value="Recreo">Recreo</option>
           <option value="Roldán">Roldán</option>
           <option value="San Carlos Centro">San Carlos Centro</option>
-          <option value="San Carlos Norte">San Carlos Norte</option>
-          <option value="San Carlos Sud">San Carlos Sud</option>
           <option value="San Lorenzo">San Lorenzo</option>
           <option value="Santa Fe">Santa Fe</option>
           <option value="Santo Tomé">Santo Tomé</option>
@@ -499,22 +491,22 @@
       <div class="fila" style="display: flex; gap: 15px; flex-wrap: wrap;">
         <div class="campo" style="flex: 1; min-width: 200px;">
           <label>📏 Kilometraje Mínimo</label>
-          <input type="number" id="buscar_km_min" placeholder="Ej: 0 — Dejalo vacío sin límite">
+          <input type="number" id="buscar_km_min" placeholder="Ej: 0">
         </div>
         <div class="campo" style="flex: 1; min-width: 200px;">
           <label>📏 Kilometraje Máximo</label>
-          <input type="number" id="buscar_km_max" placeholder="Ej: 100000 — Dejalo vacío sin límite">
+          <input type="number" id="buscar_km_max" placeholder="Ej: 100000">
         </div>
       </div>
       
       <div class="fila" style="display: flex; gap: 15px; flex-wrap: wrap;">
         <div class="campo" style="flex: 1; min-width: 200px;">
           <label>💰 Precio Mínimo ($)</label>
-          <input type="number" id="buscar_precio_min" placeholder="Ej: 0 — Dejalo vacío sin límite">
+          <input type="number" id="buscar_precio_min" placeholder="Ej: 0">
         </div>
         <div class="campo" style="flex: 1; min-width: 200px;">
           <label>💰 Precio Máximo ($)</label>
-          <input type="number" id="buscar_precio_max" placeholder="Ej: 1500000 — Dejalo vacío sin límite">
+          <input type="number" id="buscar_precio_max" placeholder="Ej: 1500000">
         </div>
       </div>
 
@@ -527,382 +519,361 @@
       <button id="btnSiguiente" disabled>Siguiente ▶</button>
     </div>
 
+    <div id="avisoLimite" class="aviso-limite">
+      ⭐ Llegaste al límite de 5 favoritos. Eliminá uno para agregar otro.
+    </div>
+
     <div id="caja_resultado"></div>
 
     <a href="index.html" class="volver">← Volver a la página principal</a>
   </div>
 
-  <!-- 🔍 VENTANA PARA VER FOTO GRANDE CON LOGO DE AGUA -->
   <div class="ventana-foto" id="ventanaFoto">
-    <div class="contenedor-foto-grande">
-      <span class="cerrar-foto" id="cerrarFoto">&times;</span>
-      <img src="" alt="Foto ampliada" class="foto-grande" id="fotoGrande">
+    <div class="contenedor-foto-grande" id="contenedorFotoGrande">
+      <a id="botonWspFlotante" href="" target="_blank" class="boton-wsp-flotante" title="Enviar por WhatsApp">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+          <path fill="white" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.76.97-.93 1.17-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.47-1.76-1.65-2.07-.17-.3-.34-.34-.5-.34-.16 0-.33.01-.47.01-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5c0 1.24-.5 2.36-1.32 3.18-.22.22-.43.45-.65.67-.22.22-.45.43-.67.65-.82.82-1.94 1.32-3.18 1.32z"/>
+          <path fill="white" d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm0 22c-5.51 0-10-4.49-10-10S6.49 2 12 2s10 4.49 10 10-4.49 10-10 10z"/>
+        </svg>
+      </a>
       <div class="logo-agua-foto"></div>
+      <span class="cerrar-foto" onclick="cerrarFoto()">×</span>
+      <img src="" alt="Foto ampliada" class="foto-grande" id="fotoGrande">
+      <div class="indicador-foto" id="indicadorFoto"></div>
     </div>
   </div>
 
-  <script>
-    const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+<script>
+const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
-    const nombresFotos = [
-      'Motor', 'Frente', 'Lateral izquierdo', 'Lateral derecho', 'Parte trasera',
-      'Interior 1', 'Interior 2', 'Interior 3', 'Interior 4',
-      'Ruedas', 'Detalle Extra 1', 'Detalle Extra 2'
-    ];
+const CORREO_SIN_LIMITE = 'misvehiculosenventa@gmail.com';
+const LIMITE_FAVORITOS = 5;
 
-    let sbClient = null;
-    let idsFiltrados = [];
-    let indiceActual = 0;
-    let idVehiculoActual = null;
+let sbClient = null;
+let idsFiltrados = [];
+let indiceActual = 0;
+let idVehiculoActual = null;
+let fotosVehiculoActual = [];
+let indiceFotoActual = 0;
+let telefonoActual = '';
+let inicioToque = 0;
 
-    // Elementos de la ventana de fotos
-    const ventanaFoto = document.getElementById('ventanaFoto');
-    const fotoGrande = document.getElementById('fotoGrande');
-    const cerrarFoto = document.getElementById('cerrarFoto');
+async function getSupabase() {
+  if (!sbClient) sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  return sbClient;
+}
 
-    async function getSupabase() {
-      if (!sbClient) {
-        sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-      }
-      return sbClient;
+function verificarSesion() {
+  const correo = localStorage.getItem('correo_usuario');
+  const nombre = localStorage.getItem('nombre_usuario');
+  const zonaUsuario = document.getElementById('zonaUsuario');
+  const zonaOlvido = document.getElementById('zonaOlvido');
+
+  if (correo && nombre) {
+    zonaUsuario.innerHTML = `
+      <span class="nombre-usuario">👤 ${nombre}</span>
+      <button onclick="cerrarSesion()" class="btn-sesion btn-salir">Cerrar sesión</button>`;
+    zonaOlvido.style.display = 'none';
+  } else {
+    zonaUsuario.innerHTML = '';
+    zonaOlvido.innerHTML = `<a href="index.html">Volvé al inicio para entrar o crear tu cuenta</a>`;
+    zonaOlvido.style.display = 'block';
+  }
+}
+
+function cerrarSesion() {
+  localStorage.removeItem('correo_usuario');
+  localStorage.removeItem('nombre_usuario');
+  localStorage.removeItem('usuario_id');
+  window.location.href = 'index.html';
+}
+
+async function obtenerUsuarioId(correo) {
+  if (!correo) return null;
+  const sb = await getSupabase();
+  const { data } = await sb.from('usuarios').select('id').eq('correo', correo).single();
+  return data?.id || null;
+}
+
+async function contarFavoritos(usuario_id) {
+  if (!usuario_id) return 0;
+  const sb = await getSupabase();
+  const { count } = await sb.from('mis_vehiculos', { count: 'exact', head: true })
+    .select('*').eq('usuario_id', usuario_id);
+  return count || 0;
+}
+
+function tieneLimiteLibre() {
+  const correo = localStorage.getItem('correo_usuario');
+  return correo === CORREO_SIN_LIMITE;
+}
+
+async function verificarLimiteFavoritos() {
+  const correo = localStorage.getItem('correo_usuario');
+  if (!correo) return true;
+  if (tieneLimiteLibre()) return true;
+
+  const usuario_id = await obtenerUsuarioId(correo);
+  const cantidad = await contarFavoritos(usuario_id);
+  
+  const aviso = document.getElementById('avisoLimite');
+  const boton = document.querySelector('.boton-favorito');
+  
+  if (cantidad >= LIMITE_FAVORITOS) {
+    aviso.classList.add('mostrar');
+    if (boton) boton.disabled = true;
+    return false;
+  } else {
+    aviso.classList.remove('mostrar');
+    if (boton) boton.disabled = false;
+    return true;
+  }
+}
+
+function limpiarPrecio(precioTexto) {
+  if (!precioTexto) return null;
+  const valor = parseFloat(String(precioTexto).replace(/[^0-9.,]/g, '').replace(',', '.'));
+  return isNaN(valor) ? null : valor;
+}
+
+function cerrarFoto() {
+  document.getElementById('ventanaFoto').classList.remove('mostrar');
+}
+
+function fotoAnterior() {
+  if (indiceFotoActual > 0) {
+    indiceFotoActual--;
+    mostrarFotoActual();
+  }
+}
+
+function fotoSiguiente() {
+  if (indiceFotoActual < fotosVehiculoActual.length - 1) {
+    indiceFotoActual++;
+    mostrarFotoActual();
+  }
+}
+
+function mostrarFotoActual() {
+  document.getElementById('fotoGrande').src = fotosVehiculoActual[indiceFotoActual];
+  document.getElementById('indicadorFoto').textContent = `${indiceFotoActual + 1} / ${fotosVehiculoActual.length}`;
+  document.getElementById('botonWspFlotante').href = 
+    `https://wa.me/54${telefonoActual}?text=${encodeURIComponent('Vi tu anuncio en Vehículos en Venta. Me gustaría comunicarme con vos.')}`;
+}
+
+function abrirFoto(fotos, indice, telefono) {
+  fotosVehiculoActual = fotos;
+  indiceFotoActual = indice;
+  telefonoActual = telefono;
+  document.getElementById('ventanaFoto').classList.add('mostrar');
+  mostrarFotoActual();
+}
+
+// Deslizar con el dedo en fotos
+document.getElementById('contenedorFotoGrande').addEventListener('touchstart', e => {
+  inicioToque = e.touches[0].clientX;
+});
+document.getElementById('contenedorFotoGrande').addEventListener('touchend', e => {
+  const diferencia = inicioToque - e.changedTouches[0].clientX;
+  if (Math.abs(diferencia) > 50) diferencia > 0 ? fotoSiguiente() : fotoAnterior();
+});
+
+function mostrarCajaCodigo() {
+  verificarLimiteFavoritos().then(puede => {
+    if (!puede) {
+      alert(`⚠️ Llegaste al límite de ${LIMITE_FAVORITOS} favoritos. Eliminá uno para agregar otro.`);
+      return;
     }
-
-    function verificarSesion() {
-      const correo = localStorage.getItem('correo_usuario');
-      const nombre = localStorage.getItem('nombre_usuario');
-      const zonaUsuario = document.getElementById('zonaUsuario');
-      const zonaOlvido = document.getElementById('zonaOlvido');
-
-      if (correo && nombre) {
-        zonaUsuario.innerHTML = `
-          <span class="nombre-usuario">👤 ${nombre}</span>
-          <button onclick="cerrarSesion()" class="btn-sesion btn-salir">Cerrar sesión</button>`;
-        zonaOlvido.style.display = 'none';
-      } else {
-        zonaUsuario.innerHTML = '';
-        zonaOlvido.innerHTML = `<a href="index.html">Volvé al inicio para entrar o crear tu cuenta</a>`;
-        zonaOlvido.style.display = 'block';
-      }
-    }
-
-    function cerrarSesion() {
-      localStorage.removeItem('correo_usuario');
-      localStorage.removeItem('nombre_usuario');
-      localStorage.removeItem('usuario_id');
+    const correo = localStorage.getItem('correo_usuario');
+    if (!correo) {
+      alert('🔐 Primero entrá desde la página principal');
       window.location.href = 'index.html';
+      return;
     }
+    document.getElementById('cajaCodigo').classList.add('mostrar');
+  });
+}
 
-    async function obtenerUsuarioId(correo) {
-      if (!correo) return null;
-      const sb = await getSupabase();
-      const { data, error } = await sb
-        .from('usuarios')
-        .select('id')
-        .eq('correo', correo)
-        .single();
-      return error ? null : data?.id;
+function ocultarCajaCodigo() {
+  document.getElementById('cajaCodigo').classList.remove('mostrar');
+}
+
+async function guardarConCodigo() {
+  const codigo = document.getElementById('codigoIngresado').value.trim();
+  if (!codigo || codigo.length < 6) { alert('⚠️ El código debe tener 6 caracteres'); return; }
+  if (!idVehiculoActual) { alert('⚠️ No hay vehículo seleccionado'); return; }
+
+  const correo = localStorage.getItem('correo_usuario');
+  const usuario_id = await obtenerUsuarioId(correo);
+  if (!usuario_id) { alert('❌ No se encontró tu cuenta'); return; }
+
+  // Verificar límite nuevamente antes de guardar
+  if (!tieneLimiteLibre()) {
+    const cantidad = await contarFavoritos(usuario_id);
+    if (cantidad >= LIMITE_FAVORITOS) {
+      alert(`⚠️ Llegaste al límite de ${LIMITE_FAVORITOS} favoritos.`);
+      return;
     }
+  }
 
-    function limpiarPrecio(precioTexto) {
-      if (!precioTexto) return null;
-      const soloNumeros = String(precioTexto).replace(/[^0-9.,]/g, '').replace(',', '.');
-      const valor = parseFloat(soloNumeros);
-      return isNaN(valor) ? null : valor;
-    }
+  const sb = await getSupabase();
+  const { data: existe } = await sb.from('mis_vehiculos')
+    .select('id').eq('usuario_id', usuario_id).eq('vehiculo_id', idVehiculoActual).maybeSingle();
 
-    function mostrarCajaCodigo() {
-      const correo = localStorage.getItem('correo_usuario');
-      if (!correo) {
-        alert('🔐 Primero debes entrar desde la página principal');
-        window.location.href = 'index.html';
-        return;
-      }
-      document.getElementById('cajaCodigo').classList.add('mostrar');
-      document.getElementById('codigoIngresado').value = '';
-      document.getElementById('codigoIngresado').focus();
-    }
+  if (existe) { alert('ℹ️ Ya está en "Mis Vehículos"'); ocultarCajaCodigo(); return; }
 
-    function ocultarCajaCodigo() {
-      document.getElementById('cajaCodigo').classList.remove('mostrar');
-    }
+  const { error } = await sb.from('mis_vehiculos').insert({ usuario_id, vehiculo_id: idVehiculoActual });
+  if (error) { alert('❌ Error: ' + error.message); return; }
 
-    async function guardarConCodigo() {
-      const codigo = document.getElementById('codigoIngresado').value.trim();
+  alert('✅ ¡Agregado correctamente! 🎉');
+  ocultarCajaCodigo();
+  verificarLimiteFavoritos();
+}
+
+async function realizarBusqueda() {
+  const tipo = document.getElementById('buscar_tipo').value;
+  const marca = document.getElementById('buscar_marca').value.trim();
+  const modelo = document.getElementById('buscar_modelo').value.trim();
+  const anio = document.getElementById('buscar_anio').value.trim();
+  const ciudad = document.getElementById('buscar_ciudad').value;
+  const combustible = document.getElementById('buscar_combustible').value;
+  const transmision = document.getElementById('buscar_transmision').value;
+  const kmMin = document.getElementById('buscar_km_min').value.trim();
+  const kmMax = document.getElementById('buscar_km_max').value.trim();
+  const precioMin = document.getElementById('buscar_precio_min').value.trim();
+  const precioMax = document.getElementById('buscar_precio_max').value.trim();
+
+  const caja = document.getElementById('caja_resultado');
+  const cajaNav = document.getElementById('caja_navegacion');
+  const btnAnt = document.getElementById('btnAnterior');
+  const btnSig = document.getElementById('btnSiguiente');
+  
+  caja.innerHTML = `<div class="cargando">🔄 Buscando vehículos...</div>`;
+  idsFiltrados = [];
+  indiceActual = 0;
+  idVehiculoActual = null;
+  btnAnt.disabled = true;
+  btnSig.disabled = true;
+
+  const sb = await getSupabase();
+  let consulta = sb.from('autos').select('*');
+
+  if (tipo) consulta = consulta.eq('tipo_vehiculo', tipo);
+  if (marca) consulta = consulta.ilike('marca', `%${marca}%`);
+  if (modelo) consulta = consulta.ilike('modelo', `%${modelo}%`);
+  if (anio.length === 4) { const num = parseInt(anio); if (!isNaN(num)) consulta = consulta.eq('anio', num); }
+  if (ciudad && ciudad !== 'otra') consulta = consulta.eq('ciudad', ciudad);
+  if (combustible) consulta = consulta.eq('combustible', combustible);
+  if (transmision) consulta = consulta.eq('transmision', transmision);
+
+  consulta = consulta.order('id', { ascending: false });
+  const { data, error } = await consulta;
+
+  if (error) { caja.innerHTML = `<div class="sin-resultado">❌ Error: ${error.message}</div>`; return; }
+  if (!data || !data.length) { caja.innerHTML = `<div class="sin-resultado">📭 No se encontraron vehículos</div>`; return; }
+
+  let resultados = data;
+  if (kmMin) { const n = parseInt(kmMin); if (!isNaN(n)) resultados = resultados.filter(v => v.kilometraje >= n); }
+  if (kmMax) { const n = parseInt(kmMax); if (!isNaN(n)) resultados = resultados.filter(v => v.kilometraje === null || v.kilometraje <= n); }
+  if (precioMin) { const n = parseFloat(precioMin); if (!isNaN(n)) resultados = resultados.filter(v => { const val = limpiarPrecio(v.precio); return val === null || val >= n; }); }
+  if (precioMax) { const n = parseFloat(precioMax); if (!isNaN(n)) resultados = resultados.filter(v => { const val = limpiarPrecio(v.precio); return val === null || val <= n; }); }
+
+  if (!resultados.length) { caja.innerHTML = `<div class="sin-resultado">📭 Ningún vehículo cumple con los filtros</div>`; return; }
+
+  idsFiltrados = resultados.map(v => v.id);
+  cajaNav.style.opacity = '1';
+  btnAnt.disabled = false;
+  btnSig.disabled = false;
+  await cargarUno(0);
+}
+
+async function cargarUno(posicion) {
+  if (posicion < 0 || posicion >= idsFiltrados.length) return;
+
+  const caja = document.getElementById('caja_resultado');
+  caja.innerHTML = `<div class="cargando">🔄 Cargando vehículo ${posicion+1} de ${idsFiltrados.length}...</div>`;
+
+  const sb = await getSupabase();
+  const { data: v, error } = await sb.from('autos').select('*').eq('id', idsFiltrados[posicion]).single();
+
+  if (error || !v) { caja.innerHTML = `<div class="sin-resultado">❌ Error al cargar</div>`; return; }
+
+  idVehiculoActual = v.id;
+
+  const fotos = [];
+  for (let i = 1; i <= 6; i++) {
+    if (v[`foto${i}`]) fotos.push(v[`foto${i}`]);
+  }
+
+  const puedeAgregar = await verificarLimiteFavoritos();
+
+  caja.innerHTML = `
+    <button class="boton-favorito" onclick="mostrarCajaCodigo()" ${!puedeAgregar ? 'disabled' : ''}>
+      💙 AGREGAR A MIS VEHÍCULOS
+    </button>
+
+    <div id="cajaCodigo" class="caja-codigo">
+      <h3>🔐 Escribí tu código de seguridad</h3>
+      <input type="text" id="codigoIngresado" class="input-codigo" placeholder="Tu código..." maxlength="6">
+      <button class="boton-guardar" onclick="guardarConCodigo()">✅ Guardar</button>
+      <button class="boton-cancelar" onclick="ocultarCajaCodigo()">❌ Cancelar</button>
+    </div>
+    
+    <div class="tarjeta">
+      ${v.tipo_vehiculo ? `<span class="etiqueta-tipo">${v.tipo_vehiculo}</span>` : ''}
       
-      if (!codigo || codigo.length < 6) {
-        alert('⚠️ El código debe tener 6 caracteres');
-        return;
-      }
-      if (!idVehiculoActual) {
-        alert('⚠️ No hay vehículo seleccionado');
-        return;
-      }
-
-      const correo = localStorage.getItem('correo_usuario');
-      const usuario_id = await obtenerUsuarioId(correo);
-      if (!usuario_id) {
-        alert('❌ No se encontró tu cuenta');
-        return;
-      }
-
-      const sb = await getSupabase();
-
-      const { data: existe } = await sb
-        .from('mis_vehiculos')
-        .select('id')
-        .eq('usuario_id', usuario_id)
-        .eq('vehiculo_id', idVehiculoActual)
-        .maybeSingle();
-
-      if (existe) {
-        alert('ℹ️ Este vehículo ya está en "Mis Vehículos"');
-        ocultarCajaCodigo();
-        return;
-      }
-
-      const { error } = await sb.from('mis_vehiculos').insert({
-        usuario_id: usuario_id,
-        vehiculo_id: idVehiculoActual
-      });
-
-      if (error) {
-        alert('❌ Error: ' + error.message);
-        return;
-      }
-
-      alert('✅ ¡Agregado a "Mis Vehículos" correctamente! 🎉');
-      ocultarCajaCodigo();
-    }
-
-    // Ampliar foto al tocar
-    function ampliarFoto(src) {
-      fotoGrande.src = src;
-      ventanaFoto.classList.add('mostrar');
-    }
-
-    // Cerrar foto ampliada
-    cerrarFoto.addEventListener('click', () => {
-      ventanaFoto.classList.remove('mostrar');
-    });
-    ventanaFoto.addEventListener('click', (e) => {
-      if (e.target === ventanaFoto) {
-        ventanaFoto.classList.remove('mostrar');
-      }
-    });
-
-    async function realizarBusqueda() {
-      const tipo = document.getElementById('buscar_tipo').value;
-      const marca = document.getElementById('buscar_marca').value.trim();
-      const modelo = document.getElementById('buscar_modelo').value.trim();
-      const anio = document.getElementById('buscar_anio').value.trim();
-      const ciudad = document.getElementById('buscar_ciudad').value;
-      const combustible = document.getElementById('buscar_combustible').value;
-      const transmision = document.getElementById('buscar_transmision').value;
-      const kmMin = document.getElementById('buscar_km_min').value.trim();
-      const kmMax = document.getElementById('buscar_km_max').value.trim();
-      const precioMin = document.getElementById('buscar_precio_min').value.trim();
-      const precioMax = document.getElementById('buscar_precio_max').value.trim();
-
-      const caja = document.getElementById('caja_resultado');
-      const cajaNav = document.getElementById('caja_navegacion');
-      const btnAnt = document.getElementById('btnAnterior');
-      const btnSig = document.getElementById('btnSiguiente');
+      <div class="titulo-vehiculo">${v.marca || ''} ${v.modelo || ''} — ${v.anio || ''}</div>
+      <div class="fila"><strong>Versión:</strong> ${v.version || '-'}</div>
+      <div class="fila"><strong>Ciudad:</strong> ${v.ciudad || '-'}</div>
+      <div class="fila"><strong>Kilometraje:</strong> ${v.kilometraje ? v.kilometraje.toLocaleString('es-AR') + ' km' : '-'}</div>
+      <div class="fila"><strong>Combustible:</strong> ${v.combustible || '-'}</div>
+      <div class="fila"><strong>Transmisión:</strong> ${v.transmision || '-'}</div>
+      <div class="fila"><strong>Precio:</strong> ${v.precio || '-'}</div>
+      <div class="fila"><strong>Teléfono:</strong> ${v.telefono || '-'}</div>
+      <div>
+        ${v.permuta ? '<span class="etiqueta permuta">✅ Acepta permuta</span>' : ''}
+        ${v.contado ? '<span class="etiqueta contado">💵 Solo contado</span>' : ''}
+      </div>
       
-      caja.innerHTML = `<div class="cargando">🔄 Buscando vehículos...</div>`;
-      idsFiltrados = [];
-      indiceActual = 0;
-      idVehiculoActual = null;
-      btnAnt.disabled = true;
-      btnSig.disabled = true;
-      cajaNav.classList.remove('activa');
-
-      const sb = await getSupabase();
-      let consulta = sb.from('autos').select('*');
-
-      if (tipo) consulta = consulta.eq('tipo_vehiculo', tipo);
-      if (marca) consulta = consulta.ilike('marca', `%${marca}%`);
-      if (modelo) consulta = consulta.ilike('modelo', `%${modelo}%`);
-      if (anio && anio.length === 4) {
-        const numAnio = parseInt(anio);
-        if (!isNaN(numAnio)) consulta = consulta.eq('anio', numAnio);
-      }
-      if (ciudad && ciudad !== 'otra') {
-        consulta = consulta.eq('ciudad', ciudad);
-      }
-      if (combustible) consulta = consulta.eq('combustible', combustible);
-      if (transmision) consulta = consulta.eq('transmision', transmision);
-
-      consulta = consulta.order('id', { ascending: false });
-      const { data, error } = await consulta;
-
-      if (error) {
-        caja.innerHTML = `<div class="sin-resultado">❌ Error: ${error.message}</div>`;
-        return;
-      }
-      if (!data || data.length === 0) {
-        caja.innerHTML = `<div class="sin-resultado">📭 No se encontraron vehículos con esos datos</div>`;
-        return;
-      }
-
-      let resultados = data;
-      
-      if (kmMin) {
-        const numKmMin = parseInt(kmMin);
-        if (!isNaN(numKmMin)) {
-          resultados = resultados.filter(auto => 
-            auto.kilometraje !== null && auto.kilometraje >= numKmMin
-          );
-        }
-      }
-      if (kmMax) {
-        const numKmMax = parseInt(kmMax);
-        if (!isNaN(numKmMax)) {
-          resultados = resultados.filter(auto => 
-            auto.kilometraje === null || auto.kilometraje <= numKmMax
-          );
-        }
-      }
-      
-      if (precioMin) {
-        const numPrecioMin = parseFloat(precioMin);
-        if (!isNaN(numPrecioMin)) {
-          resultados = resultados.filter(auto => {
-            const valor = limpiarPrecio(auto.precio);
-            return valor === null || valor >= numPrecioMin;
-          });
-        }
-      }
-      if (precioMax) {
-        const numPrecioMax = parseFloat(precioMax);
-        if (!isNaN(numPrecioMax)) {
-          resultados = resultados.filter(auto => {
-            const valor = limpiarPrecio(auto.precio);
-            return valor === null || valor <= numPrecioMax;
-          });
-        }
-      }
-
-      if (resultados.length === 0) {
-        caja.innerHTML = `<div class="sin-resultado">📭 Ningún vehículo cumple con los filtros elegidos</div>`;
-        return;
-      }
-
-      idsFiltrados = resultados.map(item => item.id);
-      cajaNav.classList.add('activa');
-      btnAnt.disabled = false;
-      btnSig.disabled = false;
-      await cargarUno(0);
-    }
-
-    async function cargarUno(posicion) {
-      if (posicion < 0 || posicion >= idsFiltrados.length) return;
-
-      const caja = document.getElementById('caja_resultado');
-      caja.innerHTML = `<div class="cargando">🔄 Cargando vehículo ${posicion+1} de ${idsFiltrados.length}...</div>`;
-
-      const sb = await getSupabase();
-      const { data: vehiculo, error } = await sb
-        .from('autos')
-        .select('*')
-        .eq('id', idsFiltrados[posicion])
-        .single();
-
-      if (error || !vehiculo) {
-        caja.innerHTML = `<div class="sin-resultado">❌ Error al cargar el vehículo</div>`;
-        return;
-      }
-
-      idVehiculoActual = vehiculo.id;
-
-      let fotosHtml = '';
-      for (let i = 1; i <= 12; i++) {
-        const foto = vehiculo[`foto${i}`];
-        if (foto) {
-          fotosHtml += `
-            <div class="foto-caja">
-              <div class="foto-ver" onclick="ampliarFoto('${foto}')">
-                <img src="${foto}" alt="${nombresFotos[i-1]}">
-              </div>
-              <div class="foto-nombre">${nombresFotos[i-1]}</div>
+      ${fotos.length ? `
+      <div class="fotos-cuadricula">
+        ${fotos.map((foto, idx) => `
+          <div class="foto-caja">
+            <div class="foto-ver" onclick='abrirFoto(${JSON.stringify(fotos)}, ${idx}, "${v.telefono || ''}")'>
+              <img src="${foto}" alt="Foto" loading="lazy">
             </div>
-          `;
-        }
-      }
-      const hayFotos = fotosHtml !== '';
-
-      caja.innerHTML = `
-        <button class="boton-favorito" onclick="mostrarCajaCodigo()">
-          💙 AGREGAR A MIS VEHÍCULOS
-        </button>
-
-        <div id="cajaCodigo" class="caja-codigo">
-          <h3>🔐 Escribí tu código de seguridad</h3>
-          <input type="text" id="codigoIngresado" class="input-codigo" placeholder="Tu código..." maxlength="6">
-          <button class="boton-guardar" onclick="guardarConCodigo()">✅ Guardar en Mis Vehículos</button>
-          <button class="boton-cancelar" onclick="ocultarCajaCodigo()">❌ Cancelar</button>
-        </div>
-        
-        <div class="tarjeta">
-          ${vehiculo.tipo_vehiculo ? `<span class="etiqueta-tipo">${vehiculo.tipo_vehiculo}</span>` : ''}
-          
-          <div class="titulo-vehiculo">${vehiculo.marca || ''} ${vehiculo.modelo || ''} — ${vehiculo.anio || ''}</div>
-          <div class="fila"><strong>Versión:</strong> ${vehiculo.version || '-'}</div>
-          <div class="fila"><strong>Ciudad:</strong> ${vehiculo.ciudad || '-'}</div>
-          <div class="fila"><strong>Kilometraje:</strong> ${vehiculo.kilometraje ? vehiculo.kilometraje.toLocaleString('es-AR') + ' km' : 'No indicado'}</div>
-          <div class="fila"><strong>Combustible:</strong> ${vehiculo.combustible || '-'}</div>
-          <div class="fila"><strong>Transmisión:</strong> ${vehiculo.transmision || '-'}</div>
-          <div class="fila"><strong>Precio:</strong> ${vehiculo.precio || '-'}</div>
-          <div class="fila"><strong>Dueño:</strong> ${vehiculo.dueno || '-'}</div>
-          <div class="fila"><strong>Dirección:</strong> ${vehiculo.direccion || '-'}</div>
-          <div class="fila"><strong>Teléfono:</strong> ${vehiculo.telefono || '-'}</div>
-          <div>
-            ${vehiculo.permuta ? '<span class="etiqueta permuta">✅ Acepta permuta</span>' : ''}
-            ${vehiculo.contado ? '<span class="etiqueta contado">💵 Solo contado</span>' : ''}
           </div>
-          <div class="fila" style="margin-top: 10px;"><strong>Deuda:</strong> ${vehiculo.deuda || 'Sin deudas'}</div>
-          <div class="fila"><strong>Descripción:</strong> ${vehiculo.descripcion || '-'}</div>
-          
-          ${hayFotos ? `
-          <div class="fotos-titulo">📸 Fotos del vehículo — Tocar para agrandar</div>
-          <div class="fotos-cuadricula">${fotosHtml}</div>
-          ` : ''}
-        </div>
-      `;
-      document.getElementById('contador').textContent = 
-        `${posicion + 1} de ${idsFiltrados.length}`;
-    }
+        `).join('')}
+      </div>
+      ` : ''}
+    </div>
+  `;
+  document.getElementById('contador').textContent = `${posicion + 1} de ${idsFiltrados.length}`;
+}
 
-    async function vehiculoAnterior() {
-      if (idsFiltrados.length === 0) return;
-      if (indiceActual === 0) {
-        indiceActual = idsFiltrados.length - 1;
-      } else {
-        indiceActual--;
-      }
-      await cargarUno(indiceActual);
-    }
+async function vehiculoAnterior() {
+  if (!idsFiltrados.length) return;
+  indiceActual = indiceActual === 0 ? idsFiltrados.length - 1 : indiceActual - 1;
+  await cargarUno(indiceActual);
+}
 
-    async function vehiculoSiguiente() {
-      if (idsFiltrados.length === 0) return;
-      if (indiceActual === idsFiltrados.length - 1) {
-        indiceActual = 0;
-      } else {
-        indiceActual++;
-      }
-      await cargarUno(indiceActual);
-    }
+async function vehiculoSiguiente() {
+  if (!idsFiltrados.length) return;
+  indiceActual = indiceActual === idsFiltrados.length - 1 ? 0 : indiceActual + 1;
+  await cargarUno(indiceActual);
+}
 
-    document.getElementById('btnAnterior').addEventListener('click', vehiculoAnterior);
-    document.getElementById('btnSiguiente').addEventListener('click', vehiculoSiguiente);
+document.getElementById('btnAnterior').addEventListener('click', vehiculoAnterior);
+document.getElementById('btnSiguiente').addEventListener('click', vehiculoSiguiente);
 
-    async function iniciar() {
-      verificarSesion();
-      await getSupabase();
-    }
+async function iniciar() {
+  verificarSesion();
+  await getSupabase();
+}
 
-    iniciar();
-  </script>
+iniciar();
+</script>
 
 </body>
 </html>
