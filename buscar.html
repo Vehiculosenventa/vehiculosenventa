@@ -6,7 +6,7 @@
   <title>🔍 Buscar Vehículo</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;}
+    * {box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif;}
     body {
       background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
       padding: 20px;
@@ -16,46 +16,45 @@
 
     .barra-superior {
       display: flex;
-      justify-content: space-between;
+      justify-content: flex-start;
       align-items: center;
+      gap: 15px;
       margin-bottom: 20px;
       padding-bottom: 12px;
       border-bottom: 2px solid rgba(44, 82, 130, 0.15);
       flex-wrap: wrap;
-      gap: 10px;
     }
     .titulo-pagina {
       font-size: 18px;
       font-weight: 800;
       color: #2c5282;
+      margin-right: 20px;
     }
     .zona-usuario {
       display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
+      gap: 12px;
       align-items: center;
+      flex-wrap: wrap;
     }
-    .btn-sesion {
-      padding: 8px 14px;
-      border-radius: 10px;
-      font-weight: 700;
-      text-decoration: none;
+    .texto-usuario {
+      font-weight: 600;
+      color: #1e40af;
       font-size: 14px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
     }
     .btn-salir {
+      padding: 6px 12px;
+      border-radius: 8px;
       background: #fef2f2;
       color: #c53030;
       border: 2px solid #feb2b2;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
     }
     .btn-salir:hover { background: #fee2e2; }
-    .nombre-usuario {
-      font-weight: 600;
-      color: #276749;
-      font-size: 14px;
-    }
+
     .olvido {
       width: 100%;
       text-align: center;
@@ -72,12 +71,8 @@
       text-decoration: underline;
     }
 
-    h1 {
-      text-align: center;
-      color: #2c5282;
-      margin-bottom: 20px;
-      font-size: 23px;
-    }
+    h1 { display: none; }
+
     .buscador {
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 28px;
@@ -406,8 +401,6 @@
     </div>
     <div id="zonaOlvido" class="olvido"></div>
 
-    <h1>Buscar Vehículo</h1>
-
     <div class="buscador">
       <p class="leyenda">Dejá vacío lo que no querés filtrar ✨</p>
 
@@ -572,8 +565,8 @@ function verificarSesion() {
 
   if (correo && nombre) {
     zonaUsuario.innerHTML = `
-      <span class="nombre-usuario">👤 ${nombre}</span>
-      <button onclick="cerrarSesion()" class="btn-sesion btn-salir">Cerrar sesión</button>`;
+      <span class="texto-usuario">👤 ${nombre} — Conectado</span>
+      <a href="#" onclick="cerrarSesion(); return false;" class="btn-salir">Cerrar sesión</a>`;
     zonaOlvido.style.display = 'none';
   } else {
     zonaUsuario.innerHTML = '';
@@ -708,7 +701,6 @@ async function guardarConCodigo() {
   const usuario_id = await obtenerUsuarioId(correo);
   if (!usuario_id) { alert('❌ No se encontró tu cuenta'); return; }
 
-  // Verificar límite nuevamente antes de guardar
   if (!tieneLimiteLibre()) {
     const cantidad = await contarFavoritos(usuario_id);
     if (cantidad >= LIMITE_FAVORITOS) {
