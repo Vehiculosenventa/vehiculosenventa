@@ -551,7 +551,7 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizWtpeWJ5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
 
     let sbClient = null;
     let idsFiltrados = [];
@@ -577,27 +577,42 @@
       return sbClient;
     }
 
-    function verificarSesion() {
-      const correo = localStorage.getItem('correo_usuario');
-      const nombre = localStorage.getItem('nombre_usuario');
+    // ✅ Verificar sesión REAL de Supabase + respaldo en localStorage
+    async function verificarSesion() {
       const zonaUsuario = document.getElementById('zonaUsuario');
-
-      if (correo && nombre) {
-        // ✅ Conectado: verde texto + Cerrar sesión azul texto
+      const sb = await getSupabase();
+      
+      // Primero intentamos con Supabase
+      const { data: { session } } = await sb.auth.getSession();
+      
+      if (session) {
+        // Conectado ✅
         zonaUsuario.innerHTML = `
           <span class="texto-conectado">✅ Conectado</span>
           <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
         `;
       } else {
-        // ❌ No conectado: botones Iniciar / Registrarse
-        zonaUsuario.innerHTML = `
-          <a href="ingresar.html" class="btn-sesion btn-iniciar">🔑 Iniciar sesión</a>
-          <a href="registro.html" class="btn-sesion btn-registrar">✨ Registrarse</a>
-        `;
+        // Respaldamos con localStorage por si acaso
+        const correo = localStorage.getItem('correo_usuario');
+        const nombre = localStorage.getItem('nombre_usuario');
+        if (correo && nombre) {
+          zonaUsuario.innerHTML = `
+            <span class="texto-conectado">✅ Conectado</span>
+            <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
+          `;
+        } else {
+          // No conectado ❌
+          zonaUsuario.innerHTML = `
+            <a href="ingresar.html" class="btn-sesion btn-iniciar">🔑 Iniciar sesión</a>
+            <a href="registro.html" class="btn-sesion btn-registrar">✨ Registrarse</a>
+          `;
+        }
       }
     }
 
-    function cerrarSesion() {
+    async function cerrarSesion() {
+      const sb = await getSupabase();
+      await sb.auth.signOut();
       localStorage.removeItem('correo_usuario');
       localStorage.removeItem('nombre_usuario');
       localStorage.removeItem('usuario_id');
@@ -711,7 +726,7 @@
       }
     });
 
-    // Funciones deslizar con el dedo
+    // Funciones deslizar con el dedo — SIN botones
     function registrarInicioDeslizamiento(e) {
       xInicio = e.touches ? e.touches[0].clientX : e.clientX;
     }
@@ -861,7 +876,7 @@
           fotosHtml += `
             <div class="foto-caja">
               <div class="foto-ver" onclick="ampliarFoto('${foto}')">
-                <img src="${foto}" alt="">
+                <img src="${foto}" alt="" loading="lazy">
               </div>
             </div>
           `;
@@ -915,7 +930,7 @@
       
       contador.textContent = `${posicion + 1} de ${idsFiltrados.length}`;
       
-      // Agregar eventos de deslizamiento
+      // Agregar eventos de deslizamiento a la tarjeta
       setTimeout(() => {
         const tarjeta = document.getElementById('tarjetaDeslizable');
         if (tarjeta) {
@@ -948,7 +963,7 @@
     }
 
     async function iniciar() {
-      verificarSesion();
+      await verificarSesion();
       await getSupabase();
       
       // Eventos globales de deslizamiento
