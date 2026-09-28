@@ -110,119 +110,60 @@
       background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
     }
 
+    /* SIN BOTONES ANTERIOR/SIGUIENTE */
     .navegacion {
+      display: none;
+    }
+
+    /* TARJETA DESLIZABLE */
+    .zona-tarjeta {
+      position: relative;
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+    .contenedor-tarjetas {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin: 18px 0;
-      padding: 14px 18px;
-      background: rgba(255, 255, 255, 0.6);
-      border-radius: 12px;
+      transition: transform 0.3s ease-out;
     }
-    .navegacion button {
-      padding: 11px 22px;
-      font-size: 15px;
-      cursor: pointer;
-      border: none;
-      border-radius: 10px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
-      font-weight: 600;
-    }
-    .navegacion button:disabled {
-      background: #c5d6e8;
-      cursor: not-allowed;
-    }
-    .contador {
-      font-size: 16px;
-      font-weight: bold;
-      color: #2c5282;
-    }
-
-    .boton-favorito {
-      display: block;
-      width: 100%;
-      padding: 16px 20px;
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      color: white;
-      border: none;
-      border-radius: 12px;
-      font-size: 17px;
-      font-weight: 700;
-      cursor: pointer;
-      margin: 0 0 18px 0;
-    }
-    .boton-favorito:disabled {
-      background: #9ca3af;
-      cursor: not-allowed;
-    }
-    .aviso-limite {
-      background: #fef3c7;
-      color: #92400e;
-      padding: 12px;
-      border-radius: 10px;
-      margin-bottom: 15px;
-      text-align: center;
-      font-weight: 600;
-      display: none;
-    }
-    .aviso-limite.mostrar {display: block;}
-
-    .caja-codigo {
-      background: #f0f7ff;
-      padding: 20px;
-      border-radius: 12px;
-      margin: 15px 0;
-      border: 2px solid #bfdbfe;
-      display: none;
-    }
-    .caja-codigo.mostrar {display: block;}
-    .caja-codigo h3 {
-      color: #1e40af;
-      margin-bottom: 12px;
-      font-size: 16px;
-    }
-    .input-codigo {
-      width: 100%;
-      padding: 14px;
-      font-size: 18px;
-      text-align: center;
-      letter-spacing: 4px;
-      border: 2px solid #93c5fd;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      font-weight: bold;
-    }
-    .boton-guardar {
-      background: #16a34a;
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      width: 100%;
-    }
-    .boton-cancelar {
-      background: #e5e7eb;
-      color: #4b5563;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 14px;
-      margin-top: 10px;
-      cursor: pointer;
-      width: 100%;
-    }
-
     .tarjeta {
+      flex: 0 0 100%;
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 25px;
       border-radius: 16px;
-      margin-bottom: 20px;
       border: 1px solid #bfa980;
     }
+    .encabezado-tarjeta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    .boton-favorito-tarjeta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+      padding: 4px 8px;
+    }
+    .estrella {
+      font-size: 22px;
+      color: #facc15;
+    }
+    .texto-favorito {
+      font-size: 14px;
+      font-weight: 600;
+      color: #2563eb;
+    }
+    .boton-favorito-tarjeta:disabled .texto-favorito {
+      color: #9ca3af;
+      cursor: not-allowed;
+    }
+    .boton-favorito-tarjeta:disabled .estrella {
+      opacity: 0.5;
+    }
+
     .etiqueta-tipo {
       display: inline-block;
       background: #ebf4fb;
@@ -292,6 +233,66 @@
       background: #d7e6f2;
     }
 
+    .aviso-limite {
+      background: #fef3c7;
+      color: #92400e;
+      padding: 12px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+    }
+    .aviso-limite.mostrar {display: block;}
+
+    .caja-codigo {
+      background: #f0f7ff;
+      padding: 20px;
+      border-radius: 12px;
+      margin: 15px 0;
+      border: 2px solid #bfdbfe;
+      display: none;
+    }
+    .caja-codigo.mostrar {display: block;}
+    .caja-codigo h3 {
+      color: #1e40af;
+      margin-bottom: 12px;
+      font-size: 16px;
+    }
+    .input-codigo {
+      width: 100%;
+      padding: 14px;
+      font-size: 18px;
+      text-align: center;
+      letter-spacing: 4px;
+      border: 2px solid #93c5fd;
+      border-radius: 10px;
+      margin-bottom: 12px;
+      font-weight: bold;
+    }
+    .boton-guardar {
+      background: #16a34a;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+    }
+    .boton-cancelar {
+      background: #e5e7eb;
+      color: #4b5563;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-top: 10px;
+      cursor: pointer;
+      width: 100%;
+    }
+
     .fotos-titulo {display: none;}
     .fotos-cuadricula {
       display: grid;
@@ -337,12 +338,14 @@
       max-height: 75vh;
       border-radius: 12px;
     }
+
+    /* LOGO WHATSAPP CHICO EN FOTO GRANDE */
     .boton-wsp-flotante {
       position: absolute;
       top: 10px;
       left: 10px;
-      width: 50px;
-      height: 50px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
       background: #25D366;
       display: flex;
@@ -351,7 +354,12 @@
       z-index: 10000;
       box-shadow: 0 2px 10px rgba(0,0,0,0.3);
     }
-    .boton-wsp-flotante svg {width: 26px; height: 26px; fill: white;}
+    .boton-wsp-flotante svg {
+      width: 18px;
+      height: 18px;
+      fill: white;
+    }
+
     .logo-agua-foto {
       position: absolute;
       top: 10px;
@@ -495,12 +503,6 @@
       <button class="boton-buscar" onclick="realizarBusqueda()">🔍 Buscar Vehículos</button>
     </div>
 
-    <div class="navegacion" id="caja_navegacion">
-      <button id="btnAnterior" disabled>◀ Anterior</button>
-      <span id="contador" class="contador">—</span>
-      <button id="btnSiguiente" disabled>Siguiente ▶</button>
-    </div>
-
     <div id="avisoLimite" class="aviso-limite">
       ⭐ Llegaste al límite de 5 favoritos. Eliminá uno para agregar otro.
     </div>
@@ -540,6 +542,8 @@ let fotosVehiculoActual = [];
 let indiceFotoActual = 0;
 let telefonoActual = '';
 let inicioToque = 0;
+let inicioX = 0;
+let finX = 0;
 
 async function getSupabase() {
   if (!sbClient) sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -603,7 +607,7 @@ async function verificarLimiteFavoritos() {
   const cantidad = await contarFavoritos(usuario_id);
   
   const aviso = document.getElementById('avisoLimite');
-  const boton = document.querySelector('.boton-favorito');
+  const boton = document.querySelector('.boton-favorito-tarjeta');
   
   if (cantidad >= LIMITE_FAVORITOS) {
     aviso.classList.add('mostrar');
@@ -728,16 +732,10 @@ async function realizarBusqueda() {
   const precioMax = document.getElementById('buscar_precio_max').value.trim();
 
   const caja = document.getElementById('caja_resultado');
-  const cajaNav = document.getElementById('caja_navegacion');
-  const btnAnt = document.getElementById('btnAnterior');
-  const btnSig = document.getElementById('btnSiguiente');
-  
   caja.innerHTML = `<div class="cargando">🔄 Buscando vehículos...</div>`;
   idsFiltrados = [];
   indiceActual = 0;
   idVehiculoActual = null;
-  btnAnt.disabled = true;
-  btnSig.disabled = true;
 
   const sb = await getSupabase();
   let consulta = sb.from('autos').select('*');
@@ -765,9 +763,6 @@ async function realizarBusqueda() {
   if (!resultados.length) { caja.innerHTML = `<div class="sin-resultado">📭 Ningún vehículo cumple con los filtros</div>`; return; }
 
   idsFiltrados = resultados.map(v => v.id);
-  cajaNav.style.opacity = '1';
-  btnAnt.disabled = false;
-  btnSig.disabled = false;
   await cargarUno(0);
 }
 
@@ -792,9 +787,45 @@ async function cargarUno(posicion) {
   const puedeAgregar = await verificarLimiteFavoritos();
 
   caja.innerHTML = `
-    <button class="boton-favorito" onclick="mostrarCajaCodigo()" ${!puedeAgregar ? 'disabled' : ''}>
-      💙 AGREGAR A MIS VEHÍCULOS
-    </button>
+    <div class="zona-tarjeta">
+      <div class="contenedor-tarjetas" id="contenedorTarjetas">
+        <div class="tarjeta">
+          <div class="encabezado-tarjeta">
+            ${v.tipo_vehiculo ? `<span class="etiqueta-tipo">${v.tipo_vehiculo}</span>` : '<span></span>'}
+
+            <button class="boton-favorito-tarjeta" onclick="mostrarCajaCodigo()" ${!puedeAgregar ? 'disabled' : ''}>
+              <span class="estrella">⭐</span>
+              <span class="texto-favorito">Agregar a mi favorito</span>
+            </button>
+          </div>
+
+          <div class="titulo-vehiculo">${v.marca || ''} ${v.modelo || ''} — ${v.anio || ''}</div>
+          <div class="fila"><strong>Versión:</strong> ${v.version || '-'}</div>
+          <div class="fila"><strong>Ciudad:</strong> ${v.ciudad || '-'}</div>
+          <div class="fila"><strong>Kilometraje:</strong> ${v.kilometraje ? v.kilometraje.toLocaleString('es-AR') + ' km' : '-'}</div>
+          <div class="fila"><strong>Combustible:</strong> ${v.combustible || '-'}</div>
+          <div class="fila"><strong>Transmisión:</strong> ${v.transmision || '-'}</div>
+          <div class="fila"><strong>Precio:</strong> ${v.precio || '-'}</div>
+          <div class="fila"><strong>Teléfono:</strong> ${v.telefono || '-'}</div>
+          <div>
+            ${v.permuta ? '<span class="etiqueta permuta">✅ Acepta permuta</span>' : ''}
+            ${v.contado ? '<span class="etiqueta contado">💵 Solo contado</span>' : ''}
+          </div>
+
+          ${fotos.length ? `
+          <div class="fotos-cuadricula">
+            ${fotos.map((foto, idx) => `
+              <div class="foto-caja">
+                <div class="foto-ver" onclick='abrirFoto(${JSON.stringify(fotos)}, ${idx}, "${v.telefono || ''}")'>
+                  <img src="${foto}" alt="Foto" loading="lazy">
+                </div>
+              </div>
+            `).join('')}
+          </div>
+          ` : ''}
+        </div>
+      </div>
+    </div>
 
     <div id="cajaCodigo" class="caja-codigo">
       <h3>🔐 Escribí tu código de seguridad</h3>
@@ -802,37 +833,26 @@ async function cargarUno(posicion) {
       <button class="boton-guardar" onclick="guardarConCodigo()">✅ Guardar</button>
       <button class="boton-cancelar" onclick="ocultarCajaCodigo()">❌ Cancelar</button>
     </div>
-    
-    <div class="tarjeta">
-      ${v.tipo_vehiculo ? `<span class="etiqueta-tipo">${v.tipo_vehiculo}</span>` : ''}
-      
-      <div class="titulo-vehiculo">${v.marca || ''} ${v.modelo || ''} — ${v.anio || ''}</div>
-      <div class="fila"><strong>Versión:</strong> ${v.version || '-'}</div>
-      <div class="fila"><strong>Ciudad:</strong> ${v.ciudad || '-'}</div>
-      <div class="fila"><strong>Kilometraje:</strong> ${v.kilometraje ? v.kilometraje.toLocaleString('es-AR') + ' km' : '-'}</div>
-      <div class="fila"><strong>Combustible:</strong> ${v.combustible || '-'}</div>
-      <div class="fila"><strong>Transmisión:</strong> ${v.transmision || '-'}</div>
-      <div class="fila"><strong>Precio:</strong> ${v.precio || '-'}</div>
-      <div class="fila"><strong>Teléfono:</strong> ${v.telefono || '-'}</div>
-      <div>
-        ${v.permuta ? '<span class="etiqueta permuta">✅ Acepta permuta</span>' : ''}
-        ${v.contado ? '<span class="etiqueta contado">💵 Solo contado</span>' : ''}
-      </div>
-      
-      ${fotos.length ? `
-      <div class="fotos-cuadricula">
-        ${fotos.map((foto, idx) => `
-          <div class="foto-caja">
-            <div class="foto-ver" onclick='abrirFoto(${JSON.stringify(fotos)}, ${idx}, "${v.telefono || ''}")'>
-              <img src="${foto}" alt="Foto" loading="lazy">
-            </div>
-          </div>
-        `).join('')}
-      </div>
-      ` : ''}
-    </div>
   `;
-  document.getElementById('contador').textContent = `${posicion + 1} de ${idsFiltrados.length}`;
+
+  const contenedorTarjetas = document.getElementById('contenedorTarjetas');
+
+  contenedorTarjetas.addEventListener('touchstart', e => {
+    inicioX = e.touches[0].clientX;
+  });
+
+  contenedorTarjetas.addEventListener('touchend', e => {
+    finX = e.changedTouches[0].clientX;
+    const diff = inicioX - finX;
+
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) {
+        vehiculoSiguiente();
+      } else {
+        vehiculoAnterior();
+      }
+    }
+  });
 }
 
 async function vehiculoAnterior() {
@@ -846,9 +866,6 @@ async function vehiculoSiguiente() {
   indiceActual = indiceActual === idsFiltrados.length - 1 ? 0 : indiceActual + 1;
   await cargarUno(indiceActual);
 }
-
-document.getElementById('btnAnterior').addEventListener('click', vehiculoAnterior);
-document.getElementById('btnSiguiente').addEventListener('click', vehiculoSiguiente);
 
 async function iniciar() {
   verificarSesion();
