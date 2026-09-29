@@ -132,7 +132,6 @@
       text-align: center;
       font-weight: 800;
     }
-    /* ✅ 2 COLUMNAS BIEN HECHO */
     .filas-datos {
       display: grid !important;
       grid-template-columns: 1fr 1fr !important;
@@ -224,7 +223,6 @@
     }
     .volver:hover {background: #5fa8d3;}
 
-    /* 🔍 FOTO AGRANDADA */
     .overlay-foto {
       position: fixed;
       top: 0;
@@ -266,7 +264,6 @@
 </head>
 <body>
 
-  <!-- 🔍 Foto agrandada -->
   <div class="overlay-foto" id="overlayFoto" onclick="cerrarFotoGrande()">
     <span class="cerrar-foto">&times;</span>
     <img src="" alt="Foto grande" class="foto-grande" id="fotoGrande" onclick="event.stopPropagation()">
@@ -351,8 +348,13 @@
           e.preventDefault();
           await cerrarSesion();
         };
-        const { data: usuario } = await sb.from('usuario').select('id').ilike('correo_usuario', correoUsuario).maybeSingle();
-        if (usuario) idUsuarioActual = usuario.id;
+        // Intentar obtener id, pero no frenar si falla
+        try {
+          const { data: usuario } = await sb.from('usuario').select('id').ilike('correo_usuario', correoUsuario).maybeSingle();
+          if (usuario) idUsuarioActual = usuario.id;
+        } catch (err) {
+          console.log('Tabla usuario no coincide, se usará correo directamente');
+        }
         return true;
       } else {
         zonaIzq.textContent = "❌ Desconectado";
@@ -529,24 +531,42 @@
     }
 
     async function cargarFavoritos() {
-      if (!idUsuarioActual) {
+      if (!correoUsuario) {
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">⭐ Iniciá sesión para ver favoritos</div>`;
         document.getElementById('tituloFav').textContent = `⭐ Mis Favoritos (0/${LIMITE})`;
         return;
       }
 
       const sb = await getSupabase();
-      const { data: guardados, error: e1 } = await sb
-        .from('mis_vehiculos')
-        .select('id, vehiculo_id')
-        .eq('usuario_id', idUsuarioActual);
-
-      if (e1) {
-        document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">❌ Error: ${e1.message}</div>`;
-        return;
+      let guardados = [];
+      
+      // Intentar por usuario_id primero, si no funciona buscar por correo
+      if (idUsuarioActual) {
+        const { data, error } = await sb
+          .from('mis_vehiculos')
+          .select('id, vehiculo_id')
+          .eq('usuario_id', idUsuarioActual);
+        if (!error) guardados = data || [];
+      }
+      
+      // Si no encontró nada, buscar por correo en la tabla autos
+      if (guardados.length === 0) {
+        const { data: todosFav, error: e2 } = await sb
+          .from('mis_vehiculos')
+          .select('id, vehiculo_id, usuario_id');
+        if (!e2 && todosFav) {
+          const { data: misAutos } = await sb
+            .from('autos')
+            .select('id, correo_usuario')
+            .ilike('correo_usuario', correoUsuario);
+          if (misAutos) {
+            const misIds = misAutos.map(a => a.id);
+            guardados = todosFav.filter(f => misIds.includes(f.vehiculo_id));
+          }
+        }
       }
 
-      favoritosGuardados = guardados || [];
+      favoritosGuardados = guardados;
       const cant = favoritosGuardados.length;
       document.getElementById('tituloFav').textContent = `⭐ Mis Favoritos (${cant}/${LIMITE})`;
       document.getElementById('avisoLimite').style.display = (!esAdmin && cant >= LIMITE) ? 'block' : 'none';
@@ -557,12 +577,12 @@
       }
 
       const ids = favoritosGuardados.map(g => g.vehiculo_id);
-      const { data: vehiculos, error: e2 } = await sb
+      const { data: vehiculos, error: e3 } = await sb
         .from('autos')
         .select('*')
         .in('id', ids);
 
-      if (e2 || !vehiculos || !vehiculos.length) {
+      if (e3 || !vehiculos || !vehiculos.length) {
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">📭 No se encontraron los vehículos guardados</div>`;
         return;
       }
