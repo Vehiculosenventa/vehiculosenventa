@@ -87,7 +87,6 @@
       overflow: hidden;
     }
 
-    /* 📸 SOLO FOTOS CHIQUITAS, SIN FOTO GRANDE */
     .miniaturas-contenedor {
       display: flex;
       gap: 10px;
@@ -102,20 +101,18 @@
       height: 70px;
       border-radius: 8px;
       overflow: hidden;
-      cursor: pointer;
-      border: 3px solid transparent;
-      transition: all 0.2s;
+      border: 2px solid transparent;
       background: #d4c29c;
       flex-shrink: 0;
+      cursor: pointer;
+      transition: border 0.2s;
     }
-    .miniatura.activa {
-      border-color: #2c5282;
-      box-shadow: 0 0 0 2px rgba(44, 82, 130, 0.4);
-    }
+    .miniatura:hover {border-color: #2c5282;}
     .miniatura img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      pointer-events: none;
     }
     .sin-foto-texto {
       padding: 20px;
@@ -211,15 +208,53 @@
     }
     .volver:hover {background: #5fa8d3;}
 
-    .cargando {
+    /* 🔍 FOTO AGRANDADA */
+    .overlay-foto {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      padding: 20px;
+    }
+    .overlay-foto.activo {display: flex;}
+    .foto-grande {
+      max-width: 100%;
+      max-height: 85vh;
+      border-radius: 12px;
+      object-fit: contain;
+    }
+    .cerrar-foto {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      color: white;
+      font-size: 30px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 10000;
+      line-height: 1;
+    }
+    .cargando-mas {
       text-align: center;
-      padding: 40px;
+      padding: 20px;
       color: #5d4037;
       font-weight: 600;
     }
   </style>
 </head>
 <body>
+
+  <!-- 🔍 Foto agrandada -->
+  <div class="overlay-foto" id="overlayFoto" onclick="cerrarFotoGrande()">
+    <span class="cerrar-foto">&times;</span>
+    <img src="" alt="Foto grande" class="foto-grande" id="fotoGrande" onclick="event.stopPropagation()">
+  </div>
 
   <div class="contenedor">
     <div class="barra-superior">
@@ -230,19 +265,20 @@
 
     <div class="seccion">
       <h2>🚗 Mis Publicados</h2>
-      <div id="cargandoPub" class="cargando">🔄 Cargando...</div>
+      <div id="cargandoPub" class="cargando-mas">🔄 Cargando...</div>
       <div id="contenidoPub" style="display:none;">
         <div class="deslizador" id="deslizadorPub">
           <div class="fila-tarjetas" id="filaPub"></div>
         </div>
         <div class="puntos" id="puntosPub"></div>
+        <div id="cargandoMasPub" class="cargando-mas" style="display:none;">Cargando siguiente vehículo...</div>
       </div>
     </div>
 
     <div class="seccion">
       <h2 id="tituloFav">⭐ Mis Favoritos (0/5)</h2>
       <div id="avisoLimite" class="aviso-limite">⚠️ Llegaste al límite de 5 favoritos</div>
-      <div id="cargandoFav" class="cargando">🔄 Cargando...</div>
+      <div id="cargandoFav" class="cargando-mas">🔄 Cargando...</div>
       <div id="contenidoFav" style="display:none;">
         <div class="deslizador" id="deslizadorFav">
           <div class="fila-tarjetas" id="filaFav"></div>
@@ -255,8 +291,8 @@
   </div>
 
   <script>
-    const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_URL = "PONÉ TU URL AQUÍ";
+    const SUPABASE_KEY = "PONÉ TU CLAVE AQUÍ";
     const CORREO_SIN_LIMITE = "misvehiculosenventa@gmail.com";
     const LIMITE = 5;
 
@@ -268,6 +304,9 @@
     let listaPub = [], indicePub = 0, inicioXPub = 0;
     let listaFav = [], indiceFav = 0, inicioXFav = 0;
     let favoritosGuardados = [];
+    let todosVehiculos = [];
+    let cargandoPub = false;
+    const CANTIDAD_CARGA = 1;
 
     async function getSupabase() {
       if (!sbClient) sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -296,16 +335,8 @@
           e.preventDefault();
           await cerrarSesion();
         };
-        
-        const { data: usuario } = await sb
-          .from('usuario')
-          .select('id')
-          .ilike('correo_usuario', correoUsuario)
-          .maybeSingle();
-        
-        if (usuario) {
-          idUsuarioActual = usuario.id;
-        }
+        const { data: usuario } = await sb.from('usuario').select('id').ilike('correo_usuario', correoUsuario).maybeSingle();
+        if (usuario) idUsuarioActual = usuario.id;
         return true;
       } else {
         zonaIzq.textContent = "❌ Desconectado";
@@ -329,40 +360,51 @@
       window.location.href = 'index.html';
     }
 
+    // 🔍 AGRANDAR FOTO
+    function abrirFotoGrande(url) {
+      document.getElementById('fotoGrande').src = url;
+      document.getElementById('overlayFoto').classList.add('activo');
+      document.body.style.overflow = 'hidden';
+    }
+    function cerrarFotoGrande() {
+      document.getElementById('overlayFoto').classList.remove('activo');
+      document.body.style.overflow = '';
+    }
+
     function armarTarjetaVehiculo(veh, esPublicado = true) {
-      // 📸 Obtener fotos que existan
       const fotos = [];
+      const fotosYa = new Set();
       for (let i = 1; i <= 6; i++) {
         const campo = veh['foto' + i];
-        if (campo && String(campo).trim() !== '') {
-          fotos.push(String(campo).trim());
+        if (campo && String(campo).trim()) {
+          const url = String(campo).trim();
+          if (!fotosYa.has(url)) {
+            fotosYa.add(url);
+            fotos.push(url);
+          }
         }
       }
 
-      // 📸 SOLO MINIATURAS, SIN FOTO GRANDE
       let fotosHtml = '';
-      if (fotos.length > 0) {
+      if (fotos.length) {
         fotosHtml = '<div class="miniaturas-contenedor">';
-        fotos.forEach((fotoUrl, indice) => {
-          fotosHtml += `
-            <div class="miniatura ${indice === 0 ? 'activa' : ''}">
-              <img src="${fotoUrl}" alt="Foto ${indice + 1}" loading="lazy">
-            </div>
-          `;
+        fotos.forEach(url => {
+          fotosHtml += `<div class="miniatura" onclick="abrirFotoGrande('${url}')"><img src="${url}" alt="Foto" loading="lazy"></div>`;
         });
         fotosHtml += '</div>';
       } else {
         fotosHtml = '<div class="sin-foto-texto">📷 Sin fotos</div>';
       }
 
-      // 📋 TODOS LOS CAMPOS QUE EXISTAN
-      const campos = Object.keys(veh);
+      const prohibidos = ['id', 'correo_usuario', 'created_at', 'usuario_id', 'foto1', 'foto2', 'foto3', 'foto4', 'foto5', 'foto6'];
+      const yaMostrados = new Set();
       let datosHtml = '';
       
-      campos.forEach(clave => {
-        const valor = veh[clave];
-        if (!valor || valor === null || valor === '' || valor === undefined) return;
-        if (['id', 'correo_usuario', 'created_at'].includes(clave)) return;
+      for (const [clave, valor] of Object.entries(veh)) {
+        if (!valor || valor === null || valor === '') continue;
+        if (prohibidos.includes(clave)) continue;
+        if (yaMostrados.has(clave)) continue;
+        yaMostrados.add(clave);
         
         let etiqueta = clave.replace(/_/g, ' ');
         etiqueta = etiqueta.charAt(0).toUpperCase() + etiqueta.slice(1);
@@ -378,97 +420,101 @@
             <span class="valor">${valorMostrar}</span>
           </div>
         `;
-      });
+      }
 
-      let botonAccion = '';
+      let boton = '';
       if (!esPublicado) {
-        const filaGuardada = favoritosGuardados.find(g => g.vehiculo_id === veh.id);
-        if (filaGuardada) {
-          botonAccion = `<button class="quitar" onclick="quitarFavorito(${filaGuardada.id}, event)">🗑️ Quitar de Favoritos</button>`;
+        const fav = favoritosGuardados.find(g => g.vehiculo_id === veh.id);
+        if (fav) {
+          boton = `<button class="quitar" onclick="quitarFavorito(${fav.id}, event)">🗑️ Quitar de Favoritos</button>`;
         }
       }
 
       return `
-        <div class="tarjeta-vehiculo" data-vehiculo-id="${veh.id}">
+        <div class="tarjeta-vehiculo" data-id="${veh.id}">
           ${fotosHtml}
           <div class="datos-contenedor">
             <h3>${veh.marca || ''} ${veh.modelo || ''}</h3>
             ${datosHtml}
-            ${esPublicado ? `<p style="text-align:center; margin-top:14px; color:#6d4c41; font-size:13px; font-weight:600;">👆 Tocá para ver completo</p>` : botonAccion}
+            ${boton}
           </div>
         </div>
       `;
     }
 
     async function cargarPublicados() {
-      const cajaCargando = document.getElementById('cargandoPub');
-      const cajaContenido = document.getElementById('contenidoPub');
-      const fila = document.getElementById('filaPub');
-      const puntos = document.getElementById('puntosPub');
-
       if (!correoUsuario) {
-        cajaCargando.innerHTML = `<div class="sin-datos">🔐 Iniciá sesión para ver tus publicados</div>`;
+        document.getElementById('cargandoPub').innerHTML = `<div class="sin-datos">🔐 Iniciá sesión para ver tus publicados</div>`;
         return;
       }
 
       const sb = await getSupabase();
-      
       const { data, error } = await sb
         .from('autos')
         .select('*')
         .ilike('correo_usuario', correoUsuario)
         .order('id', { ascending: false });
 
-      cajaCargando.style.display = 'none';
-
       if (error) {
-        cajaCargando.innerHTML = `<div class="sin-datos">❌ Error: ${error.message}</div>`;
+        document.getElementById('cargandoPub').innerHTML = `<div class="sin-datos">❌ Error: ${error.message}</div>`;
         return;
       }
 
       if (!data || !data.length) {
-        cajaCargando.innerHTML = `<div class="sin-datos">📭 Aún no publicaste ningún vehículo</div>`;
+        document.getElementById('cargandoPub').innerHTML = `<div class="sin-datos">📭 Aún no publicaste ningún vehículo</div>`;
         return;
       }
 
-      listaPub = data;
+      todosVehiculos = data;
+      listaPub = data.slice(0, CANTIDAD_CARGA);
       indicePub = 0;
-      cajaContenido.style.display = 'block';
+      
+      document.getElementById('cargandoPub').style.display = 'none';
+      document.getElementById('contenidoPub').style.display = 'block';
+      
+      renderizarPublicados();
+    }
 
+    function renderizarPublicados() {
+      const fila = document.getElementById('filaPub');
+      const puntos = document.getElementById('puntosPub');
+      
       fila.innerHTML = '';
       puntos.innerHTML = '';
-
-      data.forEach((veh, i) => {
+      
+      listaPub.forEach((veh, i) => {
         const pantalla = document.createElement('div');
         pantalla.className = 'pantalla';
         pantalla.innerHTML = armarTarjetaVehiculo(veh, true);
-        pantalla.onclick = (e) => {
-          if (!e.target.closest('.miniatura')) {
-            verDetalle(veh.id);
-          }
-        };
         fila.appendChild(pantalla);
-
+        
         const p = document.createElement('span');
-        p.className = 'punto' + (i === 0 ? ' activo' : '');
+        p.className = 'punto' + (i === indicePub ? ' activo' : '');
         puntos.appendChild(p);
       });
+    }
 
-      configurarDeslizamiento('Pub');
-      mostrarActual('Pub');
+    async function cargarSiguientePublicado() {
+      if (cargandoPub) return;
+      const proximoIndice = listaPub.length;
+      if (proximoIndice >= todosVehiculos.length) return;
+      
+      cargandoPub = true;
+      document.getElementById('cargandoMasPub').style.display = 'block';
+      
+      await new Promise(r => setTimeout(r, 150));
+      
+      listaPub.push(todosVehiculos[proximoIndice]);
+      renderizarPublicados();
+      
+      document.getElementById('cargandoMasPub').style.display = 'none';
+      cargandoPub = false;
     }
 
     async function cargarFavoritos() {
-      const cajaCargando = document.getElementById('cargandoFav');
-      const cajaContenido = document.getElementById('contenidoFav');
-      const titulo = document.getElementById('tituloFav');
-      const aviso = document.getElementById('avisoLimite');
-      const fila = document.getElementById('filaFav');
-      const puntos = document.getElementById('puntosFav');
-
       if (!idUsuarioActual) {
-        cajaCargando.innerHTML = `<div class="sin-datos">⭐ Iniciá sesión para ver favoritos</div>`;
-        titulo.textContent = `⭐ Mis Favoritos (0/${LIMITE})`;
+        document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">⭐ Iniciá sesión para ver favoritos</div>`;
+        document.getElementById('tituloFav').textContent = `⭐ Mis Favoritos (0/${LIMITE})`;
         return;
       }
 
@@ -479,19 +525,17 @@
         .eq('usuario_id', idUsuarioActual);
 
       if (e1) {
-        cajaCargando.innerHTML = `<div class="sin-datos">❌ Error: ${e1.message}</div>`;
+        document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">❌ Error: ${e1.message}</div>`;
         return;
       }
 
       favoritosGuardados = guardados || [];
       const cant = favoritosGuardados.length;
-      titulo.textContent = `⭐ Mis Favoritos (${cant}/${LIMITE})`;
-      aviso.style.display = (!esAdmin && cant >= LIMITE) ? 'block' : 'none';
-
-      cajaCargando.style.display = 'none';
+      document.getElementById('tituloFav').textContent = `⭐ Mis Favoritos (${cant}/${LIMITE})`;
+      document.getElementById('avisoLimite').style.display = (!esAdmin && cant >= LIMITE) ? 'block' : 'none';
 
       if (!cant) {
-        cajaCargando.innerHTML = `<div class="sin-datos">⭐ Aún no guardaste favoritos</div>`;
+        document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">⭐ Aún no guardaste favoritos</div>`;
         return;
       }
 
@@ -502,30 +546,35 @@
         .in('id', ids);
 
       if (e2 || !vehiculos || !vehiculos.length) {
-        cajaCargando.innerHTML = `<div class="sin-datos">📭 No se encontraron los vehículos guardados</div>`;
+        document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">📭 No se encontraron los vehículos guardados</div>`;
         return;
       }
 
       listaFav = vehiculos;
       indiceFav = 0;
-      cajaContenido.style.display = 'block';
+      
+      document.getElementById('cargandoFav').style.display = 'none';
+      document.getElementById('contenidoFav').style.display = 'block';
+      renderizarFavoritos();
+    }
 
+    function renderizarFavoritos() {
+      const fila = document.getElementById('filaFav');
+      const puntos = document.getElementById('puntosFav');
+      
       fila.innerHTML = '';
       puntos.innerHTML = '';
-
-      vehiculos.forEach((veh, i) => {
+      
+      listaFav.forEach((veh, i) => {
         const pantalla = document.createElement('div');
         pantalla.className = 'pantalla';
         pantalla.innerHTML = armarTarjetaVehiculo(veh, false);
         fila.appendChild(pantalla);
-
+        
         const p = document.createElement('span');
-        p.className = 'punto' + (i === 0 ? ' activo' : '');
+        p.className = 'punto' + (i === indiceFav ? ' activo' : '');
         puntos.appendChild(p);
       });
-
-      configurarDeslizamiento('Fav');
-      mostrarActual('Fav');
     }
 
     async function quitarFavorito(idFila, evento) {
@@ -537,13 +586,9 @@
         alert('❌ No se pudo quitar: ' + error.message);
         return;
       }
-      document.getElementById('cargandoFav').style.display = 'block';
       document.getElementById('contenidoFav').style.display = 'none';
+      document.getElementById('cargandoFav').style.display = 'block';
       await cargarFavoritos();
-    }
-
-    function verDetalle(id) {
-      window.location.href = 'ver-vehiculo.html?id=' + id;
     }
 
     function configurarDeslizamiento(tipo) {
@@ -561,11 +606,17 @@
           ini = inicioXFav; ult = e.changedTouches[0].clientX; lista = listaFav; ind = indiceFav;
         }
         const dif = ult - ini;
-        if (dif < -50 && ind < lista.length - 1) ind++;
-        else if (dif > 50 && ind > 0) ind--;
-        
-        if (tipo === 'Pub') indicePub = ind;
-        else indiceFav = ind;
+        if (dif < -50 && ind < lista.length - 1) {
+          ind++;
+          if (tipo === 'Pub') {
+            indicePub = ind;
+            if (ind >= listaPub.length - 1) cargarSiguientePublicado();
+          } else indiceFav = ind;
+        } else if (dif > 50 && ind > 0) {
+          ind--;
+          if (tipo === 'Pub') indicePub = ind;
+          else indiceFav = ind;
+        }
         mostrarActual(tipo);
       }, { passive: true });
     }
@@ -573,9 +624,9 @@
     function mostrarActual(tipo) {
       const fila = document.getElementById(`fila${tipo}`);
       const puntos = document.getElementById(`puntos${tipo}`);
-      let ind, lista;
-      if (tipo === 'Pub') { ind = indicePub; lista = listaPub; }
-      else { ind = indiceFav; lista = listaFav; }
+      let ind;
+      if (tipo === 'Pub') ind = indicePub;
+      else ind = indiceFav;
       
       fila.style.transform = `translateX(-${ind * 100}%)`;
       puntos.querySelectorAll('.punto').forEach((p, i) => {
@@ -586,6 +637,8 @@
     async function iniciar() {
       const ok = await verificarSesion();
       if (!ok) return;
+      configurarDeslizamiento('Pub');
+      configurarDeslizamiento('Fav');
       await cargarPublicados();
       await cargarFavoritos();
     }
