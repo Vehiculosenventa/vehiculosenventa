@@ -281,10 +281,11 @@
           await cerrarSesion();
         };
         
+        // ✅ CORREGIDO: busca por correo_usuario
         const { data: usuario } = await sb
           .from('usuario')
           .select('id')
-          .ilike('correo', correoUsuario)
+          .ilike('correo_usuario', correoUsuario)
           .maybeSingle();
         
         if (usuario) {
@@ -371,10 +372,11 @@
 
       const sb = await getSupabase();
       
+      // ✅ CORREGIDO: correo_usuario
       const { data, error } = await sb
         .from('autos')
         .select('*')
-        .ilike('correo_usuario', correoUsuario)  // ✅ CORREGIDO
+        .ilike('correo_usuario', correoUsuario)
         .order('id', { ascending: false });
 
       cajaCargando.style.display = 'none';
