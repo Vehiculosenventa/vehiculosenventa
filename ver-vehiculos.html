@@ -78,7 +78,6 @@
       padding: 0 5px;
     }
 
-    /* Tarjeta color crema/marrón */
     .tarjeta-vehiculo {
       background: #f3e9d2;
       padding: 0;
@@ -88,7 +87,6 @@
       overflow: hidden;
     }
 
-    /* Foto principal grande */
     .foto-grande {
       width: 100%;
       height: 240px;
@@ -110,7 +108,6 @@
       text-align: center;
     }
 
-    /* Galería de fotos chiquitas */
     .galeria {
       display: flex;
       gap: 8px;
@@ -138,7 +135,6 @@
       object-fit: cover;
     }
 
-    /* Datos del vehículo - TODOS los campos */
     .datos-contenedor {
       padding: 18px;
       background: #f3e9d2;
@@ -231,6 +227,18 @@
       color: #5d4037;
       font-weight: 600;
     }
+    .etiqueta-boolean {
+      font-weight: 700; 
+      color: #6d4c41;
+    }
+    .valor-boolean-si {
+      color: #166534; 
+      font-weight: 600;
+    }
+    .valor-boolean-no {
+      color: #991b1b; 
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -242,7 +250,6 @@
       <a href="#" class="zona-derecha" id="botonAccion"></a>
     </div>
 
-    <!-- MIS PUBLICADOS → desliza 1x1 -->
     <div class="seccion">
       <h2>🚗 Mis Publicados</h2>
       <div id="cargandoPub" class="cargando">🔄 Cargando...</div>
@@ -254,7 +261,6 @@
       </div>
     </div>
 
-    <!-- MIS FAVORITOS → desliza 1x1 -->
     <div class="seccion">
       <h2 id="tituloFav">⭐ Mis Favoritos (0/5)</h2>
       <div id="avisoLimite" class="aviso-limite">⚠️ Llegaste al límite de 5 favoritos</div>
@@ -351,20 +357,13 @@
       window.location.href = 'index.html';
     }
 
-    // Obtener todas las fotos del vehículo
     function obtenerTodasLasFotos(veh) {
       const fotos = [];
-      for (let i = 1; i <= 5; i++) {
+      for (let i = 1; i <= 6; i++) {
         const campo = veh[`foto${i}`];
         if (campo && typeof campo === 'string' && campo.trim() !== '') {
           fotos.push(campo.trim());
         }
-      }
-      if (veh.foto_principal && !fotos.includes(veh.foto_principal)) {
-        fotos.unshift(veh.foto_principal);
-      }
-      if (veh.imagen && !fotos.includes(veh.imagen)) {
-        fotos.unshift(veh.imagen);
       }
       return fotos;
     }
@@ -400,50 +399,51 @@
         }
       }
 
+      const siNo = (valor) => valor ? 
+        '<span class="valor-boolean-si">Sí</span>' : 
+        '<span class="valor-boolean-no">No</span>';
+
       return `
         <div class="tarjeta-vehiculo" ${esPublicado ? `onclick="verDetalle(${veh.id})"` : ''}>
-          <!-- Foto principal grande -->
           <div class="foto-grande" id="contenedorFotoGrande-${veh.id}">
             ${htmlFotoGrande}
           </div>
           
-          <!-- Galería de fotos chiquitas -->
           ${fotos.length > 0 ? `<div class="galeria">${htmlGaleria}</div>` : ''}
           
-          <!-- TODOS los datos abajo -->
           <div class="datos-contenedor">
             <h3>${veh.marca||''} ${veh.modelo||''}</h3>
+            ${veh.nombre_usuario ? `<div class="dato"><span class="etiqueta">Publicado por:</span><span class="valor">${veh.nombre_usuario}</span></div>` : ''}
             <div class="dato"><span class="etiqueta">Año:</span><span class="valor">${veh.anio||'-'}</span></div>
             <div class="dato"><span class="etiqueta">Versión:</span><span class="valor">${veh.version||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Tipo:</span><span class="valor">${veh.tipo_vehiculo||'-'}</span></div>
             <div class="dato"><span class="etiqueta">Ciudad:</span><span class="valor">${veh.ciudad||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Dirección:</span><span class="valor">${veh.direccion||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Dueño:</span><span class="valor">${veh.dueno||'-'}</span></div>
             <div class="dato"><span class="etiqueta">Precio:</span><span class="valor">$ ${veh.precio ? Number(veh.precio).toLocaleString('es-AR') : '-'}</span></div>
             <div class="dato"><span class="etiqueta">Teléfono:</span><span class="valor">${veh.telefono||'-'}</span></div>
-            <div class="dato"><span class="etiqueta">Kilómetros:</span><span class="valor">${veh.kilometros||'-'}</span></div>
-            <div class="dato"><span class="etiqueta">Color:</span><span class="valor">${veh.color||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Kilometraje:</span><span class="valor">${veh.kilometraje ? Number(veh.kilometraje).toLocaleString('es-AR') : '-'}</span></div>
             <div class="dato"><span class="etiqueta">Combustible:</span><span class="valor">${veh.combustible||'-'}</span></div>
             <div class="dato"><span class="etiqueta">Transmisión:</span><span class="valor">${veh.transmision||'-'}</span></div>
-            <div class="dato"><span class="etiqueta">Puertas:</span><span class="valor">${veh.puertas||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Permuta:</span>${siNo(veh.permuta)}</div>
+            <div class="dato"><span class="etiqueta">Contado:</span>${siNo(veh.contado)}</div>
+            <div class="dato"><span class="etiqueta">Deuda:</span><span class="valor">${veh.deuda||'No'}</span></div>
+            ${veh.descripcion ? `<div class="dato" style="align-items:flex-start;"><span class="etiqueta">Descripción:</span><span class="valor" style="text-align:right;max-width:65%;">${veh.descripcion}</span></div>` : ''}
             ${esPublicado ? `<p style="text-align:center; margin-top:14px; color:#6d4c41; font-size:13px; font-weight:600;">👆 Tocá para ver completo</p>` : botonAccion}
           </div>
         </div>
       `;
     }
 
-    // Cambiar foto grande al tocar una chiquita
     window.cambiarFoto = function(idVehiculo, urlFoto, elementoChica) {
       const contenedor = document.getElementById(`contenedorFotoGrande-${idVehiculo}`);
       if (!contenedor) return;
-      
-      // Reemplazar la imagen
       contenedor.innerHTML = `<img src="${urlFoto}" class="foto-activa" alt="Vehículo">`;
-      
-      // Quitar activa de todas y poner en la tocada
       const galeria = elementoChica.parentElement;
       galeria.querySelectorAll('.foto-chica').forEach(f => f.classList.remove('activa'));
       elementoChica.classList.add('activa');
     };
 
-    // --- MIS PUBLICADOS desde tabla autos ---
     async function cargarPublicados() {
       const cajaCargando = document.getElementById('cargandoPub');
       const cajaContenido = document.getElementById('contenidoPub');
@@ -459,7 +459,6 @@
 
       const sb = await getSupabase();
       
-      // ✅ CORREGIDO: la columna se llama correo_usuario
       const { data, error } = await sb
         .from('autos')
         .select('*')
@@ -503,7 +502,6 @@
       mostrarActual('Pub');
     }
 
-    // --- MIS FAVORITOS desde tabla mis_vehiculos ---
     async function cargarFavoritos() {
       const cajaCargando = document.getElementById('cargandoFav');
       const cajaContenido = document.getElementById('contenidoFav');
