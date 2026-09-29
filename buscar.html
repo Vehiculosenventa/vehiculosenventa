@@ -483,54 +483,52 @@
     }
 
     async function verificarSesion() {
-      // Primero probamos con la sesión real de Supabase
       const sb = await getSupabase();
       const { data: { session } } = await sb.auth.getSession();
       
       if (session && session.user) {
         correoUsuarioActual = (session.user.email || '').trim().toLowerCase();
         esAdmin = correoUsuarioActual === CORREO_SIN_LIMITE.toLowerCase();
+        idUsuarioActual = session.user.id; // ✅ DIRECTO DEL SISTEMA — NO BUSCA MÁS EN OTRA TABLA
         sesionConfirmada = true;
-        // Guardamos también en localStorage para que lo encuentren las otras páginas
         localStorage.setItem('correo_usuario', session.user.email);
-        localStorage.setItem('nombre_usuario', session.user.user_metadata?.nombre || session.user.email.split('@')[0]);
+        localStorage.setItem('id_usuario', session.user.id);
         return true;
       }
       
-      // Si no hay sesión activa, probamos con localStorage como respaldo
       const correo = localStorage.getItem('correo_usuario');
-      const nombre = localStorage.getItem('nombre_usuario');
-      if (correo && nombre) {
+      const idGuardado = localStorage.getItem('id_usuario');
+      if (correo && idGuardado) {
         correoUsuarioActual = correo.trim().toLowerCase();
+        idUsuarioActual = idGuardado;
         esAdmin = correoUsuarioActual === CORREO_SIN_LIMITE.toLowerCase();
         sesionConfirmada = true;
         return true;
       }
       
       sesionConfirmada = false;
+      idUsuarioActual = null;
       return false;
-    }
-
-    async function obtenerUsuarioId(correo) {
-      if (!correo) return null;
-      const sb = await getSupabase();
-      const { data } = await sb.from('usuarios').select('id').eq('correo', correo).maybeSingle();
-      return data?.id || null;
     }
 
     async function contarGuardadosUsuario(usuarioId) {
       if (!usuarioId) return 0;
       const sb = await getSupabase();
-      const { count } = await sb.from('mis_vehiculos').select('*', { count: 'exact', head: true }).eq('usuario_id', usuarioId);
+      const { count } = await sb
+        .from('mis_vehiculos')
+        .select('*', { count: 'exact', head: true })
+        .eq('usuario_id', usuarioId); // ✅ COLUMNA CORRECTA
       return count || 0;
     }
 
     async function yaEstaGuardado(vehiculoId) {
       if (!idUsuarioActual || !vehiculoId) return false;
       const sb = await getSupabase();
-      const { data } = await sb.from('mis_vehiculos').select('id')
-        .eq('usuario_id', idUsuarioActual)
-        .eq('vehiculo_id', vehiculoId)
+      const { data } = await sb
+        .from('mis_vehiculos')
+        .select('id')
+        .eq('usuario_id', idUsuarioActual) // ✅ COLUMNA CORRECTA
+        .eq('vehiculo_id', vehiculoId)      // ✅ COLUMNA CORRECTA
         .maybeSingle();
       return !!data;
     }
@@ -550,12 +548,7 @@
       }
 
       if (!idUsuarioActual) {
-        const correo = correoUsuarioActual || localStorage.getItem('correo_usuario');
-        idUsuarioActual = await obtenerUsuarioId(correo);
-      }
-
-      if (!idUsuarioActual) {
-        alert('❌ No se encontró tu cuenta');
+        alert('❌ No se pudo identificar tu cuenta. Salí y entrá de nuevo.');
         return false;
       }
 
@@ -574,8 +567,8 @@
 
       const sb = await getSupabase();
       const { error } = await sb.from('mis_vehiculos').insert({
-        usuario_id: idUsuarioActual,
-        vehiculo_id: vehiculoId
+        usuario_id: idUsuarioActual,   // ✅ QUEDA GUARDADO BIEN — NO NULL
+        vehiculo_id: vehiculoId        // ✅ COLUMNA CORRECTA
       });
 
       if (error) {
@@ -584,7 +577,7 @@
       }
 
       alert('✅ ¡Agregado a "Mis Vehículos"! ⭐🎉');
-      await cargarUno(indiceActual); // Recarga para que cambie el botón
+      await cargarUno(indiceActual);
       return true;
     }
 
@@ -638,11 +631,7 @@
       contador.textContent = '';
       idsFiltrados = []; indiceActual = 0; idVehiculoActual = null; telefonoActual = ''; marcaModeloActual = '';
 
-      // Verificamos sesión al iniciar la búsqueda
       await verificarSesion();
-      if (sesionConfirmada && !idUsuarioActual) {
-        idUsuarioActual = await obtenerUsuarioId(correoUsuarioActual || localStorage.getItem('correo_usuario'));
-      }
 
       const sb = await getSupabase();
       let consulta = sb.from('autos').select('*');
@@ -677,11 +666,7 @@
       const contador = document.getElementById('contador');
       caja.innerHTML = `<div class="cargando">🔄 Cargando vehículo ${posicion+1} de ${idsFiltrados.length}...</div>`;
 
-      // Aseguramos que la sesión esté verificada antes de mostrar el botón
       await verificarSesion();
-      if (sesionConfirmada && !idUsuarioActual) {
-        idUsuarioActual = await obtenerUsuarioId(correoUsuarioActual || localStorage.getItem('correo_usuario'));
-      }
 
       const sb = await getSupabase();
       const { data: vehiculo, error } = await sb.from('autos').select('*').eq('id', idsFiltrados[posicion]).single();
@@ -763,7 +748,7 @@
 
     async function iniciar() {
       await getSupabase();
-      await verificarSesion(); // Verificamos apenas carga la página
+      await verificarSesion();
       document.addEventListener('touchstart', registrarInicioDeslizamiento, { passive: true });
       document.addEventListener('touchend', registrarFinDeslizamiento, { passive: true });
       document.addEventListener('mousedown', registrarInicioDeslizamiento);
