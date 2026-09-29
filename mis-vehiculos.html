@@ -148,6 +148,7 @@
       padding: 30px 15px;
       color: #78716c;
       font-size: 15px;
+      line-height: 1.6;
     }
 
     .volver {
@@ -239,6 +240,8 @@
       if (session?.user?.email) correoUsuario = session.user.email;
       correoUsuario = correoUsuario.trim().toLowerCase();
       
+      console.log("📧 Correo detectado:", correoUsuario);
+      
       esAdmin = correoUsuario === CORREO_SIN_LIMITE.toLowerCase();
       
       if (correoUsuario) {
@@ -256,12 +259,12 @@
         const { data: usuario } = await sb
           .from('usuario')
           .select('id')
-          .eq('correo', correoUsuario)
+          .ilike('correo', correoUsuario)
           .maybeSingle();
         
         if (usuario) {
           idUsuarioActual = usuario.id;
-          console.log("✅ Usuario encontrado:", idUsuarioActual);
+          console.log("✅ Usuario encontrado - ID:", idUsuarioActual);
         } else {
           console.log("⚠️ No se encontró usuario con ese correo");
           idUsuarioActual = null;
@@ -296,26 +299,44 @@
       const fila = document.getElementById('filaPub');
       const puntos = document.getElementById('puntosPub');
 
+      console.log("🚗 Buscando publicados para:", correoUsuario);
+
       if (!correoUsuario) {
         cajaCargando.innerHTML = `<div class="sin-datos">🔐 Iniciá sesión para ver tus publicados</div>`;
         return;
       }
 
       const sb = await getSupabase();
+      
+      // Primero traemos TODOS los autos para verificar
+      const { data: todos, error: eTodos } = await sb
+        .from('autos')
+        .select('id, marca, modelo, correo');
+      
+      console.log("📋 Total de autos en la tabla:", todos?.length || 0);
+      if (todos && todos.length > 0) {
+        console.log("📧 Correos encontrados:", todos.map(a => a.correo));
+      }
+
+      // Buscamos con coincidencia flexible de correo
       const { data, error } = await sb
         .from('autos')
         .select('*')
-        .eq('correo', correoUsuario)
+        .ilike('correo', correoUsuario)
         .order('id', { ascending: false });
 
       cajaCargando.style.display = 'none';
 
       if (error) {
+        console.error("❌ Error en consulta:", error);
         cajaCargando.innerHTML = `<div class="sin-datos">❌ Error: ${error.message}</div>`;
         return;
       }
+
+      console.log("✅ Publicados encontrados:", data?.length || 0);
+
       if (!data || !data.length) {
-        cajaCargando.innerHTML = `<div class="sin-datos">📭 Aún no publicaste ningún vehículo</div>`;
+        cajaCargando.innerHTML = `<div class="sin-datos">📭 Aún no publicaste ningún vehículo<br><small>(Correo usado: ${correoUsuario})</small></div>`;
         return;
       }
 
@@ -360,7 +381,7 @@
       const fila = document.getElementById('filaFav');
       const puntos = document.getElementById('puntosFav');
 
-      console.log("🔍 cargarFavoritos - idUsuarioActual:", idUsuarioActual);
+      console.log("⭐ Cargando favoritos - idUsuarioActual:", idUsuarioActual);
 
       if (!idUsuarioActual) {
         cajaCargando.innerHTML = `<div class="sin-datos">⭐ Iniciá sesión para ver favoritos</div>`;
