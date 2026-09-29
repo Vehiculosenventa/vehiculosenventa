@@ -344,11 +344,12 @@
     .foto-ver img {width: 100%; height: 100%; object-fit: cover;}
     .foto-nombre {display: none;}
 
+    /* ✅ FONDO CELESTE EN VENTANA DE FOTOS */
     .ventana-foto {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
-      background: rgba(0,0,0,0.92);
+      background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
       display: none;
       align-items: center;
       justify-content: center;
@@ -369,25 +370,8 @@
       border-radius: 12px;
     }
 
-    .boton-wsp-flotante {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: #25D366;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 10000;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.4);
-    }
-    .boton-wsp-flotante svg {
-      width: 22px;
-      height: 22px;
-      fill: white;
-    }
+    /* ✅ BOTÓN DE WHATSAPP ELIMINADO DE LA VENTANA DE FOTOS */
+    .boton-wsp-flotante { display: none; }
 
     .logo-agua-foto {
       position: absolute;
@@ -410,10 +394,11 @@
       line-height: 1;
     }
     .indicador-foto {
-      color: #ccc;
+      color: #2c5282;
       font-size: 14px;
       margin-top: 10px;
       text-align: center;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -544,12 +529,7 @@
 
   <div class="ventana-foto" id="ventanaFoto">
     <div class="contenedor-foto-grande" id="contenedorFotoGrande">
-      <a id="botonWspFlotante" href="" target="_blank" class="boton-wsp-flotante" title="Enviar por WhatsApp">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-          <path fill="white" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.76.97-.93 1.17-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.47-1.76-1.65-2.07-.17-.3-.34-.34-.5-.34-.16 0-.33.01-.47.01-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5c0 1.24-.5 2.36-1.32 3.18-.22.22-.43.45-.65.67-.22.22-.45.43-.67.65-.82.82-1.94 1.32-3.18 1.32z"/>
-          <path fill="white" d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm0 22c-5.51 0-10-4.49-10-10S6.49 2 12 2s10 4.49 10 10-4.49 10-10 10z"/>
-        </svg>
-      </a>
+      <!-- ✅ BOTÓN DE WHATSAPP ELIMINADO DE AQUÍ -->
       <div class="logo-agua-foto"></div>
       <span class="cerrar-foto" onclick="cerrarFoto()">×</span>
       <img src="" alt="Foto ampliada" class="foto-grande" id="fotoGrande">
@@ -570,7 +550,6 @@ let indiceActual = 0;
 let idVehiculoActual = null;
 let fotosVehiculoActual = [];
 let indiceFotoActual = 0;
-let telefonoActual = '';
 let inicioX = 0;
 let finX = 0;
 
@@ -692,18 +671,11 @@ function fotoSiguiente() {
 function mostrarFotoActual() {
   document.getElementById('fotoGrande').src = fotosVehiculoActual[indiceFotoActual];
   document.getElementById('indicadorFoto').textContent = `${indiceFotoActual + 1} / ${fotosVehiculoActual.length}`;
-  
-  const mensaje = encodeURIComponent(
-    `Hola, vi tu vehículo y quisiera saber por él. Quedo atento, gracias!`
-  );
-  document.getElementById('botonWspFlotante').href = 
-    `https://wa.me/549${telefonoActual}?text=${mensaje}`;
 }
 
 function abrirFoto(fotos, indice, telefono) {
   fotosVehiculoActual = fotos;
   indiceFotoActual = indice;
-  telefonoActual = telefono;
   document.getElementById('ventanaFoto').classList.add('mostrar');
   mostrarFotoActual();
 }
@@ -856,7 +828,7 @@ async function cargarUno(posicion) {
 
           <div class="titulo-vehiculo">${v.marca || ''} ${v.modelo || ''} — ${v.anio || ''}</div>
 
-          <!-- ✅ BOTÓN DE WHATSAPP EN EL LUGAR QUE PEDISTE -->
+          <!-- ✅ BOTÓN DE WHATSAPP EN LA TARJETA SIGUE IGUAL -->
           <a href="https://wa.me/549${numeroTel}?text=${mensajeWsp}" target="_blank" class="boton-wsp-tarjeta">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path fill="white" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.76.97-.93 1.17-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.47-1.76-1.65-2.07-.17-.3-.34-.34-.5-.34-.16 0-.33.01-.47.01-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5c0 1.24-.5 2.36-1.32 3.18-.22.22-.43.45-.65.67-.22.22-.45.43-.67.65-.82.82-1.94 1.32-3.18 1.32z"/>
