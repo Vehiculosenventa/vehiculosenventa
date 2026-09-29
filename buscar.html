@@ -321,24 +321,6 @@
       line-height: 1;
       text-shadow: 0 0 4px rgba(0,0,0,0.4);
     }
-    .aviso-sesion {
-      background: #fef3c7;
-      border: 1px solid #fcd34d;
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 15px;
-      text-align: center;
-    }
-    .boton-iniciar-peque {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 10px 20px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
-      border-radius: 10px;
-      text-decoration: none;
-      font-weight: 600;
-    }
   </style>
 </head>
 <body>
@@ -485,6 +467,7 @@
     let idUsuarioActual = null;
     let correoUsuarioActual = '';
     let esAdmin = false;
+    let sesionConfirmada = false;
 
     let xInicio = 0, xFin = 0;
     const UMBRAL_DESLIZAR = 50;
@@ -500,11 +483,32 @@
     }
 
     async function verificarSesion() {
+      // Primero probamos con la sesión real de Supabase
+      const sb = await getSupabase();
+      const { data: { session } } = await sb.auth.getSession();
+      
+      if (session && session.user) {
+        correoUsuarioActual = (session.user.email || '').trim().toLowerCase();
+        esAdmin = correoUsuarioActual === CORREO_SIN_LIMITE.toLowerCase();
+        sesionConfirmada = true;
+        // Guardamos también en localStorage para que lo encuentren las otras páginas
+        localStorage.setItem('correo_usuario', session.user.email);
+        localStorage.setItem('nombre_usuario', session.user.user_metadata?.nombre || session.user.email.split('@')[0]);
+        return true;
+      }
+      
+      // Si no hay sesión activa, probamos con localStorage como respaldo
       const correo = localStorage.getItem('correo_usuario');
       const nombre = localStorage.getItem('nombre_usuario');
-      correoUsuarioActual = (correo || '').trim().toLowerCase();
-      esAdmin = correoUsuarioActual === CORREO_SIN_LIMITE.toLowerCase();
-      return !!(correo && nombre);
+      if (correo && nombre) {
+        correoUsuarioActual = correo.trim().toLowerCase();
+        esAdmin = correoUsuarioActual === CORREO_SIN_LIMITE.toLowerCase();
+        sesionConfirmada = true;
+        return true;
+      }
+      
+      sesionConfirmada = false;
+      return false;
     }
 
     async function obtenerUsuarioId(correo) {
@@ -546,7 +550,7 @@
       }
 
       if (!idUsuarioActual) {
-        const correo = localStorage.getItem('correo_usuario');
+        const correo = correoUsuarioActual || localStorage.getItem('correo_usuario');
         idUsuarioActual = await obtenerUsuarioId(correo);
       }
 
@@ -580,6 +584,7 @@
       }
 
       alert('✅ ¡Agregado a "Mis Vehículos"! ⭐🎉');
+      await cargarUno(indiceActual); // Recarga para que cambie el botón
       return true;
     }
 
@@ -633,10 +638,11 @@
       contador.textContent = '';
       idsFiltrados = []; indiceActual = 0; idVehiculoActual = null; telefonoActual = ''; marcaModeloActual = '';
 
-      const correo = localStorage.getItem('correo_usuario');
-      correoUsuarioActual = (correo || '').trim().toLowerCase();
-      esAdmin = correoUsuarioActual === CORREO_SIN_LIMITE.toLowerCase();
-      idUsuarioActual = await obtenerUsuarioId(correo);
+      // Verificamos sesión al iniciar la búsqueda
+      await verificarSesion();
+      if (sesionConfirmada && !idUsuarioActual) {
+        idUsuarioActual = await obtenerUsuarioId(correoUsuarioActual || localStorage.getItem('correo_usuario'));
+      }
 
       const sb = await getSupabase();
       let consulta = sb.from('autos').select('*');
@@ -671,6 +677,12 @@
       const contador = document.getElementById('contador');
       caja.innerHTML = `<div class="cargando">🔄 Cargando vehículo ${posicion+1} de ${idsFiltrados.length}...</div>`;
 
+      // Aseguramos que la sesión esté verificada antes de mostrar el botón
+      await verificarSesion();
+      if (sesionConfirmada && !idUsuarioActual) {
+        idUsuarioActual = await obtenerUsuarioId(correoUsuarioActual || localStorage.getItem('correo_usuario'));
+      }
+
       const sb = await getSupabase();
       const { data: vehiculo, error } = await sb.from('autos').select('*').eq('id', idsFiltrados[posicion]).single();
       if (error || !vehiculo) { caja.innerHTML = `<div class="sin-resultado">❌ Error al cargar</div>`; return; }
@@ -679,8 +691,7 @@
       telefonoActual = vehiculo.telefono || '';
       marcaModeloActual = `${vehiculo.marca || ''} ${vehiculo.modelo || ''} — ${vehiculo.anio || ''}`.trim();
 
-      const guardado = await yaEstaGuardado(vehiculo.id);
-      const tieneSesion = await verificarSesion();
+      const guardado = idUsuarioActual ? await yaEstaGuardado(vehiculo.id) : false;
 
       let fotosHtml = '';
       for (let i = 1; i <= 6; i++) {
@@ -692,7 +703,7 @@
       let enlaceFavoritoHtml = '';
       if (guardado) {
         enlaceFavoritoHtml = `<span class="enlace-favorito guardado"><span class="estrella-gris">⭐</span> En Mis Vehículos</span>`;
-      } else if (!tieneSesion) {
+      } else if (!sesionConfirmada) {
         enlaceFavoritoHtml = `<span class="enlace-favorito agregar" onclick="window.location.href='iniciar-sesion.html'"><span class="estrella-amarilla">⭐</span> Agregar a Mi Vehículo</span>`;
       } else {
         enlaceFavoritoHtml = `<span class="enlace-favorito agregar" onclick="agregarAFavoritos(${vehiculo.id})"><span class="estrella-amarilla">⭐</span> Agregar a Mi Vehículo</span>`;
@@ -752,8 +763,7 @@
 
     async function iniciar() {
       await getSupabase();
-      correoUsuarioActual = (localStorage.getItem('correo_usuario') || '').trim().toLowerCase();
-      esAdmin = correoUsuarioActual === CORREO_SIN_LIMITE.toLowerCase();
+      await verificarSesion(); // Verificamos apenas carga la página
       document.addEventListener('touchstart', registrarInicioDeslizamiento, { passive: true });
       document.addEventListener('touchend', registrarFinDeslizamiento, { passive: true });
       document.addEventListener('mousedown', registrarInicioDeslizamiento);
