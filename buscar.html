@@ -93,19 +93,32 @@
       border-radius: 8px;
     }
 
+    .fila-superior {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+      width: 100%;
+    }
+    .etiqueta-tipo {
+      display: inline-block;
+      background: #ebf4fb;
+      color: #2c5282;
+      padding: 8px 18px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 15px;
+    }
     .enlace-favorito {
       display: inline-flex;
       align-items: center;
       gap: 8px;
       font-size: 17px;
       font-weight: 700;
-      margin: 0 0 18px 0;
       padding: 8px 4px;
       border: none;
       background: transparent;
       transition: all 0.2s;
-      justify-content: flex-end;
-      width: 100%;
     }
     .enlace-favorito.agregar {
       color: #1d4ed8;
@@ -118,7 +131,6 @@
     .enlace-favorito.guardado {
       color: #6b7280;
       cursor: default;
-      justify-content: flex-end;
     }
     .estrella-amarilla {
       color: #facc15;
@@ -225,24 +237,6 @@
     @keyframes aparecer {
       from {opacity: 0; transform: translateX(8px);}
       to {opacity: 1; transform: translateX(0);}
-    }
-    .etiqueta-tipo {
-      display: inline-block;
-      background: #ebf4fb;
-      color: #2c5282;
-      padding: 8px 18px;
-      border-radius: 20px;
-      font-weight: 700;
-      margin-bottom: 15px;
-      font-size: 15px;
-    }
-    .fotos-titulo {
-      margin-top: 0;
-      margin-bottom: 12px;
-      font-weight: 700;
-      color: #2c5282;
-      font-size: 15px;
-      text-align: center;
     }
     .fotos-cuadricula {
       display: grid;
@@ -700,9 +694,10 @@
 
       caja.innerHTML = `
         <div class="tarjeta" id="tarjetaDeslizable">
-          ${vehiculo.tipo_vehiculo ? `<span class="etiqueta-tipo">${vehiculo.tipo_vehiculo}</span>` : ''}
-          
-          ${enlaceFavoritoHtml}
+          <div class="fila-superior">
+            ${vehiculo.tipo_vehiculo ? `<span class="etiqueta-tipo">${vehiculo.tipo_vehiculo}</span>` : ''}
+            ${enlaceFavoritoHtml}
+          </div>
           
           <div id="cajaCodigo" class="caja-codigo">
             <h3>🔐 Escribí tu código de seguridad</h3>
@@ -711,7 +706,7 @@
             <button class="boton-cancelar" onclick="ocultarCajaCodigo()">❌ Cancelar</button>
           </div>
           
-          ${hayFotos ? `<div class="fotos-titulo">📸 Fotos del vehículo — Tocar para agrandar</div><div class="fotos-cuadricula">${fotosHtml}</div>` : ''}
+          ${hayFotos ? `<div class="fotos-cuadricula">${fotosHtml}</div>` : ''}
           
           <div class="titulo-vehiculo">${vehiculo.marca || ''} ${vehiculo.modelo || ''} — ${vehiculo.anio || ''}</div>
           <div class="fila"><strong>Versión:</strong> ${vehiculo.version || '-'}</div>
