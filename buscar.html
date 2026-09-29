@@ -61,6 +61,7 @@
       text-align: center;
       margin-top: 10px;
       margin-bottom: 15px;
+      display: none; /* Oculto porque no mostramos los botones de entrar */
     }
     .olvido a {
       color: #4a5568;
@@ -558,12 +559,9 @@ function verificarSesion() {
   let nombre = null;
   let usuario_id = null;
 
-  console.log('📦 Buscando TODO en localStorage...');
   for (let i = 0; i < localStorage.length; i++) {
     const clave = localStorage.key(i);
     const valor = localStorage.getItem(clave);
-    console.log(`  → ${clave}: ${valor}`);
-
     const claveMin = clave.toLowerCase();
     if (!correo && (claveMin.includes('correo') || claveMin.includes('email'))) {
       correo = valor;
@@ -576,26 +574,17 @@ function verificarSesion() {
     }
   }
 
-  console.log('📧 Correo encontrado:', correo);
-  console.log('👤 Nombre encontrado:', nombre);
-  console.log('🆔 ID encontrado:', usuario_id);
-
   const ladoIzquierdo = document.getElementById('ladoIzquierdo');
   const ladoDerecho = document.getElementById('ladoDerecho');
-  const zonaOlvido = document.getElementById('zonaOlvido');
 
   if (correo) {
     const nombreMostrar = nombre || correo.split('@')[0];
     ladoIzquierdo.innerHTML = `<span class="texto-conectado">${nombreMostrar} — Conectado</span>`;
     ladoDerecho.innerHTML = `<button class="boton-azul" onclick="cerrarSesion()">Cerrar sesión</button>`;
-    zonaOlvido.style.display = 'none';
-    console.log('✅ SESIÓN DETECTADA CORRECTAMENTE');
   } else {
-    ladoIzquierdo.innerHTML = `<a href="index.html" class="boton-azul">Ir al Inicio</a>`;
-    ladoDerecho.innerHTML = `<a href="iniciar-sesion.html" class="boton-azul">Entrar</a>`;
-    zonaOlvido.innerHTML = `<a href="index.html">👉 Entrá desde la página principal primero</a>`;
-    zonaOlvido.style.display = 'block';
-    console.log('❌ Sin sesión detectada — entrá desde la página principal');
+    // ✅ SIN botones de "Ir al inicio" ni "Entrar"
+    ladoIzquierdo.innerHTML = '';
+    ladoDerecho.innerHTML = '';
   }
 }
 
@@ -680,11 +669,9 @@ function mostrarFotoActual() {
   document.getElementById('fotoGrande').src = fotosVehiculoActual[indiceFotoActual];
   document.getElementById('indicadorFoto').textContent = `${indiceFotoActual + 1} / ${fotosVehiculoActual.length}`;
   
-  // ✅ Mensaje de WhatsApp personalizado
   const mensaje = encodeURIComponent(
     `Hola! 👋 Vi tu anuncio en Vehículos en Venta y me gustaría comunicarme con vos. Quedo atento, gracias!`
   );
-  // ✅ Número directo SIN el 15
   document.getElementById('botonWspFlotante').href = 
     `https://wa.me/549${telefonoActual}?text=${mensaje}`;
 }
@@ -717,7 +704,6 @@ function mostrarCajaCodigo() {
       localStorage.getItem('email');
     if (!correo) {
       alert('🔐 Primero entrá desde la página principal');
-      window.location.href = 'index.html';
       return;
     }
     document.getElementById('cajaCodigo').classList.add('mostrar');
