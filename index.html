@@ -290,7 +290,7 @@
     <a href="catalogo.html" class="boton">📋 <span>Ver Vehículos — Catálogo</span></a>
     <a href="buscar.html" class="boton">🔍 <span>Buscar Vehículo</span></a>
     <a href="mis-vehiculos.html" class="boton">❤️ <span>Mis Vehículos</span></a>
-    <a href="app.webmanifest" download class="boton">📲 <span>Descargar App</span></a>
+    <button id="btnInstalarApp" class="boton">📲 <span>Descargar App</span></button>
     
     <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
     
@@ -336,6 +336,29 @@
     const inputChat = document.getElementById('inputChat');
     const btnEnviarChat = document.getElementById('btnEnviarChat');
     const cuerpoChat = document.getElementById('cuerpoChat');
+    const btnInstalarApp = document.getElementById('btnInstalarApp');
+
+    // Instalar App automático
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      btnInstalarApp.style.display = 'flex';
+    });
+
+    btnInstalarApp.addEventListener('click', async () => {
+      if (!deferredPrompt) {
+        alert('La aplicación ya está instalada o no se puede instalar en este dispositivo. Desde el celular tocá los 3 puntitos → "Agregar a pantalla de inicio" ✅');
+        return;
+      }
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === 'accepted') {
+        console.log('✅ App instalada');
+        btnInstalarApp.textContent = '✅ App Instalada';
+        deferredPrompt = null;
+      }
+    });
 
     // Abrir y cerrar chat
     btnChatIA.addEventListener('click', () => {
