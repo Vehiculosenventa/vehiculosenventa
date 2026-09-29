@@ -87,7 +87,7 @@
       overflow: hidden;
     }
 
-    .fotos-contenedor {
+    .foto-grande-contenedor {
       width: 100%;
       height: 220px;
       background: #e8dcc5;
@@ -100,11 +100,48 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: opacity 0.2s;
     }
     .sin-foto {
       color: #8b7355;
       font-size: 16px;
       text-align: center;
+    }
+
+    .miniaturas-contenedor {
+      display: flex;
+      gap: 6px;
+      padding: 10px;
+      background: #e8dcc5;
+      overflow-x: auto;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .miniatura {
+      width: 65px;
+      height: 55px;
+      border-radius: 6px;
+      overflow: hidden;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: all 0.2s;
+      background: #d4c29c;
+    }
+    .miniatura.activa {
+      border-color: #2c5282;
+      box-shadow: 0 0 0 2px rgba(44, 82, 130, 0.4);
+    }
+    .miniatura img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .miniatura-vacia {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #8b7355;
     }
 
     .datos-contenedor {
@@ -238,7 +275,7 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     const CORREO_SIN_LIMITE = "misvehiculosenventa@gmail.com";
     const LIMITE = 5;
 
@@ -281,7 +318,6 @@
           await cerrarSesion();
         };
         
-        // ✅ CORREGIDO: busca por correo_usuario
         const { data: usuario } = await sb
           .from('usuario')
           .select('id')
@@ -319,17 +355,40 @@
     }
 
     function armarTarjetaVehiculo(veh, esPublicado = true) {
-      const tieneFoto = veh.foto1 || veh.foto_principal || veh.imagen;
-      const urlFoto = tieneFoto 
-        ? (veh.foto1 || veh.foto_principal || veh.imagen) 
-        : null;
+      const fotos = [
+        veh.foto1, veh.foto2, veh.foto3, veh.foto4, veh.foto5, veh.foto6
+      ].filter(f => f && f.trim() !== '');
 
-      let htmlFoto = '';
-      if (urlFoto) {
-        htmlFoto = `<img src="${urlFoto}" class="foto-principal" alt="Vehículo">`;
-      } else {
-        htmlFoto = `<div class="sin-foto">📷 Sin foto</div>`;
-      }
+      const indiceFotoActiva = {valor: 0};
+      const fotoPrincipal = fotos.length > 0 ? fotos[0] : null;
+
+      const fotosHtml = fotos.length > 0 
+        ? fotos.map((f, i) => `
+            <div class="miniatura ${i === 0 ? 'activa' : ''}" 
+                 onclick="cambiarFoto(this, '${f}', ${i}, '${veh.id}')"
+                 data-veh="${veh.id}" data-indice="${i}">
+              <img src="${f}" alt="Foto ${i+1}" loading="lazy">
+            </div>
+          `).join('')
+        : '';
+
+      let htmlFotoGrande = fotoPrincipal 
+        ? `<img src="${fotoPrincipal}" class="foto-principal" alt="Vehículo" id="fotoGrande-${veh.id}">`
+        : `<div class="sin-foto">📷 Sin foto</div>`;
+
+      const camposVehiculo = Object.entries(veh).filter(([clave, valor]) => {
+        if (!valor || valor === null || valor === '') return false;
+        return !['id', 'correo_usuario', 'created_at'].includes(clave);
+      });
+
+      let datosHtml = camposVehiculo.map(([clave, valor]) => {
+        const etiqueta = clave.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
+        let valorMostrar = valor;
+        if (clave === 'precio' && !isNaN(Number(valor))) {
+          valorMostrar = '$ ' + Number(valor).toLocaleString('es-AR');
+        }
+        return `<div class="dato"><span class="etiqueta">${etiqueta}:</span><span class="valor">${valorMostrar}</span></div>`;
+      }).join('');
 
       let botonAccion = '';
       if (!esPublicado) {
@@ -340,22 +399,29 @@
       }
 
       return `
-        <div class="tarjeta-vehiculo" ${esPublicado ? `onclick="verDetalle(${veh.id})"` : ''}>
-          <div class="fotos-contenedor">
-            ${htmlFoto}
+        <div class="tarjeta-vehiculo" data-vehiculo-id="${veh.id}">
+          <div class="foto-grande-contenedor" id="contenedorFoto-${veh.id}">
+            ${htmlFotoGrande}
           </div>
+          ${fotosHtml ? `<div class="miniaturas-contenedor">${fotosHtml}</div>` : ''}
           <div class="datos-contenedor">
             <h3>${veh.marca||''} ${veh.modelo||''}</h3>
-            <div class="dato"><span class="etiqueta">Año:</span><span class="valor">${veh.anio||'-'}</span></div>
-            <div class="dato"><span class="etiqueta">Versión:</span><span class="valor">${veh.version||'-'}</span></div>
-            <div class="dato"><span class="etiqueta">Ciudad:</span><span class="valor">${veh.ciudad||'-'}</span></div>
-            <div class="dato"><span class="etiqueta">Precio:</span><span class="valor">$ ${veh.precio ? Number(veh.precio).toLocaleString('es-AR') : '-'}</span></div>
-            <div class="dato"><span class="etiqueta">Teléfono:</span><span class="valor">${veh.telefono||'-'}</span></div>
+            ${datosHtml}
             ${esPublicado ? `<p style="text-align:center; margin-top:14px; color:#6d4c41; font-size:13px; font-weight:600;">👆 Tocá para ver completo</p>` : botonAccion}
           </div>
         </div>
       `;
     }
+
+    window.cambiarFoto = function(elemento, urlFoto, indice, vehId) {
+      const contenedor = document.getElementById(`contenedorFoto-${vehId}`);
+      const miniaturas = elemento.parentElement.querySelectorAll('.miniatura');
+      
+      miniaturas.forEach(m => m.classList.remove('activa'));
+      elemento.classList.add('activa');
+      
+      contenedor.innerHTML = `<img src="${urlFoto}" class="foto-principal" alt="Vehículo">`;
+    };
 
     async function cargarPublicados() {
       const cajaCargando = document.getElementById('cargandoPub');
@@ -372,7 +438,6 @@
 
       const sb = await getSupabase();
       
-      // ✅ CORREGIDO: correo_usuario
       const { data, error } = await sb
         .from('autos')
         .select('*')
@@ -405,6 +470,11 @@
         const pantalla = document.createElement('div');
         pantalla.className = 'pantalla';
         pantalla.innerHTML = armarTarjetaVehiculo(veh, true);
+        pantalla.onclick = (e) => {
+          if (!e.target.closest('.miniatura')) {
+            verDetalle(veh.id);
+          }
+        };
         fila.appendChild(pantalla);
 
         const p = document.createElement('span');
