@@ -86,10 +86,21 @@
       text-align: center;
       animation: entradaSuave 0.7s ease-out;
       border: 1px solid #bfa980;
+      position: relative;
     }
     @keyframes entradaSuave {
       from { opacity: 0; transform: translateY(25px); }
       to { opacity: 1; transform: translateY(0); }
+    }
+    .saludo-usuario {
+      text-align: left;
+      color: #2c5282;
+      font-size: 17px;
+      font-weight: 600;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed #bfa980;
+      display: none;
     }
     h1 {
       color: #2c5282;
@@ -274,12 +285,15 @@
     </span>
     
     <span id="botonesConSesion" class="oculto">
-      <span class="texto-conectado">Conectado</span>
+      <span class="texto-conectado" id="texto-conectado">Conectado</span>
       <button id="btn-cerrar" class="enlace-cerrar">Cerrar sesión</button>
     </span>
   </div>
 
   <div class="caja-principal">
+    <!-- SALUDO DENTRO DE LA TARJETA, ARRIBA DE TODO -->
+    <div class="saludo-usuario" id="saludo-usuario"></div>
+
     <h1>🚗 Vehículos en Venta</h1>
     <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
     La plataforma de vehículos de Rosario y la región</p>
@@ -319,7 +333,6 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // ✅ Tu clave puesta tal cual la pasaste
     const GEMINI_KEY = "AQ.Ab8RN6L0LZPP4KE9W7B6LAjCkzqbxfBESYAvDlOke6hyfrdZJQ";
                       
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -335,6 +348,8 @@
     const btnEnviarChat = document.getElementById('btnEnviarChat');
     const cuerpoChat = document.getElementById('cuerpoChat');
     const btnInstalarApp = document.getElementById('btnInstalarApp');
+    const saludoUsuario = document.getElementById('saludo-usuario');
+    const textoConectado = document.getElementById('texto-conectado');
 
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -378,7 +393,6 @@
       return div;
     }
 
-    // ✅ TABLA: "autos"
     async function obtenerVehiculos() {
       try {
         const { data, error } = await supabaseClient
@@ -393,6 +407,31 @@
       } catch (e) {
         console.error('Error:', e);
         return [];
+      }
+    }
+
+    // OBTENER NOMBRE DEL USUARIO Y MOSTRAR SALUDO
+    function mostrarSaludo(session) {
+      if (!session || !session.user) {
+        saludoUsuario.style.display = 'none';
+        return;
+      }
+
+      let nombre = null;
+      // Buscar nombre en los datos del usuario
+      if (session.user.user_metadata) {
+        nombre = session.user.user_metadata.nombre || session.user.user_metadata.name;
+      }
+      // Si no tiene nombre, usar la parte del correo
+      if (!nombre && session.user.email) {
+        nombre = session.user.email.split('@')[0];
+      }
+
+      if (nombre) {
+        saludoUsuario.textContent = `Hola: ${nombre} 👋`;
+        saludoUsuario.style.display = 'block';
+        // También actualizar el texto "Conectado" arriba
+        textoConectado.textContent = `Conectado — ${nombre}`;
       }
     }
 
@@ -427,7 +466,6 @@ Respondé de forma natural, cortés, llamativa. Promové la plataforma con entus
 `;
 
       try {
-        // ✅ Dirección adaptada para claves AQ... → v1beta + gemini-1.5-flash
         const respuesta = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
           {
@@ -488,10 +526,13 @@ Respondé de forma natural, cortés, llamativa. Promové la plataforma con entus
         botonesSinSesion.classList.add('oculto');
         botonesConSesion.classList.remove('oculto');
         enlaceOlvidada.style.display = 'none';
+        // Mostrar saludo con el nombre
+        mostrarSaludo(session);
       } else {
         botonesSinSesion.classList.remove('oculto');
         botonesConSesion.classList.add('oculto');
         enlaceOlvidada.style.display = 'inline-block';
+        saludoUsuario.style.display = 'none';
       }
     }
 
@@ -503,7 +544,7 @@ Respondé de forma natural, cortés, llamativa. Promové la plataforma con entus
       }
     });
 
-    supabaseClient.auth.onAuthStateChange(() => {
+    supabaseClient.auth.onAuthStateChange((event, session) => {
       verificarSesion();
     });
 
