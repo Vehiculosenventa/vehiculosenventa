@@ -102,7 +102,7 @@
     .icono-favorito {
       font-size: 22px;
       line-height: 1;
-      transition: transform 0.2s ease, color 0.2s ease;
+      transition: color 0.2s ease;
     }
 
     .no-favorito .icono-favorito {
@@ -376,7 +376,7 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     const CORREO_SIN_LIMITE = "misvehiculosenventa@gmail.com";
     const LIMITE_FAVORITOS = 5;
 
@@ -431,7 +431,7 @@
       favoritosIds = new Set((data || []).map(f => f.vehiculo_id));
     }
 
-    async function alternarFavorito(idVehiculo) {
+    async function alternarFavorito(idVehiculo, elementoBoton) {
       if (!idUsuarioActual) {
         alert('🔐 Iniciá sesión para agregar a favoritos');
         window.location.href = 'iniciar-sesion.html';
@@ -442,13 +442,18 @@
       const aviso = document.getElementById('avisoLimite');
 
       if (favoritosIds.has(idVehiculo)) {
+        // Ya está guardado → BORRAR
         await sb
           .from('mis_vehiculos')
           .delete()
           .eq('usuario_id', idUsuarioActual)
           .eq('vehiculo_id', idVehiculo);
         favoritosIds.delete(idVehiculo);
+        // Cambiar estrella → amarilla
+        elementoBoton.classList.remove('es-favorito');
+        elementoBoton.classList.add('no-favorito');
       } else {
+        // No está guardado → AGREGAR
         if (!esAdmin && favoritosIds.size >= LIMITE_FAVORITOS) {
           alert(`⚠️ Llegaste al límite de ${LIMITE_FAVORITOS} favoritos`);
           aviso.style.display = 'block';
@@ -461,10 +466,12 @@
             vehiculo_id: idVehiculo
           });
         favoritosIds.add(idVehiculo);
+        // Cambiar estrella → gris
+        elementoBoton.classList.remove('no-favorito');
+        elementoBoton.classList.add('es-favorito');
       }
 
       aviso.style.display = (!esAdmin && favoritosIds.size >= LIMITE_FAVORITOS) ? 'block' : 'none';
-      armarTarjetas();
     }
 
     function esFavorito(idVehiculo) {
@@ -544,7 +551,7 @@
         pantalla.innerHTML = `
           <div class="tarjeta-vehiculo">
             <button class="caja-favorito ${estaFavorito ? 'es-favorito' : 'no-favorito'}" 
-                    onclick="alternarFavorito(${idVeh})">
+                    onclick="alternarFavorito(${idVeh}, this)">
               <span class="icono-favorito">★</span>
               <span class="texto-favorito">Agregar a Mi Favorito</span>
             </button>
