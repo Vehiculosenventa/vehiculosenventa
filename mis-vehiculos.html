@@ -132,11 +132,12 @@
       text-align: center;
       font-weight: 800;
     }
-    /* ✅ 2 COLUMNAS */
-    .datos-filas {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px 16px;
+    /* ✅ 2 COLUMNAS BIEN HECHO */
+    .filas-datos {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 10px 15px !important;
+      width: 100% !important;
     }
     .dato {
       padding: 8px 0;
@@ -145,9 +146,18 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      width: 100%;
     }
-    .etiqueta {font-weight: 700; color: #6d4c41;}
-    .valor {color: #4e342e; text-align: right;}
+    .etiqueta {
+      font-weight: 700;
+      color: #6d4c41;
+      font-size: 13px;
+    }
+    .valor {
+      color: #4e342e;
+      text-align: right;
+      font-size: 13px;
+    }
 
     .puntos {
       display: flex;
@@ -366,7 +376,6 @@
       window.location.href = 'index.html';
     }
 
-    // 🔍 AGRANDAR FOTO
     function abrirFotoGrande(url) {
       document.getElementById('fotoGrande').src = url;
       document.getElementById('overlayFoto').classList.add('activo');
@@ -441,7 +450,7 @@
           ${fotosHtml}
           <div class="datos-contenedor">
             <h3>${veh.marca || ''} ${veh.modelo || ''}</h3>
-            <div class="datos-filas">
+            <div class="filas-datos">
               ${datosHtml}
             </div>
             ${boton}
