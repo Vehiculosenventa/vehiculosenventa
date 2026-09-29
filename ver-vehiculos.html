@@ -380,33 +380,38 @@
     const CORREO_SIN_LIMITE = "misvehiculosenventa@gmail.com";
     const LIMITE_FAVORITOS = 5;
 
-    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
+    let sbClient = null;
+    let idUsuarioActual = null;
+    let correoUsuario = '';
+    let esAdmin = false;
     let listaVehiculos = [];
+    let favoritosIds = new Set();
     let indiceActual = 0;
     let inicioX = 0;
     let ultimoDesplazamiento = 0;
-    let idUsuarioActual = null;
-    let esAdmin = false;
-    let favoritosIds = new Set();
+
+    async function getSupabase() {
+      if (!sbClient) sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      return sbClient;
+    }
 
     async function verificarSesion() {
-      let correo = '';
-      const { data: { session } } = await supabaseClient.auth.getSession();
+      const sb = await getSupabase();
+      const { data: { session } } = await sb.auth.getSession();
+      
+      correoUsuario = localStorage.getItem('correo_usuario') || localStorage.getItem('correo') || '';
       if (session?.user?.email) {
-        correo = session.user.email.trim().toLowerCase();
+        correoUsuario = session.user.email;
       }
-      if (!correo) {
-        correo = (localStorage.getItem('correo_usuario') || localStorage.getItem('correo') || '').trim().toLowerCase();
-      }
+      correoUsuario = correoUsuario.trim().toLowerCase();
       
-      esAdmin = correo === CORREO_SIN_LIMITE.toLowerCase();
+      esAdmin = correoUsuario === CORREO_SIN_LIMITE.toLowerCase();
       
-      if (correo) {
-        const { data: usuario } = await supabaseClient
+      if (correoUsuario) {
+        const { data: usuario } = await sb
           .from('usuario')
           .select('id')
-          .eq('correo', correo)
+          .eq('correo', correoUsuario)
           .maybeSingle();
         idUsuarioActual = usuario?.id || null;
         await cargarMisFavoritos();
@@ -417,7 +422,8 @@
 
     async function cargarMisFavoritos() {
       if (!idUsuarioActual) return;
-      const { data } = await supabaseClient
+      const sb = await getSupabase();
+      const { data } = await sb
         .from('mis_vehiculos')
         .select('vehiculo_id')
         .eq('usuario_id', idUsuarioActual);
@@ -426,15 +432,16 @@
 
     async function alternarFavorito(idVehiculo) {
       if (!idUsuarioActual) {
-        alert('🔐 Iniciá sesión para agregar favoritos');
+        alert('🔐 Iniciá sesión para agregar a favoritos');
         window.location.href = 'iniciar-sesion.html';
         return;
       }
 
+      const sb = await getSupabase();
       const aviso = document.getElementById('avisoLimite');
 
       if (favoritosIds.has(idVehiculo)) {
-        await supabaseClient
+        await sb
           .from('mis_vehiculos')
           .delete()
           .eq('usuario_id', idUsuarioActual)
@@ -446,7 +453,7 @@
           aviso.style.display = 'block';
           return;
         }
-        await supabaseClient
+        await sb
           .from('mis_vehiculos')
           .insert({
             usuario_id: idUsuarioActual,
@@ -479,7 +486,7 @@
         ? `Filtrando: ${tipoSeleccionado}` 
         : "Todos los vehículos";
 
-      let consulta = supabaseClient.from("autos").select("*");
+      let consulta = (await getSupabase()).from("autos").select("*");
       
       if (tipoSeleccionado) {
         consulta = consulta.eq("tipo_vehiculo", tipoSeleccionado);
