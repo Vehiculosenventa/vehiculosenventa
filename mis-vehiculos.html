@@ -78,28 +78,58 @@
       padding: 0 5px;
     }
 
+    /* Tarjeta color crema/marrón - SIN blanco */
     .tarjeta-vehiculo {
-      background: #f5efe0;
-      padding: 20px;
+      background: #f3e9d2;
+      padding: 0;
       border-radius: 14px;
-      border: 2px solid #7aa7c9;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border: 2px solid #bfa980;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      overflow: hidden;
     }
-    .tarjeta-vehiculo h3 {
-      font-size: 18px;
-      color: #2c5282;
-      margin-bottom: 10px;
+
+    /* Fotos arriba de todo */
+    .fotos-contenedor {
+      width: 100%;
+      height: 220px;
+      background: #e8dcc5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+    .foto-principal {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .sin-foto {
+      color: #8b7355;
+      font-size: 16px;
       text-align: center;
     }
+
+    /* Datos abajo */
+    .datos-contenedor {
+      padding: 18px;
+      background: #f3e9d2;
+    }
+    .datos-contenedor h3 {
+      font-size: 19px;
+      color: #5d4037;
+      margin-bottom: 14px;
+      text-align: center;
+      font-weight: 800;
+    }
     .dato {
-      padding: 6px 0;
-      border-bottom: 1px solid #d9ccb4;
-      font-size: 14px;
+      padding: 8px 0;
+      border-bottom: 1px solid #d4b996;
+      font-size: 15px;
       display: flex;
       justify-content: space-between;
     }
-    .etiqueta {font-weight: 600; color: #5d4e37;}
-    .valor {color: #3a2f1f;}
+    .etiqueta {font-weight: 700; color: #6d4c41;}
+    .valor {color: #4e342e;}
 
     .puntos {
       display: flex;
@@ -121,31 +151,32 @@
 
     .quitar {
       background: #fee2e2;
-      color: #dc2626;
+      color: #b91c1c;
       border: none;
-      padding: 8px 14px;
+      padding: 10px 14px;
       border-radius: 8px;
       font-size: 14px;
-      margin-top: 15px;
+      margin-top: 16px;
       cursor: pointer;
       width: 100%;
-      font-weight: 600;
+      font-weight: 700;
     }
     .quitar:hover {background: #fecaca;}
 
     .aviso-limite {
       background: #fef3c7;
       color: #92400e;
-      padding: 8px;
+      padding: 10px;
       border-radius: 8px;
       font-size: 13px;
       margin-bottom: 10px;
       text-align: center;
       display: none;
+      font-weight: 600;
     }
     .sin-datos {
       text-align: center;
-      padding: 30px 15px;
+      padding: 40px 20px;
       color: #78716c;
       font-size: 15px;
       line-height: 1.6;
@@ -167,8 +198,8 @@
 
     .cargando {
       text-align: center;
-      padding: 30px;
-      color: #2c5282;
+      padding: 40px;
+      color: #5d4037;
       font-weight: 600;
     }
   </style>
@@ -240,7 +271,7 @@
       if (session?.user?.email) correoUsuario = session.user.email;
       correoUsuario = correoUsuario.trim().toLowerCase();
       
-      console.log("📧 Correo detectado:", correoUsuario);
+      console.log("📧 Correo:", correoUsuario);
       
       esAdmin = correoUsuario === CORREO_SIN_LIMITE.toLowerCase();
       
@@ -255,7 +286,6 @@
           await cerrarSesion();
         };
         
-        // Buscar en tabla "usuario"
         const { data: usuario } = await sb
           .from('usuario')
           .select('id')
@@ -264,9 +294,9 @@
         
         if (usuario) {
           idUsuarioActual = usuario.id;
-          console.log("✅ Usuario encontrado - ID:", idUsuarioActual);
+          console.log("✅ Usuario ID:", idUsuarioActual);
         } else {
-          console.log("⚠️ No se encontró usuario con ese correo");
+          console.log("⚠️ Sin usuario en tabla usuario");
           idUsuarioActual = null;
         }
         return true;
@@ -292,6 +322,45 @@
       window.location.href = 'index.html';
     }
 
+    function armarTarjetaVehiculo(veh, esPublicado = true) {
+      const tieneFoto = veh.foto1 || veh.foto_principal || veh.imagen;
+      const urlFoto = tieneFoto 
+        ? (veh.foto1 || veh.foto_principal || veh.imagen) 
+        : null;
+
+      let htmlFoto = '';
+      if (urlFoto) {
+        htmlFoto = `<img src="${urlFoto}" class="foto-principal" alt="Vehículo">`;
+      } else {
+        htmlFoto = `<div class="sin-foto">📷 Sin foto</div>`;
+      }
+
+      let botonAccion = '';
+      if (!esPublicado) {
+        const filaGuardada = favoritosGuardados.find(g => g.vehiculo_id === veh.id);
+        if (filaGuardada) {
+          botonAccion = `<button class="quitar" onclick="quitarFavorito(${filaGuardada.id}, event)">🗑️ Quitar de Favoritos</button>`;
+        }
+      }
+
+      return `
+        <div class="tarjeta-vehiculo" ${esPublicado ? `onclick="verDetalle(${veh.id})"` : ''}>
+          <div class="fotos-contenedor">
+            ${htmlFoto}
+          </div>
+          <div class="datos-contenedor">
+            <h3>${veh.marca||''} ${veh.modelo||''}</h3>
+            <div class="dato"><span class="etiqueta">Año:</span><span class="valor">${veh.anio||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Versión:</span><span class="valor">${veh.version||veh.version||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Ciudad:</span><span class="valor">${veh.ciudad||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Precio:</span><span class="valor">$ ${veh.precio ? Number(veh.precio).toLocaleString('es-AR') : '-'}</span></div>
+            <div class="dato"><span class="etiqueta">Teléfono:</span><span class="valor">${veh.telefono||'-'}</span></div>
+            ${esPublicado ? `<p style="text-align:center; margin-top:14px; color:#6d4c41; font-size:13px; font-weight:600;">👆 Tocá para ver completo</p>` : botonAccion}
+          </div>
+        </div>
+      `;
+    }
+
     // --- MIS PUBLICADOS desde tabla autos ---
     async function cargarPublicados() {
       const cajaCargando = document.getElementById('cargandoPub');
@@ -308,17 +377,6 @@
 
       const sb = await getSupabase();
       
-      // Primero traemos TODOS los autos para verificar
-      const { data: todos, error: eTodos } = await sb
-        .from('autos')
-        .select('id, marca, modelo, correo');
-      
-      console.log("📋 Total de autos en la tabla:", todos?.length || 0);
-      if (todos && todos.length > 0) {
-        console.log("📧 Correos encontrados:", todos.map(a => a.correo));
-      }
-
-      // Buscamos con coincidencia flexible de correo
       const { data, error } = await sb
         .from('autos')
         .select('*')
@@ -328,7 +386,7 @@
       cajaCargando.style.display = 'none';
 
       if (error) {
-        console.error("❌ Error en consulta:", error);
+        console.error("❌ Error:", error);
         cajaCargando.innerHTML = `<div class="sin-datos">❌ Error: ${error.message}</div>`;
         return;
       }
@@ -336,7 +394,7 @@
       console.log("✅ Publicados encontrados:", data?.length || 0);
 
       if (!data || !data.length) {
-        cajaCargando.innerHTML = `<div class="sin-datos">📭 Aún no publicaste ningún vehículo<br><small>(Correo usado: ${correoUsuario})</small></div>`;
+        cajaCargando.innerHTML = `<div class="sin-datos">📭 Aún no publicaste ningún vehículo<br><small style="color:#9e917c">Correo: ${correoUsuario}</small></div>`;
         return;
       }
 
@@ -350,17 +408,7 @@
       data.forEach((veh, i) => {
         const pantalla = document.createElement('div');
         pantalla.className = 'pantalla';
-        pantalla.innerHTML = `
-          <div class="tarjeta-vehiculo" onclick="verDetalle(${veh.id})">
-            <h3>${veh.marca||''} ${veh.modelo||''}</h3>
-            <div class="dato"><span class="etiqueta">Año:</span><span class="valor">${veh.anio||'-'}</span></div>
-            <div class="dato"><span class="etiqueta">Versión:</span><span class="valor">${veh.version||'-'}</span></div>
-            <div class="dato"><span class="etiqueta">Ciudad:</span><span class="valor">${veh.ciudad||'-'}</span></div>
-            <div class="dato"><span class="etiqueta">Precio:</span><span class="valor">$ ${veh.precio ? Number(veh.precio).toLocaleString('es-AR') : '-'}</span></div>
-            <div class="dato"><span class="etiqueta">Teléfono:</span><span class="valor">${veh.telefono||'-'}</span></div>
-            <p style="text-align:center; margin-top:12px; color:#5a91b8; font-size:13px;">👆 Tocá para ver completo</p>
-          </div>
-        `;
+        pantalla.innerHTML = armarTarjetaVehiculo(veh, true);
         fila.appendChild(pantalla);
 
         const p = document.createElement('span');
@@ -381,7 +429,7 @@
       const fila = document.getElementById('filaFav');
       const puntos = document.getElementById('puntosFav');
 
-      console.log("⭐ Cargando favoritos - idUsuarioActual:", idUsuarioActual);
+      console.log("⭐ Cargando favoritos - Usuario ID:", idUsuarioActual);
 
       if (!idUsuarioActual) {
         cajaCargando.innerHTML = `<div class="sin-datos">⭐ Iniciá sesión para ver favoritos</div>`;
@@ -396,7 +444,7 @@
         .eq('usuario_id', idUsuarioActual);
 
       if (e1) {
-        console.error("Error al cargar favoritos:", e1);
+        console.error("Error:", e1);
         cajaCargando.innerHTML = `<div class="sin-datos">❌ Error: ${e1.message}</div>`;
         return;
       }
@@ -432,19 +480,9 @@
       puntos.innerHTML = '';
 
       vehiculos.forEach((veh, i) => {
-        const filaGuardada = favoritosGuardados.find(g => g.vehiculo_id === veh.id);
         const pantalla = document.createElement('div');
         pantalla.className = 'pantalla';
-        pantalla.innerHTML = `
-          <div class="tarjeta-vehiculo">
-            <h3>${veh.marca||''} ${veh.modelo||''}</h3>
-            <div class="dato"><span class="etiqueta">Año:</span><span class="valor">${veh.anio||'-'}</span></div>
-            <div class="dato"><span class="etiqueta">Versión:</span><span class="valor">${veh.version||'-'}</span></div>
-            <div class="dato"><span class="etiqueta">Ciudad:</span><span class="valor">${veh.ciudad||'-'}</span></div>
-            <div class="dato"><span class="etiqueta">Precio:</span><span class="valor">$ ${veh.precio ? Number(veh.precio).toLocaleString('es-AR') : '-'}</span></div>
-            <button class="quitar" onclick="quitarFavorito(${filaGuardada.id}, event)">🗑️ Quitar de Favoritos</button>
-          </div>
-        `;
+        pantalla.innerHTML = armarTarjetaVehiculo(veh, false);
         fila.appendChild(pantalla);
 
         const p = document.createElement('span');
