@@ -132,10 +132,16 @@
       text-align: center;
       font-weight: 800;
     }
+    /* ✅ 2 COLUMNAS */
+    .datos-filas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px 16px;
+    }
     .dato {
-      padding: 10px 0;
+      padding: 8px 0;
       border-bottom: 1px solid #d4b996;
-      font-size: 15px;
+      font-size: 14px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -435,7 +441,9 @@
           ${fotosHtml}
           <div class="datos-contenedor">
             <h3>${veh.marca || ''} ${veh.modelo || ''}</h3>
-            ${datosHtml}
+            <div class="datos-filas">
+              ${datosHtml}
+            </div>
             ${boton}
           </div>
         </div>
