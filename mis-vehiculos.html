@@ -100,32 +100,33 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: opacity 0.2s;
     }
     .sin-foto {
       color: #8b7355;
       font-size: 16px;
       text-align: center;
+      padding: 40px;
     }
 
     .miniaturas-contenedor {
-      display: flex;
-      gap: 6px;
-      padding: 10px;
+      display: flex !important;
+      gap: 8px;
+      padding: 12px;
       background: #e8dcc5;
       overflow-x: auto;
-      justify-content: center;
-      flex-wrap: wrap;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
     }
     .miniatura {
-      width: 65px;
+      width: 70px;
       height: 55px;
       border-radius: 6px;
       overflow: hidden;
       cursor: pointer;
-      border: 2px solid transparent;
+      border: 3px solid transparent;
       transition: all 0.2s;
       background: #d4c29c;
+      flex-shrink: 0;
     }
     .miniatura.activa {
       border-color: #2c5282;
@@ -135,13 +136,6 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-    }
-    .miniatura-vacia {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      color: #8b7355;
     }
 
     .datos-contenedor {
@@ -355,41 +349,62 @@
     }
 
     function armarTarjetaVehiculo(veh, esPublicado = true) {
-      const fotos = [
-        veh.foto1, veh.foto2, veh.foto3, veh.foto4, veh.foto5, veh.foto6
-      ].filter(f => f && f.trim() !== '');
+      // 📸 Obtener las 6 fotos
+      const fotos = [];
+      for (let i = 1; i <= 6; i++) {
+        const campo = veh['foto' + i];
+        if (campo && String(campo).trim() !== '') {
+          fotos.push(String(campo).trim());
+        }
+      }
+      console.log("📸 Fotos encontradas:", fotos.length, fotos);
 
-      const indiceFotoActiva = {valor: 0};
-      const fotoPrincipal = fotos.length > 0 ? fotos[0] : null;
+      // Foto principal
+      let fotoPrincipalHtml = `<div class="sin-foto">📷 Sin foto</div>`;
+      if (fotos.length > 0) {
+        fotoPrincipalHtml = `<img src="${fotos[0]}" class="foto-principal" alt="Vehículo" id="fotoGrande-${veh.id}">`;
+      }
 
-      const fotosHtml = fotos.length > 0 
-        ? fotos.map((f, i) => `
-            <div class="miniatura ${i === 0 ? 'activa' : ''}" 
-                 onclick="cambiarFoto(this, '${f}', ${i}, '${veh.id}')"
-                 data-veh="${veh.id}" data-indice="${i}">
-              <img src="${f}" alt="Foto ${i+1}" loading="lazy">
+      // Miniaturas
+      let miniaturasHtml = '';
+      if (fotos.length > 0) {
+        miniaturasHtml = '<div class="miniaturas-contenedor">';
+        fotos.forEach((fotoUrl, indice) => {
+          miniaturasHtml += `
+            <div class="miniatura ${indice === 0 ? 'activa' : ''}" 
+                 onclick="cambiarFoto('${veh.id}', '${fotoUrl}', this)">
+              <img src="${fotoUrl}" alt="Foto ${indice + 1}">
             </div>
-          `).join('')
-        : '';
+          `;
+        });
+        miniaturasHtml += '</div>';
+      }
 
-      let htmlFotoGrande = fotoPrincipal 
-        ? `<img src="${fotoPrincipal}" class="foto-principal" alt="Vehículo" id="fotoGrande-${veh.id}">`
-        : `<div class="sin-foto">📷 Sin foto</div>`;
-
-      const camposVehiculo = Object.entries(veh).filter(([clave, valor]) => {
-        if (!valor || valor === null || valor === '') return false;
-        return !['id', 'correo_usuario', 'created_at'].includes(clave);
+      // 📋 TODOS los campos del vehículo
+      const camposMostrar = ['marca', 'modelo', 'anio', 'version', 'ciudad', 'precio', 'telefono', 'kilometros', 'color', 'combustible', 'transmision', 'puertas'];
+      let datosHtml = '';
+      
+      camposMostrar.forEach(clave => {
+        const valor = veh[clave];
+        if (valor !== null && valor !== undefined && valor !== '') {
+          let etiqueta = clave.replace(/_/g, ' ');
+          etiqueta = etiqueta.charAt(0).toUpperCase() + etiqueta.slice(1);
+          
+          let valorMostrar = valor;
+          if (clave === 'precio' && !isNaN(Number(valor))) {
+            valorMostrar = '$ ' + Number(valor).toLocaleString('es-AR');
+          }
+          
+          datosHtml += `
+            <div class="dato">
+              <span class="etiqueta">${etiqueta}:</span>
+              <span class="valor">${valorMostrar}</span>
+            </div>
+          `;
+        }
       });
 
-      let datosHtml = camposVehiculo.map(([clave, valor]) => {
-        const etiqueta = clave.replace(/_/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
-        let valorMostrar = valor;
-        if (clave === 'precio' && !isNaN(Number(valor))) {
-          valorMostrar = '$ ' + Number(valor).toLocaleString('es-AR');
-        }
-        return `<div class="dato"><span class="etiqueta">${etiqueta}:</span><span class="valor">${valorMostrar}</span></div>`;
-      }).join('');
-
+      // Botón de favoritos
       let botonAccion = '';
       if (!esPublicado) {
         const filaGuardada = favoritosGuardados.find(g => g.vehiculo_id === veh.id);
@@ -401,11 +416,11 @@
       return `
         <div class="tarjeta-vehiculo" data-vehiculo-id="${veh.id}">
           <div class="foto-grande-contenedor" id="contenedorFoto-${veh.id}">
-            ${htmlFotoGrande}
+            ${fotoPrincipalHtml}
           </div>
-          ${fotosHtml ? `<div class="miniaturas-contenedor">${fotosHtml}</div>` : ''}
+          ${miniaturasHtml}
           <div class="datos-contenedor">
-            <h3>${veh.marca||''} ${veh.modelo||''}</h3>
+            <h3>${veh.marca || ''} ${veh.modelo || ''}</h3>
             ${datosHtml}
             ${esPublicado ? `<p style="text-align:center; margin-top:14px; color:#6d4c41; font-size:13px; font-weight:600;">👆 Tocá para ver completo</p>` : botonAccion}
           </div>
@@ -413,11 +428,12 @@
       `;
     }
 
-    window.cambiarFoto = function(elemento, urlFoto, indice, vehId) {
+    // 🔄 Cambiar foto al tocar miniatura
+    window.cambiarFoto = function(vehId, urlFoto, elemento) {
       const contenedor = document.getElementById(`contenedorFoto-${vehId}`);
-      const miniaturas = elemento.parentElement.querySelectorAll('.miniatura');
+      const hermanas = elemento.parentElement.querySelectorAll('.miniatura');
       
-      miniaturas.forEach(m => m.classList.remove('activa'));
+      hermanas.forEach(m => m.classList.remove('activa'));
       elemento.classList.add('activa');
       
       contenedor.innerHTML = `<img src="${urlFoto}" class="foto-principal" alt="Vehículo">`;
