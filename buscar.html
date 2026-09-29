@@ -16,66 +16,16 @@
     .contenedor {max-width: 620px; margin: 0 auto;}
 
     .barra-superior {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      text-align: center;
       margin-bottom: 20px;
       padding-bottom: 12px;
       border-bottom: 2px solid rgba(44, 82, 130, 0.15);
-      flex-wrap: wrap;
-      gap: 10px;
     }
     .titulo-pagina {
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 800;
       color: #2c5282;
     }
-    .zona-usuario {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    .texto-favoritos {
-      color: #1d4ed8;
-      font-weight: 700;
-      font-size: 14px;
-      text-decoration: none;
-    }
-    .texto-favoritos:hover {text-decoration: underline;}
-    .texto-conectado {
-      color: #166534;
-      font-weight: 700;
-      font-size: 14px;
-    }
-    .texto-cerrar {
-      color: #1d4ed8;
-      font-weight: 700;
-      font-size: 14px;
-      cursor: pointer;
-      text-decoration: none;
-    }
-    .texto-cerrar:hover {text-decoration: underline;}
-    .btn-sesion {
-      padding: 8px 14px;
-      border-radius: 10px;
-      font-weight: 700;
-      text-decoration: none;
-      font-size: 14px;
-      border: none;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .btn-iniciar {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
-    }
-    .btn-iniciar:hover {transform: translateY(-1px);}
-    .btn-registrar {
-      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-      color: white;
-    }
-    .btn-registrar:hover {transform: translateY(-1px);}
 
     h1 {
       text-align: center;
@@ -435,7 +385,6 @@
   <div class="contenedor">
     <div class="barra-superior">
       <div class="titulo-pagina">🔍 Buscar Vehículo</div>
-      <div id="zonaUsuario" class="zona-usuario"></div>
     </div>
 
     <h1>Buscar Vehículo</h1>
@@ -587,44 +536,9 @@
     }
 
     async function verificarSesion() {
-      const zonaUsuario = document.getElementById('zonaUsuario');
-      const sb = await getSupabase();
-      const { data: { session } } = await sb.auth.getSession();
-      
-      if (session) {
-        localStorage.setItem('correo_usuario', session.user.email || 'conectado');
-        localStorage.setItem('nombre_usuario', session.user.user_metadata?.nombre || 'Usuario');
-        zonaUsuario.innerHTML = `
-          <a href="mis-vehiculos.html" class="texto-favoritos">⭐ Mis Vehículos</a>
-          <span class="texto-conectado">✅ Conectado</span>
-          <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
-        `;
-        return true;
-      }
-      
       const correo = localStorage.getItem('correo_usuario');
       const nombre = localStorage.getItem('nombre_usuario');
-      if (correo && nombre) {
-        zonaUsuario.innerHTML = `
-          <a href="mis-vehiculos.html" class="texto-favoritos">⭐ Mis Vehículos</a>
-          <span class="texto-conectado">✅ Conectado</span>
-          <a class="texto-cerrar" href="#" onclick="cerrarSesion(); return false;">Cerrar sesión</a>
-        `;
-        return true;
-      }
-      
-      zonaUsuario.innerHTML = `
-        <a href="iniciar-sesion.html" class="btn-sesion btn-iniciar">🔑 Iniciar sesión</a>
-        <a href="registrarse.html" class="btn-sesion btn-registrar">✨ Registrarse</a>
-      `;
-      return false;
-    }
-
-    async function cerrarSesion() {
-      const sb = await getSupabase();
-      await sb.auth.signOut();
-      localStorage.clear();
-      window.location.href = 'index.html';
+      return !!(correo && nombre);
     }
 
     async function obtenerUsuarioId(correo) {
@@ -851,7 +765,6 @@
     }
 
     async function iniciar() {
-      await verificarSesion();
       await getSupabase();
       document.addEventListener('touchstart', registrarInicioDeslizamiento, { passive: true });
       document.addEventListener('touchend', registrarFinDeslizamiento, { passive: true });
