@@ -322,7 +322,7 @@
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-    const GEMINI_KEY = "AQ.Ab8RN6KfN23z_GQP6oPyjfCxuYAOz7kAtbXjUF9EWCtBR0tudQ";
+    const GEMINI_KEY = "AQ.Ab8RN6Lf-fnKkXpzB8O4p9bhHMDlPRkPit_xZZNcY65gV5hfbA";
                       
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -383,11 +383,11 @@
       return div;
     }
 
-    // Obtener todos los vehículos de la base — TABLA CORREGIDA: "autos"
+    // Obtener todos los vehículos de la base
     async function obtenerVehiculos() {
       try {
         const { data, error } = await supabaseClient
-          .from('autos')
+          .from('vehiculos')
           .select('*');
         
         if (error) {
@@ -401,7 +401,7 @@
       }
     }
 
-    // Llamar a Gemini con el contexto — URL CORREGIDA
+    // Llamar a Gemini — URL CORREGIDA: v1 en vez de v1beta
     async function llamarGemini(mensajeUsuario) {
       const vehiculos = await obtenerVehiculos();
       
@@ -431,7 +431,7 @@ Respondé de forma natural, cortés, llamativa. Promové la plataforma con entus
 
       try {
         const respuesta = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
+          `https://generativelanguage.googleapis.com/v1/models/gemini-2.0-flash:generateContent?key=${GEMINI_KEY}`,
           {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
