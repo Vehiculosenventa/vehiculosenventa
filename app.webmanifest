@@ -1,0 +1,25 @@
+{
+  "name": "Vehículos en Venta — Rosario y Región",
+  "short_name": "Vehículos",
+  "description": "Publicá, buscá y vendé vehículos en Rosario y toda la región. Gratis, fácil y seguro.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#91b8d5",
+  "theme_color": "#1565C0",
+  "orientation": "portrait-primary",
+  "scope": "./",
+  "icons": [
+    {
+      "src": "icono-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
