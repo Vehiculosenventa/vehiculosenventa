@@ -170,28 +170,28 @@
       opacity: 0.5;
     }
 
-    .boton-wsp-tarjeta {
+    /* ✅ BOTÓN REDONDO DE WHATSAPP - SOLO ÍCONO */
+    .boton-wsp-redondo {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      justify-content: center;
+      width: 50px;
+      height: 50px;
       background: #25D366;
+      border-radius: 50%;
       color: white;
       text-decoration: none;
-      padding: 10px 18px;
-      border-radius: 25px;
-      font-weight: 600;
-      font-size: 15px;
-      margin: 0 0 15px 0;
       border: none;
       cursor: pointer;
       box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+      margin: 0 0 15px 0;
     }
-    .boton-wsp-tarjeta:hover {
+    .boton-wsp-redondo:hover {
       background: #1fb959;
     }
-    .boton-wsp-tarjeta svg {
-      width: 20px;
-      height: 20px;
+    .boton-wsp-redondo svg {
+      width: 26px;
+      height: 26px;
       fill: white;
     }
 
@@ -344,7 +344,7 @@
     .foto-ver img {width: 100%; height: 100%; object-fit: cover;}
     .foto-nombre {display: none;}
 
-    /* ✅ FONDO CELESTE EN VENTANA DE FOTOS */
+    /* FONDO CELESTE EN VENTANA DE FOTOS */
     .ventana-foto {
       position: fixed;
       top: 0; left: 0;
@@ -369,9 +369,6 @@
       max-height: 75vh;
       border-radius: 12px;
     }
-
-    /* ✅ BOTÓN DE WHATSAPP ELIMINADO DE LA VENTANA DE FOTOS */
-    .boton-wsp-flotante { display: none; }
 
     .logo-agua-foto {
       position: absolute;
@@ -529,7 +526,6 @@
 
   <div class="ventana-foto" id="ventanaFoto">
     <div class="contenedor-foto-grande" id="contenedorFotoGrande">
-      <!-- ✅ BOTÓN DE WHATSAPP ELIMINADO DE AQUÍ -->
       <div class="logo-agua-foto"></div>
       <span class="cerrar-foto" onclick="cerrarFoto()">×</span>
       <img src="" alt="Foto ampliada" class="foto-grande" id="fotoGrande">
@@ -828,13 +824,12 @@ async function cargarUno(posicion) {
 
           <div class="titulo-vehiculo">${v.marca || ''} ${v.modelo || ''} — ${v.anio || ''}</div>
 
-          <!-- ✅ BOTÓN DE WHATSAPP EN LA TARJETA SIGUE IGUAL -->
-          <a href="https://wa.me/549${numeroTel}?text=${mensajeWsp}" target="_blank" class="boton-wsp-tarjeta">
+          <!-- ✅ SOLO BOTÓN REDONDO DE WHATSAPP -->
+          <a href="https://wa.me/549${numeroTel}?text=${mensajeWsp}" target="_blank" class="boton-wsp-redondo" title="Consultar por WhatsApp">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
               <path fill="white" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.76.97-.93 1.17-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.47-1.76-1.65-2.07-.17-.3-.34-.34-.5-.34-.16 0-.33.01-.47.01-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5c0 1.24-.5 2.36-1.32 3.18-.22.22-.43.45-.65.67-.22.22-.45.43-.67.65-.82.82-1.94 1.32-3.18 1.32z"/>
               <path fill="white" d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm0 22c-5.51 0-10-4.49-10-10S6.49 2 12 2s10 4.49 10 10-4.49 10-10 10z"/>
             </svg>
-            Consultar por WhatsApp
           </a>
 
           <div class="fila"><strong>Versión:</strong> ${v.version || '-'}</div>
