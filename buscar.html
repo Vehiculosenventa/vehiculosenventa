@@ -575,6 +575,9 @@
         return;
       }
 
+      const correo = localStorage.getItem('correo_usuario');
+      idUsuarioActual = await obtenerUsuarioId(correo);
+
       if (!tieneLimiteLibre()) {
         const cantidad = await contarGuardadosUsuario(idUsuarioActual);
         if (cantidad >= LIMITE_FAVORITOS) {
