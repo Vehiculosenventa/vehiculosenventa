@@ -78,7 +78,6 @@
       padding: 0 5px;
     }
 
-    /* Tarjeta color crema/marrón - SIN blanco */
     .tarjeta-vehiculo {
       background: #f3e9d2;
       padding: 0;
@@ -88,7 +87,6 @@
       overflow: hidden;
     }
 
-    /* Fotos arriba de todo */
     .fotos-contenedor {
       width: 100%;
       height: 220px;
@@ -109,7 +107,6 @@
       text-align: center;
     }
 
-    /* Datos abajo */
     .datos-contenedor {
       padding: 18px;
       background: #f3e9d2;
@@ -213,7 +210,6 @@
       <a href="#" class="zona-derecha" id="botonAccion"></a>
     </div>
 
-    <!-- MIS PUBLICADOS → desliza 1x1 -->
     <div class="seccion">
       <h2>🚗 Mis Publicados</h2>
       <div id="cargandoPub" class="cargando">🔄 Cargando...</div>
@@ -225,7 +221,6 @@
       </div>
     </div>
 
-    <!-- MIS FAVORITOS → desliza 1x1 -->
     <div class="seccion">
       <h2 id="tituloFav">⭐ Mis Favoritos (0/5)</h2>
       <div id="avisoLimite" class="aviso-limite">⚠️ Llegaste al límite de 5 favoritos</div>
@@ -243,7 +238,7 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     const CORREO_SIN_LIMITE = "misvehiculosenventa@gmail.com";
     const LIMITE = 5;
 
@@ -351,7 +346,7 @@
           <div class="datos-contenedor">
             <h3>${veh.marca||''} ${veh.modelo||''}</h3>
             <div class="dato"><span class="etiqueta">Año:</span><span class="valor">${veh.anio||'-'}</span></div>
-            <div class="dato"><span class="etiqueta">Versión:</span><span class="valor">${veh.version||veh.version||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Versión:</span><span class="valor">${veh.version||'-'}</span></div>
             <div class="dato"><span class="etiqueta">Ciudad:</span><span class="valor">${veh.ciudad||'-'}</span></div>
             <div class="dato"><span class="etiqueta">Precio:</span><span class="valor">$ ${veh.precio ? Number(veh.precio).toLocaleString('es-AR') : '-'}</span></div>
             <div class="dato"><span class="etiqueta">Teléfono:</span><span class="valor">${veh.telefono||'-'}</span></div>
@@ -361,7 +356,6 @@
       `;
     }
 
-    // --- MIS PUBLICADOS desde tabla autos ---
     async function cargarPublicados() {
       const cajaCargando = document.getElementById('cargandoPub');
       const cajaContenido = document.getElementById('contenidoPub');
@@ -380,7 +374,7 @@
       const { data, error } = await sb
         .from('autos')
         .select('*')
-        .ilike('correo', correoUsuario)
+        .ilike('correo_usuario', correoUsuario)  // ✅ CORREGIDO
         .order('id', { ascending: false });
 
       cajaCargando.style.display = 'none';
@@ -420,7 +414,6 @@
       mostrarActual('Pub');
     }
 
-    // --- MIS FAVORITOS desde tabla mis_vehiculos ---
     async function cargarFavoritos() {
       const cajaCargando = document.getElementById('cargandoFav');
       const cajaContenido = document.getElementById('contenidoFav');
