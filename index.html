@@ -59,13 +59,13 @@
       margin-right: 15px;
       font-size: 15px;
       font-weight: 600;
-      color: #2f855a; /* verde */
+      color: #2f855a;
     }
     .enlace-cerrar {
       display: inline-block;
       font-size: 15px;
       font-weight: 600;
-      color: #1e40af; /* azul */
+      color: #1e40af;
       text-decoration: none;
       cursor: pointer;
       border: none;
@@ -146,18 +146,131 @@
       font-size: 13px;
       color: #5a4f3f;
     }
+    /* Botón flotante Chat IA */
+    .boton-ia-flotante {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: white;
+      border: none;
+      font-size: 16px;
+      font-weight: 700;
+      padding: 14px 22px;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(49, 130, 206, 0.35);
+      transition: all 0.3s ease;
+      z-index: 999;
+    }
+    .boton-ia-flotante:hover {
+      transform: translateY(-2px);
+      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
+      box-shadow: 0 6px 20px rgba(49, 130, 206, 0.45);
+    }
+    /* Ventana de Chat */
+    .ventana-chat {
+      position: fixed;
+      bottom: 90px;
+      right: 24px;
+      width: 90%;
+      max-width: 380px;
+      height: 500px;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      z-index: 1000;
+      overflow: hidden;
+      animation: abrirVentana 0.3s ease-out;
+    }
+    @keyframes abrirVentana {
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    .cabecera-chat {
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: white;
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+      font-size: 17px;
+    }
+    .cerrar-chat {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 22px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+    .cuerpo-chat {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: #f0f4f8;
+    }
+    .mensaje {
+      margin-bottom: 15px;
+      padding: 12px 16px;
+      border-radius: 18px;
+      max-width: 85%;
+      line-height: 1.4;
+    }
+    .mensaje-ia {
+      background: white;
+      border-bottom-left-radius: 4px;
+      color: #2d3748;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    .mensaje-usuario {
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: white;
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+    }
+    .entrada-chat {
+      display: flex;
+      padding: 15px;
+      border-top: 1px solid #e2e8f0;
+      background: white;
+    }
+    .entrada-chat input {
+      flex: 1;
+      padding: 12px 18px;
+      border: 1px solid #cbd5e0;
+      border-radius: 25px;
+      font-size: 15px;
+      outline: none;
+      margin-right: 10px;
+    }
+    .entrada-chat button {
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 25px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: transform 0.2s;
+    }
+    .entrada-chat button:hover {
+      transform: scale(1.05);
+    }
     .oculto {display: none !important;}
   </style>
 </head>
 <body>
   <div class="barra-superior">
-    <!-- Sin sesión -->
     <span id="botonesSinSesion">
       <a href="registrarse.html" class="boton-sesion boton-registrar">✨ Registrarse</a>
       <a href="iniciar-sesion.html" class="boton-sesion boton-entrar">🔐 Iniciar sesión</a>
     </span>
     
-    <!-- Con sesión → SIN botones, solo texto -->
     <span id="botonesConSesion" class="oculto">
       <span class="texto-conectado">Conectado</span>
       <button id="btn-cerrar" class="enlace-cerrar">Cerrar sesión</button>
@@ -173,10 +286,32 @@
     <a href="catalogo.html" class="boton">📋 <span>Ver Vehículos — Catálogo</span></a>
     <a href="buscar.html" class="boton">🔍 <span>Buscar Vehículo</span></a>
     <a href="mis-vehiculos.html" class="boton">❤️ <span>Mis Vehículos</span></a>
+    <a href="#" class="boton">📲 <span>Descargar App</span></a>
     
     <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
     
     <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
+  </div>
+
+  <!-- Botón flotante Chat IA -->
+  <button class="boton-ia-flotante" id="btnChatIA">🤖 Chat IA</button>
+
+  <!-- Ventana de Chat -->
+  <div class="ventana-chat oculto" id="ventanaChat">
+    <div class="cabecera-chat">
+      <span>🤖 Chat IA — Vehículos en Venta</span>
+      <button class="cerrar-chat" id="btnCerrarChat">×</button>
+    </div>
+    <div class="cuerpo-chat" id="cuerpoChat">
+      <div class="mensaje mensaje-ia">
+        ¡Hola! 👋 Soy tu asistente virtual de Vehículos en Venta.<br>
+        Te puedo ayudar a buscar autos, explicar cómo funciona la plataforma y todo lo que necesitás. ¿En qué te ayudo?
+      </div>
+    </div>
+    <div class="entrada-chat">
+      <input type="text" id="inputChat" placeholder="Escribí tu mensaje...">
+      <button id="btnEnviarChat">Enviar</button>
+    </div>
   </div>
 
   <script>
@@ -189,6 +324,45 @@
     const botonesConSesion = document.getElementById('botonesConSesion');
     const btnCerrar = document.getElementById('btn-cerrar');
     const enlaceOlvidada = document.getElementById('enlace-olvidada');
+    const btnChatIA = document.getElementById('btnChatIA');
+    const ventanaChat = document.getElementById('ventanaChat');
+    const btnCerrarChat = document.getElementById('btnCerrarChat');
+    const inputChat = document.getElementById('inputChat');
+    const btnEnviarChat = document.getElementById('btnEnviarChat');
+    const cuerpoChat = document.getElementById('cuerpoChat');
+
+    // Abrir y cerrar chat
+    btnChatIA.addEventListener('click', () => {
+      ventanaChat.classList.toggle('oculto');
+    });
+    btnCerrarChat.addEventListener('click', () => {
+      ventanaChat.classList.add('oculto');
+    });
+
+    // Enviar mensaje
+    function agregarMensaje(texto, esUsuario = false) {
+      const div = document.createElement('div');
+      div.className = `mensaje ${esUsuario ? 'mensaje-usuario' : 'mensaje-ia'}`;
+      div.textContent = texto;
+      cuerpoChat.appendChild(div);
+      cuerpoChat.scrollTop = cuerpoChat.scrollHeight;
+    }
+
+    btnEnviarChat.addEventListener('click', enviarMensaje);
+    inputChat.addEventListener('keypress', e => e.key === 'Enter' && enviarMensaje());
+
+    function enviarMensaje() {
+      const texto = inputChat.value.trim();
+      if (!texto) return;
+      
+      agregarMensaje(texto, true);
+      inputChat.value = '';
+      
+      // Respuesta automática de la IA
+      setTimeout(() => {
+        agregarMensaje('Recibí tu mensaje. Estoy conectado con toda la información de Vehículos en Venta. En breve te respondo con lo que necesitás. 🚗✨');
+      }, 800);
+    }
 
     async function verificarSesion() {
       const { data: { session } } = await supabaseClient.auth.getSession();
