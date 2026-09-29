@@ -324,7 +324,7 @@
         const { data: usuario } = await sb
           .from('usuario')
           .select('id')
-          .ilike('correo', correoUsuario)
+          .ilike('correo_usuario', correoUsuario)
           .maybeSingle();
         
         if (usuario) {
