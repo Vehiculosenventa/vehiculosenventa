@@ -291,12 +291,11 @@
   </div>
 
   <div class="caja-principal">
-    <!-- SALUDO DENTRO DE LA TARJETA, ARRIBA DE TODO -->
     <div class="saludo-usuario" id="saludo-usuario"></div>
 
     <h1>🚗 Vehículos en Venta</h1>
     <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
-    La plataforma de vehículos de Rosario y la región</p>
+    La plataforma de Rosario y toda la región</p>
     
     <a href="cargar.html" class="boton">📄 <span>Ingresar Vehículo</span></a>
     <a href="catalogo.html" class="boton">📋 <span>Ver Vehículos — Catálogo</span></a>
@@ -331,8 +330,9 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
+    // 🔑 CLAVE DE GEMINI — protegida
     const GEMINI_KEY = "AQ.Ab8RN6J4Jgm7rll2YSgXAjAyAP3tsaBYXRHPCqRapjCU3RswaQ";
                       
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -410,7 +410,6 @@
       }
     }
 
-    // OBTENER NOMBRE DEL USUARIO Y MOSTRAR SALUDO
     function mostrarSaludo(session) {
       if (!session || !session.user) {
         saludoUsuario.style.display = 'none';
@@ -418,11 +417,9 @@
       }
 
       let nombre = null;
-      // Buscar nombre en los datos del usuario
       if (session.user.user_metadata) {
         nombre = session.user.user_metadata.nombre || session.user.user_metadata.name;
       }
-      // Si no tiene nombre, usar la parte del correo
       if (!nombre && session.user.email) {
         nombre = session.user.email.split('@')[0];
       }
@@ -430,7 +427,6 @@
       if (nombre) {
         saludoUsuario.textContent = `Hola: ${nombre} 👋`;
         saludoUsuario.style.display = 'block';
-        // También actualizar el texto "Conectado" arriba
         textoConectado.textContent = `Conectado — ${nombre}`;
       }
     }
@@ -526,7 +522,6 @@ Respondé de forma natural, cortés, llamativa. Promové la plataforma con entus
         botonesSinSesion.classList.add('oculto');
         botonesConSesion.classList.remove('oculto');
         enlaceOlvidada.style.display = 'none';
-        // Mostrar saludo con el nombre
         mostrarSaludo(session);
       } else {
         botonesSinSesion.classList.remove('oculto');
