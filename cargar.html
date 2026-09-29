@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -168,63 +169,29 @@
       color: #1a365d;
       margin-bottom: 20px;
     }
-
-    /* === TARJETA DE FOTO DIVIDIDA EN 2 === */
     .foto-tarjeta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 15px 18px;
+      margin-bottom: 12px;
       background: #fff;
       border-radius: 14px;
       border: 2px solid #94b8d9;
-      margin-bottom: 12px;
-      overflow: hidden;
+      cursor: pointer;
       position: relative;
       z-index: 2;
     }
     .foto-tarjeta.disabled { opacity: 0.6; pointer-events: none; }
-    .foto-tarjeta-titulo {
-      padding: 12px 15px;
+    .foto-nombre {
       font-weight: 700;
       font-size: 15px;
       color: #1a365d;
-      background: #f0f4f8;
-      border-bottom: 1px solid #d2d6dc;
-    }
-    .foto-botones-fila {
-      display: flex;
-      gap: 1px;
-    }
-    .foto-boton-elegir, .foto-boton-camara {
       flex: 1;
-      padding: 15px 10px;
-      text-align: center;
-      cursor: pointer;
-      transition: background 0.2s;
     }
-    .foto-boton-elegir {
-      background: #e6f0fa;
-      border-right: 1px solid #94b8d9;
-    }
-    .foto-boton-elegir:hover { background: #d4e4f7; }
-    .foto-boton-camara {
-      background: #eaf7f0;
-    }
-    .foto-boton-camara:hover { background: #d4f0e3; }
-    .foto-boton-texto {
-      font-size: 14px;
-      font-weight: 600;
-      color: #2d3748;
-      margin-top: 4px;
-    }
-    .foto-mini-contenedor {
-      padding: 10px 15px 15px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-top: 1px dashed #cbd5e0;
-      margin-top: 1px;
-    }
+    .icono-camara { font-size: 20px; flex-shrink: 0; }
     .foto-mini {
-      width: 100px; 
-      height: 75px;
+      width: 80px; height: 60px;
       border-radius: 10px;
       overflow: hidden;
       background: #f0f4f8;
@@ -232,11 +199,11 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
     }
     .foto-mini-img { width: 100%; height: 100%; object-fit: cover; display: none; }
-    .foto-sin { font-size: 12px; color: #718096; }
+    .foto-sin { font-size: 11px; color: #718096; }
     .foto-input-oculto { display: none; }
-
     .botones-sesion {
       display: flex;
       gap: 12px;
@@ -549,131 +516,77 @@
       <div class="foto-seccion">
         <div class="foto-titulo-seccion">📸 Fotos del vehículo — Tocar para ver grande</div>
 
-        <!-- FOTO 1 -->
-        <div class="foto-tarjeta" id="foto_tarjeta_1">
-          <div class="foto-tarjeta-titulo">1️⃣ Foto 1</div>
-          <div class="foto-botones-fila">
-            <div class="foto-boton-elegir" id="btnElegir1">
-              📁 Elegir de carpeta
-              <input type="file" class="foto-input-oculto" id="foto1_archivo" accept="image/*" disabled>
-            </div>
-            <div class="foto-boton-camara" id="btnCamara1">
-              📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto1_camara" accept="image/*" capture="environment" disabled>
-            </div>
+        <label class="foto-tarjeta" id="foto_tarjeta_1">
+          <span>1️⃣</span>
+          <div class="foto-nombre">Foto 1
+            <input type="file" class="foto-input-oculto" id="foto1" accept="image/*" capture="environment" disabled>
           </div>
-          <div class="foto-mini-contenedor">
-            <div class="foto-mini" id="mini1">
-              <img id="img1" class="foto-mini-img" alt="Foto del vehículo">
-              <span id="sin1" class="foto-sin">Sin foto</span>
-            </div>
+          <span class="icono-camara">📷</span>
+          <div class="foto-mini" id="mini1">
+            <img id="img1" class="foto-mini-img" alt="Foto del vehículo">
+            <span id="sin1" class="foto-sin">Sin foto</span>
           </div>
-        </div>
+        </label>
 
-        <!-- FOTO 2 -->
-        <div class="foto-tarjeta" id="foto_tarjeta_2">
-          <div class="foto-tarjeta-titulo">2️⃣ Foto 2</div>
-          <div class="foto-botones-fila">
-            <div class="foto-boton-elegir" id="btnElegir2">
-              📁 Elegir de carpeta
-              <input type="file" class="foto-input-oculto" id="foto2_archivo" accept="image/*" disabled>
-            </div>
-            <div class="foto-boton-camara" id="btnCamara2">
-              📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto2_camara" accept="image/*" capture="environment" disabled>
-            </div>
+        <label class="foto-tarjeta" id="foto_tarjeta_2">
+          <span>2️⃣</span>
+          <div class="foto-nombre">Foto 2
+            <input type="file" class="foto-input-oculto" id="foto2" accept="image/*" capture="environment" disabled>
           </div>
-          <div class="foto-mini-contenedor">
-            <div class="foto-mini" id="mini2">
-              <img id="img2" class="foto-mini-img" alt="Foto del vehículo">
-              <span id="sin2" class="foto-sin">Sin foto</span>
-            </div>
+          <span class="icono-camara">📷</span>
+          <div class="foto-mini" id="mini2">
+            <img id="img2" class="foto-mini-img" alt="Foto del vehículo">
+            <span id="sin2" class="foto-sin">Sin foto</span>
           </div>
-        </div>
+        </label>
 
-        <!-- FOTO 3 -->
-        <div class="foto-tarjeta" id="foto_tarjeta_3">
-          <div class="foto-tarjeta-titulo">3️⃣ Foto 3</div>
-          <div class="foto-botones-fila">
-            <div class="foto-boton-elegir" id="btnElegir3">
-              📁 Elegir de carpeta
-              <input type="file" class="foto-input-oculto" id="foto3_archivo" accept="image/*" disabled>
-            </div>
-            <div class="foto-boton-camara" id="btnCamara3">
-              📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto3_camara" accept="image/*" capture="environment" disabled>
-            </div>
+        <label class="foto-tarjeta" id="foto_tarjeta_3">
+          <span>3️⃣</span>
+          <div class="foto-nombre">Foto 3
+            <input type="file" class="foto-input-oculto" id="foto3" accept="image/*" capture="environment" disabled>
           </div>
-          <div class="foto-mini-contenedor">
-            <div class="foto-mini" id="mini3">
-              <img id="img3" class="foto-mini-img" alt="Foto del vehículo">
-              <span id="sin3" class="foto-sin">Sin foto</span>
-            </div>
+          <span class="icono-camara">📷</span>
+          <div class="foto-mini" id="mini3">
+            <img id="img3" class="foto-mini-img" alt="Foto del vehículo">
+            <span id="sin3" class="foto-sin">Sin foto</span>
           </div>
-        </div>
+        </label>
 
-        <!-- FOTO 4 -->
-        <div class="foto-tarjeta" id="foto_tarjeta_4">
-          <div class="foto-tarjeta-titulo">4️⃣ Foto 4</div>
-          <div class="foto-botones-fila">
-            <div class="foto-boton-elegir" id="btnElegir4">
-              📁 Elegir de carpeta
-              <input type="file" class="foto-input-oculto" id="foto4_archivo" accept="image/*" disabled>
-            </div>
-            <div class="foto-boton-camara" id="btnCamara4">
-              📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto4_camara" accept="image/*" capture="environment" disabled>
-            </div>
+        <label class="foto-tarjeta" id="foto_tarjeta_4">
+          <span>4️⃣</span>
+          <div class="foto-nombre">Foto 4
+            <input type="file" class="foto-input-oculto" id="foto4" accept="image/*" capture="environment" disabled>
           </div>
-          <div class="foto-mini-contenedor">
-            <div class="foto-mini" id="mini4">
-              <img id="img4" class="foto-mini-img" alt="Foto del vehículo">
-              <span id="sin4" class="foto-sin">Sin foto</span>
-            </div>
+          <span class="icono-camara">📷</span>
+          <div class="foto-mini" id="mini4">
+            <img id="img4" class="foto-mini-img" alt="Foto del vehículo">
+            <span id="sin4" class="foto-sin">Sin foto</span>
           </div>
-        </div>
+        </label>
 
-        <!-- FOTO 5 -->
-        <div class="foto-tarjeta" id="foto_tarjeta_5">
-          <div class="foto-tarjeta-titulo">5️⃣ Foto 5</div>
-          <div class="foto-botones-fila">
-            <div class="foto-boton-elegir" id="btnElegir5">
-              📁 Elegir de carpeta
-              <input type="file" class="foto-input-oculto" id="foto5_archivo" accept="image/*" disabled>
-            </div>
-            <div class="foto-boton-camara" id="btnCamara5">
-              📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto5_camara" accept="image/*" capture="environment" disabled>
-            </div>
+        <label class="foto-tarjeta" id="foto_tarjeta_5">
+          <span>5️⃣</span>
+          <div class="foto-nombre">Foto 5
+            <input type="file" class="foto-input-oculto" id="foto5" accept="image/*" capture="environment" disabled>
           </div>
-          <div class="foto-mini-contenedor">
-            <div class="foto-mini" id="mini5">
-              <img id="img5" class="foto-mini-img" alt="Foto del vehículo">
-              <span id="sin5" class="foto-sin">Sin foto</span>
-            </div>
+          <span class="icono-camara">📷</span>
+          <div class="foto-mini" id="mini5">
+            <img id="img5" class="foto-mini-img" alt="Foto del vehículo">
+            <span id="sin5" class="foto-sin">Sin foto</span>
           </div>
-        </div>
+        </label>
 
-        <!-- FOTO 6 -->
-        <div class="foto-tarjeta" id="foto_tarjeta_6">
-          <div class="foto-tarjeta-titulo">6️⃣ Foto 6</div>
-          <div class="foto-botones-fila">
-            <div class="foto-boton-elegir" id="btnElegir6">
-              📁 Elegir de carpeta
-              <input type="file" class="foto-input-oculto" id="foto6_archivo" accept="image/*" disabled>
-            </div>
-            <div class="foto-boton-camara" id="btnCamara6">
-              📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto6_camara" accept="image/*" capture="environment" disabled>
-            </div>
+        <label class="foto-tarjeta" id="foto_tarjeta_6">
+          <span>6️⃣</span>
+          <div class="foto-nombre">Foto 6
+            <input type="file" class="foto-input-oculto" id="foto6" accept="image/*" capture="environment" disabled>
           </div>
-          <div class="foto-mini-contenedor">
-            <div class="foto-mini" id="mini6">
-              <img id="img6" class="foto-mini-img" alt="Foto del vehículo">
-              <span id="sin6" class="foto-sin">Sin foto</span>
-            </div>
+          <span class="icono-camara">📷</span>
+          <div class="foto-mini" id="mini6">
+            <img id="img6" class="foto-mini-img" alt="Foto del vehículo">
+            <span id="sin6" class="foto-sin">Sin foto</span>
           </div>
-        </div>
+        </label>
       </div>
 
       <button type="submit" class="boton" id="btnGuardar" disabled>💾 Guardar Vehículo</button>
@@ -705,7 +618,7 @@
     const fotoGrande = document.getElementById('fotoGrande');
     const cerrarFoto = document.getElementById('cerrarFoto');
 
-    // ✅ Calidad subida → 85%
+    // ✅ Calidad subida un poquito → 85% → se ve más nítida y sigue cargando rápido
     function comprimirFoto(archivo, calidad = 0.85, maxAncho = 1000) {
       return new Promise((resolver) => {
         const lector = new FileReader();
@@ -753,11 +666,11 @@
     }
 
     function verFoto(numero, input) {
+      const img = document.getElementById(`img${numero}`);
+      const sin = document.getElementById(`sin${numero}`);
       if (input.files && input.files[0]) {
         const lector = new FileReader();
         lector.onload = e => {
-          const img = document.getElementById(`img${numero}`);
-          const sin = document.getElementById(`sin${numero}`);
           img.src = e.target.result;
           img.style.display = 'block';
           sin.style.display = 'none';
@@ -830,25 +743,11 @@
             setFormDisabled(false);
           }
 
-          // Conectar los dos botones de cada foto
           for (let i = 1; i <= 6; i++) {
-            const inputArchivo = document.getElementById(`foto${i}_archivo`);
-            const inputCamara = document.getElementById(`foto${i}_camara`);
-            const btnElegir = document.getElementById(`btnElegir${i}`);
-            const btnCamara = document.getElementById(`btnCamara${i}`);
+            const input = document.getElementById(`foto${i}`);
             const mini = document.getElementById(`mini${i}`);
-            
-            if (inputArchivo && btnElegir) {
-              btnElegir.addEventListener('click', () => inputArchivo.click());
-              inputArchivo.addEventListener('change', e => verFoto(i, e.target));
-            }
-            if (inputCamara && btnCamara) {
-              btnCamara.addEventListener('click', () => inputCamara.click());
-              inputCamara.addEventListener('change', e => verFoto(i, e.target));
-            }
-            if (mini) {
-              mini.addEventListener('click', () => ampliarFoto(i));
-            }
+            if (input) input.addEventListener('change', e => verFoto(i, e.target));
+            if (mini) mini.addEventListener('click', () => ampliarFoto(i));
           }
         } else {
           document.getElementById('cargando').classList.add('oculto');
@@ -871,23 +770,10 @@
             }
 
             for (let i = 1; i <= 6; i++) {
-              const inputArchivo = document.getElementById(`foto${i}_archivo`);
-              const inputCamara = document.getElementById(`foto${i}_camara`);
-              const btnElegir = document.getElementById(`btnElegir${i}`);
-              const btnCamara = document.getElementById(`btnCamara${i}`);
+              const input = document.getElementById(`foto${i}`);
               const mini = document.getElementById(`mini${i}`);
-              
-              if (inputArchivo && btnElegir) {
-                btnElegir.addEventListener('click', () => inputArchivo.click());
-                inputArchivo.addEventListener('change', e => verFoto(i, e.target));
-              }
-              if (inputCamara && btnCamara) {
-                btnCamara.addEventListener('click', () => inputCamara.click());
-                inputCamara.addEventListener('change', e => verFoto(i, e.target));
-              }
-              if (mini) {
-                mini.addEventListener('click', () => ampliarFoto(i));
-              }
+              if (input) input.addEventListener('change', e => verFoto(i, e.target));
+              if (mini) mini.addEventListener('click', () => ampliarFoto(i));
             }
           }
         });
@@ -926,11 +812,8 @@
 
         const fotos = {};
         for (let i = 1; i <= 6; i++) {
-          const inputArchivo = document.getElementById(`foto${i}_archivo`);
-          const inputCamara = document.getElementById(`foto${i}_camara`);
-          const input = inputArchivo.files[0] ? inputArchivo : inputCamara;
-          
-          if (input.files && input.files[0]) {
+          const input = document.getElementById(`foto${i}`);
+          if (input.files[0]) {
             fotos[`foto${i}`] = await comprimirFoto(input.files[0]);
           } else {
             fotos[`foto${i}`] = null;
