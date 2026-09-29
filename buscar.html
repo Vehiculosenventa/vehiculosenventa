@@ -501,6 +501,8 @@
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const CORREO_SIN_LIMITE = "misvehiculosenventa@gmail.com";
+    const LIMITE_FAVORITOS = 5;
 
     let sbClient = null;
     let idsFiltrados = [];
@@ -509,6 +511,7 @@
     let telefonoActual = '';
     let marcaModeloActual = '';
     let idUsuarioActual = null;
+    let correoUsuarioActual = '';
 
     let xInicio = 0, xFin = 0;
     const UMBRAL_DESLIZAR = 50;
@@ -526,6 +529,7 @@
     async function verificarSesion() {
       const correo = localStorage.getItem('correo_usuario');
       const nombre = localStorage.getItem('nombre_usuario');
+      correoUsuarioActual = correo || '';
       return !!(correo && nombre);
     }
 
@@ -534,6 +538,17 @@
       const sb = await getSupabase();
       const { data } = await sb.from('usuarios').select('id').eq('correo', correo).single();
       return data?.id || null;
+    }
+
+    async function contarGuardadosUsuario(usuarioId) {
+      if (!usuarioId) return 0;
+      const sb = await getSupabase();
+      const { count } = await sb.from('mis_vehiculos').select('*', { count: 'exact', head: true }).eq('usuario_id', usuarioId);
+      return count || 0;
+    }
+
+    function tieneLimiteLibre() {
+      return correoUsuarioActual.trim().toLowerCase() === CORREO_SIN_LIMITE.toLowerCase();
     }
 
     async function yaEstaGuardado(vehiculoId) {
@@ -559,6 +574,15 @@
         window.location.href = 'iniciar-sesion.html';
         return;
       }
+
+      if (!tieneLimiteLibre()) {
+        const cantidad = await contarGuardadosUsuario(idUsuarioActual);
+        if (cantidad >= LIMITE_FAVORITOS) {
+          alert(`⚠️ Ya tenés ${LIMITE_FAVORITOS} vehículos guardados.\nEntrá a "Mis Vehículos" y sacá uno para poder agregar otro.`);
+          return;
+        }
+      }
+
       document.getElementById('cajaCodigo').classList.add('mostrar');
       document.getElementById('codigoIngresado').value = '';
       document.getElementById('codigoIngresado').focus();
@@ -582,6 +606,15 @@
         .eq('usuario_id', usuario_id).eq('vehiculo_id', idVehiculoActual).maybeSingle();
       
       if (existe) { alert('⭐ Ya está guardado en "Mis Vehículos"'); ocultarCajaCodigo(); return; }
+
+      if (!tieneLimiteLibre()) {
+        const cantidad = await contarGuardadosUsuario(usuario_id);
+        if (cantidad >= LIMITE_FAVORITOS) {
+          alert(`⚠️ Llegaste al límite de ${LIMITE_FAVORITOS} vehículos.\nSacá uno de "Mis Vehículos" para agregar este.`);
+          ocultarCajaCodigo();
+          return;
+        }
+      }
 
       const { error } = await sb.from('mis_vehiculos').insert({ usuario_id, vehiculo_id: idVehiculoActual });
       if (error) { alert('❌ Error: ' + error.message); return; }
@@ -642,6 +675,7 @@
       idsFiltrados = []; indiceActual = 0; idVehiculoActual = null; telefonoActual = ''; marcaModeloActual = '';
 
       const correo = localStorage.getItem('correo_usuario');
+      correoUsuarioActual = correo || '';
       idUsuarioActual = await obtenerUsuarioId(correo);
 
       const sb = await getSupabase();
@@ -759,6 +793,7 @@
 
     async function iniciar() {
       await getSupabase();
+      correoUsuarioActual = localStorage.getItem('correo_usuario') || '';
       document.addEventListener('touchstart', registrarInicioDeslizamiento, { passive: true });
       document.addEventListener('touchend', registrarFinDeslizamiento, { passive: true });
       document.addEventListener('mousedown', registrarInicioDeslizamiento);
