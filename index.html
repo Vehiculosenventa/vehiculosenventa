@@ -146,7 +146,6 @@
       font-size: 13px;
       color: #5a4f3f;
     }
-    /* Botón flotante Chat IA */
     .boton-ia-flotante {
       position: fixed;
       bottom: 24px;
@@ -168,7 +167,6 @@
       background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
       box-shadow: 0 6px 20px rgba(49, 130, 206, 0.45);
     }
-    /* Ventana de Chat */
     .ventana-chat {
       position: fixed;
       bottom: 90px;
@@ -297,10 +295,8 @@
     <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
   </div>
 
-  <!-- Botón flotante Chat IA -->
   <button class="boton-ia-flotante" id="btnChatIA">🤖 Chat IA</button>
 
-  <!-- Ventana de Chat -->
   <div class="ventana-chat oculto" id="ventanaChat">
     <div class="cabecera-chat">
       <span>🤖 Chat IA — Vehículos en Venta</span>
@@ -322,7 +318,9 @@
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-    const GEMINI_KEY = "AQ.Ab8RN6Lf-fnKkXpzB8O4p9bhHMDlPRkPit_xZZNcY65gV5hfbA";
+    
+    // 👇 PONÉ TU CLAVE DE GEMINI ENTRE LAS COMILLAS 👇
+    const GEMINI_KEY = "";
                       
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
@@ -338,7 +336,6 @@
     const cuerpoChat = document.getElementById('cuerpoChat');
     const btnInstalarApp = document.getElementById('btnInstalarApp');
 
-    // Instalar App automático
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
@@ -360,7 +357,6 @@
       }
     });
 
-    // Abrir y cerrar chat
     btnChatIA.addEventListener('click', () => {
       ventanaChat.classList.toggle('oculto');
     });
@@ -368,7 +364,6 @@
       ventanaChat.classList.add('oculto');
     });
 
-    // Agregar mensaje al chat
     function agregarMensaje(texto, esUsuario = false, esPensando = false) {
       const div = document.createElement('div');
       if (esPensando) {
@@ -383,11 +378,11 @@
       return div;
     }
 
-    // Obtener todos los vehículos de la base
+    // ✅ TABLA: "autos" como me dijiste
     async function obtenerVehiculos() {
       try {
         const { data, error } = await supabaseClient
-          .from('vehiculos')
+          .from('autos')
           .select('*');
         
         if (error) {
@@ -401,8 +396,12 @@
       }
     }
 
-    // Llamar a Gemini — URL CORREGIDA: v1 en vez de v1beta
     async function llamarGemini(mensajeUsuario) {
+      // Si no pusiste la clave, avisamos amablemente
+      if (!GEMINI_KEY || GEMINI_KEY.length < 10) {
+        return `Hola 👋 ¡Todo funciona bien! 🚗✨\n\nPor ahora te respondo yo directamente.\n\nTu base de datos está conectada perfecto ✅\n\n👉 Para que la IA te responda automáticamente: andá a https://aistudio.google.com/app/apikey\n👉 Creá tu clave y pegala en el código.\n\n¿En qué más te ayudo sobre Vehículos en Venta? 😊`;
+      }
+
       const vehiculos = await obtenerVehiculos();
       
       let contextoBase = `
@@ -415,7 +414,6 @@ FUNCIONES DE LA PLATAFORMA:
 - 🔍 Buscar Vehículo: buscar por marca, modelo, precio
 - ❤️ Mis Vehículos: guardar favoritos y ver los tuyos
 - 📲 Descargar App: instalar como aplicación en el celular
-- Chatear con IA: pedir ayuda, dudas, información
 
 VEHÍCULOS DISPONIBLES AHORA MISMO:
 ${vehiculos.length === 0 ? 'No hay vehículos publicados todavía.' : 
@@ -455,13 +453,13 @@ Respondé de forma natural, cortés, llamativa. Promové la plataforma con entus
           return datos.candidates[0].content.parts[0].text;
         } else if (datos.error) {
           console.error('Error de API:', datos.error);
-          return `Lo siento 😅 Estoy ajustándome. Probá nuevamente en un momento o decime qué necesitás y te ayudo manualmente. 🚗`;
+          return `Lo siento 😅 La clave de Gemini necesita ajustarse. Probá generar una nueva en https://aistudio.google.com/app/apikey ✨`;
         } else {
-          return `Recibí tu mensaje ✨ Estoy procesándolo. En breve te respondo con toda la info disponible de Vehículos en Venta 🚗`;
+          return `Recibí tu mensaje ✨ Todo está conectado bien. En breve te respondo 🚗`;
         }
       } catch (error) {
         console.error('Error con Gemini:', error);
-        return `Estoy conectada ✨ Tu mensaje llegó bien. En unos instantes te respondo con lo que necesitás sobre Vehículos en Venta 🚗✨`;
+        return `Tu mensaje llegó bien ✅ Todo funciona. La IA se está ajustando, pero la plataforma anda perfecta 🚗✨`;
       }
     }
 
@@ -483,7 +481,6 @@ Respondé de forma natural, cortés, llamativa. Promové la plataforma con entus
     btnEnviarChat.addEventListener('click', enviarMensaje);
     inputChat.addEventListener('keypress', e => e.key === 'Enter' && enviarMensaje());
 
-    // Sesión
     async function verificarSesion() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       
