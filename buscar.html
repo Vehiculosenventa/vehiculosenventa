@@ -61,7 +61,7 @@
       text-align: center;
       margin-top: 10px;
       margin-bottom: 15px;
-      display: none; /* Oculto porque no mostramos los botones de entrar */
+      display: none;
     }
     .olvido a {
       color: #4a5568;
@@ -142,7 +142,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
     }
     .boton-favorito-tarjeta {
       display: flex;
@@ -170,6 +170,31 @@
       opacity: 0.5;
     }
 
+    .boton-wsp-tarjeta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #25D366;
+      color: white;
+      text-decoration: none;
+      padding: 10px 18px;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 15px;
+      margin: 0 0 15px 0;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+    }
+    .boton-wsp-tarjeta:hover {
+      background: #1fb959;
+    }
+    .boton-wsp-tarjeta svg {
+      width: 20px;
+      height: 20px;
+      fill: white;
+    }
+
     .etiqueta-tipo {
       display: inline-block;
       background: #ebf4fb;
@@ -177,15 +202,15 @@
       padding: 8px 18px;
       border-radius: 20px;
       font-weight: 700;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
       font-size: 15px;
     }
     .titulo-vehiculo {
       font-size: 20px;
       font-weight: 700;
       color: #2c5282;
-      margin-bottom: 16px;
-      padding-bottom: 10px;
+      margin-bottom: 10px;
+      padding-bottom: 8px;
       border-bottom: 2px solid #d4c29c;
     }
     .fila {
@@ -582,7 +607,6 @@ function verificarSesion() {
     ladoIzquierdo.innerHTML = `<span class="texto-conectado">${nombreMostrar} — Conectado</span>`;
     ladoDerecho.innerHTML = `<button class="boton-azul" onclick="cerrarSesion()">Cerrar sesión</button>`;
   } else {
-    // ✅ SIN botones de "Ir al inicio" ni "Entrar"
     ladoIzquierdo.innerHTML = '';
     ladoDerecho.innerHTML = '';
   }
@@ -670,7 +694,7 @@ function mostrarFotoActual() {
   document.getElementById('indicadorFoto').textContent = `${indiceFotoActual + 1} / ${fotosVehiculoActual.length}`;
   
   const mensaje = encodeURIComponent(
-    `Hola! 👋 Vi tu anuncio en Vehículos en Venta y me gustaría comunicarme con vos. Quedo atento, gracias!`
+    `Hola, vi tu vehículo y quisiera saber por él. Quedo atento, gracias!`
   );
   document.getElementById('botonWspFlotante').href = 
     `https://wa.me/549${telefonoActual}?text=${mensaje}`;
@@ -815,6 +839,8 @@ async function cargarUno(posicion) {
   }
 
   const puedeAgregar = await verificarLimiteFavoritos();
+  const mensajeWsp = encodeURIComponent(`Hola, vi tu vehículo y quisiera saber por él. Quedo atento, gracias!`);
+  const numeroTel = v.telefono || '';
 
   caja.innerHTML = `
     <div class="zona-tarjeta">
@@ -829,6 +855,16 @@ async function cargarUno(posicion) {
           </div>
 
           <div class="titulo-vehiculo">${v.marca || ''} ${v.modelo || ''} — ${v.anio || ''}</div>
+
+          <!-- ✅ BOTÓN DE WHATSAPP EN EL LUGAR QUE PEDISTE -->
+          <a href="https://wa.me/549${numeroTel}?text=${mensajeWsp}" target="_blank" class="boton-wsp-tarjeta">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+              <path fill="white" d="M17.47 14.38c-.3-.15-1.76-.87-2.03-.97-.27-.1-.47-.15-.67.15-.2.3-.76.97-.93 1.17-.17.2-.34.22-.64.07-.3-.15-1.26-.46-2.39-1.48-.88-.79-1.47-1.76-1.65-2.07-.17-.3-.34-.34-.5-.34-.16 0-.33.01-.47.01-2.5 0-4.5-2-4.5-4.5s2-4.5 4.5-4.5 4.5 2 4.5 4.5c0 1.24-.5 2.36-1.32 3.18-.22.22-.43.45-.65.67-.22.22-.45.43-.67.65-.82.82-1.94 1.32-3.18 1.32z"/>
+              <path fill="white" d="M12 0C5.37 0 0 5.37 0 12s5.37 12 12 12 12-5.37 12-12S18.63 0 12 0zm0 22c-5.51 0-10-4.49-10-10S6.49 2 12 2s10 4.49 10 10-4.49 10-10 10z"/>
+            </svg>
+            Consultar por WhatsApp
+          </a>
+
           <div class="fila"><strong>Versión:</strong> ${v.version || '-'}</div>
           <div class="fila"><strong>Ciudad:</strong> ${v.ciudad || '-'}</div>
           <div class="fila"><strong>Kilometraje:</strong> ${v.kilometraje ? v.kilometraje.toLocaleString('es-AR') + ' km' : '-'}</div>
