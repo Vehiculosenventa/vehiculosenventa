@@ -306,7 +306,7 @@
       if (session?.user?.email) correoUsuario = session.user.email;
       correoUsuario = correoUsuario.trim().toLowerCase();
       
-      console.log("📧 Correo:", correoUsuario);
+      console.log("📧 Correo que busca:", correoUsuario);
       
       esAdmin = correoUsuario === CORREO_SIN_LIMITE.toLowerCase();
       
@@ -324,7 +324,7 @@
         const { data: usuario } = await sb
           .from('usuario')
           .select('id')
-          .ilike('correo_usuario', correoUsuario)
+          .ilike('correo', correoUsuario)
           .maybeSingle();
         
         if (usuario) {
@@ -459,6 +459,14 @@
 
       const sb = await getSupabase();
       
+      // 🔍 Primero mostramos TODOS los autos para ver si hay datos
+      const { data: todos, error: eTodos } = await sb
+        .from('autos')
+        .select('correo_usuario, marca, modelo');
+      
+      console.log("📋 Todos los autos en la tabla:", todos);
+      
+      // ✅ Buscamos por correo_usuario
       const { data, error } = await sb
         .from('autos')
         .select('*')
@@ -476,7 +484,7 @@
       console.log("✅ Publicados encontrados:", data?.length || 0);
 
       if (!data || !data.length) {
-        cajaCargando.innerHTML = `<div class="sin-datos">📭 Aún no publicaste ningún vehículo<br><small style="color:#9e917c">Correo: ${correoUsuario}</small></div>`;
+        cajaCargando.innerHTML = `<div class="sin-datos">📭 No se encontraron vehículos<br><small style="color:#9e917c">Buscando: ${correoUsuario}</small></div>`;
         return;
       }
 
@@ -553,6 +561,7 @@
         return;
       }
 
+      console.log("✅ Favoritos encontrados:", vehiculos.length);
       listaFav = vehiculos;
       indiceFav = 0;
       cajaContenido.style.display = 'block';
