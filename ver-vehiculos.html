@@ -272,7 +272,7 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     const CORREO_SIN_LIMITE = "misvehiculosenventa@gmail.com";
     const LIMITE = 5;
 
@@ -459,10 +459,11 @@
 
       const sb = await getSupabase();
       
+      // ✅ CORREGIDO: la columna se llama correo_usuario
       const { data, error } = await sb
         .from('autos')
         .select('*')
-        .ilike('correo', correoUsuario)
+        .ilike('correo_usuario', correoUsuario)
         .order('id', { ascending: false });
 
       cajaCargando.style.display = 'none';
