@@ -12,13 +12,13 @@
       padding: 20px;
       min-height: 100vh;
     }
-    .contenedor {max-width: 920px; margin: 0 auto;}
+    .contenedor {max-width: 580px; margin: 0 auto;}
 
     .barra-superior {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
       padding-bottom: 12px;
       border-bottom: 2px solid rgba(44, 82, 130, 0.15);
     }
@@ -30,7 +30,7 @@
     .zona-izquierda.conectado {color: #166534;}
     .zona-izquierda.desconectado {color: #dc2626;}
     .titulo-pagina {
-      font-size: 22px;
+      font-size: 20px;
       font-weight: 800;
       color: #2c5282;
       text-align: center;
@@ -48,103 +48,127 @@
     .boton-conectar {color: #1d4ed8;}
     .boton-cerrar {color: #dc2626;}
 
-    .fila-dos-columnas {
-      display: flex;
-      gap: 20px;
-      width: 100%;
-    }
-    .columna-vertical {
-      width: 50%;
+    .seccion {
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 20px;
       border-radius: 16px;
       border: 1px solid #bfa980;
-      min-height: 400px;
+      margin-bottom: 20px;
     }
-    .columna-vertical h2 {
+    .seccion h2 {
       text-align: center;
-      font-size: 18px;
-      margin-bottom: 18px;
-      padding-bottom: 10px;
+      font-size: 17px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
       border-bottom: 2px solid #d4c29c;
       color: #2c5282;
     }
 
-    .tarjeta-chica {
-      background: white;
-      padding: 14px;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      border-left: 4px solid #bfa980;
-      cursor: pointer;
+    .deslizador {
+      overflow: hidden;
+      touch-action: pan-y;
+    }
+    .fila-tarjetas {
+      display: flex;
+      transition: transform 0.3s ease-out;
+      will-change: transform;
+    }
+    .pantalla {
+      min-width: 100%;
+      padding: 0 5px;
+    }
+
+    .tarjeta-vehiculo {
+      background: #f5efe0;
+      padding: 20px;
+      border-radius: 14px;
+      border: 2px solid #7aa7c9;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .tarjeta-vehiculo h3 {
+      font-size: 18px;
+      color: #2c5282;
+      margin-bottom: 10px;
+      text-align: center;
+    }
+    .dato {
+      padding: 6px 0;
+      border-bottom: 1px solid #d9ccb4;
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+    }
+    .etiqueta {font-weight: 600; color: #5d4e37;}
+    .valor {color: #3a2f1f;}
+
+    .puntos {
+      display: flex;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .punto {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
       transition: all 0.2s;
     }
-    .tarjeta-chica:hover {
-      transform: translateX(4px);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    .punto.activo {
+      background: #ffffff;
+      box-shadow: 0 0 4px rgba(255,255,255,0.6);
     }
-    .tarjeta-chica h3 {
-      font-size: 15px;
-      color: #2c5282;
-      margin-bottom: 4px;
-    }
-    .tarjeta-chica p {
-      font-size: 13px;
-      color: #6b7280;
-    }
+
     .quitar {
       background: #fee2e2;
       color: #dc2626;
       border: none;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 12px;
-      margin-top: 8px;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      margin-top: 15px;
       cursor: pointer;
+      width: 100%;
+      font-weight: 600;
     }
     .quitar:hover {background: #fecaca;}
 
     .aviso-limite {
       background: #fef3c7;
       color: #92400e;
-      padding: 10px;
+      padding: 8px;
       border-radius: 8px;
       font-size: 13px;
-      margin-bottom: 15px;
+      margin-bottom: 10px;
       text-align: center;
       display: none;
     }
     .sin-datos {
       text-align: center;
-      padding: 40px 20px;
+      padding: 30px 15px;
       color: #78716c;
-      font-size: 14px;
+      font-size: 15px;
     }
 
     .volver {
       display: block;
       text-align: center;
-      margin-top: 25px;
-      color: #1e40af;
+      margin-top: 10px;
+      color: #ffffff;
       text-decoration: none;
-      font-weight: 600;
-      padding: 12px;
-      background: rgba(255,255,255,0.6);
-      border-radius: 10px;
-      transition: all 0.2s;
+      font-weight: bold;
+      padding: 14px;
+      background: #5a91b8;
+      border-radius: 12px;
+      transition: background 0.2s;
     }
-    .volver:hover {background: #d7e6f2;}
+    .volver:hover {background: #5fa8d3;}
 
     .cargando {
       text-align: center;
-      padding: 40px;
+      padding: 30px;
       color: #2c5282;
       font-weight: 600;
-    }
-
-    @media (max-width: 650px) {
-      .fila-dos-columnas {flex-direction: column;}
-      .columna-vertical {width: 100%;}
     }
   </style>
 </head>
@@ -157,24 +181,28 @@
       <a href="#" class="zona-derecha" id="botonAccion"></a>
     </div>
 
-    <div class="fila-dos-columnas">
-      <!-- COLUMNA IZQUIERDA → VERTICAL → Publicados por él -->
-      <div class="columna-vertical">
-        <h2>🚗 Mis Publicados</h2>
-        <div id="listaPublicados">
-          <div class="cargando">🔄 Cargando...</div>
+    <!-- MIS PUBLICADOS → desliza 1x1 -->
+    <div class="seccion">
+      <h2>🚗 Mis Publicados</h2>
+      <div id="cargandoPub" class="cargando">🔄 Cargando...</div>
+      <div id="contenidoPub" style="display:none;">
+        <div class="deslizador" id="deslizadorPub">
+          <div class="fila-tarjetas" id="filaPub"></div>
         </div>
+        <div class="puntos" id="puntosPub"></div>
       </div>
+    </div>
 
-      <!-- COLUMNA DERECHA → VERTICAL → Favoritos que marcó -->
-      <div class="columna-vertical">
-        <h2>⭐ Mis Favoritos (0/5)</h2>
-        <div id="avisoLimite" class="aviso-limite">
-          ⚠️ Llegaste al límite de 5 favoritos
+    <!-- MIS FAVORITOS → desliza 1x1 -->
+    <div class="seccion">
+      <h2 id="tituloFav">⭐ Mis Favoritos (0/5)</h2>
+      <div id="avisoLimite" class="aviso-limite">⚠️ Llegaste al límite de 5 favoritos</div>
+      <div id="cargandoFav" class="cargando">🔄 Cargando...</div>
+      <div id="contenidoFav" style="display:none;">
+        <div class="deslizador" id="deslizadorFav">
+          <div class="fila-tarjetas" id="filaFav"></div>
         </div>
-        <div id="listaFavoritos">
-          <div class="cargando">🔄 Cargando...</div>
-        </div>
+        <div class="puntos" id="puntosFav"></div>
       </div>
     </div>
 
@@ -184,9 +212,17 @@
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizndra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const CORREO_SIN_LIMITE = "misvehiculosenventa@gmail.com";
+    const LIMITE = 5;
 
     let sbClient = null;
     let idUsuarioActual = null;
+    let correoUsuario = '';
+    let esAdmin = false;
+
+    let listaPub = [], indicePub = 0, inicioXPub = 0, ultimoPub = 0;
+    let listaFav = [], indiceFav = 0, inicioXFav = 0, ultimoFav = 0;
+    let favoritosGuardados = [];
 
     async function getSupabase() {
       if (!sbClient) sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -198,10 +234,14 @@
       const botonAccion = document.getElementById('botonAccion');
       const sb = await getSupabase();
       const { data: { session } } = await sb.auth.getSession();
-      const correo = localStorage.getItem('correo_usuario') || localStorage.getItem('correo');
-      const haySesion = !!(session || correo);
-
-      if (haySesion) {
+      
+      correoUsuario = localStorage.getItem('correo_usuario') || localStorage.getItem('correo') || '';
+      if (session?.user?.email) correoUsuario = session.user.email;
+      correoUsuario = correoUsuario.trim().toLowerCase();
+      
+      esAdmin = correoUsuario === CORREO_SIN_LIMITE.toLowerCase();
+      
+      if (correoUsuario) {
         zonaIzq.textContent = "✅ Conectado";
         zonaIzq.className = "zona-izquierda conectado";
         botonAccion.textContent = "Cerrar sesión";
@@ -210,8 +250,13 @@
           e.preventDefault();
           await cerrarSesion();
         };
-        const { data: usuario } = await sb.from('usuarios').select('id').eq('correo', correo).single();
+        const { data: usuario } = await sb
+          .from('usuario')
+          .select('id')
+          .eq('correo', correoUsuario)
+          .maybeSingle();
         idUsuarioActual = usuario?.id;
+        return true;
       } else {
         zonaIzq.textContent = "❌ Desconectado";
         zonaIzq.className = "zona-izquierda desconectado";
@@ -221,8 +266,8 @@
           e.preventDefault();
           window.location.href = 'iniciar-sesion.html';
         };
+        return false;
       }
-      return haySesion;
     }
 
     async function cerrarSesion() {
@@ -232,83 +277,145 @@
       window.location.href = 'index.html';
     }
 
+    // --- MIS PUBLICADOS desde tabla autos ---
     async function cargarPublicados() {
-      const caja = document.getElementById('listaPublicados');
-      const correo = localStorage.getItem('correo_usuario') || localStorage.getItem('correo');
-      if (!correo) {
-        caja.innerHTML = `<div class="sin-datos">🔐 Iniciá sesión para ver tus publicados</div>`;
+      const cajaCargando = document.getElementById('cargandoPub');
+      const cajaContenido = document.getElementById('contenidoPub');
+      const fila = document.getElementById('filaPub');
+      const puntos = document.getElementById('puntosPub');
+
+      if (!correoUsuario) {
+        cajaCargando.innerHTML = `<div class="sin-datos">🔐 Iniciá sesión para ver tus publicados</div>`;
         return;
       }
+
       const sb = await getSupabase();
       const { data, error } = await sb
         .from('autos')
-        .select('id, marca, modelo, anio, ciudad')
-        .eq('correo', correo)
+        .select('*')
+        .eq('correo', correoUsuario)
         .order('id', { ascending: false });
 
-      if (error) {
-        caja.innerHTML = `<div class="sin-datos">❌ Error: ${error.message}</div>`;
-        return;
-      }
-      if (!data.length) {
-        caja.innerHTML = `<div class="sin-datos">📭 Aún no publicaste ningún vehículo</div>`;
-        return;
-      }
-      caja.innerHTML = data.map(v => `
-        <div class="tarjeta-chica" onclick="verDetalle(${v.id})">
-          <h3>${v.marca||''} ${v.modelo||''}</h3>
-          <p>${v.anio||''} · ${v.ciudad||''}</p>
-        </div>
-      `).join('');
-    }
-
-    async function cargarFavoritos() {
-      const caja = document.getElementById('listaFavoritos');
-      const titulo = document.querySelector('.columna-vertical:nth-child(2) h2');
-      const aviso = document.getElementById('avisoLimite');
-      if (!idUsuarioActual) {
-        caja.innerHTML = `<div class="sin-datos">⭐ Iniciá sesión para ver favoritos</div>`;
-        titulo.textContent = `⭐ Mis Favoritos (0/5)`;
-        return;
-      }
-      const sb = await getSupabase();
-      const { data: guardados, error } = await sb
-        .from('mis_vehiculos')
-        .select('id, vehiculo_id')
-        .eq('usuario_id', idUsuarioActual)
-        .limit(5);
+      cajaCargando.style.display = 'none';
 
       if (error) {
-        caja.innerHTML = `<div class="sin-datos">❌ Error: ${error.message}</div>`;
+        cajaCargando.innerHTML = `<div class="sin-datos">❌ Error: ${error.message}</div>`;
         return;
       }
-      const cant = guardados ? guardados.length : 0;
-      titulo.textContent = `⭐ Mis Favoritos (${cant}/5)`;
-      aviso.style.display = cant >= 5 ? 'block' : 'none';
-      if (!cant) {
-        caja.innerHTML = `<div class="sin-datos">⭐ Aún no guardaste favoritos</div>`;
+      if (!data || !data.length) {
+        cajaCargando.innerHTML = `<div class="sin-datos">📭 Aún no publicaste ningún vehículo</div>`;
         return;
       }
-      const ids = guardados.map(g => g.vehiculo_id);
-      const { data: vehiculos } = await sb
-        .from('autos')
-        .select('id, marca, modelo, anio, ciudad')
-        .in('id', ids);
 
-      if (!vehiculos || !vehiculos.length) {
-        caja.innerHTML = `<div class="sin-datos">📭 No se encontraron los vehículos guardados</div>`;
-        return;
-      }
-      caja.innerHTML = vehiculos.map(v => {
-        const fila = guardados.find(g => g.vehiculo_id === v.id);
-        return `
-          <div class="tarjeta-chica">
-            <h3>${v.marca||''} ${v.modelo||''}</h3>
-            <p>${v.anio||''} · ${v.ciudad||''}</p>
-            <button class="quitar" onclick="quitarFavorito(${fila.id}, event)">🗑️ Quitar</button>
+      listaPub = data;
+      indicePub = 0;
+      cajaContenido.style.display = 'block';
+
+      fila.innerHTML = '';
+      puntos.innerHTML = '';
+
+      data.forEach((veh, i) => {
+        const pantalla = document.createElement('div');
+        pantalla.className = 'pantalla';
+        pantalla.innerHTML = `
+          <div class="tarjeta-vehiculo" onclick="verDetalle(${veh.id})">
+            <h3>${veh.marca||''} ${veh.modelo||''}</h3>
+            <div class="dato"><span class="etiqueta">Año:</span><span class="valor">${veh.anio||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Versión:</span><span class="valor">${veh.version||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Ciudad:</span><span class="valor">${veh.ciudad||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Precio:</span><span class="valor">$ ${veh.precio ? Number(veh.precio).toLocaleString('es-AR') : '-'}</span></div>
+            <div class="dato"><span class="etiqueta">Teléfono:</span><span class="valor">${veh.telefono||'-'}</span></div>
+            <p style="text-align:center; margin-top:12px; color:#5a91b8; font-size:13px;">👆 Tocá para ver completo</p>
           </div>
         `;
-      }).join('');
+        fila.appendChild(pantalla);
+
+        const p = document.createElement('span');
+        p.className = 'punto' + (i === 0 ? ' activo' : '');
+        puntos.appendChild(p);
+      });
+
+      configurarDeslizamiento('Pub');
+      mostrarActual('Pub');
+    }
+
+    // --- MIS FAVORITOS desde tabla mis_vehiculos ---
+    async function cargarFavoritos() {
+      const cajaCargando = document.getElementById('cargandoFav');
+      const cajaContenido = document.getElementById('contenidoFav');
+      const titulo = document.getElementById('tituloFav');
+      const aviso = document.getElementById('avisoLimite');
+      const fila = document.getElementById('filaFav');
+      const puntos = document.getElementById('puntosFav');
+
+      if (!idUsuarioActual) {
+        cajaCargando.innerHTML = `<div class="sin-datos">⭐ Iniciá sesión para ver favoritos</div>`;
+        titulo.textContent = `⭐ Mis Favoritos (0/${LIMITE})`;
+        return;
+      }
+
+      const sb = await getSupabase();
+      const { data: guardados, error: e1 } = await sb
+        .from('mis_vehiculos')
+        .select('id, vehiculo_id')
+        .eq('usuario_id', idUsuarioActual);
+
+      favoritosGuardados = guardados || [];
+      const cant = favoritosGuardados.length;
+      titulo.textContent = `⭐ Mis Favoritos (${cant}/${LIMITE})`;
+      aviso.style.display = (!esAdmin && cant >= LIMITE) ? 'block' : 'none';
+
+      if (e1 || !cant) {
+        cajaCargando.style.display = 'none';
+        if (!cant) {
+          cajaCargando.innerHTML = `<div class="sin-datos">⭐ Aún no guardaste favoritos</div>`;
+        }
+        return;
+      }
+
+      const ids = favoritosGuardados.map(g => g.vehiculo_id);
+      const { data: vehiculos, error: e2 } = await sb
+        .from('autos')
+        .select('*')
+        .in('id', ids);
+
+      cajaCargando.style.display = 'none';
+
+      if (e2 || !vehiculos || !vehiculos.length) {
+        cajaCargando.innerHTML = `<div class="sin-datos">📭 No se encontraron vehículos</div>`;
+        return;
+      }
+
+      listaFav = vehiculos;
+      indiceFav = 0;
+      cajaContenido.style.display = 'block';
+
+      fila.innerHTML = '';
+      puntos.innerHTML = '';
+
+      vehiculos.forEach((veh, i) => {
+        const filaGuardada = favoritosGuardados.find(g => g.vehiculo_id === veh.id);
+        const pantalla = document.createElement('div');
+        pantalla.className = 'pantalla';
+        pantalla.innerHTML = `
+          <div class="tarjeta-vehiculo">
+            <h3>${veh.marca||''} ${veh.modelo||''}</h3>
+            <div class="dato"><span class="etiqueta">Año:</span><span class="valor">${veh.anio||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Versión:</span><span class="valor">${veh.version||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Ciudad:</span><span class="valor">${veh.ciudad||'-'}</span></div>
+            <div class="dato"><span class="etiqueta">Precio:</span><span class="valor">$ ${veh.precio ? Number(veh.precio).toLocaleString('es-AR') : '-'}</span></div>
+            <button class="quitar" onclick="quitarFavorito(${filaGuardada.id}, event)">🗑️ Quitar de Favoritos</button>
+          </div>
+        `;
+        fila.appendChild(pantalla);
+
+        const p = document.createElement('span');
+        p.className = 'punto' + (i === 0 ? ' activo' : '');
+        puntos.appendChild(p);
+      });
+
+      configurarDeslizamiento('Fav');
+      mostrarActual('Fav');
     }
 
     async function quitarFavorito(idFila, evento) {
@@ -320,12 +427,52 @@
         alert('❌ No se pudo quitar: ' + error.message);
         return;
       }
+      // Recargar solo favoritos
+      document.getElementById('cargandoFav').style.display = 'block';
+      document.getElementById('contenidoFav').style.display = 'none';
       await cargarFavoritos();
     }
 
     function verDetalle(id) {
-      // Cambiá el nombre acá si tu archivo se llama distinto
       window.location.href = 'ver-vehiculo.html?id=' + id;
+    }
+
+    // Deslizamiento genérico
+    function configurarDeslizamiento(tipo) {
+      const desl = document.getElementById(`deslizador${tipo}`);
+      desl.addEventListener('touchstart', e => {
+        if (tipo === 'Pub') inicioXPub = e.touches[0].clientX;
+        else inicioXFav = e.touches[0].clientX;
+      }, { passive: true });
+
+      desl.addEventListener('touchend', e => {
+        let ini, ult, lista, ind;
+        if (tipo === 'Pub') {
+          ini = inicioXPub; ult = e.changedTouches[0].clientX; lista = listaPub; ind = indicePub;
+        } else {
+          ini = inicioXFav; ult = e.changedTouches[0].clientX; lista = listaFav; ind = indiceFav;
+        }
+        const dif = ult - ini;
+        if (dif < -50 && ind < lista.length - 1) ind++;
+        else if (dif > 50 && ind > 0) ind--;
+        
+        if (tipo === 'Pub') indicePub = ind;
+        else indiceFav = ind;
+        mostrarActual(tipo);
+      }, { passive: true });
+    }
+
+    function mostrarActual(tipo) {
+      const fila = document.getElementById(`fila${tipo}`);
+      const puntos = document.getElementById(`puntos${tipo}`);
+      let ind, lista;
+      if (tipo === 'Pub') { ind = indicePub; lista = listaPub; }
+      else { ind = indiceFav; lista = listaFav; }
+      
+      fila.style.transform = `translateX(-${ind * 100}%)`;
+      puntos.querySelectorAll('.punto').forEach((p, i) => {
+        p.classList.toggle('activo', i === ind);
+      });
     }
 
     async function iniciar() {
