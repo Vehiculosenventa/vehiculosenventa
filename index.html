@@ -323,7 +323,7 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     const GEMINI_KEY = "AQ.Ab8RN6KfN23z_GQP6oPyjfCxuYAOz7kAtbXjUF9EWCtBR0tudQ";
-
+                      
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     const botonesSinSesion = document.getElementById('botonesSinSesion');
@@ -383,11 +383,11 @@
       return div;
     }
 
-    // Obtener todos los vehículos de la base
+    // Obtener todos los vehículos de la base — TABLA CORREGIDA: "autos"
     async function obtenerVehiculos() {
       try {
         const { data, error } = await supabaseClient
-          .from('vehiculos')
+          .from('autos')
           .select('*');
         
         if (error) {
@@ -401,7 +401,7 @@
       }
     }
 
-    // Llamar a Gemini con el contexto
+    // Llamar a Gemini con el contexto — URL CORREGIDA
     async function llamarGemini(mensajeUsuario) {
       const vehiculos = await obtenerVehiculos();
       
@@ -454,6 +454,7 @@ Respondé de forma natural, cortés, llamativa. Promové la plataforma con entus
         if (datos.candidates && datos.candidates[0]?.content?.parts?.[0]?.text) {
           return datos.candidates[0].content.parts[0].text;
         } else if (datos.error) {
+          console.error('Error de API:', datos.error);
           return `Lo siento 😅 Estoy ajustándome. Probá nuevamente en un momento o decime qué necesitás y te ayudo manualmente. 🚗`;
         } else {
           return `Recibí tu mensaje ✨ Estoy procesándolo. En breve te respondo con toda la info disponible de Vehículos en Venta 🚗`;
