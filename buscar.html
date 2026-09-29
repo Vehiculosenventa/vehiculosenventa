@@ -175,54 +175,6 @@
       font-size: 16px;
     }
 
-    .caja-codigo {
-      background: #fefceb;
-      padding: 20px;
-      border-radius: 12px;
-      margin: 0 0 18px 0;
-      border: 2px solid #fde68a;
-      display: none;
-    }
-    .caja-codigo.mostrar {display: block;}
-    .caja-codigo h3 {
-      color: #713f12;
-      margin-bottom: 12px;
-      font-size: 16px;
-    }
-    .input-codigo {
-      width: 100%;
-      padding: 14px;
-      font-size: 18px;
-      text-align: center;
-      letter-spacing: 4px;
-      border: 2px solid #facc15;
-      border-radius: 10px;
-      margin-bottom: 12px;
-      font-weight: bold;
-    }
-    .boton-guardar {
-      background: #eab308;
-      color: #713f12;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: 700;
-      cursor: pointer;
-      width: 100%;
-    }
-    .boton-cancelar {
-      background: #f3f4f6;
-      color: #4b5563;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 10px;
-      font-size: 14px;
-      margin-top: 10px;
-      cursor: pointer;
-      width: 100%;
-    }
-
     .tarjeta {
       background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
       padding: 25px;
@@ -274,6 +226,8 @@
       padding: 6px 0;
       border-bottom: 1px solid rgba(90, 79, 63, 0.1);
       color: #5a4f3f;
+      flex-wrap: wrap;
+      gap: 4px;
     }
     .fila strong {
       color: #1e40af;
@@ -366,6 +320,24 @@
       font-weight: bold;
       line-height: 1;
       text-shadow: 0 0 4px rgba(0,0,0,0.4);
+    }
+    .aviso-sesion {
+      background: #fef3c7;
+      border: 1px solid #fcd34d;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 15px;
+      text-align: center;
+    }
+    .boton-iniciar-peque {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: 600;
     }
   </style>
 </head>
@@ -500,7 +472,7 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZIjoiYW5vbiIsImlhdCI6MTc4OTM1Mzk1NywiZXhwIjoyMTA0OTI5OTU3fQ.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     const CORREO_SIN_LIMITE = "misvehiculosenventa@gmail.com";
     const LIMITE_FAVORITOS = 5;
 
@@ -512,6 +484,7 @@
     let marcaModeloActual = '';
     let idUsuarioActual = null;
     let correoUsuarioActual = '';
+    let esAdmin = false;
 
     let xInicio = 0, xFin = 0;
     const UMBRAL_DESLIZAR = 50;
@@ -529,14 +502,15 @@
     async function verificarSesion() {
       const correo = localStorage.getItem('correo_usuario');
       const nombre = localStorage.getItem('nombre_usuario');
-      correoUsuarioActual = correo || '';
+      correoUsuarioActual = (correo || '').trim().toLowerCase();
+      esAdmin = correoUsuarioActual === CORREO_SIN_LIMITE.toLowerCase();
       return !!(correo && nombre);
     }
 
     async function obtenerUsuarioId(correo) {
       if (!correo) return null;
       const sb = await getSupabase();
-      const { data } = await sb.from('usuarios').select('id').eq('correo', correo).single();
+      const { data } = await sb.from('usuarios').select('id').eq('correo', correo).maybeSingle();
       return data?.id || null;
     }
 
@@ -545,10 +519,6 @@
       const sb = await getSupabase();
       const { count } = await sb.from('mis_vehiculos').select('*', { count: 'exact', head: true }).eq('usuario_id', usuarioId);
       return count || 0;
-    }
-
-    function tieneLimiteLibre() {
-      return correoUsuarioActual.trim().toLowerCase() === CORREO_SIN_LIMITE.toLowerCase();
     }
 
     async function yaEstaGuardado(vehiculoId) {
@@ -567,64 +537,50 @@
       return isNaN(v) ? null : v;
     }
 
-    async function mostrarCajaCodigo() {
+    async function agregarAFavoritos(vehiculoId) {
       const tieneSesion = await verificarSesion();
       if (!tieneSesion) {
-        alert('🔐 Primero debés entrar con tu cuenta');
+        alert('🔐 Necesitás iniciar sesión para guardar vehículos');
         window.location.href = 'iniciar-sesion.html';
-        return;
+        return false;
       }
 
-      const correo = localStorage.getItem('correo_usuario');
-      idUsuarioActual = await obtenerUsuarioId(correo);
+      if (!idUsuarioActual) {
+        const correo = localStorage.getItem('correo_usuario');
+        idUsuarioActual = await obtenerUsuarioId(correo);
+      }
 
-      if (!tieneLimiteLibre()) {
+      if (!idUsuarioActual) {
+        alert('❌ No se encontró tu cuenta');
+        return false;
+      }
+
+      if (await yaEstaGuardado(vehiculoId)) {
+        alert('⭐ Ya está guardado en "Mis Vehículos"');
+        return false;
+      }
+
+      if (!esAdmin) {
         const cantidad = await contarGuardadosUsuario(idUsuarioActual);
         if (cantidad >= LIMITE_FAVORITOS) {
           alert(`⚠️ Ya tenés ${LIMITE_FAVORITOS} vehículos guardados.\nEntrá a "Mis Vehículos" y sacá uno para poder agregar otro.`);
-          return;
+          return false;
         }
       }
-
-      document.getElementById('cajaCodigo').classList.add('mostrar');
-      document.getElementById('codigoIngresado').value = '';
-      document.getElementById('codigoIngresado').focus();
-    }
-
-    function ocultarCajaCodigo() {
-      document.getElementById('cajaCodigo').classList.remove('mostrar');
-    }
-
-    async function guardarConCodigo() {
-      const codigo = document.getElementById('codigoIngresado').value.trim();
-      if (!codigo || codigo.length < 6) { alert('⚠️ El código debe tener 6 caracteres'); return; }
-      if (!idVehiculoActual) { alert('⚠️ No hay vehículo seleccionado'); return; }
-
-      const correo = localStorage.getItem('correo_usuario');
-      const usuario_id = await obtenerUsuarioId(correo);
-      if (!usuario_id) { alert('❌ No se encontró tu cuenta'); return; }
 
       const sb = await getSupabase();
-      const { data: existe } = await sb.from('mis_vehiculos').select('id')
-        .eq('usuario_id', usuario_id).eq('vehiculo_id', idVehiculoActual).maybeSingle();
-      
-      if (existe) { alert('⭐ Ya está guardado en "Mis Vehículos"'); ocultarCajaCodigo(); return; }
+      const { error } = await sb.from('mis_vehiculos').insert({
+        usuario_id: idUsuarioActual,
+        vehiculo_id: vehiculoId
+      });
 
-      if (!tieneLimiteLibre()) {
-        const cantidad = await contarGuardadosUsuario(usuario_id);
-        if (cantidad >= LIMITE_FAVORITOS) {
-          alert(`⚠️ Llegaste al límite de ${LIMITE_FAVORITOS} vehículos.\nSacá uno de "Mis Vehículos" para agregar este.`);
-          ocultarCajaCodigo();
-          return;
-        }
+      if (error) {
+        alert('❌ Error: ' + error.message);
+        return false;
       }
 
-      const { error } = await sb.from('mis_vehiculos').insert({ usuario_id, vehiculo_id: idVehiculoActual });
-      if (error) { alert('❌ Error: ' + error.message); return; }
-      
       alert('✅ ¡Agregado a "Mis Vehículos"! ⭐🎉');
-      ocultarCajaCodigo();
-      await cargarUno(indiceActual);
+      return true;
     }
 
     function armarEnlaceWhatsApp(telefono, marcaModelo) {
@@ -678,7 +634,8 @@
       idsFiltrados = []; indiceActual = 0; idVehiculoActual = null; telefonoActual = ''; marcaModeloActual = '';
 
       const correo = localStorage.getItem('correo_usuario');
-      correoUsuarioActual = correo || '';
+      correoUsuarioActual = (correo || '').trim().toLowerCase();
+      esAdmin = correoUsuarioActual === CORREO_SIN_LIMITE.toLowerCase();
       idUsuarioActual = await obtenerUsuarioId(correo);
 
       const sb = await getSupabase();
@@ -723,6 +680,7 @@
       marcaModeloActual = `${vehiculo.marca || ''} ${vehiculo.modelo || ''} — ${vehiculo.anio || ''}`.trim();
 
       const guardado = await yaEstaGuardado(vehiculo.id);
+      const tieneSesion = await verificarSesion();
 
       let fotosHtml = '';
       for (let i = 1; i <= 6; i++) {
@@ -731,22 +689,20 @@
       }
       const hayFotos = fotosHtml !== '';
 
-      const enlaceFavoritoHtml = guardado
-        ? `<span class="enlace-favorito guardado"><span class="estrella-gris">⭐</span> En Mis Vehículos</span>`
-        : `<span class="enlace-favorito agregar" onclick="mostrarCajaCodigo()"><span class="estrella-amarilla">⭐</span> Agregar a Mi Vehículo</span>`;
+      let enlaceFavoritoHtml = '';
+      if (guardado) {
+        enlaceFavoritoHtml = `<span class="enlace-favorito guardado"><span class="estrella-gris">⭐</span> En Mis Vehículos</span>`;
+      } else if (!tieneSesion) {
+        enlaceFavoritoHtml = `<span class="enlace-favorito agregar" onclick="window.location.href='iniciar-sesion.html'"><span class="estrella-amarilla">⭐</span> Agregar a Mi Vehículo</span>`;
+      } else {
+        enlaceFavoritoHtml = `<span class="enlace-favorito agregar" onclick="agregarAFavoritos(${vehiculo.id})"><span class="estrella-amarilla">⭐</span> Agregar a Mi Vehículo</span>`;
+      }
 
       caja.innerHTML = `
         <div class="tarjeta" id="tarjetaDeslizable">
           <div class="fila-superior">
             ${vehiculo.tipo_vehiculo ? `<span class="etiqueta-tipo">${vehiculo.tipo_vehiculo}</span>` : ''}
             ${enlaceFavoritoHtml}
-          </div>
-          
-          <div id="cajaCodigo" class="caja-codigo">
-            <h3>🔐 Escribí tu código de seguridad</h3>
-            <input type="text" id="codigoIngresado" class="input-codigo" placeholder="Tu código..." maxlength="6">
-            <button class="boton-guardar" onclick="guardarConCodigo()">✅ Guardar</button>
-            <button class="boton-cancelar" onclick="ocultarCajaCodigo()">❌ Cancelar</button>
           </div>
           
           ${hayFotos ? `<div class="fotos-cuadricula">${fotosHtml}</div>` : ''}
@@ -796,7 +752,8 @@
 
     async function iniciar() {
       await getSupabase();
-      correoUsuarioActual = localStorage.getItem('correo_usuario') || '';
+      correoUsuarioActual = (localStorage.getItem('correo_usuario') || '').trim().toLowerCase();
+      esAdmin = correoUsuarioActual === CORREO_SIN_LIMITE.toLowerCase();
       document.addEventListener('touchstart', registrarInicioDeslizamiento, { passive: true });
       document.addEventListener('touchend', registrarFinDeslizamiento, { passive: true });
       document.addEventListener('mousedown', registrarInicioDeslizamiento);
