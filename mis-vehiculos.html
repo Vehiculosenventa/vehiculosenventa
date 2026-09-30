@@ -158,6 +158,28 @@
       font-size: 13px;
     }
 
+    .boton-whatsapp {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #25D366;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 600;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+    .boton-whatsapp:hover {background: #1da851;}
+    .boton-whatsapp img {
+      width: 18px;
+      height: 18px;
+    }
+
     .puntos {
       display: flex;
       justify-content: center;
@@ -310,7 +332,6 @@
     const LIMITE = 5;
 
     let sbClient = null;
-    let idUsuarioActual = null;
     let correoUsuario = '';
     let esAdmin = false;
 
@@ -348,13 +369,6 @@
           e.preventDefault();
           await cerrarSesion();
         };
-        // Intentar obtener id, pero no frenar si falla
-        try {
-          const { data: usuario } = await sb.from('usuario').select('id').ilike('correo_usuario', correoUsuario).maybeSingle();
-          if (usuario) idUsuarioActual = usuario.id;
-        } catch (err) {
-          console.log('Tabla usuario no coincide, se usará correo directamente');
-        }
         return true;
       } else {
         zonaIzq.textContent = "❌ Desconectado";
@@ -366,7 +380,6 @@
           e.preventDefault();
           window.location.href = 'iniciar-sesion.html';
         };
-        idUsuarioActual = null;
         return false;
       }
     }
@@ -413,12 +426,17 @@
         fotosHtml = '<div class="sin-foto-texto">📷 Sin fotos</div>';
       }
 
-      const prohibidos = ['id', 'correo_usuario', 'created_at', 'usuario_id', 'foto1', 'foto2', 'foto3', 'foto4', 'foto5', 'foto6'];
+      const prohibidos = ['id', 'correo_usuario', 'created_at', 'usuario_id', 'foto1', 'foto2', 'foto3', 'foto4', 'foto5', 'foto6', 'telefono', 'whatsapp'];
       const yaMostrados = new Set();
       let datosHtml = '';
+      let numeroWhatsApp = '';
       
       for (const [clave, valor] of Object.entries(veh)) {
         if (!valor || valor === null || valor === '') continue;
+        if (clave === 'telefono' || clave === 'whatsapp') {
+          numeroWhatsApp = String(valor).replace(/\D/g, '');
+          continue;
+        }
         if (prohibidos.includes(clave)) continue;
         if (yaMostrados.has(clave)) continue;
         yaMostrados.add(clave);
@@ -439,8 +457,23 @@
         `;
       }
 
+      // Botón WhatsApp en el último campo de la segunda columna
+      const botonWhatsAppHtml = numeroWhatsApp ? `
+        <div class="dato">
+          <span class="etiqueta"></span>
+          <a href="https://wa.me/${numeroWhatsApp}" target="_blank" class="boton-whatsapp">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="white" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.476-.883-.79-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.37-.012-.57-.012-.2 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.21 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.29.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c0-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.965L.057 24l6.205-1.62a11.882 11.882 0 005.783 1.48h.006c6.554 0 11.89-5.334 11.893-11.893A11.821 11.821 0 0020.89 3.488z"/>
+            </svg>
+            WhatsApp
+          </a>
+        </div>
+      ` : '';
+
       let boton = '';
-      if (!esPublicado) {
+      if (esPublicado) {
+        boton = `<button class="quitar" onclick="quitarPublicado(${veh.id}, event)">🗑️ Quitar de Mis Publicados</button>`;
+      } else {
         const fav = favoritosGuardados.find(g => g.vehiculo_id === veh.id);
         if (fav) {
           boton = `<button class="quitar" onclick="quitarFavorito(${fav.id}, event)">🗑️ Quitar de Favoritos</button>`;
@@ -454,6 +487,7 @@
             <h3>${veh.marca || ''} ${veh.modelo || ''}</h3>
             <div class="filas-datos">
               ${datosHtml}
+              ${botonWhatsAppHtml}
             </div>
             ${boton}
           </div>
@@ -530,6 +564,21 @@
       cargandoPub = false;
     }
 
+    async function quitarPublicado(idVehiculo, evento) {
+      if (!confirm('¿Quitar este vehículo de Mis Publicados?')) return;
+      evento.stopPropagation();
+      const sb = await getSupabase();
+      const { error } = await sb.from('autos').delete().eq('id', idVehiculo);
+      if (error) {
+        alert('❌ No se pudo quitar: ' + error.message);
+        return;
+      }
+      document.getElementById('contenidoPub').style.display = 'none';
+      document.getElementById('cargandoPub').style.display = 'block';
+      await cargarPublicados();
+      await cargarFavoritos();
+    }
+
     async function cargarFavoritos() {
       if (!correoUsuario) {
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">⭐ Iniciá sesión para ver favoritos</div>`;
@@ -538,55 +587,55 @@
       }
 
       const sb = await getSupabase();
-      let guardados = [];
       
-      // Intentar por usuario_id primero, si no funciona buscar por correo
-      if (idUsuarioActual) {
-        const { data, error } = await sb
-          .from('mis_vehiculos')
-          .select('id, vehiculo_id')
-          .eq('usuario_id', idUsuarioActual);
-        if (!error) guardados = data || [];
+      const { data: todosFav, error: e1 } = await sb
+        .from('mis_vehiculos')
+        .select('id, vehiculo_id');
+      
+      if (e1) {
+        document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">❌ Error cargando favoritos: ${e1.message}</div>`;
+        return;
       }
       
-      // Si no encontró nada, buscar por correo en la tabla autos
-      if (guardados.length === 0) {
-        const { data: todosFav, error: e2 } = await sb
-          .from('mis_vehiculos')
-          .select('id, vehiculo_id, usuario_id');
-        if (!e2 && todosFav) {
-          const { data: misAutos } = await sb
-            .from('autos')
-            .select('id, correo_usuario')
-            .ilike('correo_usuario', correoUsuario);
-          if (misAutos) {
-            const misIds = misAutos.map(a => a.id);
-            guardados = todosFav.filter(f => misIds.includes(f.vehiculo_id));
-          }
-        }
+      if (!todosFav || !todosFav.length) {
+        document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">⭐ Aún no guardaste favoritos</div>`;
+        document.getElementById('tituloFav').textContent = `⭐ Mis Favoritos (0/${LIMITE})`;
+        return;
       }
-
-      favoritosGuardados = guardados;
+      
+      const { data: misAutos, error: e2 } = await sb
+        .from('autos')
+        .select('id, correo_usuario')
+        .ilike('correo_usuario', correoUsuario);
+      
+      if (e2 || !misAutos) {
+        document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">❌ Error: ${e2?.message || 'No se encontraron tus vehículos'}</div>`;
+        return;
+      }
+      
+      const misIds = misAutos.map(a => a.id);
+      favoritosGuardados = todosFav.filter(f => misIds.includes(f.vehiculo_id));
+      
       const cant = favoritosGuardados.length;
       document.getElementById('tituloFav').textContent = `⭐ Mis Favoritos (${cant}/${LIMITE})`;
       document.getElementById('avisoLimite').style.display = (!esAdmin && cant >= LIMITE) ? 'block' : 'none';
-
+      
       if (!cant) {
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">⭐ Aún no guardaste favoritos</div>`;
         return;
       }
-
-      const ids = favoritosGuardados.map(g => g.vehiculo_id);
+      
+      const idsVehiculos = favoritosGuardados.map(g => g.vehiculo_id);
       const { data: vehiculos, error: e3 } = await sb
         .from('autos')
         .select('*')
-        .in('id', ids);
-
+        .in('id', idsVehiculos);
+      
       if (e3 || !vehiculos || !vehiculos.length) {
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">📭 No se encontraron los vehículos guardados</div>`;
         return;
       }
-
+      
       listaFav = vehiculos;
       indiceFav = 0;
       
