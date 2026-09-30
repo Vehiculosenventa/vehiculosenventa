@@ -23,13 +23,13 @@
       padding: 20px;
     }
     .barra-superior {
-      text-align: right;
+      text-align: center; /* ✅ Centrado igual que los botones */
       margin-bottom: 20px;
     }
     .boton-sesion {
       display: inline-block;
       padding: 10px 20px;
-      margin-left: 10px;
+      margin: 0 5px;
       border-radius: 10px;
       font-size: 15px;
       font-weight: 600;
@@ -93,7 +93,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
     .saludo-usuario {
-      text-align: left;
+      text-align: center; /* ✅ Centrado */
       color: #2c5282;
       font-size: 17px;
       font-weight: 600;
@@ -107,6 +107,7 @@
       font-size: 34px;
       font-weight: 800;
       margin-bottom: 12px;
+      text-align: center; /* ✅ Centrado */
     }
     .subtitulo {
       color: #5a4f3f;
@@ -114,6 +115,7 @@
       margin-bottom: 35px;
       font-weight: 500;
       line-height: 1.5;
+      text-align: center; /* ✅ Centrado */
     }
     .boton {
       display: flex;
@@ -147,6 +149,7 @@
       font-weight: 600;
       text-decoration: none;
       transition: color 0.2s ease;
+      text-align: center; /* ✅ Centrado */
     }
     .enlace-olvidada:hover {
       color: #3182ce;
@@ -156,6 +159,7 @@
       margin-top: 30px;
       font-size: 13px;
       color: #5a4f3f;
+      text-align: center; /* ✅ Centrado */
     }
     .boton-ia-flotante {
       position: fixed;
@@ -293,7 +297,8 @@
   <div class="caja-principal">
     <div class="saludo-usuario" id="saludo-usuario"></div>
 
-    <h1>🚗 Vehículos en Venta</h1>
+    <!-- ✅ Sin autito rojo, solo el texto -->
+    <h1>Vehículos en Venta</h1>
     <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
     La plataforma de Rosario y toda la región</p>
     
@@ -317,7 +322,7 @@
     </div>
     <div class="cuerpo-chat" id="cuerpoChat">
       <div class="mensaje mensaje-ia">
-        ¡Hola! 👋 Soy tu asistente de <strong>Vehículos en Venta</strong> 🚗✨<br><br>
+        ¡Hola! 👋 Soy tu asistente de <strong>Vehículos en Venta</strong> ✨<br><br>
         Te ayudo a buscar autos, saber cómo publicar, usar favoritos y todo sobre la plataforma.<br><br>
         ¿En qué te ayudo hoy?
       </div>
@@ -439,26 +444,32 @@
       const vehiculos = await obtenerVehiculos();
       
       let contextoBase = `
-Eres el asistente virtual de "Vehículos en Venta", la plataforma de Rosario y región.
-Tu personalidad: amable, cercana, entusiasta, clara. Hablas como alguien de aquí.
+Eres el asistente de "Vehículos en Venta" — la plataforma NUEVA de Rosario y toda la región ✨
 
-FUNCIONES DE LA PLATAFORMA:
-- 📄 Ingresar Vehículo: para publicar un auto propio, gratis
-- 📋 Ver Vehículos — Catálogo: ver todos los publicados
-- 🔍 Buscar Vehículo: buscar por marca, modelo, precio
-- ❤️ Mis Vehículos: guardar favoritos y ver los tuyos
-- 📲 Descargar App: instalar como aplicación en el celular
+🆕 SOMOS NUEVOS: recién lanzamos, ¡estamos creciendo!
 
-VEHÍCULOS DISPONIBLES AHORA MISMO:
-${vehiculos.length === 0 ? 'No hay vehículos publicados todavía.' : 
-  vehiculos.map(v => 
-    `- ${v.marca || 'Sin marca'} ${v.modelo || 'Sin modelo'} | ${v.anio || 'Año desconocido'} | $${v.precio || 'Precio a consultar'} | ${v.ciudad || 'Rosario'}`
-  ).join('\n')
-}
+📢 TU MISIÓN PRINCIPAL: invitar con entusiasmo a la gente a PUBLICAR su vehículo.
+✅ ES TOTALMENTE GRATIS — sin costo, sin comisiones, sin gastos mensuales
+✅ Rápido — en 3 minutos está publicado
+✅ Llega a gente de Rosario y alrededores
 
-Si NO hay vehículos: invita amablemente a publicar el suyo, explicá que es gratis y rápido: toca "Ingresar Vehículo", completa los datos y listo.
+CÓMO PUBLICAR paso a paso:
+1️⃣ Tocar el botón 📄 "Ingresar Vehículo"
+2️⃣ Completar: marca, modelo, año, precio, ciudad, fotos
+3️⃣ Tocar "Publicar" → ¡y listo! Ya lo ven todos
 
-Respondé de forma natural, cortés, llamativa. Promové la plataforma con entusiasmo.
+LO QUE TIENE LA PLATAFORMA:
+- 📄 Ingresar Vehículo → publicar el tuyo GRATIS
+- 📋 Ver Vehículos — Catálogo → todos los publicados
+- 🔍 Buscar Vehículo → buscar por marca, modelo, precio
+- ❤️ Mis Vehículos → guardar favoritos (máx. 5; tu correo especial SIN límite)
+- 📲 Descargar App → instalar en el celular
+- 🔐 Registrarse / Iniciar sesión → crear cuenta gratis
+- ¿Olvidaste tu contraseña? → enlace abajo para recuperarla
+
+Si hay pocos vehículos: decí que recién empezamos 🆕 y ¡animá a ser de los primeros en publicar!
+
+Tu tono: amable, cercano, de acá de Rosario. Claro, entusiasta, no muy largo.
 `;
 
       try {
