@@ -397,26 +397,42 @@
 
     async function verificarSesion() {
       const sb = await getSupabase();
-      const { data: { session } } = await sb.auth.getSession();
       
-      correoUsuario = localStorage.getItem('correo_usuario') || localStorage.getItem('correo') || '';
+      // Buscar correo en TODOS los lugares posibles
+      correoUsuario = 
+        localStorage.getItem('correo_usuario') || 
+        localStorage.getItem('correo') || 
+        localStorage.getItem('email') || '';
+      
+      const { data: { session } } = await sb.auth.getSession();
       if (session?.user?.email) {
         correoUsuario = session.user.email;
       }
+      
       correoUsuario = correoUsuario.trim().toLowerCase();
+      console.log('✅ Correo detectado:', correoUsuario);
       
       esAdmin = correoUsuario === CORREO_SIN_LIMITE.toLowerCase();
       
+      idUsuarioActual = null;
       if (correoUsuario) {
-        const { data: usuario } = await sb
+        const { data: usuario, error: errUsuario } = await sb
           .from('usuario')
           .select('id')
           .eq('correo', correoUsuario)
           .maybeSingle();
-        idUsuarioActual = usuario?.id || null;
-        await cargarMisFavoritos();
+        
+        if (errUsuario) {
+          console.error('❌ Error buscando usuario:', errUsuario);
+        } else if (usuario) {
+          idUsuarioActual = usuario.id;
+          console.log('✅ Usuario encontrado, ID:', idUsuarioActual);
+          await cargarMisFavoritos();
+        } else {
+          console.log('⚠️ No se encontró usuario en tabla con ese correo');
+        }
       } else {
-        idUsuarioActual = null;
+        console.log('⚠️ No hay correo de sesión');
         favoritosIds.clear();
       }
     }
@@ -424,14 +440,23 @@
     async function cargarMisFavoritos() {
       if (!idUsuarioActual) return;
       const sb = await getSupabase();
-      const { data } = await sb
+      const { data, error } = await sb
         .from('mis_vehiculos')
         .select('vehiculo_id')
         .eq('usuario_id', idUsuarioActual);
+      
+      if (error) {
+        console.error('❌ Error cargando favoritos:', error);
+        return;
+      }
+      
       favoritosIds = new Set((data || []).map(f => f.vehiculo_id));
+      console.log('✅ Favoritos cargados:', favoritosIds.size, [...favoritosIds]);
     }
 
     async function alternarFavorito(idVehiculo, elementoBoton) {
+      console.log('⭐ Tocó favorito, idVeh:', idVehiculo, 'usuarioId:', idUsuarioActual);
+      
       if (!idUsuarioActual) {
         alert('🔐 Iniciá sesión para agregar a favoritos');
         window.location.href = 'iniciar-sesion.html';
@@ -443,15 +468,23 @@
 
       if (favoritosIds.has(idVehiculo)) {
         // Ya está guardado → BORRAR
-        await sb
+        const { error } = await sb
           .from('mis_vehiculos')
           .delete()
           .eq('usuario_id', idUsuarioActual)
           .eq('vehiculo_id', idVehiculo);
+        
+        if (error) {
+          console.error('❌ Error al borrar:', error);
+          alert('No se pudo quitar: ' + error.message);
+          return;
+        }
+        
         favoritosIds.delete(idVehiculo);
-        // Cambiar estrella → amarilla
         elementoBoton.classList.remove('es-favorito');
         elementoBoton.classList.add('no-favorito');
+        console.log('✅ Quitado de favoritos');
+        
       } else {
         // No está guardado → AGREGAR
         if (!esAdmin && favoritosIds.size >= LIMITE_FAVORITOS) {
@@ -459,16 +492,24 @@
           aviso.style.display = 'block';
           return;
         }
-        await sb
+        
+        const { error } = await sb
           .from('mis_vehiculos')
           .insert({
             usuario_id: idUsuarioActual,
             vehiculo_id: idVehiculo
           });
+        
+        if (error) {
+          console.error('❌ Error al guardar:', error);
+          alert('No se pudo guardar: ' + error.message);
+          return;
+        }
+        
         favoritosIds.add(idVehiculo);
-        // Cambiar estrella → gris
         elementoBoton.classList.remove('no-favorito');
         elementoBoton.classList.add('es-favorito');
+        console.log('✅ Guardado en favoritos');
       }
 
       aviso.style.display = (!esAdmin && favoritosIds.size >= LIMITE_FAVORITOS) ? 'block' : 'none';
