@@ -371,7 +371,6 @@
           <div class="fila-tarjetas" id="filaPub"></div>
         </div>
         <div class="puntos" id="puntosPub"></div>
-        <div id="cargandoMasPub" class="cargando-mas" style="display:none;">Cargando siguiente vehículo...</div>
       </div>
     </div>
 
@@ -403,7 +402,7 @@
 
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
-    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZpendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizwendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     const CORREO_SIN_LIMITE = "misvehiculosenventa@gmail.com";
     const LIMITE = 5;
 
@@ -415,8 +414,6 @@
     let listaFav = [], indiceFav = 0, inicioXFav = 0;
     let favoritosGuardados = [];
     let todosVehiculos = [];
-    let cargandoPub = false;
-    const CANTIDAD_CARGA = 1;
 
     async function getSupabase() {
       if (!sbClient) sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -573,6 +570,8 @@
     async function cargarPublicados() {
       if (!correoUsuario) {
         document.getElementById('cargandoPub').innerHTML = `<div class="sin-datos">🔐 Iniciá sesión para ver tus publicados</div>`;
+        todosVehiculos = [];
+        actualizarBotonEliminarCuenta();
         return;
       }
 
@@ -585,19 +584,21 @@
 
       if (error) {
         document.getElementById('cargandoPub').innerHTML = `<div class="sin-datos">❌ Error: ${error.message}</div>`;
+        todosVehiculos = [];
+        actualizarBotonEliminarCuenta();
         return;
       }
 
       if (!data || !data.length) {
         document.getElementById('cargandoPub').innerHTML = `<div class="sin-datos">📭 Aún no publicaste ningún vehículo</div>`;
+        todosVehiculos = [];
       } else {
         todosVehiculos = data;
-        listaPub = data.slice(0, CANTIDAD_CARGA);
+        listaPub = data;
         indicePub = 0;
         
         document.getElementById('cargandoPub').style.display = 'none';
         document.getElementById('contenidoPub').style.display = 'block';
-        
         renderizarPublicados();
       }
       
@@ -621,23 +622,8 @@
         p.className = 'punto' + (i === indicePub ? ' activo' : '');
         puntos.appendChild(p);
       });
-    }
-
-    async function cargarSiguientePublicado() {
-      if (cargandoPub) return;
-      const proximoIndice = listaPub.length;
-      if (proximoIndice >= todosVehiculos.length) return;
       
-      cargandoPub = true;
-      document.getElementById('cargandoMasPub').style.display = 'block';
-      
-      await new Promise(r => setTimeout(r, 150));
-      
-      listaPub.push(todosVehiculos[proximoIndice]);
-      renderizarPublicados();
-      
-      document.getElementById('cargandoMasPub').style.display = 'none';
-      cargandoPub = false;
+      fila.style.transform = `translateX(-${indicePub * 100}%)`;
     }
 
     async function quitarPublicado(idVehiculo, evento) {
@@ -660,6 +646,7 @@
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">⭐ Iniciá sesión para ver favoritos</div>`;
         document.getElementById('tituloFav').textContent = `⭐ Mis Favoritos (0/${LIMITE})`;
         favoritosGuardados = [];
+        actualizarBotonEliminarCuenta();
         return;
       }
 
@@ -672,6 +659,7 @@
       if (e1) {
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">❌ Error cargando favoritos: ${e1.message}</div>`;
         favoritosGuardados = [];
+        actualizarBotonEliminarCuenta();
         return;
       }
       
@@ -679,6 +667,8 @@
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">⭐ Aún no guardaste favoritos</div>`;
         document.getElementById('tituloFav').textContent = `⭐ Mis Favoritos (0/${LIMITE})`;
         favoritosGuardados = [];
+        listaFav = [];
+        actualizarBotonEliminarCuenta();
         return;
       }
       
@@ -690,6 +680,8 @@
       if (e2 || !misAutos) {
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">❌ Error: ${e2?.message || 'No se encontraron tus vehículos'}</div>`;
         favoritosGuardados = [];
+        listaFav = [];
+        actualizarBotonEliminarCuenta();
         return;
       }
       
@@ -702,6 +694,7 @@
       
       if (!cant) {
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">⭐ Aún no guardaste favoritos</div>`;
+        listaFav = [];
       } else {
         const idsVehiculos = favoritosGuardados.map(g => g.vehiculo_id);
         const { data: vehiculos, error: e3 } = await sb
@@ -742,6 +735,8 @@
         p.className = 'punto' + (i === indiceFav ? ' activo' : '');
         puntos.appendChild(p);
       });
+      
+      fila.style.transform = `translateX(-${indiceFav * 100}%)`;
     }
 
     async function quitarFavorito(idFila, evento) {
@@ -775,15 +770,11 @@
         const dif = ult - ini;
         if (dif < -50 && ind < lista.length - 1) {
           ind++;
-          if (tipo === 'Pub') {
-            indicePub = ind;
-            if (ind >= listaPub.length - 1) cargarSiguientePublicado();
-          } else indiceFav = ind;
         } else if (dif > 50 && ind > 0) {
           ind--;
-          if (tipo === 'Pub') indicePub = ind;
-          else indiceFav = ind;
         }
+        if (tipo === 'Pub') indicePub = ind;
+        else indiceFav = ind;
         mostrarActual(tipo);
       }, { passive: true });
     }
@@ -811,6 +802,7 @@
         return;
       }
       
+      // ✅ CUENTA BIEN: vehículos + favoritos
       const tieneVehiculos = todosVehiculos.length > 0;
       const tieneFavoritos = favoritosGuardados.length > 0;
       
@@ -841,7 +833,7 @@
       await sb.from('mis_vehiculos').delete().ilike('correo_usuario', correoUsuario);
       
       // 3. Cerrar sesión y borrar cuenta
-      const { error } = await sb.auth.signOut();
+      await sb.auth.signOut();
       localStorage.clear();
       
       alert('✅ Tu cuenta fue eliminada correctamente.');
