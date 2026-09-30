@@ -395,7 +395,7 @@
       return sbClient;
     }
 
-    async function verificarSesion() {
+    async function verificarSesionYCargarFavoritos() {
       const sb = await getSupabase();
       
       // Buscar correo en TODOS los lugares posibles
@@ -413,8 +413,9 @@
       console.log('✅ Correo detectado:', correoUsuario);
       
       esAdmin = correoUsuario === CORREO_SIN_LIMITE.toLowerCase();
-      
       idUsuarioActual = null;
+      favoritosIds.clear();
+      
       if (correoUsuario) {
         const { data: usuario, error: errUsuario } = await sb
           .from('usuario')
@@ -427,31 +428,25 @@
         } else if (usuario) {
           idUsuarioActual = usuario.id;
           console.log('✅ Usuario encontrado, ID:', idUsuarioActual);
-          await cargarMisFavoritos();
+          
+          // CARGAMOS FAVORITOS ANTES DE DIBUJAR NADA
+          const { data: favs, error: errFavs } = await sb
+            .from('mis_vehiculos')
+            .select('vehiculo_id')
+            .eq('usuario_id', idUsuarioActual);
+          
+          if (errFavs) {
+            console.error('❌ Error cargando favoritos:', errFavs);
+          } else {
+            favoritosIds = new Set((favs || []).map(f => f.vehiculo_id));
+            console.log('✅ Favoritos cargados:', favoritosIds.size, [...favoritosIds]);
+          }
         } else {
           console.log('⚠️ No se encontró usuario en tabla con ese correo');
         }
       } else {
         console.log('⚠️ No hay correo de sesión');
-        favoritosIds.clear();
       }
-    }
-
-    async function cargarMisFavoritos() {
-      if (!idUsuarioActual) return;
-      const sb = await getSupabase();
-      const { data, error } = await sb
-        .from('mis_vehiculos')
-        .select('vehiculo_id')
-        .eq('usuario_id', idUsuarioActual);
-      
-      if (error) {
-        console.error('❌ Error cargando favoritos:', error);
-        return;
-      }
-      
-      favoritosIds = new Set((data || []).map(f => f.vehiculo_id));
-      console.log('✅ Favoritos cargados:', favoritosIds.size, [...favoritosIds]);
     }
 
     async function alternarFavorito(idVehiculo, elementoBoton) {
@@ -525,7 +520,8 @@
     }
 
     async function cargarVehiculos() {
-      await verificarSesion();
+      // PRIMERO sesión y favoritos → DESPUÉS vehículos
+      await verificarSesionYCargarFavoritos();
       
       const tipoSeleccionado = obtenerTipo();
       
