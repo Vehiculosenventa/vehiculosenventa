@@ -303,6 +303,45 @@
       color: #5d4037;
       font-weight: 600;
     }
+
+    /* === ELIMINAR CUENTA === */
+    .zona-eliminar-cuenta {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 2px dashed #bfa980;
+      text-align: center;
+    }
+    .aviso-eliminar-cuenta {
+      background: #fef2f2;
+      color: #b91c1c;
+      padding: 14px;
+      border-radius: 10px;
+      font-size: 14px;
+      margin-bottom: 12px;
+      display: none;
+      font-weight: 600;
+      line-height: 1.6;
+    }
+    .boton-eliminar-cuenta {
+      background: #dc2626;
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .boton-eliminar-cuenta:disabled {
+      background: #a8a29e;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+    .boton-eliminar-cuenta:hover:not(:disabled) {
+      background: #b91c1c;
+      transform: translateY(-1px);
+    }
   </style>
 </head>
 <body>
@@ -349,6 +388,17 @@
     </div>
 
     <a href="index.html" class="volver">← Volver a la página principal</a>
+
+    <!-- === ELIMINAR CUENTA === -->
+    <div class="zona-eliminar-cuenta">
+      <div class="aviso-eliminar-cuenta" id="avisoEliminarCuenta">
+        ⚠️ Tenés vehículos o favoritos guardados.<br>
+        Eliminá todo primero para poder borrar tu cuenta.
+      </div>
+      <button class="boton-eliminar-cuenta" id="btnEliminarCuenta" disabled>
+        🗑️ Eliminar mi cuenta
+      </button>
+    </div>
   </div>
 
   <script>
@@ -540,17 +590,18 @@
 
       if (!data || !data.length) {
         document.getElementById('cargandoPub').innerHTML = `<div class="sin-datos">📭 Aún no publicaste ningún vehículo</div>`;
-        return;
+      } else {
+        todosVehiculos = data;
+        listaPub = data.slice(0, CANTIDAD_CARGA);
+        indicePub = 0;
+        
+        document.getElementById('cargandoPub').style.display = 'none';
+        document.getElementById('contenidoPub').style.display = 'block';
+        
+        renderizarPublicados();
       }
-
-      todosVehiculos = data;
-      listaPub = data.slice(0, CANTIDAD_CARGA);
-      indicePub = 0;
       
-      document.getElementById('cargandoPub').style.display = 'none';
-      document.getElementById('contenidoPub').style.display = 'block';
-      
-      renderizarPublicados();
+      actualizarBotonEliminarCuenta();
     }
 
     function renderizarPublicados() {
@@ -608,6 +659,7 @@
       if (!correoUsuario) {
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">⭐ Iniciá sesión para ver favoritos</div>`;
         document.getElementById('tituloFav').textContent = `⭐ Mis Favoritos (0/${LIMITE})`;
+        favoritosGuardados = [];
         return;
       }
 
@@ -619,12 +671,14 @@
       
       if (e1) {
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">❌ Error cargando favoritos: ${e1.message}</div>`;
+        favoritosGuardados = [];
         return;
       }
       
       if (!todosFav || !todosFav.length) {
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">⭐ Aún no guardaste favoritos</div>`;
         document.getElementById('tituloFav').textContent = `⭐ Mis Favoritos (0/${LIMITE})`;
+        favoritosGuardados = [];
         return;
       }
       
@@ -635,6 +689,7 @@
       
       if (e2 || !misAutos) {
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">❌ Error: ${e2?.message || 'No se encontraron tus vehículos'}</div>`;
+        favoritosGuardados = [];
         return;
       }
       
@@ -647,26 +702,27 @@
       
       if (!cant) {
         document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">⭐ Aún no guardaste favoritos</div>`;
-        return;
+      } else {
+        const idsVehiculos = favoritosGuardados.map(g => g.vehiculo_id);
+        const { data: vehiculos, error: e3 } = await sb
+          .from('autos')
+          .select('*')
+          .in('id', idsVehiculos);
+        
+        if (e3 || !vehiculos || !vehiculos.length) {
+          document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">📭 No se encontraron los vehículos guardados</div>`;
+          listaFav = [];
+        } else {
+          listaFav = vehiculos;
+          indiceFav = 0;
+          
+          document.getElementById('cargandoFav').style.display = 'none';
+          document.getElementById('contenidoFav').style.display = 'block';
+          renderizarFavoritos();
+        }
       }
       
-      const idsVehiculos = favoritosGuardados.map(g => g.vehiculo_id);
-      const { data: vehiculos, error: e3 } = await sb
-        .from('autos')
-        .select('*')
-        .in('id', idsVehiculos);
-      
-      if (e3 || !vehiculos || !vehiculos.length) {
-        document.getElementById('cargandoFav').innerHTML = `<div class="sin-datos">📭 No se encontraron los vehículos guardados</div>`;
-        return;
-      }
-      
-      listaFav = vehiculos;
-      indiceFav = 0;
-      
-      document.getElementById('cargandoFav').style.display = 'none';
-      document.getElementById('contenidoFav').style.display = 'block';
-      renderizarFavoritos();
+      actualizarBotonEliminarCuenta();
     }
 
     function renderizarFavoritos() {
@@ -745,11 +801,65 @@
       });
     }
 
+    async function actualizarBotonEliminarCuenta() {
+      const aviso = document.getElementById('avisoEliminarCuenta');
+      const boton = document.getElementById('btnEliminarCuenta');
+      
+      if (!correoUsuario) {
+        aviso.style.display = 'none';
+        boton.disabled = true;
+        return;
+      }
+      
+      const tieneVehiculos = todosVehiculos.length > 0;
+      const tieneFavoritos = favoritosGuardados.length > 0;
+      
+      if (tieneVehiculos || tieneFavoritos) {
+        aviso.style.display = 'block';
+        boton.disabled = true;
+      } else {
+        aviso.style.display = 'none';
+        boton.disabled = false;
+      }
+    }
+
+    async function eliminarCuenta() {
+      if (!confirm('⚠️ Esta acción NO tiene vuelta atrás.\n\nAl eliminar tu cuenta se borrarán todos tus datos permanentemente.\n\n¿Estás seguro/a?')) {
+        return;
+      }
+      
+      if (!confirm('⚠️ Última confirmación:\n¿Realmente querés eliminar tu cuenta para siempre?')) {
+        return;
+      }
+      
+      const sb = await getSupabase();
+      
+      // 1. Borrar todos sus vehículos
+      await sb.from('autos').delete().ilike('correo_usuario', correoUsuario);
+      
+      // 2. Borrar todos sus favoritos
+      await sb.from('mis_vehiculos').delete().ilike('correo_usuario', correoUsuario);
+      
+      // 3. Cerrar sesión y borrar cuenta
+      const { error } = await sb.auth.signOut();
+      localStorage.clear();
+      
+      alert('✅ Tu cuenta fue eliminada correctamente.');
+      window.location.href = 'index.html';
+    }
+
     async function iniciar() {
       const ok = await verificarSesion();
-      if (!ok) return;
+      if (!ok) {
+        document.getElementById('btnEliminarCuenta').disabled = true;
+        return;
+      }
+      
       configurarDeslizamiento('Pub');
       configurarDeslizamiento('Fav');
+      
+      document.getElementById('btnEliminarCuenta').addEventListener('click', eliminarCuenta);
+      
       await cargarPublicados();
       await cargarFavoritos();
     }
