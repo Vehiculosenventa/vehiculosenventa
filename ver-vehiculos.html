@@ -398,7 +398,6 @@
     async function verificarSesionYCargarFavoritos() {
       const sb = await getSupabase();
       
-      // Buscar correo en TODOS los lugares posibles
       correoUsuario = 
         localStorage.getItem('correo_usuario') || 
         localStorage.getItem('correo') || 
@@ -413,6 +412,8 @@
       console.log('✅ Correo detectado:', correoUsuario);
       
       esAdmin = correoUsuario === CORREO_SIN_LIMITE.toLowerCase();
+      console.log('✅ Es admin (sin límite):', esAdmin);
+      
       idUsuarioActual = null;
       favoritosIds.clear();
       
@@ -429,7 +430,6 @@
           idUsuarioActual = usuario.id;
           console.log('✅ Usuario encontrado, ID:', idUsuarioActual);
           
-          // CARGAMOS FAVORITOS ANTES DE DIBUJAR NADA
           const { data: favs, error: errFavs } = await sb
             .from('mis_vehiculos')
             .select('vehiculo_id')
@@ -449,7 +449,7 @@
       }
     }
 
-    async function alternarFavorito(idVehiculo, elementoBoton) {
+    async function agregarFavorito(idVehiculo, elementoBoton) {
       console.log('⭐ Tocó favorito, idVeh:', idVehiculo, 'usuarioId:', idUsuarioActual);
       
       if (!idUsuarioActual) {
@@ -458,56 +458,41 @@
         return;
       }
 
+      // Si ya está guardado → no hace nada
+      if (favoritosIds.has(idVehiculo)) {
+        console.log('ℹ️ Ya está en favoritos, no se quita');
+        return;
+      }
+
       const sb = await getSupabase();
       const aviso = document.getElementById('avisoLimite');
 
-      if (favoritosIds.has(idVehiculo)) {
-        // Ya está guardado → BORRAR
-        const { error } = await sb
-          .from('mis_vehiculos')
-          .delete()
-          .eq('usuario_id', idUsuarioActual)
-          .eq('vehiculo_id', idVehiculo);
-        
-        if (error) {
-          console.error('❌ Error al borrar:', error);
-          alert('No se pudo quitar: ' + error.message);
-          return;
-        }
-        
-        favoritosIds.delete(idVehiculo);
-        elementoBoton.classList.remove('es-favorito');
-        elementoBoton.classList.add('no-favorito');
-        console.log('✅ Quitado de favoritos');
-        
-      } else {
-        // No está guardado → AGREGAR
-        if (!esAdmin && favoritosIds.size >= LIMITE_FAVORITOS) {
-          alert(`⚠️ Llegaste al límite de ${LIMITE_FAVORITOS} favoritos`);
-          aviso.style.display = 'block';
-          return;
-        }
-        
-        const { error } = await sb
-          .from('mis_vehiculos')
-          .insert({
-            usuario_id: idUsuarioActual,
-            vehiculo_id: idVehiculo
-          });
-        
-        if (error) {
-          console.error('❌ Error al guardar:', error);
-          alert('No se pudo guardar: ' + error.message);
-          return;
-        }
-        
-        favoritosIds.add(idVehiculo);
-        elementoBoton.classList.remove('no-favorito');
-        elementoBoton.classList.add('es-favorito');
-        console.log('✅ Guardado en favoritos');
+      // Verificar límite
+      if (!esAdmin && favoritosIds.size >= LIMITE_FAVORITOS) {
+        alert(`⚠️ Llegaste al límite de ${LIMITE_FAVORITOS} favoritos`);
+        aviso.style.display = 'block';
+        return;
       }
 
+      // Agregar SOLAMENTE, nunca borrar
+      const { error } = await sb
+        .from('mis_vehiculos')
+        .insert({
+          usuario_id: idUsuarioActual,
+          vehiculo_id: idVehiculo
+        });
+      
+      if (error) {
+        console.error('❌ Error al guardar:', error);
+        alert('No se pudo guardar: ' + error.message);
+        return;
+      }
+      
+      favoritosIds.add(idVehiculo);
+      elementoBoton.classList.remove('no-favorito');
+      elementoBoton.classList.add('es-favorito');
       aviso.style.display = (!esAdmin && favoritosIds.size >= LIMITE_FAVORITOS) ? 'block' : 'none';
+      console.log('✅ Guardado en favoritos');
     }
 
     function esFavorito(idVehiculo) {
@@ -520,7 +505,6 @@
     }
 
     async function cargarVehiculos() {
-      // PRIMERO sesión y favoritos → DESPUÉS vehículos
       await verificarSesionYCargarFavoritos();
       
       const tipoSeleccionado = obtenerTipo();
@@ -588,7 +572,7 @@
         pantalla.innerHTML = `
           <div class="tarjeta-vehiculo">
             <button class="caja-favorito ${estaFavorito ? 'es-favorito' : 'no-favorito'}" 
-                    onclick="alternarFavorito(${idVeh}, this)">
+                    onclick="agregarFavorito(${idVeh}, this)">
               <span class="icono-favorito">★</span>
               <span class="texto-favorito">Agregar a Mi Favorito</span>
             </button>
