@@ -298,6 +298,23 @@
       color: #333333;
     }
 
+    /* Logo de agua en fotos ampliadas */
+    .logo-agua {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 10001;
+      width: 90px;
+      height: auto;
+      pointer-events: none;
+    }
+
+    .logo-agua img {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
     .sin-resultados {
       background: #f5efe0 !important;
       border-radius: 20px;
@@ -371,6 +388,10 @@
     <button class="cerrar-ampliada" onclick="cerrarAmpliada(event)">✕</button>
     <div class="foto-ampliada-caja" onclick="event.stopPropagation()">
       <img src="" alt="Foto ampliada" class="foto-ampliada-img" id="foto-ampliada-img">
+      <!-- Tu logo de agua acá -->
+      <div class="logo-agua">
+        <img src="logo.png" alt="Vehículos en Venta">
+      </div>
     </div>
   </div>
 
@@ -458,7 +479,6 @@
         return;
       }
 
-      // Si ya está guardado → no hace nada
       if (favoritosIds.has(idVehiculo)) {
         console.log('ℹ️ Ya está en favoritos, no se quita');
         return;
@@ -467,14 +487,12 @@
       const sb = await getSupabase();
       const aviso = document.getElementById('avisoLimite');
 
-      // Verificar límite
       if (!esAdmin && favoritosIds.size >= LIMITE_FAVORITOS) {
         alert(`⚠️ Llegaste al límite de ${LIMITE_FAVORITOS} favoritos`);
         aviso.style.display = 'block';
         return;
       }
 
-      // Agregar SOLAMENTE, nunca borrar
       const { error } = await sb
         .from('mis_vehiculos')
         .insert({
