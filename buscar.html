@@ -306,9 +306,14 @@
       right: 10px;
       width: 100px;
       height: 100px;
-      opacity: 0.12;
       pointer-events: none;
-      background: url('imágenes/logo.png') center/contain no-repeat;
+      z-index: 10000;
+    }
+    .logo-agua-foto img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0.85;
     }
     .cerrar-foto {
       position: absolute;
@@ -448,7 +453,10 @@
     <div class="contenedor-foto-grande">
       <span class="cerrar-foto" id="cerrarFoto">&times;</span>
       <img src="" alt="Foto ampliada" class="foto-grande" id="fotoGrande">
-      <div class="logo-agua-foto"></div>
+      <!-- Tu logo de agua -->
+      <div class="logo-agua-foto">
+        <img src="logo.png" alt="Vehículos en Venta">
+      </div>
     </div>
   </div>
 
@@ -489,7 +497,7 @@
       if (session && session.user) {
         correoUsuarioActual = (session.user.email || '').trim().toLowerCase();
         esAdmin = correoUsuarioActual === CORREO_SIN_LIMITE.toLowerCase();
-        idUsuarioActual = session.user.id; // ✅ DIRECTO DEL SISTEMA — NO BUSCA MÁS EN OTRA TABLA
+        idUsuarioActual = session.user.id;
         sesionConfirmada = true;
         localStorage.setItem('correo_usuario', session.user.email);
         localStorage.setItem('id_usuario', session.user.id);
@@ -517,7 +525,7 @@
       const { count } = await sb
         .from('mis_vehiculos')
         .select('*', { count: 'exact', head: true })
-        .eq('usuario_id', usuarioId); // ✅ COLUMNA CORRECTA
+        .eq('usuario_id', usuarioId);
       return count || 0;
     }
 
@@ -527,8 +535,8 @@
       const { data } = await sb
         .from('mis_vehiculos')
         .select('id')
-        .eq('usuario_id', idUsuarioActual) // ✅ COLUMNA CORRECTA
-        .eq('vehiculo_id', vehiculoId)      // ✅ COLUMNA CORRECTA
+        .eq('usuario_id', idUsuarioActual)
+        .eq('vehiculo_id', vehiculoId)
         .maybeSingle();
       return !!data;
     }
@@ -567,8 +575,8 @@
 
       const sb = await getSupabase();
       const { error } = await sb.from('mis_vehiculos').insert({
-        usuario_id: idUsuarioActual,   // ✅ QUEDA GUARDADO BIEN — NO NULL
-        vehiculo_id: vehiculoId        // ✅ COLUMNA CORRECTA
+        usuario_id: idUsuarioActual,
+        vehiculo_id: vehiculoId
       });
 
       if (error) {
