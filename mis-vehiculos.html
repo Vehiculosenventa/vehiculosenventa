@@ -259,11 +259,32 @@
       padding: 20px;
     }
     .overlay-foto.activo {display: flex;}
+    .contenedor-foto-grande {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
     .foto-grande {
       max-width: 100%;
       max-height: 85vh;
       border-radius: 12px;
       object-fit: contain;
+    }
+    .logo-agua-foto {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 100px;
+      height: 100px;
+      pointer-events: none;
+      z-index: 10000;
+    }
+    .logo-agua-foto img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      opacity: 0.85;
     }
     .cerrar-foto {
       position: absolute;
@@ -273,7 +294,7 @@
       font-size: 30px;
       font-weight: bold;
       cursor: pointer;
-      z-index: 10000;
+      z-index: 10001;
       line-height: 1;
     }
     .cargando-mas {
@@ -288,7 +309,13 @@
 
   <div class="overlay-foto" id="overlayFoto" onclick="cerrarFotoGrande()">
     <span class="cerrar-foto">&times;</span>
-    <img src="" alt="Foto grande" class="foto-grande" id="fotoGrande" onclick="event.stopPropagation()">
+    <div class="contenedor-foto-grande">
+      <img src="" alt="Foto grande" class="foto-grande" id="fotoGrande" onclick="event.stopPropagation()">
+      <!-- Tu logo de agua -->
+      <div class="logo-agua-foto">
+        <img src="logo.png" alt="Vehículos en Venta">
+      </div>
+    </div>
   </div>
 
   <div class="contenedor">
@@ -457,7 +484,6 @@
         `;
       }
 
-      // Botón WhatsApp en el último campo de la segunda columna
       const botonWhatsAppHtml = numeroWhatsApp ? `
         <div class="dato">
           <span class="etiqueta"></span>
