@@ -23,7 +23,7 @@
       padding: 20px;
     }
     .barra-superior {
-      text-align: center; /* ✅ Centrado igual que los botones */
+      text-align: center;
       margin-bottom: 20px;
     }
     .boton-sesion {
@@ -93,7 +93,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
     .saludo-usuario {
-      text-align: center; /* ✅ Centrado */
+      text-align: center;
       color: #2c5282;
       font-size: 17px;
       font-weight: 600;
@@ -107,7 +107,7 @@
       font-size: 34px;
       font-weight: 800;
       margin-bottom: 12px;
-      text-align: center; /* ✅ Centrado */
+      text-align: center;
     }
     .subtitulo {
       color: #5a4f3f;
@@ -115,7 +115,7 @@
       margin-bottom: 35px;
       font-weight: 500;
       line-height: 1.5;
-      text-align: center; /* ✅ Centrado */
+      text-align: center;
     }
     .boton {
       display: flex;
@@ -149,7 +149,7 @@
       font-weight: 600;
       text-decoration: none;
       transition: color 0.2s ease;
-      text-align: center; /* ✅ Centrado */
+      text-align: center;
     }
     .enlace-olvidada:hover {
       color: #3182ce;
@@ -159,7 +159,7 @@
       margin-top: 30px;
       font-size: 13px;
       color: #5a4f3f;
-      text-align: center; /* ✅ Centrado */
+      text-align: center;
     }
     .boton-ia-flotante {
       position: fixed;
@@ -279,9 +279,37 @@
       font-style: italic;
       color: #718096;
     }
+    /* 🔊 Botón de voz */
+    .boton-voz {
+      position: fixed;
+      top: 15px;
+      right: 15px;
+      background: linear-gradient(135deg, #2f855a 0%, #276749 100%);
+      color: white;
+      border: none;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 10px 18px;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(47, 133, 90, 0.35);
+      transition: all 0.3s ease;
+      z-index: 998;
+    }
+    .boton-voz:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(47, 133, 90, 0.45);
+    }
+    .boton-voz.apagada {
+      background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
+    }
   </style>
 </head>
 <body>
+
+  <!-- 🔊 Botón de voz -->
+  <button id="btnVoz" class="boton-voz">🔊 Voz: ON</button>
+
   <div class="barra-superior">
     <span id="botonesSinSesion">
       <a href="registrarse.html" class="boton-sesion boton-registrar">✨ Registrarse</a>
@@ -297,7 +325,6 @@
   <div class="caja-principal">
     <div class="saludo-usuario" id="saludo-usuario"></div>
 
-    <!-- ✅ Sin autito rojo, solo el texto -->
     <h1>Vehículos en Venta</h1>
     <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
     La plataforma de Rosario y toda la región</p>
@@ -337,7 +364,6 @@
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // 🔑 CLAVE DE GEMINI — protegida
     const GEMINI_KEY = "AQ.Ab8RN6J4Jgm7rll2YSgXAjAyAP3tsaBYXRHPCqRapjCU3RswaQ";
                       
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -355,6 +381,57 @@
     const btnInstalarApp = document.getElementById('btnInstalarApp');
     const saludoUsuario = document.getElementById('saludo-usuario');
     const textoConectado = document.getElementById('texto-conectado');
+    const btnVoz = document.getElementById('btnVoz');
+
+    let vozActiva = true;
+    let vozActual = null;
+
+    // 🔊 Sistema de voz
+    function hablar(texto) {
+      if (!vozActiva || !texto) return;
+      
+      window.speechSynthesis.cancel();
+      const mensaje = new SpeechSynthesisUtterance(texto);
+      mensaje.lang = 'es-AR';
+      mensaje.rate = 0.95;
+      mensaje.pitch = 1;
+      
+      const voces = window.speechSynthesis.getVoices();
+      const vozElegida = voces.find(v => v.lang === 'es-AR' || v.lang.startsWith('es'));
+      if (vozElegida) mensaje.voice = vozElegida;
+      
+      window.speechSynthesis.speak(mensaje);
+    }
+
+    function alternarVoz() {
+      vozActiva = !vozActiva;
+      if (!vozActiva) {
+        window.speechSynthesis.cancel();
+        btnVoz.textContent = '🔇 Voz: OFF';
+        btnVoz.classList.add('apagada');
+      } else {
+        btnVoz.textContent = '🔊 Voz: ON';
+        btnVoz.classList.remove('apagada');
+      }
+    }
+
+    btnVoz.addEventListener('click', alternarVoz);
+
+    // Cargar voces
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+      speechSynthesis.onvoiceschanged = () => {
+        vozActual = window.speechSynthesis.getVoices();
+      };
+    }
+
+    // Leer al entrar
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        if (vozActiva) {
+          hablar('Bienvenido a Vehículos en Venta. La plataforma de Rosario y toda la región. Publicá, buscá y vendé con total confianza.');
+        }
+      }, 500);
+    });
 
     let deferredPrompt;
     window.addEventListener('beforeinstallprompt', (e) => {
@@ -379,9 +456,13 @@
 
     btnChatIA.addEventListener('click', () => {
       ventanaChat.classList.toggle('oculto');
+      if (!ventanaChat.classList.contains('oculto')) {
+        hablar('Abrí el chat con la asistente virtual. Escribí tu mensaje abajo.');
+      }
     });
     btnCerrarChat.addEventListener('click', () => {
       ventanaChat.classList.add('oculto');
+      hablar('Chat cerrado. Seguí navegando.');
     });
 
     function agregarMensaje(texto, esUsuario = false, esPensando = false) {
@@ -392,6 +473,10 @@
       } else {
         div.className = `mensaje ${esUsuario ? 'mensaje-usuario' : 'mensaje-ia'}`;
         div.innerHTML = texto.replace(/\n/g, '<br>');
+        if (!esUsuario && vozActiva) {
+          const textoLimpio = texto.replace(/<[^>]*>/g, '');
+          hablar(textoLimpio);
+        }
       }
       cuerpoChat.appendChild(div);
       cuerpoChat.scrollTop = cuerpoChat.scrollHeight;
@@ -433,12 +518,14 @@
         saludoUsuario.textContent = `Hola: ${nombre} 👋`;
         saludoUsuario.style.display = 'block';
         textoConectado.textContent = `Conectado — ${nombre}`;
+        hablar(`Hola ${nombre}, bienvenido de nuevo.`);
       }
     }
 
     async function llamarGemini(mensajeUsuario) {
       if (!GEMINI_KEY || GEMINI_KEY.length < 10) {
-        return `Hola 👋 Todo funciona bien. Tu base está conectada ✅ Generá tu clave en https://aistudio.google.com/app/apikey y la pegás cuando quieras 😊`;
+        const respuesta = `Hola 👋 Todo funciona bien. Tu base está conectada ✅ Generá tu clave en aistudio.google.com y la pegás cuando quieras 😊`;
+        return respuesta;
       }
 
       const vehiculos = await obtenerVehiculos();
@@ -462,10 +549,9 @@ LO QUE TIENE LA PLATAFORMA:
 - 📄 Ingresar Vehículo → publicar el tuyo GRATIS
 - 📋 Ver Vehículos — Catálogo → todos los publicados
 - 🔍 Buscar Vehículo → buscar por marca, modelo, precio
-- ❤️ Mis Vehículos → guardar favoritos (máx. 5; tu correo especial SIN límite)
+- ❤️ Mis Vehículos → guardar favoritos
 - 📲 Descargar App → instalar en el celular
 - 🔐 Registrarse / Iniciar sesión → crear cuenta gratis
-- ¿Olvidaste tu contraseña? → enlace abajo para recuperarla
 
 Si hay pocos vehículos: decí que recién empezamos 🆕 y ¡animá a ser de los primeros en publicar!
 
@@ -544,6 +630,7 @@ Tu tono: amable, cercano, de acá de Rosario. Claro, entusiasta, no muy largo.
 
     btnCerrar.addEventListener('click', async () => {
       if (confirm('¿Seguro querés cerrar sesión?')) {
+        hablar('Cerrando sesión. Hasta la próxima.');
         await supabaseClient.auth.signOut();
         verificarSesion();
         window.location.href = 'index.html';
