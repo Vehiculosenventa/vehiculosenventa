@@ -161,6 +161,7 @@
       color: #5a4f3f;
       text-align: center;
     }
+    /* Botón Ayuda IA con voz integrada */
     .boton-ia-flotante {
       position: fixed;
       bottom: 24px;
@@ -176,11 +177,33 @@
       box-shadow: 0 4px 15px rgba(49, 130, 206, 0.35);
       transition: all 0.3s ease;
       z-index: 999;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .boton-ia-flotante:hover {
       transform: translateY(-2px);
       background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
       box-shadow: 0 6px 20px rgba(49, 130, 206, 0.45);
+    }
+    .boton-ia-flotante.apagado {
+      background: linear-gradient(135deg, #c53030 0%, #9b2c2c 100%);
+    }
+    .icono-parlante {
+      font-size: 18px;
+      position: relative;
+    }
+    .crucecita {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      font-size: 12px;
+      font-weight: bold;
+      color: #fff;
+      display: none;
+    }
+    .apagado .crucecita {
+      display: inline;
     }
     .ventana-chat {
       position: fixed;
@@ -279,36 +302,9 @@
       font-style: italic;
       color: #718096;
     }
-    /* 🔊 Botón de voz */
-    .boton-voz {
-      position: fixed;
-      top: 15px;
-      right: 15px;
-      background: linear-gradient(135deg, #2f855a 0%, #276749 100%);
-      color: white;
-      border: none;
-      font-size: 14px;
-      font-weight: 700;
-      padding: 10px 18px;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 4px 12px rgba(47, 133, 90, 0.35);
-      transition: all 0.3s ease;
-      z-index: 998;
-    }
-    .boton-voz:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 16px rgba(47, 133, 90, 0.45);
-    }
-    .boton-voz.apagada {
-      background: linear-gradient(135deg, #718096 0%, #4a5568 100%);
-    }
   </style>
 </head>
 <body>
-
-  <!-- 🔊 Botón de voz -->
-  <button id="btnVoz" class="boton-voz">🔊 Voz: ON</button>
 
   <div class="barra-superior">
     <span id="botonesSinSesion">
@@ -340,16 +336,20 @@
     <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
   </div>
 
-  <button class="boton-ia-flotante" id="btnChatIA">🤖 Chat IA</button>
+  <!-- Botón Ayuda IA con voz integrada -->
+  <button class="boton-ia-flotante" id="btnChatIA">
+    <span class="icono-parlante">🔊<span class="crucecita">✖</span></span>
+    <span id="textoBotonIA">Ayuda IA</span>
+  </button>
 
   <div class="ventana-chat oculto" id="ventanaChat">
     <div class="cabecera-chat">
-      <span>🤖 Chat IA — Vehículos en Venta</span>
+      <span>🤖 Ayuda IA — Vehículos en Venta</span>
       <button class="cerrar-chat" id="btnCerrarChat">×</button>
     </div>
     <div class="cuerpo-chat" id="cuerpoChat">
       <div class="mensaje mensaje-ia">
-        ¡Hola! 👋 Soy tu asistente de <strong>Vehículos en Venta</strong> ✨<br><br>
+        ¡Hola! Soy tu asistente de Vehículos en Venta.<br><br>
         Te ayudo a buscar autos, saber cómo publicar, usar favoritos y todo sobre la plataforma.<br><br>
         ¿En qué te ayudo hoy?
       </div>
@@ -381,19 +381,31 @@
     const btnInstalarApp = document.getElementById('btnInstalarApp');
     const saludoUsuario = document.getElementById('saludo-usuario');
     const textoConectado = document.getElementById('texto-conectado');
-    const btnVoz = document.getElementById('btnVoz');
+    const textoBotonIA = document.getElementById('textoBotonIA');
 
     let vozActiva = true;
-    let vozActual = null;
 
-    // 🔊 Sistema de voz
+    // 🔊 Quitar emojis antes de hablar
+    function limpiarTextoParaVoz(texto) {
+      // Eliminar emojis y símbolos gráficos
+      return texto
+        .replace(/[\u{1F300}-\u{1F9FF}]/gu, ' ')
+        .replace(/[📄📋🔍❤️📲🔐✨🚗🚗💫]/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+    }
+
+    // 🔊 Sistema de voz — velocidad 1.1
     function hablar(texto) {
       if (!vozActiva || !texto) return;
       
+      const textoLimpio = limpiarTextoParaVoz(texto);
+      if (!textoLimpio) return;
+      
       window.speechSynthesis.cancel();
-      const mensaje = new SpeechSynthesisUtterance(texto);
+      const mensaje = new SpeechSynthesisUtterance(textoLimpio);
       mensaje.lang = 'es-AR';
-      mensaje.rate = 0.95;
+      mensaje.rate = 1.1; // Velocidad natural, de corrida
       mensaje.pitch = 1;
       
       const voces = window.speechSynthesis.getVoices();
@@ -403,28 +415,27 @@
       window.speechSynthesis.speak(mensaje);
     }
 
+    // 🔊 Alternar voz tocando el botón
     function alternarVoz() {
       vozActiva = !vozActiva;
       if (!vozActiva) {
         window.speechSynthesis.cancel();
-        btnVoz.textContent = '🔇 Voz: OFF';
-        btnVoz.classList.add('apagada');
+        btnChatIA.classList.add('apagado');
+        textoBotonIA.textContent = 'Chau IA';
       } else {
-        btnVoz.textContent = '🔊 Voz: ON';
-        btnVoz.classList.remove('apagada');
+        btnChatIA.classList.remove('apagado');
+        textoBotonIA.textContent = 'Ayuda IA';
       }
     }
 
-    btnVoz.addEventListener('click', alternarVoz);
+    btnChatIA.addEventListener('click', alternarVoz);
 
-    // Cargar voces
+    // Cargar voces disponibles
     if (speechSynthesis.onvoiceschanged !== undefined) {
-      speechSynthesis.onvoiceschanged = () => {
-        vozActual = window.speechSynthesis.getVoices();
-      };
+      speechSynthesis.onvoiceschanged = () => {};
     }
 
-    // Leer al entrar
+    // Bienvenida al entrar
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
         if (vozActiva) {
@@ -454,30 +465,28 @@
       }
     });
 
-    btnChatIA.addEventListener('click', () => {
-      ventanaChat.classList.toggle('oculto');
-      if (!ventanaChat.classList.contains('oculto')) {
-        hablar('Abrí el chat con la asistente virtual. Escribí tu mensaje abajo.');
-      }
-    });
     btnCerrarChat.addEventListener('click', () => {
       ventanaChat.classList.add('oculto');
-      hablar('Chat cerrado. Seguí navegando.');
+      if (vozActiva) hablar('Chat cerrado. Seguí navegando.');
     });
 
     function agregarMensaje(texto, esUsuario = false, esPensando = false) {
       const div = document.createElement('div');
+      
+      // ✅ NO leer nunca "Escribiendo..."
       if (esPensando) {
         div.className = 'mensaje mensaje-ia pensando';
         div.textContent = texto;
       } else {
         div.className = `mensaje ${esUsuario ? 'mensaje-usuario' : 'mensaje-ia'}`;
         div.innerHTML = texto.replace(/\n/g, '<br>');
+        
+        // ✅ Solo leer mensajes reales, sin emojis
         if (!esUsuario && vozActiva) {
-          const textoLimpio = texto.replace(/<[^>]*>/g, '');
-          hablar(textoLimpio);
+          hablar(texto);
         }
       }
+      
       cuerpoChat.appendChild(div);
       cuerpoChat.scrollTop = cuerpoChat.scrollHeight;
       return div;
@@ -515,45 +524,46 @@
       }
 
       if (nombre) {
-        saludoUsuario.textContent = `Hola: ${nombre} 👋`;
+        saludoUsuario.textContent = `Hola: ${nombre}`;
         saludoUsuario.style.display = 'block';
         textoConectado.textContent = `Conectado — ${nombre}`;
-        hablar(`Hola ${nombre}, bienvenido de nuevo.`);
+        if (vozActiva) {
+          hablar(`Hola ${nombre}, bienvenido de nuevo.`);
+        }
       }
     }
 
     async function llamarGemini(mensajeUsuario) {
       if (!GEMINI_KEY || GEMINI_KEY.length < 10) {
-        const respuesta = `Hola 👋 Todo funciona bien. Tu base está conectada ✅ Generá tu clave en aistudio.google.com y la pegás cuando quieras 😊`;
-        return respuesta;
+        return `Hola. Todo funciona bien. Tu base está conectada. Generá tu clave en aistudio.google.com y la pegás cuando quieras.`;
       }
 
       const vehiculos = await obtenerVehiculos();
       
       let contextoBase = `
-Eres el asistente de "Vehículos en Venta" — la plataforma NUEVA de Rosario y toda la región ✨
+Eres el asistente de Vehículos en Venta — la plataforma NUEVA de Rosario y toda la región.
 
-🆕 SOMOS NUEVOS: recién lanzamos, ¡estamos creciendo!
+SOMOS NUEVOS: recién lanzamos, estamos creciendo.
 
-📢 TU MISIÓN PRINCIPAL: invitar con entusiasmo a la gente a PUBLICAR su vehículo.
-✅ ES TOTALMENTE GRATIS — sin costo, sin comisiones, sin gastos mensuales
-✅ Rápido — en 3 minutos está publicado
-✅ Llega a gente de Rosario y alrededores
+TU MISIÓN PRINCIPAL: invitar con entusiasmo a la gente a PUBLICAR su vehículo.
+ES TOTALMENTE GRATIS — sin costo, sin comisiones, sin gastos mensuales.
+Rápido — en 3 minutos está publicado.
+Llega a gente de Rosario y alrededores.
 
 CÓMO PUBLICAR paso a paso:
-1️⃣ Tocar el botón 📄 "Ingresar Vehículo"
-2️⃣ Completar: marca, modelo, año, precio, ciudad, fotos
-3️⃣ Tocar "Publicar" → ¡y listo! Ya lo ven todos
+1. Tocar el botón Ingresar Vehículo.
+2. Completar: marca, modelo, año, precio, ciudad, fotos.
+3. Tocar Publicar y listo. Ya lo ven todos.
 
 LO QUE TIENE LA PLATAFORMA:
-- 📄 Ingresar Vehículo → publicar el tuyo GRATIS
-- 📋 Ver Vehículos — Catálogo → todos los publicados
-- 🔍 Buscar Vehículo → buscar por marca, modelo, precio
-- ❤️ Mis Vehículos → guardar favoritos
-- 📲 Descargar App → instalar en el celular
-- 🔐 Registrarse / Iniciar sesión → crear cuenta gratis
+- Ingresar Vehículo → publicar el tuyo gratis.
+- Ver Vehículos — Catálogo → todos los publicados.
+- Buscar Vehículo → buscar por marca, modelo, precio.
+- Mis Vehículos → guardar favoritos.
+- Descargar App → instalar en el celular.
+- Registrarse o Iniciar sesión → crear cuenta gratis.
 
-Si hay pocos vehículos: decí que recién empezamos 🆕 y ¡animá a ser de los primeros en publicar!
+Si hay pocos vehículos: decí que recién empezamos y animá a ser de los primeros en publicar.
 
 Tu tono: amable, cercano, de acá de Rosario. Claro, entusiasta, no muy largo.
 `;
@@ -584,13 +594,13 @@ Tu tono: amable, cercano, de acá de Rosario. Claro, entusiasta, no muy largo.
           return datos.candidates[0].content.parts[0].text;
         } else if (datos.error) {
           console.error('Error de API:', datos.error);
-          return `Lo siento 😅 La clave puede tardar unos minutos en activarse. Probá de nuevo en 5 minutos ✨ Mientras tanto, la plataforma anda perfecta 🚗`;
+          return `Lo siento. La clave puede tardar unos minutos en activarse. Probá de nuevo en 5 minutos. Mientras tanto, la plataforma anda perfecta.`;
         } else {
-          return `Recibí tu mensaje ✨ Todo conectado. En breve te respondo 🚗`;
+          return `Recibí tu mensaje. Todo conectado. En breve te respondo.`;
         }
       } catch (error) {
         console.error('Error con Gemini:', error);
-        return `Tu mensaje llegó bien ✅ Todo funciona. La IA se está ajustando, pero la plataforma anda perfecta 🚗✨`;
+        return `Tu mensaje llegó bien. Todo funciona. La IA se está ajustando, pero la plataforma anda perfecta.`;
       }
     }
 
@@ -601,6 +611,7 @@ Tu tono: amable, cercano, de acá de Rosario. Claro, entusiasta, no muy largo.
       agregarMensaje(texto, true);
       inputChat.value = '';
       
+      // ✅ Esto NO se lee en voz
       const pensando = agregarMensaje('Escribiendo...', false, true);
       
       const respuesta = await llamarGemini(texto);
@@ -630,7 +641,7 @@ Tu tono: amable, cercano, de acá de Rosario. Claro, entusiasta, no muy largo.
 
     btnCerrar.addEventListener('click', async () => {
       if (confirm('¿Seguro querés cerrar sesión?')) {
-        hablar('Cerrando sesión. Hasta la próxima.');
+        if (vozActiva) hablar('Cerrando sesión. Hasta la próxima.');
         await supabaseClient.auth.signOut();
         verificarSesion();
         window.location.href = 'index.html';
