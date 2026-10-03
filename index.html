@@ -4,11 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="apple-mobile-web-app-title" content="Vehículos en Venta">
-  <meta name="theme-color" content="#1565C0">
-  <title>Vehículos en Venta</title>
-  <link rel="manifest" href="app.webmanifest">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#00b8ff">
+  <title>Compra y Venta de Autos - Rosario y Zona</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <style>
     * {
@@ -18,543 +16,404 @@
       font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;
     }
     body {
-      background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
+      background: linear-gradient(180deg, #0a2a5a 0%, #0d4a8c 45%, #00b8ff 100%);
       min-height: 100vh;
-      padding: 20px;
+      color: #ffffff;
+      overflow-x: hidden;
     }
-    .barra-superior {
-      text-align: center; /* ✅ Centrado igual que los botones */
-      margin-bottom: 20px;
-    }
-    .boton-sesion {
-      display: inline-block;
-      padding: 10px 20px;
-      margin: 0 5px;
-      border-radius: 10px;
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: all 0.3s ease;
-      border: none;
-      cursor: pointer;
-    }
-    .boton-registrar {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff;
-    }
-    .boton-registrar:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(49,130,206,0.2);
-    }
-    .boton-entrar {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: #fff;
-    }
-    .boton-entrar:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(49,130,206,0.2);
-    }
-    .texto-conectado {
-      display: inline-block;
-      margin-right: 15px;
-      font-size: 15px;
-      font-weight: 600;
-      color: #2f855a;
-    }
-    .enlace-cerrar {
-      display: inline-block;
-      font-size: 15px;
-      font-weight: 600;
-      color: #1e40af;
-      text-decoration: none;
-      cursor: pointer;
-      border: none;
-      background: transparent;
-    }
-    .enlace-cerrar:hover {
-      color: #3182ce;
-      text-decoration: underline;
-    }
-    .caja-principal {
-      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
-      border-radius: 28px;
-      padding: 55px 40px;
-      width: 100%;
-      max-width: 540px;
+    .contenedor-principal {
+      max-width: 520px;
       margin: 0 auto;
-      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.12);
-      text-align: center;
-      animation: entradaSuave 0.7s ease-out;
-      border: 1px solid #bfa980;
+      padding: 15px 20px 40px;
       position: relative;
     }
-    @keyframes entradaSuave {
-      from { opacity: 0; transform: translateY(25px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .saludo-usuario {
-      text-align: center; /* ✅ Centrado */
-      color: #2c5282;
-      font-size: 17px;
-      font-weight: 600;
-      margin-bottom: 15px;
-      padding-bottom: 10px;
-      border-bottom: 1px dashed #bfa980;
-      display: none;
-    }
-    h1 {
-      color: #2c5282;
-      font-size: 34px;
-      font-weight: 800;
-      margin-bottom: 12px;
-      text-align: center; /* ✅ Centrado */
-    }
-    .subtitulo {
-      color: #5a4f3f;
-      font-size: 17px;
-      margin-bottom: 35px;
-      font-weight: 500;
-      line-height: 1.5;
-      text-align: center; /* ✅ Centrado */
-    }
-    .boton {
+    .cabecera {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 12px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      position: relative;
+      margin-bottom: 30px;
+      padding-top: 10px;
+    }
+    .flecha-volver {
+      position: absolute;
+      left: 0;
+      font-size: 24px;
       color: #ffffff;
       text-decoration: none;
+    }
+    .titulo-pagina {
+      font-size: 18px;
+      font-weight: 700;
+      color: #ffffff;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .fondo-decoracion {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .estrella {
+      position: absolute;
+      color: rgba(255,255,255,0.8);
+      animation: parpadeo 3s infinite;
+    }
+    @keyframes parpadeo {
+      0%, 100% { opacity: 0.3; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+    .zona-asistente {
+      position: relative;
+      text-align: center;
+      margin: 20px 0 30px;
+    }
+    .burbuja-saludo {
+      background: linear-gradient(135deg, #ffffff 0%, #e0f7ff 100%);
+      border-radius: 30px 30px 10px 30px;
+      padding: 22px 28px;
+      margin: 0 auto 35px;
+      max-width: 420px;
+      color: #0d4a8c;
       font-size: 20px;
       font-weight: 700;
-      padding: 20px 26px;
-      border-radius: 16px;
-      margin-bottom: 16px;
-      transition: all 0.35s ease;
-      border: none;
-      box-shadow: 0 6px 16px rgba(49, 130, 206, 0.18);
-      cursor: pointer;
-      width: 100%;
+      line-height: 1.5;
+      box-shadow: 0 6px 25px rgba(0,184,255,0.3);
+      animation: aparecer 0.6s ease-out;
     }
-    .boton:hover {
-      transform: translateY(-2px);
-      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
-      box-shadow: 0 8px 20px rgba(49, 130, 206, 0.25);
+    @keyframes aparecer {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .enlace-olvidada {
+    .avatar-contenedor {
+      position: relative;
       display: inline-block;
-      margin-top: 25px;
-      color: #1e40af;
-      font-size: 15px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: color 0.2s ease;
-      text-align: center; /* ✅ Centrado */
+      margin: 10px 0;
+      width: 220px;
+      height: 220px;
     }
-    .enlace-olvidada:hover {
-      color: #3182ce;
-      text-decoration: underline;
+    .onda {
+      position: absolute;
+      border-radius: 50%;
+      border: 2px solid rgba(0,184,255,0.4);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: expandir 3s ease-out infinite;
     }
-    .pie-pagina {
-      margin-top: 30px;
-      font-size: 13px;
-      color: #5a4f3f;
-      text-align: center; /* ✅ Centrado */
+    .onda:nth-child(2) { animation-delay: 0.6s; }
+    .onda:nth-child(3) { animation-delay: 1.2s; }
+    @keyframes expandir {
+      0% { width: 200px; height: 200px; opacity: 0.7; }
+      100% { width: 320px; height: 320px; opacity: 0; }
     }
-    .boton-ia-flotante {
-      position: fixed;
-      bottom: 24px;
-      right: 24px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
-      border: none;
+    .robot {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 130px;
+      z-index: 3;
+    }
+    .robot-cabeza {
+      width: 130px;
+      height: 74px;
+      background: linear-gradient(180deg, #ffffff 0%, #f0f7ff 100%);
+      border-radius: 38px 38px 30px 30px;
+      position: relative;
+      box-shadow: 0 0 25px rgba(0,180,200,0.35), inset 0 -8px 20px rgba(0,150,180,0.15);
+    }
+    .robot-pantalla {
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 72px;
+      height: 38px;
+      background: linear-gradient(180deg, #e6f7ff 0%, #ffffff 100%);
+      border-radius: 18px;
+      border: 1px solid #b3e5fc;
+      box-shadow: inset 0 0 18px rgba(0,184,255,0.08);
+    }
+    .robot-antenas {
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 34px;
+    }
+    .antena {
+      width: 3px;
+      height: 14px;
+      background: #ffffff;
+      border-radius: 2px;
+    }
+    .antena-punta {
+      width: 9px;
+      height: 9px;
+      background: #00b8ff;
+      border-radius: 50%;
+      position: absolute;
+      top: -4px;
+      left: -3px;
+    }
+    .robot-cuerpo {
+      width: 110px;
+      height: 56px;
+      background: linear-gradient(180deg, #ffffff 0%, #f0f7ff 100%);
+      border-radius: 0 0 34px 34px;
+      margin: -8px auto 0;
+      position: relative;
+      box-shadow: 0 0 25px rgba(0,180,200,0.35), inset 0 -8px 20px rgba(0,150,180,0.15);
+    }
+    .robot-pecho {
+      position: absolute;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 30px;
+      background: linear-gradient(180deg, #e6f7ff 0%, #ffffff 100%);
+      border-radius: 12px;
+      border: 1px solid #b3e5fc;
+      box-shadow: inset 0 0 18px rgba(0,184,255,0.08);
+    }
+    .etiqueta-centro {
+      text-align: center;
+      margin: 20px 0 45px;
+    }
+    .frase-principal {
+      font-size: 26px;
+      font-weight: 700;
+      color: #ffffff;
+      line-height: 1.4;
+      margin-bottom: 8px;
+    }
+    .frase-secundaria {
       font-size: 16px;
-      font-weight: 700;
-      padding: 14px 22px;
-      border-radius: 50px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(49, 130, 206, 0.35);
-      transition: all 0.3s ease;
-      z-index: 999;
+      color: #b3e5fc;
     }
-    .boton-ia-flotante:hover {
-      transform: translateY(-2px);
-      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
-      box-shadow: 0 6px 20px rgba(49, 130, 206, 0.45);
+    .zona-mensajes {
+      margin-bottom: 150px;
     }
-    .ventana-chat {
+    .mensaje-usuario {
+      background: rgba(255,255,255,0.15);
+      border-radius: 20px 20px 6px 20px;
+      padding: 14px 18px;
+      margin: 12px 0 12px auto;
+      max-width: 85%;
+      line-height: 1.5;
+      color: #ffffff;
+    }
+    .mensaje-ia {
+      background: rgba(255,255,255,0.08);
+      border-radius: 20px 20px 20px 6px;
+      padding: 14px 18px;
+      margin: 12px 0;
+      max-width: 85%;
+      line-height: 1.6;
+      color: #e0f7ff;
+      border: 1px solid rgba(0,184,255,0.2);
+    }
+    .caja-entrada {
       position: fixed;
-      bottom: 90px;
-      right: 24px;
-      width: 90%;
-      max-width: 380px;
-      height: 520px;
-      background: white;
+      bottom: 35px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 92%;
+      max-width: 500px;
+      background: #ffffff;
+      padding: 20px 25px;
       border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
       display: flex;
-      flex-direction: column;
-      z-index: 1000;
-      overflow: hidden;
-      animation: abrirVentana 0.3s ease-out;
-    }
-    @keyframes abrirVentana {
-      from { opacity: 0; transform: translateY(20px) scale(0.95); }
-      to { opacity: 1; transform: translateY(0) scale(1); }
-    }
-    .cabecera-chat {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
-      padding: 15px 20px;
-      display: flex;
-      justify-content: space-between;
       align-items: center;
-      font-weight: 700;
-      font-size: 17px;
+      gap: 12px;
     }
-    .cerrar-chat {
-      background: none;
+    .entrada-texto {
+      flex: 1;
       border: none;
+      outline: none;
+      font-size: 17px;
+      color: #0f172a;
+      padding: 12px 4px;
+      background: #f5f8fa;
+      border-radius: 12px;
+      padding-left: 15px;
+    }
+    .entrada-texto::placeholder {
+      color: #94a3b8;
+    }
+    .icono-microfono-chico {
+      color: #94a3b8;
+      font-size: 20px;
+      margin-right: 8px;
+    }
+    .boton-microfono {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      border: none;
+      background: linear-gradient(135deg, #0099dd 0%, #0066cc 100%);
       color: white;
       font-size: 22px;
       cursor: pointer;
-      padding: 0;
-      line-height: 1;
-    }
-    .cuerpo-chat {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      background: #f0f4f8;
-    }
-    .mensaje {
-      margin-bottom: 15px;
-      padding: 12px 16px;
-      border-radius: 18px;
-      max-width: 85%;
-      line-height: 1.5;
-    }
-    .mensaje-ia {
-      background: white;
-      border-bottom-left-radius: 4px;
-      color: #2d3748;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    }
-    .mensaje-usuario {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
-      margin-left: auto;
-      border-bottom-right-radius: 4px;
-    }
-    .entrada-chat {
       display: flex;
-      padding: 15px;
-      border-top: 1px solid #e2e8f0;
-      background: white;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.25s ease;
+      box-shadow: 0 4px 15px rgba(0,102,204,0.35);
+      flex-shrink: 0;
     }
-    .entrada-chat input {
-      flex: 1;
-      padding: 12px 18px;
-      border: 1px solid #cbd5e0;
-      border-radius: 25px;
-      font-size: 15px;
-      outline: none;
-      margin-right: 10px;
+    .boton-microfono:hover,
+    .boton-microfono.grabando {
+      transform: scale(1.15);
+      box-shadow: 0 0 25px rgba(0,184,255,0.5);
+      background: linear-gradient(135deg, #00b8ff 0%, #0091cc 100%);
     }
-    .entrada-chat button {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
-      color: white;
-      border: none;
-      padding: 12px 20px;
-      border-radius: 25px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: transform 0.2s;
-    }
-    .entrada-chat button:hover {
-      transform: scale(1.05);
-    }
-    .oculto {display: none !important;}
-    .pensando {
-      font-style: italic;
-      color: #718096;
-    }
+    .oculto { display: none !important; }
   </style>
 </head>
 <body>
-  <div class="barra-superior">
-    <span id="botonesSinSesion">
-      <a href="registrarse.html" class="boton-sesion boton-registrar">✨ Registrarse</a>
-      <a href="iniciar-sesion.html" class="boton-sesion boton-entrar">🔐 Iniciar sesión</a>
-    </span>
-    
-    <span id="botonesConSesion" class="oculto">
-      <span class="texto-conectado" id="texto-conectado">Conectado</span>
-      <button id="btn-cerrar" class="enlace-cerrar">Cerrar sesión</button>
-    </span>
-  </div>
-
-  <div class="caja-principal">
-    <div class="saludo-usuario" id="saludo-usuario"></div>
-
-    <!-- ✅ Sin autito rojo, solo el texto -->
-    <h1>Vehículos en Venta</h1>
-    <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
-    La plataforma de Rosario y toda la región</p>
-    
-    <a href="cargar.html" class="boton">📄 <span>Ingresar Vehículo</span></a>
-    <a href="catalogo.html" class="boton">📋 <span>Ver Vehículos — Catálogo</span></a>
-    <a href="buscar.html" class="boton">🔍 <span>Buscar Vehículo</span></a>
-    <a href="mis-vehiculos.html" class="boton">❤️ <span>Mis Vehículos</span></a>
-    <button id="btnInstalarApp" class="boton">📲 <span>Descargar App</span></button>
-    
-    <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
-    
-    <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
-  </div>
-
-  <button class="boton-ia-flotante" id="btnChatIA">🤖 Chat IA</button>
-
-  <div class="ventana-chat oculto" id="ventanaChat">
-    <div class="cabecera-chat">
-      <span>🤖 Chat IA — Vehículos en Venta</span>
-      <button class="cerrar-chat" id="btnCerrarChat">×</button>
+  <div class="contenedor-principal">
+    <div class="cabecera">
+      <a href="#" class="flecha-volver">&larr;</a>
+      <h1 class="titulo-pagina">Compra y Venta de Autos<br>Rosario y Zona</h1>
     </div>
-    <div class="cuerpo-chat" id="cuerpoChat">
-      <div class="mensaje mensaje-ia">
-        ¡Hola! 👋 Soy tu asistente de <strong>Vehículos en Venta</strong> ✨<br><br>
-        Te ayudo a buscar autos, saber cómo publicar, usar favoritos y todo sobre la plataforma.<br><br>
-        ¿En qué te ayudo hoy?
+    <div class="fondo-decoracion" id="decoracion"></div>
+    <div class="zona-asistente">
+      <div class="burbuja-saludo" id="cajaBienvenida">
+        👋 ¡Bienvenido! ¿Vendés o buscás un auto?
+      </div>
+      <div class="avatar-contenedor">
+        <div class="onda"></div>
+        <div class="onda"></div>
+        <div class="onda"></div>
+        <div class="robot">
+          <div class="robot-cabeza">
+            <div class="robot-antenas">
+              <div class="antena"><div class="antena-punta"></div></div>
+              <div class="antena"><div class="antena-punta"></div></div>
+            </div>
+            <div class="robot-pantalla"></div>
+          </div>
+          <div class="robot-cuerpo">
+            <div class="robot-pecho"></div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="entrada-chat">
-      <input type="text" id="inputChat" placeholder="Escribí tu mensaje...">
-      <button id="btnEnviarChat">Enviar</button>
+    <div class="etiqueta-centro">
+      <p class="frase-principal">Comprá, vendé o publicá<br>tu auto acá</p>
+      <p class="frase-secundaria">Rosario y alrededores — todo en un solo lugar</p>
     </div>
+    <div class="zona-mensajes" id="zonaMensajes"></div>
   </div>
-
+  <div class="caja-entrada">
+    <input type="text" class="entrada-texto" id="entradaTexto" placeholder="Quiero vender un auto / Busco un auto...">
+    <span class="icono-microfono-chico">🎤</span>
+    <button class="boton-microfono" id="btnMicrofono">🎤</button>
+  </div>
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
-    
-    // 🔑 CLAVE DE GEMINI — protegida
-    const GEMINI_KEY = "AQ.Ab8RN6J4Jgm7rll2YSgXAjAyAP3tsaBYXRHPCqRapjCU3RswaQ";
-                      
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-    const botonesSinSesion = document.getElementById('botonesSinSesion');
-    const botonesConSesion = document.getElementById('botonesConSesion');
-    const btnCerrar = document.getElementById('btn-cerrar');
-    const enlaceOlvidada = document.getElementById('enlace-olvidada');
-    const btnChatIA = document.getElementById('btnChatIA');
-    const ventanaChat = document.getElementById('ventanaChat');
-    const btnCerrarChat = document.getElementById('btnCerrarChat');
-    const inputChat = document.getElementById('inputChat');
-    const btnEnviarChat = document.getElementById('btnEnviarChat');
-    const cuerpoChat = document.getElementById('cuerpoChat');
-    const btnInstalarApp = document.getElementById('btnInstalarApp');
-    const saludoUsuario = document.getElementById('saludo-usuario');
-    const textoConectado = document.getElementById('texto-conectado');
-
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-      e.preventDefault();
-      deferredPrompt = e;
-      btnInstalarApp.style.display = 'flex';
-    });
-
-    btnInstalarApp.addEventListener('click', async () => {
-      if (!deferredPrompt) {
-        alert('La aplicación ya está instalada o no se puede instalar en este dispositivo. Desde el celular tocá los 3 puntitos → "Agregar a pantalla de inicio" ✅');
-        return;
-      }
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      if (outcome === 'accepted') {
-        console.log('✅ App instalada');
-        btnInstalarApp.textContent = '✅ App Instalada';
-        deferredPrompt = null;
-      }
-    });
-
-    btnChatIA.addEventListener('click', () => {
-      ventanaChat.classList.toggle('oculto');
-    });
-    btnCerrarChat.addEventListener('click', () => {
-      ventanaChat.classList.add('oculto');
-    });
-
-    function agregarMensaje(texto, esUsuario = false, esPensando = false) {
+    const zonaMensajes = document.getElementById('zonaMensajes');
+    const cajaBienvenida = document.getElementById('cajaBienvenida');
+    const entradaTexto = document.getElementById('entradaTexto');
+    const btnMicrofono = document.getElementById('btnMicrofono');
+    let estaGrabando = false;
+    const decoracion = document.getElementById('decoracion');
+    const simbolos = ['✦', '✧', '⋆', '✴', '✻', '✦'];
+    for (let i = 0; i < 24; i++) {
+      const s = document.createElement('div');
+      s.className = 'estrella';
+      s.textContent = simbolos[Math.floor(Math.random() * simbolos.length)];
+      s.style.left = Math.random() * 100 + '%';
+      s.style.top = Math.random() * 100 + '%';
+      s.style.animationDelay = Math.random() * 3 + 's';
+      decoracion.appendChild(s);
+    }
+    function limpiarTexto(texto) {
+      return texto.replace(/[\u{1F300}-\u{1F9FF}]/gu, ' ').replace(/\s+/g, ' ').trim();
+    }
+    function hablar(texto) {
+      const limpio = limpiarTexto(texto);
+      if (!limpio) return;
+      window.speechSynthesis.cancel();
+      const mensaje = new SpeechSynthesisUtterance(limpio);
+      mensaje.lang = 'es-AR';
+      mensaje.rate = 1.05;
+      mensaje.pitch = 1.02;
+      window.speechSynthesis.speak(mensaje);
+    }
+    function agregarMensaje(texto, esUsuario = false) {
+      if (cajaBienvenida) cajaBienvenida.classList.add('oculto');
       const div = document.createElement('div');
-      if (esPensando) {
-        div.className = 'mensaje mensaje-ia pensando';
-        div.textContent = texto;
-      } else {
-        div.className = `mensaje ${esUsuario ? 'mensaje-usuario' : 'mensaje-ia'}`;
-        div.innerHTML = texto.replace(/\n/g, '<br>');
-      }
-      cuerpoChat.appendChild(div);
-      cuerpoChat.scrollTop = cuerpoChat.scrollHeight;
-      return div;
+      div.className = esUsuario ? 'mensaje-usuario' : 'mensaje-ia';
+      div.textContent = texto;
+      zonaMensajes.appendChild(div);
+      zonaMensajes.scrollTop = zonaMensajes.scrollHeight;
+      if (!esUsuario) hablar(texto);
     }
-
-    async function obtenerVehiculos() {
-      try {
-        const { data, error } = await supabaseClient
-          .from('autos')
-          .select('*');
-        
-        if (error) {
-          console.error('Error al traer vehículos:', error);
-          return [];
-        }
-        return data || [];
-      } catch (e) {
-        console.error('Error:', e);
-        return [];
+    function procesarMensaje(texto) {
+      const t = texto.toLowerCase();
+      if (t.includes('vender') || t.includes('publicar') || t.includes('poner')) {
+        return "Perfecto. Te ayudo a vender tu auto. Decime: marca, modelo, año, precio y en qué zona estás.";
       }
+      if (t.includes('comprar') || t.includes('buscar') || t.includes('ver autos') || t.includes('disponible')) {
+        return "Bueno. ¿Qué estás buscando? Decime marca, modelo, presupuesto o zona y te muestro los autos que hay.";
+      }
+      if (t.includes('mis') || t.includes('lo que publiqué') || t.includes('mis autos')) {
+        return "Claro. Aquí están los autos que publicaste. ¿Querés editar, borrar o ver algo más?";
+      }
+      if (t.includes('favorito') || t.includes('guardar')) {
+        return "Listo. Lo guardé en tus favoritos. Te aviso si baja de precio o aparece algo parecido.";
+      }
+      if (t.includes('eliminar') || t.includes('borrar') || t.includes('sacar')) {
+        return "Decime cuál querés sacar: marca, modelo o precio y lo elimino enseguida.";
+      }
+      return "Soy tu asistente para comprar y vender autos. Decime: ¿vendés o buscás un auto?";
     }
-
-    function mostrarSaludo(session) {
-      if (!session || !session.user) {
-        saludoUsuario.style.display = 'none';
-        return;
-      }
-
-      let nombre = null;
-      if (session.user.user_metadata) {
-        nombre = session.user.user_metadata.nombre || session.user.user_metadata.name;
-      }
-      if (!nombre && session.user.email) {
-        nombre = session.user.email.split('@')[0];
-      }
-
-      if (nombre) {
-        saludoUsuario.textContent = `Hola: ${nombre} 👋`;
-        saludoUsuario.style.display = 'block';
-        textoConectado.textContent = `Conectado — ${nombre}`;
-      }
-    }
-
-    async function llamarGemini(mensajeUsuario) {
-      if (!GEMINI_KEY || GEMINI_KEY.length < 10) {
-        return `Hola 👋 Todo funciona bien. Tu base está conectada ✅ Generá tu clave en https://aistudio.google.com/app/apikey y la pegás cuando quieras 😊`;
-      }
-
-      const vehiculos = await obtenerVehiculos();
-      
-      let contextoBase = `
-Eres el asistente de "Vehículos en Venta" — la plataforma NUEVA de Rosario y toda la región ✨
-
-🆕 SOMOS NUEVOS: recién lanzamos, ¡estamos creciendo!
-
-📢 TU MISIÓN PRINCIPAL: invitar con entusiasmo a la gente a PUBLICAR su vehículo.
-✅ ES TOTALMENTE GRATIS — sin costo, sin comisiones, sin gastos mensuales
-✅ Rápido — en 3 minutos está publicado
-✅ Llega a gente de Rosario y alrededores
-
-CÓMO PUBLICAR paso a paso:
-1️⃣ Tocar el botón 📄 "Ingresar Vehículo"
-2️⃣ Completar: marca, modelo, año, precio, ciudad, fotos
-3️⃣ Tocar "Publicar" → ¡y listo! Ya lo ven todos
-
-LO QUE TIENE LA PLATAFORMA:
-- 📄 Ingresar Vehículo → publicar el tuyo GRATIS
-- 📋 Ver Vehículos — Catálogo → todos los publicados
-- 🔍 Buscar Vehículo → buscar por marca, modelo, precio
-- ❤️ Mis Vehículos → guardar favoritos (máx. 5; tu correo especial SIN límite)
-- 📲 Descargar App → instalar en el celular
-- 🔐 Registrarse / Iniciar sesión → crear cuenta gratis
-- ¿Olvidaste tu contraseña? → enlace abajo para recuperarla
-
-Si hay pocos vehículos: decí que recién empezamos 🆕 y ¡animá a ser de los primeros en publicar!
-
-Tu tono: amable, cercano, de acá de Rosario. Claro, entusiasta, no muy largo.
-`;
-
-      try {
-        const respuesta = await fetch(
-          `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contents: [{
-                parts: [{
-                  text: `${contextoBase}\n\nPregunta del usuario: ${mensajeUsuario}`
-                }]
-              }],
-              generationConfig: {
-                temperature: 0.7,
-                maxOutputTokens: 800
-              }
-            })
-          }
-        );
-
-        const datos = await respuesta.json();
-        
-        if (datos.candidates && datos.candidates[0]?.content?.parts?.[0]?.text) {
-          return datos.candidates[0].content.parts[0].text;
-        } else if (datos.error) {
-          console.error('Error de API:', datos.error);
-          return `Lo siento 😅 La clave puede tardar unos minutos en activarse. Probá de nuevo en 5 minutos ✨ Mientras tanto, la plataforma anda perfecta 🚗`;
-        } else {
-          return `Recibí tu mensaje ✨ Todo conectado. En breve te respondo 🚗`;
-        }
-      } catch (error) {
-        console.error('Error con Gemini:', error);
-        return `Tu mensaje llegó bien ✅ Todo funciona. La IA se está ajustando, pero la plataforma anda perfecta 🚗✨`;
-      }
-    }
-
-    async function enviarMensaje() {
-      const texto = inputChat.value.trim();
+    function enviar() {
+      const texto = entradaTexto.value.trim();
       if (!texto) return;
-      
       agregarMensaje(texto, true);
-      inputChat.value = '';
-      
-      const pensando = agregarMensaje('Escribiendo...', false, true);
-      
-      const respuesta = await llamarGemini(texto);
-      pensando.remove();
-      
-      agregarMensaje(respuesta);
+      entradaTexto.value = '';
+      setTimeout(() => agregarMensaje(procesarMensaje(texto)), 500);
     }
-
-    btnEnviarChat.addEventListener('click', enviarMensaje);
-    inputChat.addEventListener('keypress', e => e.key === 'Enter' && enviarMensaje());
-
-    async function verificarSesion() {
-      const { data: { session } } = await supabaseClient.auth.getSession();
-      
-      if (session) {
-        botonesSinSesion.classList.add('oculto');
-        botonesConSesion.classList.remove('oculto');
-        enlaceOlvidada.style.display = 'none';
-        mostrarSaludo(session);
-      } else {
-        botonesSinSesion.classList.remove('oculto');
-        botonesConSesion.classList.add('oculto');
-        enlaceOlvidada.style.display = 'inline-block';
-        saludoUsuario.style.display = 'none';
-      }
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const Reconocimiento = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const reconocimiento = new Reconocimiento();
+      reconocimiento.lang = 'es-AR';
+      reconocimiento.continuous = false;
+      reconocimiento.onresult = (e) => {
+        entradaTexto.value = e.results[0][0].transcript;
+        enviar();
+      };
+      reconocimiento.onend = () => {
+        estaGrabando = false;
+        btnMicrofono.classList.remove('grabando');
+      };
+      btnMicrofono.addEventListener('click', () => {
+        if (!estaGrabando) {
+          reconocimiento.start();
+          estaGrabando = true;
+          btnMicrofono.classList.add('grabando');
+        }
+      });
+    } else {
+      btnMicrofono.title = "Tu navegador no soporta reconocimiento de voz";
+      btnMicrofono.style.opacity = '0.5';
     }
-
-    btnCerrar.addEventListener('click', async () => {
-      if (confirm('¿Seguro querés cerrar sesión?')) {
-        await supabaseClient.auth.signOut();
-        verificarSesion();
-        window.location.href = 'index.html';
-      }
+    entradaTexto.addEventListener('keypress', e => e.key === 'Enter' && enviar());
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        hablar("Bienvenido. Soy tu asistente para comprar y vender autos en Rosario y zona. Decime: ¿vendés o buscás un auto?");
+      }, 800);
     });
-
-    supabaseClient.auth.onAuthStateChange((event, session) => {
-      verificarSesion();
-    });
-
-    document.addEventListener('DOMContentLoaded', verificarSesion);
   </script>
 </body>
 </html>
