@@ -6,7 +6,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="Vehículos en Venta">
-  <meta name="theme-color" content="#1565C0">
+  <meta name="theme-color" content="#4B5563">
   <title>Vehículos en Venta</title>
   <link rel="manifest" href="app.webmanifest">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -18,74 +18,78 @@
       font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;
     }
     body {
-      background: linear-gradient(135deg, #91b8d5 0%, #7aa7c9 100%);
+      background: linear-gradient(135deg, #E5E7EB 0%, #F9FAFB 50%, #FFFFFF 100%);
       min-height: 100vh;
       padding: 20px;
     }
     .barra-superior {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
     .boton-sesion {
       display: inline-block;
-      padding: 10px 20px;
-      margin: 0 5px;
-      border-radius: 10px;
+      padding: 11px 22px;
+      margin: 0 6px;
+      border-radius: 12px;
       font-size: 15px;
       font-weight: 600;
       text-decoration: none;
       transition: all 0.3s ease;
       border: none;
       cursor: pointer;
+      box-shadow: 0 2px 8px rgba(75, 85, 99, 0.15);
     }
     .boton-registrar {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      background: linear-gradient(135deg, #4B5563 0%, #374151 100%);
       color: #fff;
     }
     .boton-registrar:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(49,130,206,0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(75, 85, 99, 0.25);
+      background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
     }
     .boton-entrar {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
       color: #fff;
     }
     .boton-entrar:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(49,130,206,0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(75, 85, 99, 0.25);
+      background: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%);
     }
     .texto-conectado {
       display: inline-block;
       margin-right: 15px;
       font-size: 15px;
       font-weight: 600;
-      color: #2f855a;
+      color: #1F2937;
     }
     .enlace-cerrar {
       display: inline-block;
       font-size: 15px;
       font-weight: 600;
-      color: #1e40af;
+      color: #4B5563;
       text-decoration: none;
       cursor: pointer;
       border: none;
       background: transparent;
+      transition: color 0.2s ease;
     }
     .enlace-cerrar:hover {
-      color: #3182ce;
+      color: #1F2937;
       text-decoration: underline;
     }
     .caja-principal {
-      background: linear-gradient(135deg, #d9c9ad 0%, #c9b58a 100%);
-      border-radius: 28px;
-      padding: 55px 40px;
+      background: #FFFFFF;
+      border-radius: 32px;
+      padding: 60px 40px;
       width: 100%;
       max-width: 540px;
       margin: 0 auto;
-      box-shadow: 0 10px 30px rgba(44, 82, 130, 0.12);
+      box-shadow: 0 10px 40px rgba(31, 41, 55, 0.08), 0 2px 12px rgba(31, 41, 55, 0.04);
       text-align: center;
       animation: entradaSuave 0.7s ease-out;
-      border: 1px solid #bfa980;
+      border: 1px solid #E5E7EB;
       position: relative;
     }
     @keyframes entradaSuave {
@@ -94,27 +98,27 @@
     }
     .saludo-usuario {
       text-align: center;
-      color: #2c5282;
+      color: #1F2937;
       font-size: 17px;
       font-weight: 600;
-      margin-bottom: 15px;
-      padding-bottom: 10px;
-      border-bottom: 1px dashed #bfa980;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #E5E7EB;
       display: none;
     }
     h1 {
-      color: #2c5282;
-      font-size: 34px;
+      color: #111827;
+      font-size: 36px;
       font-weight: 800;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
       text-align: center;
     }
     .subtitulo {
-      color: #5a4f3f;
+      color: #6B7280;
       font-size: 17px;
-      margin-bottom: 35px;
+      margin-bottom: 38px;
       font-weight: 500;
-      line-height: 1.5;
+      line-height: 1.6;
       text-align: center;
     }
     .boton {
@@ -122,27 +126,26 @@
       align-items: center;
       justify-content: center;
       gap: 12px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      background: linear-gradient(135deg, #4B5563 0%, #374151 100%);
       color: #ffffff;
       text-decoration: none;
       font-size: 20px;
       font-weight: 700;
-      padding: 20px 26px;
-      border-radius: 16px;
+      padding: 22px 26px;
+      border-radius: 18px;
       margin-bottom: 16px;
       transition: all 0.35s ease;
       border: none;
-      box-shadow: 0 6px 16px rgba(49, 130, 206, 0.18);
+      box-shadow: 0 6px 20px rgba(75, 85, 99, 0.2);
       cursor: pointer;
       width: 100%;
       position: relative;
     }
     .boton:hover {
-      transform: translateY(-2px);
-      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
-      box-shadow: 0 8px 20px rgba(49, 130, 206, 0.25);
+      transform: translateY(-3px);
+      background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
+      box-shadow: 0 10px 28px rgba(75, 85, 99, 0.3);
     }
-    /* --- Círculo de progreso de instalación --- */
     .contenedor-progreso {
       position: absolute;
       right: 15px;
@@ -161,7 +164,7 @@
     }
     .circulo-progreso circle.fondo {
       fill: none;
-      stroke: rgba(255,255,255,0.3);
+      stroke: rgba(255,255,255,0.25);
       stroke-width: 3;
     }
     .circulo-progreso circle.barra {
@@ -180,76 +183,77 @@
       color: white;
     }
     .instalado-mensaje {
-      margin-top: 10px;
-      color: #2f855a;
+      margin-top: 12px;
+      color: #059669;
       font-weight: 600;
       font-size: 15px;
     }
     .enlace-olvidada {
       display: inline-block;
-      margin-top: 25px;
-      color: #1e40af;
+      margin-top: 28px;
+      color: #4B5563;
       font-size: 15px;
       font-weight: 600;
       text-decoration: none;
-      transition: color 0.2s ease;
+      transition: all 0.25s ease;
       text-align: center;
     }
     .enlace-olvidada:hover {
-      color: #3182ce;
+      color: #1F2937;
       text-decoration: underline;
     }
     .pie-pagina {
-      margin-top: 30px;
+      margin-top: 32px;
       font-size: 13px;
-      color: #5a4f3f;
+      color: #9CA3AF;
       text-align: center;
     }
     .boton-ia-flotante {
       position: fixed;
       bottom: 24px;
       right: 24px;
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      background: linear-gradient(135deg, #4B5563 0%, #374151 100%);
       color: white;
       border: none;
       font-size: 16px;
       font-weight: 700;
-      padding: 14px 22px;
+      padding: 15px 24px;
       border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(49, 130, 206, 0.35);
+      box-shadow: 0 6px 20px rgba(75, 85, 99, 0.35);
       transition: all 0.3s ease;
       z-index: 999;
     }
     .boton-ia-flotante:hover {
-      transform: translateY(-2px);
-      background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
-      box-shadow: 0 6px 20px rgba(49, 130, 206, 0.45);
+      transform: translateY(-3px);
+      background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
+      box-shadow: 0 10px 30px rgba(75, 85, 99, 0.4);
     }
     .ventana-chat {
       position: fixed;
-      bottom: 90px;
+      bottom: 95px;
       right: 24px;
       width: 90%;
       max-width: 380px;
       height: 520px;
       background: white;
-      border-radius: 20px;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      border-radius: 24px;
+      box-shadow: 0 10px 40px rgba(31, 41, 55, 0.15);
       display: flex;
       flex-direction: column;
       z-index: 1000;
       overflow: hidden;
       animation: abrirVentana 0.3s ease-out;
+      border: 1px solid #E5E7EB;
     }
     @keyframes abrirVentana {
       from { opacity: 0; transform: translateY(20px) scale(0.95); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
     .cabecera-chat {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      background: linear-gradient(135deg, #4B5563 0%, #374151 100%);
       color: white;
-      padding: 15px 20px;
+      padding: 16px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -260,68 +264,78 @@
       background: none;
       border: none;
       color: white;
-      font-size: 22px;
+      font-size: 24px;
       cursor: pointer;
       padding: 0;
       line-height: 1;
+      transition: transform 0.2s ease;
+    }
+    .cerrar-chat:hover {
+      transform: scale(1.2);
     }
     .cuerpo-chat {
       flex: 1;
       padding: 20px;
       overflow-y: auto;
-      background: #f0f4f8;
+      background: #F9FAFB;
     }
     .mensaje {
       margin-bottom: 15px;
-      padding: 12px 16px;
-      border-radius: 18px;
+      padding: 13px 17px;
+      border-radius: 20px;
       max-width: 85%;
       line-height: 1.5;
     }
     .mensaje-ia {
-      background: white;
-      border-bottom-left-radius: 4px;
-      color: #2d3748;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      background: #FFFFFF;
+      border-bottom-left-radius: 6px;
+      color: #1F2937;
+      box-shadow: 0 2px 6px rgba(31, 41, 55, 0.06);
+      border: 1px solid #E5E7EB;
     }
     .mensaje-usuario {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      background: linear-gradient(135deg, #4B5563 0%, #374151 100%);
       color: white;
       margin-left: auto;
-      border-bottom-right-radius: 4px;
+      border-bottom-right-radius: 6px;
     }
     .entrada-chat {
       display: flex;
-      padding: 15px;
-      border-top: 1px solid #e2e8f0;
+      padding: 16px;
+      border-top: 1px solid #E5E7EB;
       background: white;
     }
     .entrada-chat input {
       flex: 1;
-      padding: 12px 18px;
-      border: 1px solid #cbd5e0;
+      padding: 13px 20px;
+      border: 1px solid #D1D5DB;
       border-radius: 25px;
       font-size: 15px;
       outline: none;
       margin-right: 10px;
+      transition: border-color 0.2s ease;
+    }
+    .entrada-chat input:focus {
+      border-color: #6B7280;
     }
     .entrada-chat button {
-      background: linear-gradient(135deg, #3182ce 0%, #2b6cb0 100%);
+      background: linear-gradient(135deg, #4B5563 0%, #374151 100%);
       color: white;
       border: none;
-      padding: 12px 20px;
+      padding: 13px 22px;
       border-radius: 25px;
       cursor: pointer;
       font-weight: 600;
-      transition: transform 0.2s;
+      transition: all 0.2s ease;
     }
     .entrada-chat button:hover {
       transform: scale(1.05);
+      background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
     }
     .oculto {display: none !important;}
     .pensando {
       font-style: italic;
-      color: #718096;
+      color: #9CA3AF;
     }
   </style>
 </head>
@@ -348,7 +362,6 @@
     <a href="buscar.html" class="boton">🔍 <span>Buscar Vehículo</span></a>
     <a href="mis-vehiculos.html" class="boton">❤️ <span>Mis Vehículos</span></a>
     
-    <!-- Botón de instalación con círculo de progreso -->
     <button id="btnInstalarApp" class="boton">
       📲 <span id="textoBotonInstalar">Descargar App</span>
       <div class="contenedor-progreso oculto" id="contenedorProgreso">
@@ -365,10 +378,10 @@
     
     <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
   </div>
-  <button class="boton-ia-flotante" id="btnChatIA">🤖 Chat IA</button>
+  <button class="boton-ia-flotante" id="btnChatIA">🤖 Ayuda IA</button>
   <div class="ventana-chat oculto" id="ventanaChat">
     <div class="cabecera-chat">
-      <span>🤖 Chat IA — Vehículos en Venta</span>
+      <span>🤖 Ayuda IA — Vehículos en Venta</span>
       <button class="cerrar-chat" id="btnCerrarChat">×</button>
     </div>
     <div class="cuerpo-chat" id="cuerpoChat">
@@ -411,7 +424,6 @@
     
     let deferredPrompt;
 
-    // Actualizar círculo de progreso
     function actualizarProgreso(porcentaje) {
       const circunferencia = 2 * Math.PI * 16;
       const desplazamiento = circunferencia - (porcentaje / 100) * circunferencia;
@@ -419,11 +431,9 @@
       textoProgreso.textContent = porcentaje + '%';
     }
 
-    // Verificar si ya está instalada al cargar la página
     function verificarSiInstalada() {
       if (window.matchMedia('(display-mode: standalone)').matches || 
           window.navigator.standalone === true) {
-        // Ya está abierta como app instalada
         btnInstalarApp.style.display = 'none';
         mensajeInstalada.classList.remove('oculto');
         return true;
@@ -431,48 +441,35 @@
       return false;
     }
 
-    // Detectar antes de instalar
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
-      
       if (verificarSiInstalada()) return;
-      
       deferredPrompt = e;
       btnInstalarApp.style.display = 'flex';
       mensajeInstalada.classList.add('oculto');
     });
 
-    // Detectar cuando se completa la instalación
     window.addEventListener('appinstalled', () => {
       console.log('✅ App instalada correctamente');
       textoBotonInstalar.textContent = '✅ App Instalada';
       contenedorProgreso.classList.add('oculto');
       mensajeInstalada.classList.remove('oculto');
       deferredPrompt = null;
-      
-      // Refrescar la página después de instalar
       setTimeout(() => {
         window.location.reload();
       }, 1500);
     });
 
-    // Acción al tocar el botón de instalar
     btnInstalarApp.addEventListener('click', async () => {
-      if (verificarSiInstalada()) {
-        return;
-      }
-      
+      if (verificarSiInstalada()) return;
       if (!deferredPrompt) {
         alert('La aplicación ya está instalada o no se puede instalar en este dispositivo. Desde el celular tocá los 3 puntitos → "Agregar a pantalla de inicio" ✅');
         return;
       }
-      
-      // Mostrar círculo de progreso
       contenedorProgreso.classList.remove('oculto');
       actualizarProgreso(0);
       textoBotonInstalar.textContent = 'Instalando...';
       
-      // Simular progreso visual mientras se procesa
       let progreso = 0;
       const simulacion = setInterval(() => {
         progreso += 10;
@@ -483,10 +480,8 @@
         actualizarProgreso(progreso);
       }, 200);
       
-      // Mostrar diálogo nativo de instalación
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
-      
       clearInterval(simulacion);
       
       if (outcome === 'accepted') {
@@ -503,7 +498,6 @@
       }
     });
 
-    // Verificar al cargar
     document.addEventListener('DOMContentLoaded', () => {
       setTimeout(verificarSiInstalada, 100);
     });
