@@ -18,34 +18,34 @@
       font-family: 'Segoe UI', Roboto, 'Open Sans', sans-serif;
     }
     body {
-      background: linear-gradient(135deg, #E5E7EB 0%, #F3F4F6 50%, #FFFFFF 100%);
+      background: linear-gradient(135deg, #E5E7EB 0%, #F9FAFB 50%, #FFFFFF 100%);
       min-height: 100vh;
       padding: 20px;
     }
     .barra-superior {
       text-align: center;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
     .boton-sesion {
       display: inline-block;
       padding: 9px 18px;
-      margin: 0 4px;
-      border-radius: 10px;
-      font-size: 14px;
+      margin: 0 6px;
+      border-radius: 12px;
+      font-size: 15px;
       font-weight: 600;
       text-decoration: none;
       transition: all 0.3s ease;
       border: none;
       cursor: pointer;
-      box-shadow: 0 2px 6px rgba(75, 85, 99, 0.12);
+      box-shadow: 0 2px 8px rgba(75, 85, 99, 0.15);
     }
     .boton-registrar {
       background: linear-gradient(135deg, #4B5563 0%, #374151 100%);
       color: #fff;
     }
     .boton-registrar:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(75, 85, 99, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(75, 85, 99, 0.25);
       background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
     }
     .boton-entrar {
@@ -53,20 +53,20 @@
       color: #fff;
     }
     .boton-entrar:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(75, 85, 99, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(75, 85, 99, 0.25);
       background: linear-gradient(135deg, #9CA3AF 0%, #6B7280 100%);
     }
     .texto-conectado {
       display: inline-block;
-      margin-right: 12px;
-      font-size: 14px;
+      margin-right: 15px;
+      font-size: 15px;
       font-weight: 600;
-      color: #374151;
+      color: #1F2937;
     }
     .enlace-cerrar {
       display: inline-block;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       color: #4B5563;
       text-decoration: none;
@@ -81,12 +81,12 @@
     }
     .caja-principal {
       background: #FFFFFF;
-      border-radius: 28px;
-      padding: 35px 28px;
+      border-radius: 32px;
+      padding: 40px 30px;
       width: 100%;
-      max-width: 520px;
+      max-width: 540px;
       margin: 0 auto;
-      box-shadow: 0 8px 30px rgba(31, 41, 55, 0.07), 0 2px 10px rgba(31, 41, 55, 0.03);
+      box-shadow: 0 10px 40px rgba(31, 41, 55, 0.08), 0 2px 12px rgba(31, 41, 55, 0.04);
       text-align: center;
       animation: entradaSuave 0.7s ease-out;
       border: 1px solid #E5E7EB;
@@ -98,34 +98,34 @@
       height: 170px;
       object-fit: cover;
       border-radius: 20px;
-      margin-bottom: 22px;
+      margin-bottom: 24px;
       box-shadow: 0 4px 15px rgba(75, 85, 99, 0.1);
     }
     @keyframes entradaSuave {
-      from { opacity: 0; transform: translateY(20px); }
+      from { opacity: 0; transform: translateY(25px); }
       to { opacity: 1; transform: translateY(0); }
     }
     .saludo-usuario {
       text-align: center;
-      color: #374151;
-      font-size: 16px;
+      color: #1F2937;
+      font-size: 17px;
       font-weight: 600;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
+      margin-bottom: 18px;
+      padding-bottom: 12px;
       border-bottom: 1px solid #E5E7EB;
       display: none;
     }
     h1 {
-      color: #1F2937;
-      font-size: 28px;
+      color: #111827;
+      font-size: 36px;
       font-weight: 800;
-      margin-bottom: 1px;
+      margin-bottom: 14px;
       text-align: center;
     }
     .subtitulo {
       color: #6B7280;
-      font-size: 15px;
-      margin-bottom: 24px;
+      font-size: 17px;
+      margin-bottom: 28px;
       font-weight: 500;
       line-height: 1.6;
       text-align: center;
@@ -134,7 +134,7 @@
       display: flex;
       flex-direction: column;
       gap: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
     }
     .boton {
       display: flex;
@@ -145,46 +145,46 @@
       color: #ffffff;
       text-decoration: none;
       font-size: 16px;
-      font-weight: 600;
-      padding: 14px 20px;
-      border-radius: 14px;
-      transition: all 0.3s ease;
+      font-weight: 700;
+      padding: 16px 22px;
+      border-radius: 18px;
+      transition: all 0.35s ease;
       border: none;
-      box-shadow: 0 4px 14px rgba(75, 85, 99, 0.18);
+      box-shadow: 0 6px 20px rgba(75, 85, 99, 0.2);
       cursor: pointer;
       width: 100%;
       position: relative;
     }
     .boton:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
       background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
-      box-shadow: 0 6px 20px rgba(75, 85, 99, 0.25);
+      box-shadow: 0 10px 28px rgba(75, 85, 99, 0.3);
     }
     .contenedor-progreso {
       position: absolute;
-      right: 14px;
+      right: 15px;
       top: 50%;
       transform: translateY(-50%);
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
       display: flex;
       align-items: center;
       justify-content: center;
     }
     .circulo-progreso {
       transform: rotate(-90deg);
-      width: 32px;
-      height: 32px;
+      width: 36px;
+      height: 36px;
     }
     .circulo-progreso circle.fondo {
       fill: none;
       stroke: rgba(255,255,255,0.25);
-      stroke-width: 2.5;
+      stroke-width: 3;
     }
     .circulo-progreso circle.barra {
       fill: none;
       stroke: #ffffff;
-      stroke-width: 2.5;
+      stroke-width: 3;
       stroke-linecap: round;
       stroke-dasharray: 100.53;
       stroke-dashoffset: 100.53;
@@ -192,21 +192,21 @@
     }
     .texto-progreso {
       position: absolute;
-      font-size: 9px;
+      font-size: 10px;
       font-weight: bold;
       color: white;
     }
     .instalado-mensaje {
-      margin-top: 10px;
+      margin-top: 12px;
       color: #059669;
       font-weight: 600;
-      font-size: 14px;
+      font-size: 15px;
     }
     .enlace-olvidada {
       display: inline-block;
-      margin-top: 20px;
+      margin-top: 28px;
       color: #4B5563;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 600;
       text-decoration: none;
       transition: all 0.25s ease;
@@ -217,8 +217,8 @@
       text-decoration: underline;
     }
     .pie-pagina {
-      margin-top: 22px;
-      font-size: 12px;
+      margin-top: 32px;
+      font-size: 13px;
       color: #9CA3AF;
       text-align: center;
     }
@@ -229,30 +229,30 @@
       background: linear-gradient(135deg, #4B5563 0%, #374151 100%);
       color: white;
       border: none;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
-      padding: 13px 22px;
+      padding: 15px 24px;
       border-radius: 50px;
       cursor: pointer;
-      box-shadow: 0 5px 18px rgba(75, 85, 99, 0.3);
+      box-shadow: 0 6px 20px rgba(75, 85, 99, 0.35);
       transition: all 0.3s ease;
       z-index: 999;
     }
     .boton-ia-flotante:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
       background: linear-gradient(135deg, #6B7280 0%, #4B5563 100%);
-      box-shadow: 0 8px 25px rgba(75, 85, 99, 0.35);
+      box-shadow: 0 10px 30px rgba(75, 85, 99, 0.4);
     }
     .ventana-chat {
       position: fixed;
-      bottom: 90px;
+      bottom: 95px;
       right: 24px;
       width: 90%;
       max-width: 380px;
       height: 520px;
       background: white;
       border-radius: 24px;
-      box-shadow: 0 10px 35px rgba(31, 41, 55, 0.12);
+      box-shadow: 0 10px 40px rgba(31, 41, 55, 0.15);
       display: flex;
       flex-direction: column;
       z-index: 1000;
@@ -261,51 +261,50 @@
       border: 1px solid #E5E7EB;
     }
     @keyframes abrirVentana {
-      from { opacity: 0; transform: translateY(15px) scale(0.96); }
+      from { opacity: 0; transform: translateY(20px) scale(0.95); }
       to { opacity: 1; transform: translateY(0) scale(1); }
     }
     .cabecera-chat {
       background: linear-gradient(135deg, #4B5563 0%, #374151 100%);
       color: white;
-      padding: 14px 18px;
+      padding: 16px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       font-weight: 700;
-      font-size: 16px;
+      font-size: 17px;
     }
     .cerrar-chat {
       background: none;
       border: none;
       color: white;
-      font-size: 22px;
+      font-size: 24px;
       cursor: pointer;
       padding: 0;
       line-height: 1;
       transition: transform 0.2s ease;
     }
     .cerrar-chat:hover {
-      transform: scale(1.15);
+      transform: scale(1.2);
     }
     .cuerpo-chat {
       flex: 1;
-      padding: 18px;
+      padding: 20px;
       overflow-y: auto;
       background: #F9FAFB;
     }
     .mensaje {
-      margin-bottom: 14px;
-      padding: 12px 16px;
-      border-radius: 18px;
+      margin-bottom: 15px;
+      padding: 13px 17px;
+      border-radius: 20px;
       max-width: 85%;
-      line-height: 1.6;
-      font-size: 15px;
+      line-height: 1.5;
     }
     .mensaje-ia {
       background: #FFFFFF;
       border-bottom-left-radius: 6px;
       color: #1F2937;
-      box-shadow: 0 2px 6px rgba(31, 41, 55, 0.05);
+      box-shadow: 0 2px 6px rgba(31, 41, 55, 0.06);
       border: 1px solid #E5E7EB;
     }
     .mensaje-usuario {
@@ -316,15 +315,15 @@
     }
     .entrada-chat {
       display: flex;
-      padding: 14px;
+      padding: 16px;
       border-top: 1px solid #E5E7EB;
       background: white;
     }
     .entrada-chat input {
       flex: 1;
-      padding: 12px 18px;
+      padding: 13px 20px;
       border: 1px solid #D1D5DB;
-      border-radius: 22px;
+      border-radius: 25px;
       font-size: 15px;
       outline: none;
       margin-right: 10px;
@@ -337,8 +336,8 @@
       background: linear-gradient(135deg, #4B5563 0%, #374151 100%);
       color: white;
       border: none;
-      padding: 12px 20px;
-      border-radius: 22px;
+      padding: 13px 22px;
+      border-radius: 25px;
       cursor: pointer;
       font-weight: 600;
       transition: all 0.2s ease;
@@ -371,27 +370,28 @@
     
     <div class="saludo-usuario" id="saludo-usuario"></div>
     <h1>Vehículos en Venta</h1>
-    <p class="subtitulo">Publicá, buscá y vendé con total confianza. La plataforma de Rosario y toda la región.</p>
+    <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
+    La plataforma de Rosario y toda la región</p>
     
     <div class="contenedor-botones">
       <a href="cargar.html" class="boton">Ingresar Vehículo</a>
-      <a href="catalogo.html" class="boton">Ver Catálogo</a>
+      <a href="catalogo.html" class="boton">Ver Vehículos — Catálogo</a>
       <a href="buscar.html" class="boton">Buscar Vehículo</a>
       <a href="mis-vehiculos.html" class="boton">Mis Vehículos</a>
       
       <button id="btnInstalarApp" class="boton">
         Descargar App
         <div class="contenedor-progreso oculto" id="contenedorProgreso">
-          <svg class="circulo-progreso" viewBox="0 0 32 32">
-            <circle class="fondo" cx="16" cy="16" r="13"></circle>
-            <circle class="barra" cx="16" cy="16" r="13" id="barraProgreso"></circle>
+          <svg class="circulo-progreso" viewBox="0 0 36 36">
+            <circle class="fondo" cx="18" cy="18" r="16"></circle>
+            <circle class="barra" cx="18" cy="18" r="16" id="barraProgreso"></circle>
           </svg>
           <span class="texto-progreso" id="textoProgreso">0%</span>
         </div>
       </button>
     </div>
     
-    <p id="mensajeInstalada" class="instalado-mensaje oculto">La aplicación ya está instalada en tu dispositivo.</p>
+    <p id="mensajeInstalada" class="instalado-mensaje oculto">La App ya está instalada en tu dispositivo</p>
     
     <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
     
@@ -400,7 +400,7 @@
   <button class="boton-ia-flotante" id="btnChatIA">Ayuda IA</button>
   <div class="ventana-chat oculto" id="ventanaChat">
     <div class="cabecera-chat">
-      <span>Asistente de Ayuda</span>
+      <span>Ayuda IA — Vehículos en Venta</span>
       <button class="cerrar-chat" id="btnCerrarChat">×</button>
     </div>
     <div class="cuerpo-chat" id="cuerpoChat">
@@ -442,7 +442,7 @@
     let deferredPrompt;
 
     function actualizarProgreso(porcentaje) {
-      const circunferencia = 2 * Math.PI * 13;
+      const circunferencia = 2 * Math.PI * 16;
       const desplazamiento = circunferencia - (porcentaje / 100) * circunferencia;
       barraProgreso.style.strokeDashoffset = desplazamiento;
       textoProgreso.textContent = porcentaje + '%';
@@ -479,7 +479,7 @@
     btnInstalarApp.addEventListener('click', async () => {
       if (verificarSiInstalada()) return;
       if (!deferredPrompt) {
-        alert('La aplicación ya está instalada o no se puede instalar en este dispositivo. Desde el celular tocá los tres puntos y seleccioná "Agregar a pantalla de inicio".');
+        alert('La aplicación ya está instalada o no se puede instalar en este dispositivo. Desde el celular tocá los 3 puntitos y seleccioná "Agregar a pantalla de inicio".');
         return;
       }
       contenedorProgreso.classList.remove('oculto');
@@ -566,14 +566,14 @@
         nombre = session.user.email.split('@')[0];
       }
       if (nombre) {
-        saludoUsuario.textContent = `Hola, ${nombre}.`;
+        saludoUsuario.textContent = `Hola: ${nombre}`;
         saludoUsuario.style.display = 'block';
         textoConectado.textContent = `Conectado — ${nombre}`;
       }
     }
     async function llamarGemini(mensajeUsuario) {
       if (!GEMINI_KEY || GEMINI_KEY.length < 10) {
-        return `Hola. Todo funciona correctamente y tu base de datos está conectada. Puedes generar tu clave en la página de Google AI Studio y pegarla cuando lo desees.`;
+        return `Hola. Todo funciona bien. Tu base está conectada. Generá tu clave en https://aistudio.google.com/app/apikey y la pegás cuando quieras.`;
       }
       const vehiculos = await obtenerVehiculos();
       
@@ -586,7 +586,7 @@ Para publicar un vehículo se debe seguir estos pasos: primero tocar el botón "
 
 La plataforma cuenta con estas secciones principales:
 - Ingresar Vehículo: para publicar un vehículo propio sin costo.
-- Ver Catálogo: para consultar todos los vehículos publicados.
+- Ver Vehículos — Catálogo: para consultar todos los vehículos publicados.
 - Buscar Vehículo: para filtrar por marca, modelo, precio y otros criterios.
 - Mis Vehículos: para guardar favoritos, con un límite de cinco elementos por cuenta.
 - Descargar App: para instalar la aplicación en el celular.
@@ -604,7 +604,7 @@ Si hay pocos vehículos publicados, explica que somos una plataforma en crecimie
             body: JSON.stringify({
               contents: [{
                 parts: [{
-                  text: `${contextoBase}\n\nConsulta del usuario: ${mensajeUsuario}`
+                  text: `${contextoBase}\n\nPregunta del usuario: ${mensajeUsuario}`
                 }]
               }],
               generationConfig: {
@@ -620,7 +620,7 @@ Si hay pocos vehículos publicados, explica que somos una plataforma en crecimie
           return datos.candidates[0].content.parts[0].text;
         } else if (datos.error) {
           console.error('Error de API:', datos.error);
-          return `Lo siento. La clave puede tardar unos minutos en activarse. Puedes intentar de nuevo más tarde. Mientras tanto, la plataforma funciona correctamente.`;
+          return `Lo siento. La clave puede tardar unos minutos en activarse. Probá de nuevo más tarde. Mientras tanto, la plataforma anda perfecta.`;
         } else {
           return `Recibí tu mensaje. Todo está conectado correctamente. En breve te respondo.`;
         }
@@ -661,7 +661,7 @@ Si hay pocos vehículos publicados, explica que somos una plataforma en crecimie
       }
     }
     btnCerrar.addEventListener('click', async () => {
-      if (confirm('¿Estás seguro de que querés cerrar sesión?')) {
+      if (confirm('¿Seguro querés cerrar sesión?')) {
         await supabaseClient.auth.signOut();
         verificarSesion();
         window.location.href = 'index.html';
