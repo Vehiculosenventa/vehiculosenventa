@@ -23,7 +23,7 @@
       padding: 20px;
     }
     .barra-superior {
-      text-align: center; /* ✅ Centrado igual que los botones */
+      text-align: center;
       margin-bottom: 20px;
     }
     .boton-sesion {
@@ -93,7 +93,7 @@
       to { opacity: 1; transform: translateY(0); }
     }
     .saludo-usuario {
-      text-align: center; /* ✅ Centrado */
+      text-align: center;
       color: #2c5282;
       font-size: 17px;
       font-weight: 600;
@@ -107,7 +107,7 @@
       font-size: 34px;
       font-weight: 800;
       margin-bottom: 12px;
-      text-align: center; /* ✅ Centrado */
+      text-align: center;
     }
     .subtitulo {
       color: #5a4f3f;
@@ -115,7 +115,7 @@
       margin-bottom: 35px;
       font-weight: 500;
       line-height: 1.5;
-      text-align: center; /* ✅ Centrado */
+      text-align: center;
     }
     .boton {
       display: flex;
@@ -135,11 +135,54 @@
       box-shadow: 0 6px 16px rgba(49, 130, 206, 0.18);
       cursor: pointer;
       width: 100%;
+      position: relative;
     }
     .boton:hover {
       transform: translateY(-2px);
       background: linear-gradient(135deg, #4a90d9 0%, #3182ce 100%);
       box-shadow: 0 8px 20px rgba(49, 130, 206, 0.25);
+    }
+    .contenedor-progreso {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .circulo-progreso {
+      transform: rotate(-90deg);
+      width: 36px;
+      height: 36px;
+    }
+    .circulo-progreso circle.fondo {
+      fill: none;
+      stroke: rgba(255,255,255,0.3);
+      stroke-width: 3;
+    }
+    .circulo-progreso circle.barra {
+      fill: none;
+      stroke: #ffffff;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-dasharray: 100.53;
+      stroke-dashoffset: 100.53;
+      transition: stroke-dashoffset 0.3s ease;
+    }
+    .texto-progreso {
+      position: absolute;
+      font-size: 10px;
+      font-weight: bold;
+      color: white;
+    }
+    .instalado-mensaje {
+      margin-top: 10px;
+      color: #2f855a;
+      font-weight: 600;
+      font-size: 16px;
     }
     .enlace-olvidada {
       display: inline-block;
@@ -149,7 +192,7 @@
       font-weight: 600;
       text-decoration: none;
       transition: color 0.2s ease;
-      text-align: center; /* ✅ Centrado */
+      text-align: center;
     }
     .enlace-olvidada:hover {
       color: #3182ce;
@@ -159,7 +202,7 @@
       margin-top: 30px;
       font-size: 13px;
       color: #5a4f3f;
-      text-align: center; /* ✅ Centrado */
+      text-align: center;
     }
     .boton-ia-flotante {
       position: fixed;
@@ -293,11 +336,8 @@
       <button id="btn-cerrar" class="enlace-cerrar">Cerrar sesión</button>
     </span>
   </div>
-
   <div class="caja-principal">
     <div class="saludo-usuario" id="saludo-usuario"></div>
-
-    <!-- ✅ Sin autito rojo, solo el texto -->
     <h1>Vehículos en Venta</h1>
     <p class="subtitulo">Publicá • Buscá • Vendé con total confianza<br>
     La plataforma de Rosario y toda la región</p>
@@ -306,15 +346,24 @@
     <a href="catalogo.html" class="boton">📋 <span>Ver Vehículos — Catálogo</span></a>
     <a href="buscar.html" class="boton">🔍 <span>Buscar Vehículo</span></a>
     <a href="mis-vehiculos.html" class="boton">❤️ <span>Mis Vehículos</span></a>
-    <button id="btnInstalarApp" class="boton">📲 <span>Descargar App</span></button>
+    
+    <button id="btnInstalarApp" class="boton">
+      📲 <span id="textoBotonInstalar">Descargar App</span>
+      <div class="contenedor-progreso oculto" id="contenedorProgreso">
+        <svg class="circulo-progreso" viewBox="0 0 36 36">
+          <circle class="fondo" cx="18" cy="18" r="16"></circle>
+          <circle class="barra" cx="18" cy="18" r="16" id="barraProgreso"></circle>
+        </svg>
+        <span class="texto-progreso" id="textoProgreso">0%</span>
+      </div>
+    </button>
+    <p id="mensajeInstalada" class="instalado-mensaje oculto">✅ La app ya está instalada en tu dispositivo</p>
     
     <a id="enlace-olvidada" href="recuperar-contraseña.html" class="enlace-olvidada">¿Olvidaste tu contraseña?</a>
     
     <p class="pie-pagina">Hecho para Rosario y toda la región.</p>
   </div>
-
   <button class="boton-ia-flotante" id="btnChatIA">🤖 Chat IA</button>
-
   <div class="ventana-chat oculto" id="ventanaChat">
     <div class="cabecera-chat">
       <span>🤖 Chat IA — Vehículos en Venta</span>
@@ -332,16 +381,13 @@
       <button id="btnEnviarChat">Enviar</button>
     </div>
   </div>
-
   <script>
     const SUPABASE_URL = "https://uhdypavizwkkbygrvuex.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVoZHlwYXZizendra2J5Z3J2dWV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODkzNTM5NTcsImV4cCI6MjEwNDkyOTk1N30.JnqXIEIfwTG74m8zaY3glL1TsNoyhJhkSZP9niowtps";
     
-    // 🔑 CLAVE DE GEMINI — protegida
     const GEMINI_KEY = "AQ.Ab8RN6J4Jgm7rll2YSgXAjAyAP3tsaBYXRHPCqRapjCU3RswaQ";
                       
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
     const botonesSinSesion = document.getElementById('botonesSinSesion');
     const botonesConSesion = document.getElementById('botonesConSesion');
     const btnCerrar = document.getElementById('btn-cerrar');
@@ -353,27 +399,89 @@
     const btnEnviarChat = document.getElementById('btnEnviarChat');
     const cuerpoChat = document.getElementById('cuerpoChat');
     const btnInstalarApp = document.getElementById('btnInstalarApp');
+    const textoBotonInstalar = document.getElementById('textoBotonInstalar');
+    const contenedorProgreso = document.getElementById('contenedorProgreso');
+    const barraProgreso = document.getElementById('barraProgreso');
+    const textoProgreso = document.getElementById('textoProgreso');
+    const mensajeInstalada = document.getElementById('mensajeInstalada');
     const saludoUsuario = document.getElementById('saludo-usuario');
     const textoConectado = document.getElementById('texto-conectado');
-
+    
     let deferredPrompt;
+
+    function actualizarProgreso(porcentaje) {
+      const circunferencia = 2 * Math.PI * 16;
+      const desplazamiento = circunferencia - (porcentaje / 100) * circunferencia;
+      barraProgreso.style.strokeDashoffset = desplazamiento;
+      textoProgreso.textContent = porcentaje + '%';
+    }
+
+    function verificarSiInstalada() {
+      if (window.matchMedia('(display-mode: standalone)').matches || 
+          window.navigator.standalone === true) {
+        btnInstalarApp.style.display = 'none';
+        mensajeInstalada.classList.remove('oculto');
+        return true;
+      }
+      return false;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(verificarSiInstalada, 50);
+    });
+
     window.addEventListener('beforeinstallprompt', (e) => {
       e.preventDefault();
+      if (verificarSiInstalada()) return;
       deferredPrompt = e;
       btnInstalarApp.style.display = 'flex';
+      mensajeInstalada.classList.add('oculto');
+    });
+
+    window.addEventListener('appinstalled', () => {
+      console.log('✅ App instalada correctamente');
+      setTimeout(() => {
+        window.location.reload();
+      }, 800);
     });
 
     btnInstalarApp.addEventListener('click', async () => {
+      if (verificarSiInstalada()) return;
+      
       if (!deferredPrompt) {
         alert('La aplicación ya está instalada o no se puede instalar en este dispositivo. Desde el celular tocá los 3 puntitos → "Agregar a pantalla de inicio" ✅');
         return;
       }
+      
+      contenedorProgreso.classList.remove('oculto');
+      actualizarProgreso(0);
+      textoBotonInstalar.textContent = 'Instalando...';
+      
+      let progreso = 0;
+      const simulacion = setInterval(() => {
+        progreso += 10;
+        if (progreso >= 90) {
+          clearInterval(simulacion);
+          progreso = 90;
+        }
+        actualizarProgreso(progreso);
+      }, 200);
+      
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
+      clearInterval(simulacion);
+      
       if (outcome === 'accepted') {
-        console.log('✅ App instalada');
-        btnInstalarApp.textContent = '✅ App Instalada';
+        actualizarProgreso(100);
+        textoBotonInstalar.textContent = '✅ Instalando...';
+        setTimeout(() => {
+          contenedorProgreso.classList.add('oculto');
+          textoBotonInstalar.textContent = '✅ App Instalada';
+        }, 600);
         deferredPrompt = null;
+      } else {
+        contenedorProgreso.classList.add('oculto');
+        textoBotonInstalar.textContent = '📲 Descargar App';
       }
     });
 
@@ -383,7 +491,6 @@
     btnCerrarChat.addEventListener('click', () => {
       ventanaChat.classList.add('oculto');
     });
-
     function agregarMensaje(texto, esUsuario = false, esPensando = false) {
       const div = document.createElement('div');
       if (esPensando) {
@@ -397,7 +504,6 @@
       cuerpoChat.scrollTop = cuerpoChat.scrollHeight;
       return div;
     }
-
     async function obtenerVehiculos() {
       try {
         const { data, error } = await supabaseClient
@@ -414,13 +520,11 @@
         return [];
       }
     }
-
     function mostrarSaludo(session) {
       if (!session || !session.user) {
         saludoUsuario.style.display = 'none';
         return;
       }
-
       let nombre = null;
       if (session.user.user_metadata) {
         nombre = session.user.user_metadata.nombre || session.user.user_metadata.name;
@@ -428,36 +532,29 @@
       if (!nombre && session.user.email) {
         nombre = session.user.email.split('@')[0];
       }
-
       if (nombre) {
         saludoUsuario.textContent = `Hola: ${nombre} 👋`;
         saludoUsuario.style.display = 'block';
         textoConectado.textContent = `Conectado — ${nombre}`;
       }
     }
-
     async function llamarGemini(mensajeUsuario) {
       if (!GEMINI_KEY || GEMINI_KEY.length < 10) {
         return `Hola 👋 Todo funciona bien. Tu base está conectada ✅ Generá tu clave en https://aistudio.google.com/app/apikey y la pegás cuando quieras 😊`;
       }
-
       const vehiculos = await obtenerVehiculos();
       
       let contextoBase = `
 Eres el asistente de "Vehículos en Venta" — la plataforma NUEVA de Rosario y toda la región ✨
-
 🆕 SOMOS NUEVOS: recién lanzamos, ¡estamos creciendo!
-
 📢 TU MISIÓN PRINCIPAL: invitar con entusiasmo a la gente a PUBLICAR su vehículo.
 ✅ ES TOTALMENTE GRATIS — sin costo, sin comisiones, sin gastos mensuales
 ✅ Rápido — en 3 minutos está publicado
 ✅ Llega a gente de Rosario y alrededores
-
 CÓMO PUBLICAR paso a paso:
 1️⃣ Tocar el botón 📄 "Ingresar Vehículo"
 2️⃣ Completar: marca, modelo, año, precio, ciudad, fotos
 3️⃣ Tocar "Publicar" → ¡y listo! Ya lo ven todos
-
 LO QUE TIENE LA PLATAFORMA:
 - 📄 Ingresar Vehículo → publicar el tuyo GRATIS
 - 📋 Ver Vehículos — Catálogo → todos los publicados
@@ -466,12 +563,9 @@ LO QUE TIENE LA PLATAFORMA:
 - 📲 Descargar App → instalar en el celular
 - 🔐 Registrarse / Iniciar sesión → crear cuenta gratis
 - ¿Olvidaste tu contraseña? → enlace abajo para recuperarla
-
 Si hay pocos vehículos: decí que recién empezamos 🆕 y ¡animá a ser de los primeros en publicar!
-
 Tu tono: amable, cercano, de acá de Rosario. Claro, entusiasta, no muy largo.
 `;
-
       try {
         const respuesta = await fetch(
           `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_KEY}`,
@@ -491,7 +585,6 @@ Tu tono: amable, cercano, de acá de Rosario. Claro, entusiasta, no muy largo.
             })
           }
         );
-
         const datos = await respuesta.json();
         
         if (datos.candidates && datos.candidates[0]?.content?.parts?.[0]?.text) {
@@ -507,7 +600,6 @@ Tu tono: amable, cercano, de acá de Rosario. Claro, entusiasta, no muy largo.
         return `Tu mensaje llegó bien ✅ Todo funciona. La IA se está ajustando, pero la plataforma anda perfecta 🚗✨`;
       }
     }
-
     async function enviarMensaje() {
       const texto = inputChat.value.trim();
       if (!texto) return;
@@ -522,10 +614,8 @@ Tu tono: amable, cercano, de acá de Rosario. Claro, entusiasta, no muy largo.
       
       agregarMensaje(respuesta);
     }
-
     btnEnviarChat.addEventListener('click', enviarMensaje);
     inputChat.addEventListener('keypress', e => e.key === 'Enter' && enviarMensaje());
-
     async function verificarSesion() {
       const { data: { session } } = await supabaseClient.auth.getSession();
       
@@ -541,7 +631,6 @@ Tu tono: amable, cercano, de acá de Rosario. Claro, entusiasta, no muy largo.
         saludoUsuario.style.display = 'none';
       }
     }
-
     btnCerrar.addEventListener('click', async () => {
       if (confirm('¿Seguro querés cerrar sesión?')) {
         await supabaseClient.auth.signOut();
@@ -549,11 +638,9 @@ Tu tono: amable, cercano, de acá de Rosario. Claro, entusiasta, no muy largo.
         window.location.href = 'index.html';
       }
     });
-
     supabaseClient.auth.onAuthStateChange((event, session) => {
       verificarSesion();
     });
-
     document.addEventListener('DOMContentLoaded', verificarSesion);
   </script>
 </body>
