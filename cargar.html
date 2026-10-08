@@ -554,14 +554,14 @@
         <div class="foto-tarjeta" id="foto_tarjeta_1">
           <div class="foto-tarjeta-titulo">1️⃣ Foto 1</div>
           <div class="foto-botones-fila">
-            <div class="foto-boton-elegir" id="btnElegir1">
+            <label class="foto-boton-elegir" id="btnElegir1">
               📁 Elegir de carpeta
               <input type="file" class="foto-input-oculto" id="foto1_archivo" accept="image/*">
-            </div>
-            <div class="foto-boton-camara" id="btnCamara1">
+            </label>
+            <label class="foto-boton-camara" id="btnCamara1">
               📸 Sacar foto ahora
               <input type="file" class="foto-input-oculto" id="foto1_camara" accept="image/*" capture="environment">
-            </div>
+            </label>
           </div>
           <div class="foto-mini-contenedor">
             <div class="foto-mini" id="mini1">
@@ -575,14 +575,14 @@
         <div class="foto-tarjeta" id="foto_tarjeta_2">
           <div class="foto-tarjeta-titulo">2️⃣ Foto 2</div>
           <div class="foto-botones-fila">
-            <div class="foto-boton-elegir" id="btnElegir2">
+            <label class="foto-boton-elegir" id="btnElegir2">
               📁 Elegir de carpeta
               <input type="file" class="foto-input-oculto" id="foto2_archivo" accept="image/*">
-            </div>
-            <div class="foto-boton-camara" id="btnCamara2">
+            </label>
+            <label class="foto-boton-camara" id="btnCamara2">
               📸 Sacar foto ahora
               <input type="file" class="foto-input-oculto" id="foto2_camara" accept="image/*" capture="environment">
-            </div>
+            </label>
           </div>
           <div class="foto-mini-contenedor">
             <div class="foto-mini" id="mini2">
@@ -596,14 +596,14 @@
         <div class="foto-tarjeta" id="foto_tarjeta_3">
           <div class="foto-tarjeta-titulo">3️⃣ Foto 3</div>
           <div class="foto-botones-fila">
-            <div class="foto-boton-elegir" id="btnElegir3">
+            <label class="foto-boton-elegir" id="btnElegir3">
               📁 Elegir de carpeta
               <input type="file" class="foto-input-oculto" id="foto3_archivo" accept="image/*">
-            </div>
-            <div class="foto-boton-camara" id="btnCamara3">
+            </label>
+            <label class="foto-boton-camara" id="btnCamara3">
               📸 Sacar foto ahora
               <input type="file" class="foto-input-oculto" id="foto3_camara" accept="image/*" capture="environment">
-            </div>
+            </label>
           </div>
           <div class="foto-mini-contenedor">
             <div class="foto-mini" id="mini3">
@@ -617,14 +617,14 @@
         <div class="foto-tarjeta" id="foto_tarjeta_4">
           <div class="foto-tarjeta-titulo">4️⃣ Foto 4</div>
           <div class="foto-botones-fila">
-            <div class="foto-boton-elegir" id="btnElegir4">
+            <label class="foto-boton-elegir" id="btnElegir4">
               📁 Elegir de carpeta
               <input type="file" class="foto-input-oculto" id="foto4_archivo" accept="image/*">
-            </div>
-            <div class="foto-boton-camara" id="btnCamara4">
+            </label>
+            <label class="foto-boton-camara" id="btnCamara4">
               📸 Sacar foto ahora
               <input type="file" class="foto-input-oculto" id="foto4_camara" accept="image/*" capture="environment">
-            </div>
+            </label>
           </div>
           <div class="foto-mini-contenedor">
             <div class="foto-mini" id="mini4">
@@ -638,14 +638,14 @@
         <div class="foto-tarjeta" id="foto_tarjeta_5">
           <div class="foto-tarjeta-titulo">5️⃣ Foto 5</div>
           <div class="foto-botones-fila">
-            <div class="foto-boton-elegir" id="btnElegir5">
+            <label class="foto-boton-elegir" id="btnElegir5">
               📁 Elegir de carpeta
               <input type="file" class="foto-input-oculto" id="foto5_archivo" accept="image/*">
-            </div>
-            <div class="foto-boton-camara" id="btnCamara5">
+            </label>
+            <label class="foto-boton-camara" id="btnCamara5">
               📸 Sacar foto ahora
               <input type="file" class="foto-input-oculto" id="foto5_camara" accept="image/*" capture="environment">
-            </div>
+            </label>
           </div>
           <div class="foto-mini-contenedor">
             <div class="foto-mini" id="mini5">
@@ -659,14 +659,14 @@
         <div class="foto-tarjeta" id="foto_tarjeta_6">
           <div class="foto-tarjeta-titulo">6️⃣ Foto 6</div>
           <div class="foto-botones-fila">
-            <div class="foto-boton-elegir" id="btnElegir6">
+            <label class="foto-boton-elegir" id="btnElegir6">
               📁 Elegir de carpeta
               <input type="file" class="foto-input-oculto" id="foto6_archivo" accept="image/*">
-            </div>
-            <div class="foto-boton-camara" id="btnCamara6">
+            </label>
+            <label class="foto-boton-camara" id="btnCamara6">
               📸 Sacar foto ahora
               <input type="file" class="foto-input-oculto" id="foto6_camara" accept="image/*" capture="environment">
-            </div>
+            </label>
           </div>
           <div class="foto-mini-contenedor">
             <div class="foto-mini" id="mini6">
@@ -750,11 +750,7 @@
         if (tarjeta) {
           desactivar ? tarjeta.classList.add('disabled') : tarjeta.classList.remove('disabled');
         }
-        // Habilitar/deshabilitar inputs de foto
-        const inputArchivo = document.getElementById(`foto${i}_archivo`);
-        const inputCamara = document.getElementById(`foto${i}_camara`);
-        if (inputArchivo) inputArchivo.disabled = desactivar;
-        if (inputCamara) inputCamara.disabled = desactivar;
+        // NO bloquear los inputs de foto — la cámara no funciona si están desactivados
       }
     }
 
@@ -836,24 +832,16 @@
             setFormDisabled(false);
           }
 
-          // Conectar botones de cada foto
+          // Conectar eventos de cada foto
           for (let i = 1; i <= 6; i++) {
             const inputArchivo = document.getElementById(`foto${i}_archivo`);
             const inputCamara = document.getElementById(`foto${i}_camara`);
-            const btnElegir = document.getElementById(`btnElegir${i}`);
-            const btnCamara = document.getElementById(`btnCamara${i}`);
             const mini = document.getElementById(`mini${i}`);
             
-            if (inputArchivo && btnElegir) {
-              btnElegir.addEventListener('click', (e) => {
-                if (!inputArchivo.closest('.disabled')) inputArchivo.click();
-              });
+            if (inputArchivo) {
               inputArchivo.addEventListener('change', e => verFoto(i, e.target));
             }
-            if (inputCamara && btnCamara) {
-              btnCamara.addEventListener('click', (e) => {
-                if (!inputCamara.closest('.disabled')) inputCamara.click();
-              });
+            if (inputCamara) {
               inputCamara.addEventListener('change', e => verFoto(i, e.target));
             }
             if (mini) {
@@ -878,30 +866,6 @@
             } else {
               avisoLimite.classList.add('oculto');
               setFormDisabled(false);
-            }
-
-            for (let i = 1; i <= 6; i++) {
-              const inputArchivo = document.getElementById(`foto${i}_archivo`);
-              const inputCamara = document.getElementById(`foto${i}_camara`);
-              const btnElegir = document.getElementById(`btnElegir${i}`);
-              const btnCamara = document.getElementById(`btnCamara${i}`);
-              const mini = document.getElementById(`mini${i}`);
-              
-              if (inputArchivo && btnElegir) {
-                btnElegir.addEventListener('click', (e) => {
-                  if (!inputArchivo.closest('.disabled')) inputArchivo.click();
-                });
-                inputArchivo.addEventListener('change', e => verFoto(i, e.target));
-              }
-              if (inputCamara && btnCamara) {
-                btnCamara.addEventListener('click', (e) => {
-                  if (!inputCamara.closest('.disabled')) inputCamara.click();
-                });
-                inputCamara.addEventListener('change', e => verFoto(i, e.target));
-              }
-              if (mini) {
-                mini.addEventListener('click', () => ampliarFoto(i));
-              }
             }
           }
         });
