@@ -169,7 +169,6 @@
       margin-bottom: 20px;
     }
 
-    /* === TARJETA DE FOTO DIVIDIDA EN 2 === */
     .foto-tarjeta {
       background: #fff;
       border-radius: 14px;
@@ -262,7 +261,6 @@
     .oculto { display: none !important; }
     .campo-otra-ciudad { margin-top: 10px; position: relative; z-index: 2; }
 
-    /* 🔍 VENTANA AMPLIAR FOTO */
     .ventana-foto {
       position: fixed;
       top: 0; left: 0;
@@ -286,7 +284,6 @@
       border-radius: 12px;
       box-shadow: 0 0 30px rgba(0,0,0,0.5);
     }
-    /* 💧 LOGO EN ESQUINA SUPERIOR DERECHA DE LA FOTO */
     .logo-agua-foto {
       position: absolute;
       top: 10px;
@@ -558,9 +555,9 @@
               📁 Elegir de carpeta
               <input type="file" class="foto-input-oculto" id="foto1_archivo" accept="image/*">
             </label>
-            <label class="foto-boton-camara">
+            <label class="foto-boton-camara" id="etqCamara1">
               📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto1_camara" accept="image/*" capture="environment">
+              <input type="file" class="foto-input-oculto" id="foto1_camara" accept="image/*;capture=environment">
             </label>
           </div>
           <div class="foto-mini-contenedor">
@@ -581,7 +578,7 @@
             </label>
             <label class="foto-boton-camara">
               📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto2_camara" accept="image/*" capture="environment">
+              <input type="file" class="foto-input-oculto" id="foto2_camara" accept="image/*;capture=environment">
             </label>
           </div>
           <div class="foto-mini-contenedor">
@@ -602,7 +599,7 @@
             </label>
             <label class="foto-boton-camara">
               📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto3_camara" accept="image/*" capture="environment">
+              <input type="file" class="foto-input-oculto" id="foto3_camara" accept="image/*;capture=environment">
             </label>
           </div>
           <div class="foto-mini-contenedor">
@@ -623,7 +620,7 @@
             </label>
             <label class="foto-boton-camara">
               📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto4_camara" accept="image/*" capture="environment">
+              <input type="file" class="foto-input-oculto" id="foto4_camara" accept="image/*;capture=environment">
             </label>
           </div>
           <div class="foto-mini-contenedor">
@@ -644,7 +641,7 @@
             </label>
             <label class="foto-boton-camara">
               📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto5_camara" accept="image/*" capture="environment">
+              <input type="file" class="foto-input-oculto" id="foto5_camara" accept="image/*;capture=environment">
             </label>
           </div>
           <div class="foto-mini-contenedor">
@@ -665,7 +662,7 @@
             </label>
             <label class="foto-boton-camara">
               📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto6_camara" accept="image/*" capture="environment">
+              <input type="file" class="foto-input-oculto" id="foto6_camara" accept="image/*;capture=environment">
             </label>
           </div>
           <div class="foto-mini-contenedor">
@@ -706,7 +703,6 @@
     const fotoGrande = document.getElementById('fotoGrande');
     const cerrarFoto = document.getElementById('cerrarFoto');
 
-    // ✅ Comprimir foto para que pese menos
     function comprimirFoto(archivo, calidad = 0.85, maxAncho = 1000) {
       return new Promise((resolver) => {
         const lector = new FileReader();
@@ -716,19 +712,15 @@
             const canvas = document.createElement('canvas');
             let ancho = img.width;
             let alto = img.height;
-
             if (ancho > maxAncho) {
               const relacion = maxAncho / ancho;
               ancho = maxAncho;
               alto = alto * relacion;
             }
-
             canvas.width = ancho;
             canvas.height = alto;
-
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, ancho, alto);
-
             resolver(canvas.toDataURL('image/jpeg', calidad));
           };
           img.src = e.target.result;
@@ -737,7 +729,6 @@
       });
     }
 
-    // ✅ Mostrar foto en miniatura
     function verFoto(numero, input) {
       if (input.files && input.files[0]) {
         const lector = new FileReader();
@@ -752,7 +743,6 @@
       }
     }
 
-    // ✅ Ampliar foto al tocar
     function ampliarFoto(numero) {
       const img = document.getElementById(`img${numero}`);
       if (img && img.style.display === 'block' && img.src) {
@@ -761,7 +751,6 @@
       }
     }
 
-    // ✅ Conectar TODOS los eventos de fotos
     function conectarEventosFotos() {
       for (let i = 1; i <= 6; i++) {
         const inputArchivo = document.getElementById(`foto${i}_archivo`);
@@ -808,48 +797,40 @@
         document.getElementById('ciudad_otra').disabled = false;
       }
       
-      // Los inputs de foto NUNCA se desactivan para que funcione la cámara
       for (let i = 1; i <= 6; i++) {
         const tarjeta = document.getElementById(`foto_tarjeta_${i}`);
         if (tarjeta) {
           desactivar ? tarjeta.classList.add('disabled') : tarjeta.classList.remove('disabled');
         }
-        document.getElementById(`foto${i}_archivo`).disabled = false;
-        document.getElementById(`foto${i}_camara`).disabled = false;
+        // Los inputs de foto NUNCA se desactivan
+        const inpArch = document.getElementById(`foto${i}_archivo`);
+        const inpCam = document.getElementById(`foto${i}_camara`);
+        if (inpArch) inpArch.disabled = false;
+        if (inpCam) inpCam.disabled = false;
       }
     }
 
     async function verificarLimitePublicaciones(usuarioId, correoUsuario) {
-      if (correoUsuario === CORREO_SIN_LIMITE) {
-        return 0;
-      }
-      
+      if (correoUsuario === CORREO_SIN_LIMITE) return 0;
       const { count, error } = await supabaseClient
         .from('autos')
         .select('*', { count: 'exact', head: true })
         .eq('usuario_id', usuarioId);
-      
-      if (error) {
-        console.error("Error al contar:", error);
-        return 0;
-      }
+      if (error) { console.error("Error al contar:", error); return 0; }
       return count || 0;
     }
 
     async function verificarSesion() {
       try {
+        conectarEventosFotos(); // Conectar fotos al cargar
+        
         const { data: { session } } = await supabaseClient.auth.getSession();
-
-        // Conectar fotos ANTES de mostrar nada
-        conectarEventosFotos();
-
         if (session) {
           document.getElementById('cargando').classList.add('oculto');
           document.getElementById('bloqueNoConectado').classList.add('oculto');
           document.getElementById('bloqueConectado').classList.remove('oculto');
           
           const cantidad = await verificarLimitePublicaciones(session.user.id, session.user.email);
-          
           if (cantidad >= 5 && session.user.email !== CORREO_SIN_LIMITE) {
             avisoLimite.classList.remove('oculto');
             setFormDisabled(true);
@@ -866,9 +847,7 @@
           if (nuevaSesion) {
             document.getElementById('bloqueNoConectado').classList.add('oculto');
             document.getElementById('bloqueConectado').classList.remove('oculto');
-            
             const cantidad = await verificarLimitePublicaciones(nuevaSesion.user.id, nuevaSesion.user.email);
-            
             if (cantidad >= 5 && nuevaSesion.user.email !== CORREO_SIN_LIMITE) {
               avisoLimite.classList.remove('oculto');
               setFormDisabled(true);
@@ -878,7 +857,6 @@
             }
           }
         });
-        
       } catch (error) {
         console.error("Error:", error);
         document.getElementById('cargando').classList.add('oculto');
@@ -893,20 +871,17 @@
 
     async function guardarVehiculo(e) {
       e.preventDefault();
-      
       const { data: { session } } = await supabaseClient.auth.getSession();
       if (!session) return;
 
       const boton = document.getElementById('btnGuardar');
       const cajaMensaje = document.getElementById('mensaje');
-      
       boton.disabled = true;
       boton.textContent = "Guardando...";
       cajaMensaje.style.display = "none";
 
       try {
         const cantidad = await verificarLimitePublicaciones(session.user.id, session.user.email);
-        
         if (cantidad >= 5 && session.user.email !== CORREO_SIN_LIMITE) {
           throw new Error("Ya publicaste 5 vehículos. El límite es 5. Eliminá uno para poder publicar otro.");
         }
@@ -915,23 +890,22 @@
         for (let i = 1; i <= 6; i++) {
           const inputArchivo = document.getElementById(`foto${i}_archivo`);
           const inputCamara = document.getElementById(`foto${i}_camara`);
-          const input = inputArchivo.files[0] ? inputArchivo : inputCamara;
+          let inputUsar = null;
+          if (inputArchivo?.files?.[0]) inputUsar = inputArchivo;
+          else if (inputCamara?.files?.[0]) inputUsar = inputCamara;
           
-          if (input.files && input.files[0]) {
-            fotos[`foto${i}`] = await comprimirFoto(input.files[0]);
+          if (inputUsar?.files?.[0]) {
+            fotos[`foto${i}`] = await comprimirFoto(inputUsar.files[0]);
           } else {
             fotos[`foto${i}`] = null;
           }
         }
 
         let tipoVehiculoValor = document.getElementById('tipo_vehiculo').value || null;
-        
         let ciudadValor;
         if (selectCiudad.value === 'otra') {
           ciudadValor = document.getElementById('ciudad_otra').value.trim();
-          if (!ciudadValor) {
-            throw new Error("Escribí tu ciudad en el campo que apareció");
-          }
+          if (!ciudadValor) throw new Error("Escribí tu ciudad en el campo que apareció");
         } else {
           ciudadValor = selectCiudad.value || null;
         }
@@ -972,7 +946,6 @@
         };
 
         const { error } = await supabaseClient.from('autos').insert([datos]);
-        
         if (error) throw error;
 
         cajaMensaje.textContent = "✅ Vehículo guardado correctamente";
@@ -981,7 +954,6 @@
         document.getElementById('formAuto').reset();
         bloqueOtraCiudad.classList.add('oculto');
         
-        // Limpiar fotos al enviar
         for (let i = 1; i <= 6; i++) {
           const img = document.getElementById(`img${i}`);
           const sin = document.getElementById(`sin${i}`);
@@ -993,7 +965,6 @@
           avisoLimite.classList.remove('oculto');
           setFormDisabled(true);
         }
-        
       } catch (error) {
         console.error("Error:", error);
         cajaMensaje.textContent = "❌ Error: " + error.message;
