@@ -407,7 +407,7 @@
             <span>📅</span>
             <label>Año</label>
           </div>
-          <input type="number" id="anio" placeholder="Ej: 2015" disabled>
+          <input type="number" id="anio" placeholder="Ej: 2015" min="1900" max="2100" oninput="if(this.value.length>4)this.value=this.value.slice(0,4)" disabled>
         </div>
         <div class="campo">
           <div class="etiqueta-linea">
@@ -554,11 +554,11 @@
         <div class="foto-tarjeta" id="foto_tarjeta_1">
           <div class="foto-tarjeta-titulo">1️⃣ Foto 1</div>
           <div class="foto-botones-fila">
-            <label class="foto-boton-elegir" id="btnElegir1">
+            <label class="foto-boton-elegir">
               📁 Elegir de carpeta
               <input type="file" class="foto-input-oculto" id="foto1_archivo" accept="image/*">
             </label>
-            <label class="foto-boton-camara" id="btnCamara1">
+            <label class="foto-boton-camara">
               📸 Sacar foto ahora
               <input type="file" class="foto-input-oculto" id="foto1_camara" accept="image/*" capture="environment">
             </label>
@@ -575,11 +575,11 @@
         <div class="foto-tarjeta" id="foto_tarjeta_2">
           <div class="foto-tarjeta-titulo">2️⃣ Foto 2</div>
           <div class="foto-botones-fila">
-            <label class="foto-boton-elegir" id="btnElegir2">
+            <label class="foto-boton-elegir">
               📁 Elegir de carpeta
               <input type="file" class="foto-input-oculto" id="foto2_archivo" accept="image/*">
             </label>
-            <label class="foto-boton-camara" id="btnCamara2">
+            <label class="foto-boton-camara">
               📸 Sacar foto ahora
               <input type="file" class="foto-input-oculto" id="foto2_camara" accept="image/*" capture="environment">
             </label>
@@ -596,11 +596,11 @@
         <div class="foto-tarjeta" id="foto_tarjeta_3">
           <div class="foto-tarjeta-titulo">3️⃣ Foto 3</div>
           <div class="foto-botones-fila">
-            <label class="foto-boton-elegir" id="btnElegir3">
+            <label class="foto-boton-elegir">
               📁 Elegir de carpeta
               <input type="file" class="foto-input-oculto" id="foto3_archivo" accept="image/*">
             </label>
-            <label class="foto-boton-camara" id="btnCamara3">
+            <label class="foto-boton-camara">
               📸 Sacar foto ahora
               <input type="file" class="foto-input-oculto" id="foto3_camara" accept="image/*" capture="environment">
             </label>
@@ -617,11 +617,11 @@
         <div class="foto-tarjeta" id="foto_tarjeta_4">
           <div class="foto-tarjeta-titulo">4️⃣ Foto 4</div>
           <div class="foto-botones-fila">
-            <label class="foto-boton-elegir" id="btnElegir4">
+            <label class="foto-boton-elegir">
               📁 Elegir de carpeta
               <input type="file" class="foto-input-oculto" id="foto4_archivo" accept="image/*">
             </label>
-            <label class="foto-boton-camara" id="btnCamara4">
+            <label class="foto-boton-camara">
               📸 Sacar foto ahora
               <input type="file" class="foto-input-oculto" id="foto4_camara" accept="image/*" capture="environment">
             </label>
@@ -638,11 +638,11 @@
         <div class="foto-tarjeta" id="foto_tarjeta_5">
           <div class="foto-tarjeta-titulo">5️⃣ Foto 5</div>
           <div class="foto-botones-fila">
-            <label class="foto-boton-elegir" id="btnElegir5">
+            <label class="foto-boton-elegir">
               📁 Elegir de carpeta
               <input type="file" class="foto-input-oculto" id="foto5_archivo" accept="image/*">
             </label>
-            <label class="foto-boton-camara" id="btnCamara5">
+            <label class="foto-boton-camara">
               📸 Sacar foto ahora
               <input type="file" class="foto-input-oculto" id="foto5_camara" accept="image/*" capture="environment">
             </label>
@@ -659,11 +659,11 @@
         <div class="foto-tarjeta" id="foto_tarjeta_6">
           <div class="foto-tarjeta-titulo">6️⃣ Foto 6</div>
           <div class="foto-botones-fila">
-            <label class="foto-boton-elegir" id="btnElegir6">
+            <label class="foto-boton-elegir">
               📁 Elegir de carpeta
               <input type="file" class="foto-input-oculto" id="foto6_archivo" accept="image/*">
             </label>
-            <label class="foto-boton-camara" id="btnCamara6">
+            <label class="foto-boton-camara">
               📸 Sacar foto ahora
               <input type="file" class="foto-input-oculto" id="foto6_camara" accept="image/*" capture="environment">
             </label>
@@ -737,23 +737,7 @@
       });
     }
 
-    function setFormDisabled(desactivar) {
-      const campos = document.querySelectorAll('input, select, textarea, button[type="submit"]');
-      campos.forEach(campo => campo.disabled = desactivar);
-      
-      if (!desactivar && selectCiudad.value === 'otra') {
-        document.getElementById('ciudad_otra').disabled = false;
-      }
-      
-      for (let i = 1; i <= 6; i++) {
-        const tarjeta = document.getElementById(`foto_tarjeta_${i}`);
-        if (tarjeta) {
-          desactivar ? tarjeta.classList.add('disabled') : tarjeta.classList.remove('disabled');
-        }
-        // NO bloquear los inputs de foto — la cámara no funciona si están desactivados
-      }
-    }
-
+    // ✅ Mostrar foto en miniatura
     function verFoto(numero, input) {
       if (input.files && input.files[0]) {
         const lector = new FileReader();
@@ -768,11 +752,31 @@
       }
     }
 
+    // ✅ Ampliar foto al tocar
     function ampliarFoto(numero) {
       const img = document.getElementById(`img${numero}`);
       if (img && img.style.display === 'block' && img.src) {
         fotoGrande.src = img.src;
         ventanaFoto.classList.add('mostrar');
+      }
+    }
+
+    // ✅ Conectar TODOS los eventos de fotos
+    function conectarEventosFotos() {
+      for (let i = 1; i <= 6; i++) {
+        const inputArchivo = document.getElementById(`foto${i}_archivo`);
+        const inputCamara = document.getElementById(`foto${i}_camara`);
+        const mini = document.getElementById(`mini${i}`);
+        
+        if (inputArchivo) {
+          inputArchivo.addEventListener('change', e => verFoto(i, e.target));
+        }
+        if (inputCamara) {
+          inputCamara.addEventListener('change', e => verFoto(i, e.target));
+        }
+        if (mini) {
+          mini.addEventListener('click', () => ampliarFoto(i));
+        }
       }
     }
 
@@ -796,6 +800,25 @@
       }
     });
 
+    function setFormDisabled(desactivar) {
+      const campos = document.querySelectorAll('input, select, textarea, button[type="submit"]');
+      campos.forEach(campo => campo.disabled = desactivar);
+      
+      if (!desactivar && selectCiudad.value === 'otra') {
+        document.getElementById('ciudad_otra').disabled = false;
+      }
+      
+      // Los inputs de foto NUNCA se desactivan para que funcione la cámara
+      for (let i = 1; i <= 6; i++) {
+        const tarjeta = document.getElementById(`foto_tarjeta_${i}`);
+        if (tarjeta) {
+          desactivar ? tarjeta.classList.add('disabled') : tarjeta.classList.remove('disabled');
+        }
+        document.getElementById(`foto${i}_archivo`).disabled = false;
+        document.getElementById(`foto${i}_camara`).disabled = false;
+      }
+    }
+
     async function verificarLimitePublicaciones(usuarioId, correoUsuario) {
       if (correoUsuario === CORREO_SIN_LIMITE) {
         return 0;
@@ -817,6 +840,9 @@
       try {
         const { data: { session } } = await supabaseClient.auth.getSession();
 
+        // Conectar fotos ANTES de mostrar nada
+        conectarEventosFotos();
+
         if (session) {
           document.getElementById('cargando').classList.add('oculto');
           document.getElementById('bloqueNoConectado').classList.add('oculto');
@@ -830,23 +856,6 @@
           } else {
             avisoLimite.classList.add('oculto');
             setFormDisabled(false);
-          }
-
-          // Conectar eventos de cada foto
-          for (let i = 1; i <= 6; i++) {
-            const inputArchivo = document.getElementById(`foto${i}_archivo`);
-            const inputCamara = document.getElementById(`foto${i}_camara`);
-            const mini = document.getElementById(`mini${i}`);
-            
-            if (inputArchivo) {
-              inputArchivo.addEventListener('change', e => verFoto(i, e.target));
-            }
-            if (inputCamara) {
-              inputCamara.addEventListener('change', e => verFoto(i, e.target));
-            }
-            if (mini) {
-              mini.addEventListener('click', () => ampliarFoto(i));
-            }
           }
         } else {
           document.getElementById('cargando').classList.add('oculto');
@@ -932,13 +941,18 @@
           throw new Error("El teléfono debe tener entre 8 y 15 dígitos");
         }
 
+        const anioValor = parseInt(document.getElementById('anio').value);
+        if (anioValor && (anioValor < 1900 || anioValor > new Date().getFullYear() + 1)) {
+          throw new Error("El año debe ser entre 1900 y el próximo año");
+        }
+
         const datos = {
           tipo_vehiculo: tipoVehiculoValor,
           marca: document.getElementById('marca').value || null,
           modelo: document.getElementById('modelo').value || null,
           version: document.getElementById('version').value || null,
           combustible: document.getElementById('combustible').value || null,
-          anio: parseInt(document.getElementById('anio').value) || null,
+          anio: anioValor || null,
           transmision: document.getElementById('transmision').value || null,
           kilometraje: parseInt(document.getElementById('kilometraje').value) || null,
           precio: parseInt(document.getElementById('precio').value) || null,
@@ -967,6 +981,7 @@
         document.getElementById('formAuto').reset();
         bloqueOtraCiudad.classList.add('oculto');
         
+        // Limpiar fotos al enviar
         for (let i = 1; i <= 6; i++) {
           const img = document.getElementById(`img${i}`);
           const sin = document.getElementById(`sin${i}`);
