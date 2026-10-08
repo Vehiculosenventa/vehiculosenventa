@@ -197,22 +197,21 @@
       text-align: center;
       cursor: pointer;
       transition: background 0.2s;
+      border: none;
+      font-size: 15px;
+      font-weight: 600;
     }
     .foto-boton-elegir {
       background: #e6f0fa;
       border-right: 1px solid #94b8d9;
+      color: #2d3748;
     }
     .foto-boton-elegir:hover { background: #d4e4f7; }
     .foto-boton-camara {
       background: #eaf7f0;
+      color: #2d3748;
     }
     .foto-boton-camara:hover { background: #d4f0e3; }
-    .foto-boton-texto {
-      font-size: 14px;
-      font-weight: 600;
-      color: #2d3748;
-      margin-top: 4px;
-    }
     .foto-mini-contenedor {
       padding: 10px 15px 15px;
       display: flex;
@@ -551,14 +550,14 @@
         <div class="foto-tarjeta" id="foto_tarjeta_1">
           <div class="foto-tarjeta-titulo">1️⃣ Foto 1</div>
           <div class="foto-botones-fila">
-            <label class="foto-boton-elegir">
+            <button type="button" class="foto-boton-elegir" id="btnElegir1">
               📁 Elegir de carpeta
-              <input type="file" class="foto-input-oculto" id="foto1_archivo" accept="image/*">
-            </label>
-            <label class="foto-boton-camara" id="etqCamara1">
+            </button>
+            <button type="button" class="foto-boton-camara" id="btnCamara1">
               📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto1_camara" accept="image/*;capture=environment">
-            </label>
+            </button>
+            <input type="file" class="foto-input-oculto" id="foto1_archivo" accept="image/*">
+            <input type="file" class="foto-input-oculto" id="foto1_camara" accept="image/*">
           </div>
           <div class="foto-mini-contenedor">
             <div class="foto-mini" id="mini1">
@@ -572,14 +571,14 @@
         <div class="foto-tarjeta" id="foto_tarjeta_2">
           <div class="foto-tarjeta-titulo">2️⃣ Foto 2</div>
           <div class="foto-botones-fila">
-            <label class="foto-boton-elegir">
+            <button type="button" class="foto-boton-elegir" id="btnElegir2">
               📁 Elegir de carpeta
-              <input type="file" class="foto-input-oculto" id="foto2_archivo" accept="image/*">
-            </label>
-            <label class="foto-boton-camara">
+            </button>
+            <button type="button" class="foto-boton-camara" id="btnCamara2">
               📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto2_camara" accept="image/*;capture=environment">
-            </label>
+            </button>
+            <input type="file" class="foto-input-oculto" id="foto2_archivo" accept="image/*">
+            <input type="file" class="foto-input-oculto" id="foto2_camara" accept="image/*">
           </div>
           <div class="foto-mini-contenedor">
             <div class="foto-mini" id="mini2">
@@ -593,14 +592,14 @@
         <div class="foto-tarjeta" id="foto_tarjeta_3">
           <div class="foto-tarjeta-titulo">3️⃣ Foto 3</div>
           <div class="foto-botones-fila">
-            <label class="foto-boton-elegir">
+            <button type="button" class="foto-boton-elegir" id="btnElegir3">
               📁 Elegir de carpeta
-              <input type="file" class="foto-input-oculto" id="foto3_archivo" accept="image/*">
-            </label>
-            <label class="foto-boton-camara">
+            </button>
+            <button type="button" class="foto-boton-camara" id="btnCamara3">
               📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto3_camara" accept="image/*;capture=environment">
-            </label>
+            </button>
+            <input type="file" class="foto-input-oculto" id="foto3_archivo" accept="image/*">
+            <input type="file" class="foto-input-oculto" id="foto3_camara" accept="image/*">
           </div>
           <div class="foto-mini-contenedor">
             <div class="foto-mini" id="mini3">
@@ -614,14 +613,14 @@
         <div class="foto-tarjeta" id="foto_tarjeta_4">
           <div class="foto-tarjeta-titulo">4️⃣ Foto 4</div>
           <div class="foto-botones-fila">
-            <label class="foto-boton-elegir">
+            <button type="button" class="foto-boton-elegir" id="btnElegir4">
               📁 Elegir de carpeta
-              <input type="file" class="foto-input-oculto" id="foto4_archivo" accept="image/*">
-            </label>
-            <label class="foto-boton-camara">
+            </button>
+            <button type="button" class="foto-boton-camara" id="btnCamara4">
               📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto4_camara" accept="image/*;capture=environment">
-            </label>
+            </button>
+            <input type="file" class="foto-input-oculto" id="foto4_archivo" accept="image/*">
+            <input type="file" class="foto-input-oculto" id="foto4_camara" accept="image/*">
           </div>
           <div class="foto-mini-contenedor">
             <div class="foto-mini" id="mini4">
@@ -635,14 +634,14 @@
         <div class="foto-tarjeta" id="foto_tarjeta_5">
           <div class="foto-tarjeta-titulo">5️⃣ Foto 5</div>
           <div class="foto-botones-fila">
-            <label class="foto-boton-elegir">
+            <button type="button" class="foto-boton-elegir" id="btnElegir5">
               📁 Elegir de carpeta
-              <input type="file" class="foto-input-oculto" id="foto5_archivo" accept="image/*">
-            </label>
-            <label class="foto-boton-camara">
+            </button>
+            <button type="button" class="foto-boton-camara" id="btnCamara5">
               📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto5_camara" accept="image/*;capture=environment">
-            </label>
+            </button>
+            <input type="file" class="foto-input-oculto" id="foto5_archivo" accept="image/*">
+            <input type="file" class="foto-input-oculto" id="foto5_camara" accept="image/*">
           </div>
           <div class="foto-mini-contenedor">
             <div class="foto-mini" id="mini5">
@@ -656,14 +655,14 @@
         <div class="foto-tarjeta" id="foto_tarjeta_6">
           <div class="foto-tarjeta-titulo">6️⃣ Foto 6</div>
           <div class="foto-botones-fila">
-            <label class="foto-boton-elegir">
+            <button type="button" class="foto-boton-elegir" id="btnElegir6">
               📁 Elegir de carpeta
-              <input type="file" class="foto-input-oculto" id="foto6_archivo" accept="image/*">
-            </label>
-            <label class="foto-boton-camara">
+            </button>
+            <button type="button" class="foto-boton-camara" id="btnCamara6">
               📸 Sacar foto ahora
-              <input type="file" class="foto-input-oculto" id="foto6_camara" accept="image/*;capture=environment">
-            </label>
+            </button>
+            <input type="file" class="foto-input-oculto" id="foto6_archivo" accept="image/*">
+            <input type="file" class="foto-input-oculto" id="foto6_camara" accept="image/*">
           </div>
           <div class="foto-mini-contenedor">
             <div class="foto-mini" id="mini6">
@@ -753,16 +752,31 @@
 
     function conectarEventosFotos() {
       for (let i = 1; i <= 6; i++) {
+        const btnElegir = document.getElementById(`btnElegir${i}`);
+        const btnCamara = document.getElementById(`btnCamara${i}`);
         const inputArchivo = document.getElementById(`foto${i}_archivo`);
         const inputCamara = document.getElementById(`foto${i}_camara`);
         const mini = document.getElementById(`mini${i}`);
         
-        if (inputArchivo) {
+        // Botón Elegir de carpeta
+        if (btnElegir && inputArchivo) {
+          btnElegir.addEventListener('click', () => {
+            inputArchivo.click();
+          });
           inputArchivo.addEventListener('change', e => verFoto(i, e.target));
         }
-        if (inputCamara) {
+        
+        // Botón Sacar foto AHORA — ABRIR CÁMARA DIRECTAMENTE
+        if (btnCamara && inputCamara) {
+          btnCamara.addEventListener('click', () => {
+            // Forzar apertura de cámara trasera
+            inputCamara.setAttribute('capture', 'environment');
+            inputCamara.click();
+          });
           inputCamara.addEventListener('change', e => verFoto(i, e.target));
         }
+        
+        // Ampliar foto al tocar
         if (mini) {
           mini.addEventListener('click', () => ampliarFoto(i));
         }
@@ -797,12 +811,12 @@
         document.getElementById('ciudad_otra').disabled = false;
       }
       
+      // Los botones de foto NUNCA se bloquean
       for (let i = 1; i <= 6; i++) {
         const tarjeta = document.getElementById(`foto_tarjeta_${i}`);
         if (tarjeta) {
           desactivar ? tarjeta.classList.add('disabled') : tarjeta.classList.remove('disabled');
         }
-        // Los inputs de foto NUNCA se desactivan
         const inpArch = document.getElementById(`foto${i}_archivo`);
         const inpCam = document.getElementById(`foto${i}_camara`);
         if (inpArch) inpArch.disabled = false;
@@ -822,7 +836,7 @@
 
     async function verificarSesion() {
       try {
-        conectarEventosFotos(); // Conectar fotos al cargar
+        conectarEventosFotos();
         
         const { data: { session } } = await supabaseClient.auth.getSession();
         if (session) {
@@ -890,12 +904,12 @@
         for (let i = 1; i <= 6; i++) {
           const inputArchivo = document.getElementById(`foto${i}_archivo`);
           const inputCamara = document.getElementById(`foto${i}_camara`);
-          let inputUsar = null;
-          if (inputArchivo?.files?.[0]) inputUsar = inputArchivo;
-          else if (inputCamara?.files?.[0]) inputUsar = inputCamara;
+          let archivo = null;
+          if (inputArchivo?.files?.[0]) archivo = inputArchivo.files[0];
+          else if (inputCamara?.files?.[0]) archivo = inputCamara.files[0];
           
-          if (inputUsar?.files?.[0]) {
-            fotos[`foto${i}`] = await comprimirFoto(inputUsar.files[0]);
+          if (archivo) {
+            fotos[`foto${i}`] = await comprimirFoto(archivo);
           } else {
             fotos[`foto${i}`] = null;
           }
